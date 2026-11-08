@@ -26,7 +26,13 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter test
-      - run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+      - run: flutter build web --release --pwa-strategy=none --base-href "/${{ github.event.repository.name }}/"
+      # Always serve the latest version: remove old offline caches on
+      # visitors' devices and version the app file with the commit id.
+      - run: |
+          cp tool/sw_cleanup.js build/web/flutter_service_worker.js
+          sed -i "s/__APP_VERSION__/${GITHUB_SHA::8}/" build/web/flutter_bootstrap.js
+          grep -q "main.dart.js?v=" build/web/flutter_bootstrap.js
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
