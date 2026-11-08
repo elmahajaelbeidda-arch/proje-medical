@@ -52,4 +52,62 @@ void main() {
     expect(c.status, ConsultationStatus.answered);
     expect(c.reply?.needsVisit, isTrue);
   });
+
+  test('voice-only request keeps the voice note and file categories', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final repo = container.read(consultationsProvider.notifier);
+
+    final id = repo.create(
+      specialtyId: 'internal',
+      type: ConsultationType.lab,
+      urgency: Urgency.soon,
+      symptoms: '',
+      durationKey: 'dur_weeks',
+      attachments: const [
+        Attachment(
+          'ordonnance.jpg',
+          AttachmentKind.image,
+          category: AttachmentCategory.prescription,
+        ),
+        Attachment('bilan.pdf', AttachmentKind.pdf),
+      ],
+      voiceNote: const VoiceNote('blob:demo', Duration(seconds: 42)),
+      hideName: false,
+      patientName: 'Amina',
+      profile: container.read(healthProfileProvider),
+    );
+
+    final c = container.read(consultationProvider(id))!;
+    expect(c.voiceNote?.duration, const Duration(seconds: 42));
+    expect(c.voiceNote?.playable, isTrue);
+    expect(c.attachments.first.category, AttachmentCategory.prescription);
+    expect(c.attachments.last.category, AttachmentCategory.lab);
+
+    // Status changes must not drop the voice note.
+    repo.accept(id, MockData.currentDoctorId);
+    expect(container.read(consultationProvider(id))!.voiceNote, isNotNull);
+  });
+
+  test('sign-up stores the ID card and logs in only after verification', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final auth = container.read(authProvider.notifier);
+
+    auth.selectRole(UserRole.patient);
+    auth.register(
+      name: 'Amina',
+      phone: '0550 11 22 33',
+      idNumber: '109870512304821',
+    );
+    var state = container.read(authProvider);
+    expect(state.loggedIn, isFalse);
+    expect(state.maskedId, '•••• 4821');
+
+    auth.verifyPhone();
+    state = container.read(authProvider);
+    expect(state.loggedIn, isTrue);
+    expect(state.phoneVerified, isTrue);
+    expect(state.idNumber, '109870512304821');
+  });
 }

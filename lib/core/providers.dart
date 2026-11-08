@@ -36,11 +36,24 @@ class AuthState {
   final UserRole role;
   final bool loggedIn;
   final String name;
+  final String phone;
+
+  /// National ID card number (verified with the SMS code at sign-up).
+  final String idNumber;
+  final bool phoneVerified;
   const AuthState({
     this.role = UserRole.patient,
     this.loggedIn = false,
     this.name = '',
+    this.phone = '',
+    this.idNumber = '',
+    this.phoneVerified = false,
   });
+
+  /// e.g. "•••• 4821"
+  String get maskedId => idNumber.length <= 4
+      ? idNumber
+      : '•••• ${idNumber.substring(idNumber.length - 4)}';
 
   bool get isDoctor => role == UserRole.doctor;
 
@@ -63,6 +76,30 @@ class AuthNotifier extends Notifier<AuthState> {
   void selectRole(UserRole role) =>
       state = AuthState(role: role, name: state.name);
 
+  /// Sign-up step 1: data entered, waiting for the SMS code.
+  void register({
+    required String name,
+    required String phone,
+    required String idNumber,
+  }) {
+    state = AuthState(
+      role: state.role,
+      name: name.trim(),
+      phone: phone.trim(),
+      idNumber: idNumber.trim(),
+    );
+  }
+
+  /// Sign-up step 2: SMS code verified.
+  void verifyPhone() => state = AuthState(
+    role: state.role,
+    loggedIn: true,
+    name: state.name,
+    phone: state.phone,
+    idNumber: state.idNumber,
+    phoneVerified: true,
+  );
+
   void login({String? name}) {
     final defaultName = state.isDoctor
         ? MockData.doctorById(MockData.currentDoctorId)!.name
@@ -71,6 +108,10 @@ class AuthNotifier extends Notifier<AuthState> {
       role: state.role,
       loggedIn: true,
       name: (name == null || name.trim().isEmpty) ? defaultName : name.trim(),
+      // Demo account: already verified at sign-up.
+      phone: '0550 12 34 56',
+      idNumber: '109870512304821',
+      phoneVerified: true,
     );
   }
 
@@ -140,6 +181,7 @@ class ConsultationsNotifier extends Notifier<List<Consultation>> {
     required String symptoms,
     required String durationKey,
     required List<Attachment> attachments,
+    VoiceNote? voiceNote,
     required bool hideName,
     required String patientName,
     required HealthProfile profile,
@@ -160,6 +202,7 @@ class ConsultationsNotifier extends Notifier<List<Consultation>> {
         symptoms: symptoms,
         durationKey: durationKey,
         attachments: attachments,
+        voiceNote: voiceNote,
         createdAt: DateTime.now(),
       ),
       ...state,

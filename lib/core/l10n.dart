@@ -29,6 +29,87 @@ class AppStrings {
       'Chifa Linnas est une plateforme numérique solidaire de l’association caritative Aoun wa Sanad. Elle propose des consultations médicales à distance et facilite l’accès aux soins et au soutien médical pour les personnes ciblées, en toute simplicité et dans la dignité.',
     ],
     'app_tagline': ['تطبيق خيري طبي', 'Application médicale solidaire'],
+    // ID card + SMS verification
+    'id_card': ['بطاقة التعريف الوطنية', 'Carte d’identité nationale'],
+    'id_number': ['رقم بطاقة التعريف الوطنية', 'Numéro de la carte d’identité'],
+    'id_number_invalid': [
+      'رقم غير صالح (من 9 إلى 18 رقماً)',
+      'Numéro invalide (9 à 18 chiffres)',
+    ],
+    'id_front': ['الوجه الأمامي', 'Recto'],
+    'id_back': ['الوجه الخلفي', 'Verso'],
+    'id_upload_hint': [
+      'صوّر بطاقة التعريف بوضوح من الوجهين',
+      'Photographiez clairement les deux faces de la carte',
+    ],
+    'id_photos_required': [
+      'يرجى رفع صورتي بطاقة التعريف',
+      'Veuillez joindre les deux faces de la carte',
+    ],
+    'id_privacy': [
+      'بياناتك سرية وتُستخدم فقط للتحقق من هويتك',
+      'Vos données sont confidentielles et servent uniquement à vérifier votre identité',
+    ],
+    'tap_to_add': ['اضغط للإضافة', 'Toucher pour ajouter'],
+    'phone_invalid': ['رقم هاتف غير صالح', 'Numéro de téléphone invalide'],
+    'verify_phone': ['التحقق من رقم الهاتف', 'Vérification du téléphone'],
+    'code_sent': [
+      'أرسلنا رمز تحقق من 6 أرقام إلى الرقم',
+      'Nous avons envoyé un code à 6 chiffres au',
+    ],
+    'enter_code': ['أدخل رمز التحقق', 'Saisissez le code de vérification'],
+    'demo_code': [
+      'نسخة تجريبية: الرمز هو 123456',
+      'Version de démonstration : le code est 123456',
+    ],
+    'wrong_code': ['الرمز غير صحيح', 'Code incorrect'],
+    'resend_code': ['إعادة إرسال الرمز', 'Renvoyer le code'],
+    'resend_in': ['إعادة الإرسال بعد {n} ثانية', 'Renvoyer dans {n} s'],
+    'code_resent': ['تم إرسال رمز جديد', 'Nouveau code envoyé'],
+    'verify': ['تحقق', 'Vérifier'],
+    'verified': ['موثّق', 'Vérifié'],
+    'phone_verified': ['تم التحقق من رقمك بنجاح', 'Numéro vérifié avec succès'],
+
+    // Files
+    'file_category': ['نوع المرفق', 'Type de document'],
+    'cat_exam': ['فحص طبي', 'Examen médical'],
+    'cat_lab': ['تحليل', 'Analyse'],
+    'cat_prescription': ['وصفة طبية', 'Ordonnance'],
+    'cat_other': ['أخرى', 'Autre'],
+    'file_too_large': ['الملف أكبر من 10 ميغابايت', 'Le fichier dépasse 10 Mo'],
+    'pick_failed': ['تعذّر فتح الملف', 'Impossible d’ouvrir le fichier'],
+    'files_added': ['تمت إضافة {n} ملف', '{n} fichier(s) ajouté(s)'],
+    'file_types_hint': [
+      'صور (JPG، PNG) أو PDF — حتى 10 ميغابايت للملف',
+      'Images (JPG, PNG) ou PDF — 10 Mo max par fichier',
+    ],
+
+    // Voice
+    'voice_note': ['رسالة صوتية', 'Message vocal'],
+    'voice_hint': [
+      'سجّل رسالة صوتية تشرح فيها حالتك واحتياجاتك (اختياري)',
+      'Enregistrez un message vocal pour expliquer votre état et vos besoins (facultatif)',
+    ],
+    'tap_to_record': ['اضغط للتسجيل', 'Appuyez pour enregistrer'],
+    'recording': ['جارٍ التسجيل...', 'Enregistrement...'],
+    'stop': ['إيقاف', 'Arrêter'],
+    'delete': ['حذف', 'Supprimer'],
+    'record_again': ['إعادة التسجيل', 'Réenregistrer'],
+    'mic_denied': [
+      'لم يُسمح باستخدام الميكروفون. فعّله من إعدادات المتصفح أو الهاتف.',
+      'Accès au micro refusé. Activez-le dans les réglages.',
+    ],
+    'record_failed': [
+      'تعذّر بدء التسجيل',
+      'Impossible de démarrer l’enregistrement',
+    ],
+    'max_duration': ['الحد الأقصى 3 دقائق', 'Durée max : 3 minutes'],
+    'demo_audio': [
+      'تسجيل تجريبي (غير قابل للتشغيل)',
+      'Enregistrement de démonstration (non lisible)',
+    ],
+    'voice_message': ['🎤 رسالة صوتية', '🎤 Message vocal'],
+    'send_voice': ['إرسال التسجيل', 'Envoyer l’enregistrement'],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
     'skip': ['تخطي', 'Passer'],
@@ -210,14 +291,17 @@ class AppStrings {
       'إذا كانت حالتك خطيرة (ألم صدر، ضيق تنفس، نزيف) اتصل بالإسعاف فوراً.',
       'Si votre état est grave (douleur thoracique, essoufflement, saignement), appelez les secours.',
     ],
-    'attach_files': ['أرفق التحاليل أو الأشعة', 'Joignez analyses ou radios'],
+    'attach_files': [
+      'أرفق الفحوصات والتحاليل والوصفات الطبية',
+      'Joignez examens, analyses et ordonnances',
+    ],
     'attach_hint': [
       'صور واضحة تساعد الطبيب على القراءة الدقيقة',
       'Des photos nettes aident le médecin',
     ],
     'camera': ['الكاميرا', 'Caméra'],
     'gallery': ['المعرض', 'Galerie'],
-    'pdf_file': ['ملف PDF', 'Fichier PDF'],
+    'pdf_file': ['ملف / PDF', 'Fichier / PDF'],
     'no_files': ['لم تُرفق أي ملفات بعد', 'Aucun fichier joint'],
     'hide_name': ['إخفاء اسمي عن الطبيب', 'Masquer mon nom au médecin'],
     'hide_name_desc': [

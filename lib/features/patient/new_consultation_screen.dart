@@ -7,6 +7,7 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
+import '../../widgets/media.dart';
 
 class NewConsultationScreen extends ConsumerStatefulWidget {
   const NewConsultationScreen({super.key, this.initialType});
@@ -25,6 +26,9 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
   String _duration = 'dur_days';
   Urgency _urgency = Urgency.normal;
   final List<Attachment> _files = [];
+  AttachmentCategory _category = AttachmentCategory.lab;
+  VoiceNote? _voice;
+  bool _picking = false;
   bool _hideName = false;
 
   static const _durations = [
@@ -42,20 +46,27 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
 
   bool get _canContinue => switch (_step) {
     0 => _specialty != null,
-    1 => _symptoms.text.trim().length >= 10,
+    // Patients who find it hard to write can explain with a voice message.
+    1 => _symptoms.text.trim().length >= 10 || _voice != null,
     _ => true,
   };
 
-  void _addFile(AttachmentKind kind, String prefix) {
+  Future<void> _addFiles(PickSource source) async {
+    if (_picking) return;
+    setState(() => _picking = true);
+    final picked = await pickAttachments(context, source, category: _category);
+    if (!mounted) return;
     setState(() {
-      final n = _files.length + 1;
-      _files.add(
-        Attachment(
-          '${prefix}_$n.${kind == AttachmentKind.pdf ? 'pdf' : 'jpg'}',
-          kind,
+      _picking = false;
+      _files.addAll(picked);
+    });
+    if (picked.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.tr('files_added', args: {'n': picked.length})),
         ),
       );
-    });
+    }
   }
 
   void _submit() {
@@ -69,6 +80,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           symptoms: _symptoms.text.trim(),
           durationKey: _duration,
           attachments: List.of(_files),
+          voiceNote: _voice,
           hideName: _hideName,
           patientName: auth.displayName,
           profile: ref.read(healthProfileProvider),
@@ -292,7 +304,15 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           onChanged: (_) => setState(() {}),
           decoration: InputDecoration(hintText: context.tr('symptoms_hint')),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
+        _title('voice_note'),
+        Text(context.tr('voice_hint')),
+        const SizedBox(height: 10),
+        VoiceRecorderField(
+          initial: _voice,
+          onChanged: (v) => setState(() => _voice = v),
+        ),
+        const SizedBox(height: 20),
         _title('symptoms_duration'),
         Wrap(
           spacing: 8,
@@ -358,13 +378,38 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
         _title('attach_files'),
         Text(context.tr('attach_hint')),
         const SizedBox(height: 16),
+        _title('file_category'),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final c in AttachmentCategory.values)
+              ChoiceChip(
+                avatar: Icon(
+                  categoryIcon(c),
+                  size: 18,
+                  color: _category == c ? Colors.white : categoryColor(c),
+                ),
+                label: Text(context.tr(categoryKey(c))),
+                selected: _category == c,
+                showCheckmark: false,
+                selectedColor: categoryColor(c),
+                labelStyle: TextStyle(
+                  color: _category == c ? Colors.white : null,
+                  fontWeight: FontWeight.w700,
+                ),
+                onSelected: (_) => setState(() => _category = c),
+              ),
+          ],
+        ),
+        const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
               child: _UploadButton(
                 icon: Icons.photo_camera_outlined,
                 label: context.tr('camera'),
-                onTap: () => _addFile(AttachmentKind.image, 'photo'),
+                onTap: () => _addFiles(PickSource.camera),
               ),
             ),
             const SizedBox(width: 10),
@@ -372,20 +417,29 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
               child: _UploadButton(
                 icon: Icons.photo_library_outlined,
                 label: context.tr('gallery'),
-                onTap: () => _addFile(AttachmentKind.image, 'image'),
+                onTap: () => _addFiles(PickSource.gallery),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _UploadButton(
-                icon: Icons.picture_as_pdf_outlined,
+                icon: Icons.upload_file_outlined,
                 label: context.tr('pdf_file'),
-                onTap: () => _addFile(AttachmentKind.pdf, 'document'),
+                onTap: () => _addFiles(PickSource.files),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 8),
+        Text(
+          context.tr('file_types_hint'),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        if (_picking) ...[
+          const SizedBox(height: 12),
+          const LinearProgressIndicator(),
+        ],
+        const SizedBox(height: 16),
         if (_files.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
@@ -398,6 +452,8 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
               child: AttachmentTile(
                 _files[i],
                 onRemove: () => setState(() => _files.removeAt(i)),
+                onCategoryChanged: (c) =>
+                    setState(() => _files[i] = _files[i].withCategory(c)),
               ),
             ),
       ],
@@ -432,7 +488,11 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(_symptoms.text.trim()),
+              if (_symptoms.text.trim().isNotEmpty) Text(_symptoms.text.trim()),
+              if (_voice != null) ...[
+                const SizedBox(height: 8),
+                VoiceNotePlayer(note: _voice!),
+              ],
               const SizedBox(height: 8),
               Text(
                 '${context.tr('symptoms_duration')} ${context.tr(_duration)}',
@@ -445,11 +505,23 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
         InfoCard(
           title: context.tr('attachments'),
           icon: Icons.attach_file,
-          child: Text(
-            _files.isEmpty
-                ? context.tr('no_files')
-                : _files.map((f) => f.name).join('\n'),
-          ),
+          child: _files.isEmpty
+              ? Text(context.tr('no_files'))
+              : Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final f in _files)
+                      Tooltip(
+                        message:
+                            '${context.tr(categoryKey(f.category))} • ${f.name}',
+                        child: InkWell(
+                          onTap: () => showAttachmentPreview(context, f),
+                          child: AttachmentThumb(f, size: 64),
+                        ),
+                      ),
+                  ],
+                ),
         ),
         const SizedBox(height: 12),
         Card(

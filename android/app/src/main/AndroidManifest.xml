@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Voice messages -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Camera photos of medical documents and ID card -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:label="shifa"
         android:name="${applicationName}"

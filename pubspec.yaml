@@ -40,6 +40,11 @@ dependencies:
   intl: ^0.20.3
   flutter_localizations:
     sdk: flutter
+  file_picker: ^13.3.2
+  image_picker: ^1.2.4
+  record: ^7.1.2
+  audioplayers: ^6.8.1
+  path_provider: ^2.1.6
 
 dev_dependencies:
   flutter_test:

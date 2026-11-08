@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/l10n.dart';
+import '../core/providers.dart';
 import '../core/theme.dart';
 import '../data/mock_data.dart';
 import '../models/models.dart';
+import 'media.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers for enums -> label / color
@@ -238,74 +240,102 @@ class DoctorAvatar extends StatelessWidget {
 }
 
 class AttachmentTile extends StatelessWidget {
-  const AttachmentTile(this.attachment, {super.key, this.onRemove});
+  const AttachmentTile(
+    this.attachment, {
+    super.key,
+    this.onRemove,
+    this.onCategoryChanged,
+  });
   final Attachment attachment;
   final VoidCallback? onRemove;
+  final ValueChanged<AttachmentCategory>? onCategoryChanged;
 
   @override
   Widget build(BuildContext context) {
-    final isPdf = attachment.kind == AttachmentKind.pdf;
-    final color = isPdf ? AppColors.danger : AppColors.info;
-    return Card(
-      child: ListTile(
-        onTap: onRemove == null ? () => showPreview(context) : null,
-        leading: CircleAvatar(
-          backgroundColor: color,
-          child: Icon(
-            isPdf ? Icons.picture_as_pdf_outlined : Icons.image_outlined,
-            color: Colors.white,
-          ),
-        ),
-        title: Text(
-          attachment.name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: onRemove == null ? Text(context.tr('tap_to_preview')) : null,
-        trailing: onRemove != null
-            ? IconButton(icon: const Icon(Icons.close), onPressed: onRemove)
-            : const Icon(Icons.zoom_in),
-      ),
+    final a = attachment;
+    final catColor = categoryColor(a.category);
+    final categoryPill = Pill(
+      label: context.tr(categoryKey(a.category)),
+      color: catColor,
+      icon: categoryIcon(a.category),
     );
-  }
 
-  void showPreview(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(attachment.name),
-        content: AspectRatio(
-          aspectRatio: 3 / 4,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(ctx).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  attachment.kind == AttachmentKind.pdf
-                      ? Icons.picture_as_pdf_outlined
-                      : Icons.image_outlined,
-                  size: 64,
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => showAttachmentPreview(context, a),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            children: [
+              AttachmentThumb(a),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      a.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (onCategoryChanged == null)
+                          categoryPill
+                        else
+                          PopupMenuButton<AttachmentCategory>(
+                            tooltip: context.tr('file_category'),
+                            onSelected: onCategoryChanged,
+                            itemBuilder: (ctx) => [
+                              for (final c in AttachmentCategory.values)
+                                PopupMenuItem(
+                                  value: c,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        categoryIcon(c),
+                                        color: categoryColor(c),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(ctx.tr(categoryKey(c))),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                categoryPill,
+                                Icon(Icons.arrow_drop_down, color: catColor),
+                              ],
+                            ),
+                          ),
+                        if (a.size != null)
+                          Text(
+                            formatBytes(a.size),
+                            textDirection: TextDirection.ltr,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  ctx.tr('preview_placeholder'),
-                  textAlign: TextAlign.center,
+              ),
+              if (onRemove != null)
+                IconButton(icon: const Icon(Icons.close), onPressed: onRemove)
+              else
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Icon(Icons.zoom_in),
                 ),
-              ],
-            ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(ctx.tr('back')),
-          ),
-        ],
       ),
     );
   }
@@ -381,7 +411,9 @@ class ConsultationCard extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                c.symptoms,
+                c.symptoms.isNotEmpty
+                    ? c.symptoms
+                    : '🎤 ${context.tr('voice_note')}',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: text.bodyMedium,
@@ -398,6 +430,12 @@ class ConsultationCard extends StatelessWidget {
                       label: context.tr(sp.key),
                       color: scheme.primary,
                       icon: sp.icon,
+                    ),
+                  if (c.voiceNote != null)
+                    Pill(
+                      label: context.tr('voice_note'),
+                      color: AppColors.teal,
+                      icon: Icons.mic,
                     ),
                   if (c.attachments.isNotEmpty)
                     Pill(
@@ -660,6 +698,54 @@ class MenuTile extends StatelessWidget {
         style: TextStyle(fontWeight: FontWeight.w600, color: color),
       ),
       trailing: const Icon(Icons.chevron_right),
+    );
+  }
+}
+
+/// "Carte d'identité •••• 4821 — vérifié" badge shown on profiles.
+class IdVerifiedBadge extends StatelessWidget {
+  const IdVerifiedBadge({super.key, required this.auth});
+  final AuthState auth;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.success,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.badge_outlined, color: Colors.white, size: 18),
+          const SizedBox(width: 8),
+          Text(
+            '${context.tr('id_card')}  ',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Text(
+            auth.maskedId,
+            textDirection: TextDirection.ltr,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          if (auth.phoneVerified) ...[
+            const SizedBox(width: 8),
+            const Icon(Icons.verified, color: Colors.white, size: 18),
+            const SizedBox(width: 2),
+            Text(
+              context.tr('verified'),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

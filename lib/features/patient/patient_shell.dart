@@ -566,6 +566,10 @@ class PatientProfileTab extends ConsumerWidget {
               ),
             ],
           ),
+          if (auth.idNumber.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Center(child: IdVerifiedBadge(auth: auth)),
+          ],
           const SizedBox(height: 24),
           Card(
             child: Column(

@@ -7,6 +7,7 @@ import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
+import '../../widgets/media.dart';
 import '../onboarding/onboarding_screens.dart';
 
 // ---------------------------------------------------------------------------
@@ -39,6 +40,55 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ChatMessage(fromDoctor: asDoctor, text: value, time: DateTime.now()),
         );
     _input.clear();
+  }
+
+  Future<void> _recordVoice(bool asDoctor) async {
+    VoiceNote? note;
+    final send = await showModalBottomSheet<bool>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheet) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  ctx.tr('voice_note'),
+                  style: Theme.of(ctx).textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 12),
+                VoiceRecorderField(onChanged: (v) => setSheet(() => note = v)),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                  onPressed: note == null
+                      ? null
+                      : () => Navigator.pop(ctx, true),
+                  icon: const Icon(Icons.send),
+                  label: Text(ctx.tr('send_voice')),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    if (send != true || note == null) return;
+    ref
+        .read(consultationsProvider.notifier)
+        .sendMessage(
+          widget.id,
+          ChatMessage(
+            fromDoctor: asDoctor,
+            text: '',
+            voice: note,
+            time: DateTime.now(),
+          ),
+        );
   }
 
   @override
@@ -125,12 +175,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          m.text,
-                          style: TextStyle(
-                            color: mine ? scheme.onPrimary : scheme.onSurface,
+                        if (m.voice != null)
+                          VoiceNotePlayer(note: m.voice!, compact: true)
+                        else
+                          Text(
+                            m.text,
+                            style: TextStyle(
+                              color: mine ? scheme.onPrimary : scheme.onSurface,
+                            ),
                           ),
-                        ),
                         const SizedBox(height: 4),
                         Text(
                           context.timeAgo(m.time),
@@ -153,8 +206,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.attach_file),
+                    tooltip: context.tr('voice_note'),
+                    onPressed: () => _recordVoice(isDoctor),
+                    icon: const Icon(Icons.mic_none),
                   ),
                   Expanded(
                     child: TextField(

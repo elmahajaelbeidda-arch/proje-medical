@@ -8,6 +8,7 @@ import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
+import '../../widgets/media.dart';
 import '../patient/consultation_details_screen.dart';
 
 class RequestDetailsScreen extends ConsumerWidget {
@@ -118,8 +119,14 @@ class RequestDetailsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(c.symptoms, style: text.bodyLarge),
-                  const SizedBox(height: 8),
+                  if (c.symptoms.isNotEmpty) ...[
+                    Text(c.symptoms, style: text.bodyLarge),
+                    const SizedBox(height: 8),
+                  ],
+                  if (c.voiceNote != null) ...[
+                    VoiceNotePlayer(note: c.voiceNote!),
+                    const SizedBox(height: 8),
+                  ],
                   Text(
                     '${context.tr('symptoms_duration')} ${context.tr(c.durationKey)} • ${context.timeAgo(c.createdAt)}',
                     style: text.bodySmall,

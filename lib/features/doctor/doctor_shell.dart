@@ -420,6 +420,10 @@ class DoctorProfileTab extends ConsumerWidget {
               icon: Icons.verified,
             ),
           ),
+          if (auth.idNumber.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Center(child: IdVerifiedBadge(auth: auth)),
+          ],
           const SizedBox(height: 20),
           InfoCard(
             title: context.tr('professional_profile'),

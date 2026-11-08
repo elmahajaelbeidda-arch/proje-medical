@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 enum UserRole { patient, doctor }
@@ -9,6 +10,9 @@ enum ConsultationType { lab, imaging, general }
 enum Urgency { normal, soon, urgent }
 
 enum AttachmentKind { image, pdf }
+
+/// What a file is: medical exam (imaging, ECG...), lab test, prescription...
+enum AttachmentCategory { exam, lab, prescription, other }
 
 class Specialty {
   final String id;
@@ -67,7 +71,33 @@ class Doctor {
 class Attachment {
   final String name;
   final AttachmentKind kind;
-  const Attachment(this.name, this.kind);
+  final AttachmentCategory category;
+
+  /// File content (null for demo data).
+  final Uint8List? bytes;
+  final int? size;
+
+  const Attachment(
+    this.name,
+    this.kind, {
+    this.category = AttachmentCategory.lab,
+    this.bytes,
+    this.size,
+  });
+
+  Attachment withCategory(AttachmentCategory c) =>
+      Attachment(name, kind, category: c, bytes: bytes, size: size);
+}
+
+/// A recorded voice message. [source] is a file path (mobile) or a blob URL
+/// (web); it is empty for demo data that has no real audio.
+@immutable
+class VoiceNote {
+  final String source;
+  final Duration duration;
+  const VoiceNote(this.source, this.duration);
+
+  bool get playable => source.isNotEmpty;
 }
 
 class DoctorReply {
@@ -90,10 +120,12 @@ class ChatMessage {
   final bool fromDoctor;
   final String text;
   final DateTime time;
+  final VoiceNote? voice;
   const ChatMessage({
     required this.fromDoctor,
     required this.text,
     required this.time,
+    this.voice,
   });
 }
 
@@ -111,6 +143,7 @@ class Consultation {
   final String symptoms;
   final String durationKey;
   final List<Attachment> attachments;
+  final VoiceNote? voiceNote;
   final ConsultationStatus status;
   final DateTime createdAt;
   final String? doctorId;
@@ -133,6 +166,7 @@ class Consultation {
     this.hideName = false,
     this.chronicDiseases = const [],
     this.attachments = const [],
+    this.voiceNote,
     this.status = ConsultationStatus.pending,
     this.doctorId,
     this.reply,
@@ -174,6 +208,7 @@ class Consultation {
       symptoms: symptoms,
       durationKey: durationKey,
       attachments: attachments,
+      voiceNote: voiceNote,
       createdAt: createdAt,
       status: status ?? this.status,
       doctorId: doctorId ?? this.doctorId,

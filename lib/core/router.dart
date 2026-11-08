@@ -21,6 +21,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/role', builder: (_, _) => const RoleSelectScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
+      GoRoute(path: '/verify', builder: (_, _) => const VerifyPhoneScreen()),
 
       // Patient
       GoRoute(path: '/patient', builder: (_, _) => const PatientShell()),
