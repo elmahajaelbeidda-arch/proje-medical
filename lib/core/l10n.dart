@@ -20,6 +20,10 @@ class AppStrings {
       'استشارات طبية خيرية عن بُعد',
       'Consultations médicales solidaires à distance',
     ],
+    'association': [
+      'جمعية عون وسند الخيرية',
+      'Association caritative Aoun wa Sanad',
+    ],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
     'skip': ['تخطي', 'Passer'],
@@ -149,10 +153,7 @@ class AppStrings {
     'avg_response': ['متوسط الرد', 'délai moyen'],
     'last_consultation': ['آخر استشارة', 'Dernière consultation'],
     'health_tips': ['نصائح صحية', 'Conseils santé'],
-    'tip1': [
-      'اشرب 8 أكواب من الماء يومياً',
-      'Buvez 8 verres d’eau par jour',
-    ],
+    'tip1': ['اشرب 8 أكواب من الماء يومياً', 'Buvez 8 verres d’eau par jour'],
     'tip2': [
       'المشي 30 دقيقة يحمي قلبك',
       '30 min de marche protègent votre cœur',
@@ -161,10 +162,7 @@ class AppStrings {
       'لا تتوقف عن دوائك دون استشارة',
       'N’arrêtez pas un traitement sans avis',
     ],
-    'tip4': [
-      'افحص السكر والضغط بانتظام',
-      'Contrôlez glycémie et tension',
-    ],
+    'tip4': ['افحص السكر والضغط بانتظام', 'Contrôlez glycémie et tension'],
 
     // Nav
     'nav_home': ['الرئيسية', 'Accueil'],
@@ -190,10 +188,7 @@ class AppStrings {
     'step_symptoms': ['الأعراض', 'Symptômes'],
     'step_files': ['الفحوص', 'Documents'],
     'step_review': ['المراجعة', 'Vérification'],
-    'choose_specialty': [
-      'اختر التخصص المطلوب',
-      'Choisissez la spécialité',
-    ],
+    'choose_specialty': ['اختر التخصص المطلوب', 'Choisissez la spécialité'],
     'consultation_type': ['نوع الطلب', 'Type de demande'],
     'describe_symptoms': ['صف الأعراض بالتفصيل', 'Décrivez vos symptômes'],
     'symptoms_hint': [

@@ -33,6 +33,7 @@ class _DoctorShellState extends State<DoctorShell> {
         ],
       ),
       bottomNavigationBar: NavigationBar(
+        indicatorColor: AppColors.doctor.withValues(alpha: .45),
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
@@ -76,17 +77,21 @@ class DoctorHomeTab extends ConsumerWidget {
     final available = ref.watch(doctorAvailableProvider);
     final auth = ref.watch(authProvider);
     final pendingMine = all
-        .where((c) =>
-            c.status == ConsultationStatus.pending &&
-            c.specialtyId == _me.specialtyId)
+        .where(
+          (c) =>
+              c.status == ConsultationStatus.pending &&
+              c.specialtyId == _me.specialtyId,
+        )
         .toList();
     final urgent =
         all.where((c) => c.status == ConsultationStatus.pending).toList()
           ..sort((a, b) => b.urgency.index.compareTo(a.urgency.index));
     final helped = all
-        .where((c) =>
-            c.doctorId == MockData.currentDoctorId &&
-            c.status == ConsultationStatus.answered)
+        .where(
+          (c) =>
+              c.doctorId == MockData.currentDoctorId &&
+              c.status == ConsultationStatus.answered,
+        )
         .length;
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
@@ -105,13 +110,15 @@ class DoctorHomeTab extends ConsumerWidget {
                   children: [
                     Text(
                       auth.displayName,
-                      style: text.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.w800),
+                      style: text.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     Text(
                       context.tr(Specialty.byId(_me.specialtyId).key),
-                      style: text.bodyMedium
-                          ?.copyWith(color: scheme.onSurfaceVariant),
+                      style: text.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -147,14 +154,17 @@ class DoctorHomeTab extends ConsumerWidget {
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.info, AppColors.secondary],
+                colors: [AppColors.doctorDark, AppColors.doctor],
               ),
               borderRadius: BorderRadius.circular(22),
             ),
             child: Row(
               children: [
-                const Icon(Icons.volunteer_activism,
-                    color: Colors.white, size: 44),
+                const Icon(
+                  Icons.volunteer_activism,
+                  color: Colors.white,
+                  size: 44,
+                ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
@@ -242,16 +252,17 @@ class _OpenRequestsTabState extends ConsumerState<OpenRequestsTab> {
 
   @override
   Widget build(BuildContext context) {
-    final items = ref
-        .watch(consultationsProvider)
-        .where((c) => c.status == ConsultationStatus.pending)
-        .where((c) => _specialty == null || c.specialtyId == _specialty)
-        .where((c) => !_urgentOnly || c.urgency == Urgency.urgent)
-        .toList()
-      ..sort((a, b) {
-        final u = b.urgency.index.compareTo(a.urgency.index);
-        return u != 0 ? u : b.createdAt.compareTo(a.createdAt);
-      });
+    final items =
+        ref
+            .watch(consultationsProvider)
+            .where((c) => c.status == ConsultationStatus.pending)
+            .where((c) => _specialty == null || c.specialtyId == _specialty)
+            .where((c) => !_urgentOnly || c.urgency == Urgency.urgent)
+            .toList()
+          ..sort((a, b) {
+            final u = b.urgency.index.compareTo(a.urgency.index);
+            return u != 0 ? u : b.createdAt.compareTo(a.createdAt);
+          });
 
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('nav_requests'))),
@@ -329,10 +340,12 @@ class MyCasesTab extends ConsumerWidget {
         .watch(consultationsProvider)
         .where((c) => c.doctorId == MockData.currentDoctorId)
         .toList();
-    final progress =
-        mine.where((c) => c.status == ConsultationStatus.accepted).toList();
-    final answered =
-        mine.where((c) => c.status != ConsultationStatus.accepted).toList();
+    final progress = mine
+        .where((c) => c.status == ConsultationStatus.accepted)
+        .toList();
+    final answered = mine
+        .where((c) => c.status != ConsultationStatus.accepted)
+        .toList();
 
     Widget list(List<Consultation> items) {
       if (items.isEmpty) {

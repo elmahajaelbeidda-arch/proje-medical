@@ -41,14 +41,18 @@ class _HealthProfileScreenState extends ConsumerState<HealthProfileScreen> {
   }
 
   void _save() {
-    ref.read(healthProfileProvider.notifier).update(HealthProfile(
-          age: int.tryParse(_age.text) ?? _initial.age,
-          male: _male,
-          bloodType: _blood,
-          chronicDiseases: _chronic,
-          allergies: _allergies.text.trim(),
-          medications: _meds.text.trim(),
-        ));
+    ref
+        .read(healthProfileProvider.notifier)
+        .update(
+          HealthProfile(
+            age: int.tryParse(_age.text) ?? _initial.age,
+            male: _male,
+            bloodType: _blood,
+            chronicDiseases: _chronic,
+            allergies: _allergies.text.trim(),
+            medications: _meds.text.trim(),
+          ),
+        );
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(context.tr('saved'))));
     context.pop();
@@ -116,9 +120,8 @@ class _HealthProfileScreenState extends ConsumerState<HealthProfileScreen> {
                 FilterChip(
                   label: Text(context.tr(d)),
                   selected: _chronic.contains(d),
-                  onSelected: (v) => setState(
-                    () => v ? _chronic.add(d) : _chronic.remove(d),
-                  ),
+                  onSelected: (v) =>
+                      setState(() => v ? _chronic.add(d) : _chronic.remove(d)),
                 ),
             ],
           ),

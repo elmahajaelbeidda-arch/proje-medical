@@ -61,8 +61,9 @@ class RequestDetailsScreen extends ConsumerWidget {
                           children: [
                             Text(
                               c.displayPatientName,
-                              style: text.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w800),
+                              style: text.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
                             Text(
                               '${c.patientAge} ${context.tr('years')} • ${context.tr(c.patientMale ? 'male' : 'female')}',
@@ -79,8 +80,11 @@ class RequestDetailsScreen extends ConsumerWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      Pill(label: context.tr(sp.key), color: scheme.primary,
-                          icon: sp.icon),
+                      Pill(
+                        label: context.tr(sp.key),
+                        color: scheme.primary,
+                        icon: sp.icon,
+                      ),
                       Pill(
                         label: context.tr(typeKey(c.type)),
                         color: AppColors.info,
@@ -92,8 +96,9 @@ class RequestDetailsScreen extends ConsumerWidget {
                   const SizedBox(height: 14),
                   Text(
                     context.tr('chronic_diseases'),
-                    style: text.labelLarge
-                        ?.copyWith(fontWeight: FontWeight.w700),
+                    style: text.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -202,7 +207,9 @@ class _ReplyScreenState extends ConsumerState<ReplyScreen> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    ref.read(consultationsProvider.notifier).reply(
+    ref
+        .read(consultationsProvider.notifier)
+        .reply(
           widget.id,
           DoctorReply(
             findings: _findings.text.trim(),
@@ -223,23 +230,26 @@ class _ReplyScreenState extends ConsumerState<ReplyScreen> {
     String? required(String? v) =>
         (v == null || v.trim().isEmpty) ? context.tr('required_field') : null;
 
-    Widget field(TextEditingController ctrl, String label, String hint,
-            IconData icon) =>
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: TextFormField(
-            controller: ctrl,
-            maxLines: 4,
-            minLines: 2,
-            validator: required,
-            decoration: InputDecoration(
-              labelText: context.tr(label),
-              hintText: context.tr(hint),
-              alignLabelWithHint: true,
-              prefixIcon: Icon(icon),
-            ),
-          ),
-        );
+    Widget field(
+      TextEditingController ctrl,
+      String label,
+      String hint,
+      IconData icon,
+    ) => Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextFormField(
+        controller: ctrl,
+        maxLines: 4,
+        minLines: 2,
+        validator: required,
+        decoration: InputDecoration(
+          labelText: context.tr(label),
+          hintText: context.tr(hint),
+          alignLabelWithHint: true,
+          prefixIcon: Icon(icon),
+        ),
+      ),
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('write_reply'))),
@@ -253,7 +263,8 @@ class _ReplyScreenState extends ConsumerState<ReplyScreen> {
                 child: ListTile(
                   leading: const Icon(Icons.person_outline),
                   title: Text(
-                      '${context.tr('patient_label')}: ${c.displayPatientName}'),
+                    '${context.tr('patient_label')}: ${c.displayPatientName}',
+                  ),
                   subtitle: Text(
                     c.symptoms,
                     maxLines: 2,
@@ -262,11 +273,24 @@ class _ReplyScreenState extends ConsumerState<ReplyScreen> {
                 ),
               ),
             const SizedBox(height: 16),
-            field(_findings, 'findings', 'findings_hint', Icons.biotech_outlined),
-            field(_diagnosis, 'diagnosis', 'diagnosis_hint',
-                Icons.medical_information_outlined),
-            field(_recommendations, 'recommendations', 'recommendations_hint',
-                Icons.checklist_rounded),
+            field(
+              _findings,
+              'findings',
+              'findings_hint',
+              Icons.biotech_outlined,
+            ),
+            field(
+              _diagnosis,
+              'diagnosis',
+              'diagnosis_hint',
+              Icons.medical_information_outlined,
+            ),
+            field(
+              _recommendations,
+              'recommendations',
+              'recommendations_hint',
+              Icons.checklist_rounded,
+            ),
             Card(
               child: SwitchListTile(
                 value: _needsVisit,

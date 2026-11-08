@@ -122,8 +122,7 @@ class MockData {
         specialtyId: 'endo',
         type: ConsultationType.lab,
         urgency: Urgency.soon,
-        symptoms:
-            'أجريت تحليل السكر التراكمي وكانت النتيجة 8.9%. أشعر بعطش كثير وتعب في المساء. أتناول دواء الميتفورمين.',
+        symptoms: 'أجريت تحليل السكر التراكمي وكانت النتيجة 8.9%. أشعر بعطش كثير وتعب في المساء. أتناول دواء الميتفورمين.',
         durationKey: 'dur_months',
         attachments: const [
           Attachment('تحليل_HbA1c.jpg', AttachmentKind.image),
@@ -133,11 +132,9 @@ class MockData {
         createdAt: now.subtract(const Duration(days: 3)),
         doctorId: 'd6',
         reply: DoctorReply(
-          findings:
-              'السكر التراكمي 8.9% أعلى من الهدف (أقل من 7%). وظائف الكلى ضمن الطبيعي.',
+          findings: 'السكر التراكمي 8.9% أعلى من الهدف (أقل من 7%). وظائف الكلى ضمن الطبيعي.',
           diagnosis: 'سكري من النوع الثاني غير منضبط بشكل كافٍ.',
-          recommendations:
-              'الالتزام بالحمية وتقليل السكريات والخبز الأبيض، المشي 30 دقيقة يومياً، ومراجعة طبيبك لتعديل جرعة الدواء. إعادة التحليل بعد 3 أشهر.',
+          recommendations: 'الالتزام بالحمية وتقليل السكريات والخبز الأبيض، المشي 30 دقيقة يومياً، ومراجعة طبيبك لتعديل جرعة الدواء. إعادة التحليل بعد 3 أشهر.',
           needsVisit: true,
           date: now.subtract(const Duration(days: 2)),
         ),
@@ -169,8 +166,7 @@ class MockData {
         specialtyId: 'cardio',
         type: ConsultationType.general,
         urgency: Urgency.normal,
-        symptoms:
-            'خفقان في القلب أحياناً عند صعود الدرج، مع ضيق بسيط في التنفس يزول بالراحة.',
+        symptoms: 'خفقان في القلب أحياناً عند صعود الدرج، مع ضيق بسيط في التنفس يزول بالراحة.',
         durationKey: 'dur_weeks',
         attachments: const [
           Attachment('تخطيط_القلب.jpg', AttachmentKind.image),
@@ -190,8 +186,7 @@ class MockData {
         specialtyId: 'internal',
         type: ConsultationType.lab,
         urgency: Urgency.urgent,
-        symptoms:
-            'تعب شديد ودوخة وشحوب. تحليل الدم يظهر هيموغلوبين 8.1. لا أستطيع الذهاب للطبيب حالياً.',
+        symptoms: 'تعب شديد ودوخة وشحوب. تحليل الدم يظهر هيموغلوبين 8.1. لا أستطيع الذهاب للطبيب حالياً.',
         durationKey: 'dur_weeks',
         attachments: const [
           Attachment('تحليل_الدم_CBC.jpg', AttachmentKind.image),
@@ -209,12 +204,9 @@ class MockData {
         specialtyId: 'internal',
         type: ConsultationType.lab,
         urgency: Urgency.soon,
-        symptoms:
-            'ارتفاع في نسبة الكرياتينين في التحليل الأخير، مع تورم خفيف في القدمين.',
+        symptoms: 'ارتفاع في نسبة الكرياتينين في التحليل الأخير، مع تورم خفيف في القدمين.',
         durationKey: 'dur_months',
-        attachments: const [
-          Attachment('وظائف_الكلى.pdf', AttachmentKind.pdf),
-        ],
+        attachments: const [Attachment('وظائف_الكلى.pdf', AttachmentKind.pdf)],
         createdAt: now.subtract(const Duration(hours: 3)),
       ),
       Consultation(
@@ -287,7 +279,8 @@ class MockData {
         reply: DoctorReply(
           findings: 'TSH = 6.2 مع T4 طبيعي.',
           diagnosis: 'قصور غدة درقية تحت سريري محتمل.',
-          recommendations: 'إعادة التحليل بعد 6 أسابيع مع تحليل الأجسام المضادة.',
+          recommendations:
+              'إعادة التحليل بعد 6 أسابيع مع تحليل الأجسام المضادة.',
           needsVisit: false,
           date: now.subtract(const Duration(days: 4)),
         ),

@@ -44,8 +44,9 @@ class ConsultationDetailsScreen extends ConsumerWidget {
                     children: [
                       CircleAvatar(
                         radius: 24,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.primaryContainer,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .primaryContainer,
                         child: Icon(sp.icon),
                       ),
                       const SizedBox(width: 12),
@@ -55,8 +56,9 @@ class ConsultationDetailsScreen extends ConsumerWidget {
                           children: [
                             Text(
                               context.tr(sp.key),
-                              style: text.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w800),
+                              style: text.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
                             Text(
                               '${context.tr(typeKey(c.type))} • ${context.timeAgo(c.createdAt)}',
@@ -80,8 +82,10 @@ class ConsultationDetailsScreen extends ConsumerWidget {
             Card(
               color: AppColors.warning.withValues(alpha: .1),
               child: ListTile(
-                leading: const Icon(Icons.hourglass_top_rounded,
-                    color: AppColors.warning),
+                leading: const Icon(
+                  Icons.hourglass_top_rounded,
+                  color: AppColors.warning,
+                ),
                 title: Text(context.tr('waiting_doctor')),
               ),
             ),
@@ -150,7 +154,9 @@ class ConsultationDetailsScreen extends ConsumerWidget {
                     Text('${context.tr('your_rating')}: '),
                     for (var i = 0; i < 5; i++)
                       Icon(
-                        i < c.rating! ? Icons.star_rounded : Icons.star_outline_rounded,
+                        i < c.rating!
+                            ? Icons.star_rounded
+                            : Icons.star_outline_rounded,
                         color: AppColors.accent,
                       ),
                   ],
@@ -176,7 +182,9 @@ class ConsultationDetailsScreen extends ConsumerWidget {
                 IconButton(
                   onPressed: () => setState(() => stars = i),
                   icon: Icon(
-                    i <= stars ? Icons.star_rounded : Icons.star_outline_rounded,
+                    i <= stars
+                        ? Icons.star_rounded
+                        : Icons.star_outline_rounded,
                     color: AppColors.accent,
                     size: 36,
                   ),
@@ -231,8 +239,9 @@ class StatusTimeline extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor:
-                    i <= reached ? scheme.primary : scheme.surfaceContainerHighest,
+                backgroundColor: i <= reached
+                    ? scheme.primary
+                    : scheme.surfaceContainerHighest,
                 child: Icon(
                   steps[i].$1,
                   size: 18,
@@ -243,8 +252,8 @@ class StatusTimeline extends StatelessWidget {
               Text(
                 context.tr(steps[i].$2),
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontWeight: i == reached ? FontWeight.w800 : null,
-                    ),
+                  fontWeight: i == reached ? FontWeight.w800 : null,
+                ),
               ),
             ],
           ),
@@ -299,8 +308,10 @@ class ReplyView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.local_hospital_outlined,
-                    color: AppColors.warning),
+                const Icon(
+                  Icons.local_hospital_outlined,
+                  color: AppColors.warning,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(

@@ -7,6 +7,7 @@ import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
+import '../onboarding/onboarding_screens.dart';
 
 // ---------------------------------------------------------------------------
 // Chat
@@ -31,7 +32,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void _send(bool asDoctor) {
     final value = _input.text.trim();
     if (value.isEmpty) return;
-    ref.read(consultationsProvider.notifier).sendMessage(
+    ref
+        .read(consultationsProvider.notifier)
+        .sendMessage(
           widget.id,
           ChatMessage(fromDoctor: asDoctor, text: value, time: DateTime.now()),
         );
@@ -102,7 +105,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     ),
                     margin: const EdgeInsets.only(bottom: 10),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 10),
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: mine
                           ? scheme.primary
@@ -159,7 +164,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       decoration: InputDecoration(
                         hintText: context.tr('type_message'),
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
                         ),
@@ -205,10 +212,14 @@ class NotificationsScreen extends ConsumerWidget {
         itemBuilder: (context, i) {
           final n = items[i];
           return Card(
-            color: n.read ? null : scheme.primaryContainer.withValues(alpha: .35),
+            color: n.read
+                ? null
+                : scheme.primaryContainer.withValues(alpha: .35),
             child: ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 6,
+              ),
               leading: CircleAvatar(
                 backgroundColor: scheme.primaryContainer,
                 child: Icon(n.icon, color: scheme.primary),
@@ -284,7 +295,7 @@ class SettingsScreen extends ConsumerWidget {
               leading: const Icon(Icons.info_outline),
               title: Text(context.tr('about')),
               subtitle: Text(
-                '${context.tr('app_name')} — ${context.tr('app_slogan')}\n${context.tr('version')} 1.0.0',
+                '${context.tr('app_name')} — ${context.tr('app_slogan')}\n${context.tr('association')} • ${context.tr('version')} 1.0.0',
               ),
               isThreeLine: true,
             ),
@@ -309,16 +320,14 @@ class DisclaimerScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Icon(Icons.gavel_rounded, size: 64, color: AppColors.primary),
+          const Center(child: AppLogo(size: 96)),
           const SizedBox(height: 16),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Text(
                 context.tr('disclaimer_body'),
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
+                style: Theme.of(context).textTheme.bodyLarge
                     ?.copyWith(height: 1.7),
               ),
             ),

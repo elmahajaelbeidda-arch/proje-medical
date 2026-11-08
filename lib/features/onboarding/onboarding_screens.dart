@@ -8,9 +8,8 @@ import '../../core/theme.dart';
 import '../../models/models.dart';
 
 class AppLogo extends StatelessWidget {
-  const AppLogo({super.key, this.size = 96, this.light = false});
+  const AppLogo({super.key, this.size = 96});
   final double size;
-  final bool light;
 
   @override
   Widget build(BuildContext context) {
@@ -18,30 +17,20 @@ class AppLogo extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: light ? Colors.white : AppColors.primary,
-        borderRadius: BorderRadius.circular(size * .3),
+        borderRadius: BorderRadius.circular(size * .26),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .12),
+            color: AppColors.navy.withValues(alpha: .25),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Icon(
-            Icons.favorite_rounded,
-            size: size * .62,
-            color: light ? AppColors.primary : Colors.white,
-          ),
-          Icon(
-            Icons.add_rounded,
-            size: size * .34,
-            color: light ? Colors.white : AppColors.primary,
-          ),
-        ],
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset(
+        'assets/images/logo.png',
+        fit: BoxFit.cover,
+        semanticLabel: 'جمعية عون وسند الخيرية',
       ),
     );
   }
@@ -71,23 +60,17 @@ class _SplashScreenState extends State<SplashScreen> {
     final text = Theme.of(context).textTheme;
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.primary, AppColors.secondary],
-          ),
-        ),
+        color: AppColors.navy,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const AppLogo(size: 110, light: true),
+              const AppLogo(size: 180),
               const SizedBox(height: 24),
               Text(
                 context.tr('app_name'),
                 style: text.displaySmall?.copyWith(
-                  color: Colors.white,
+                  color: AppColors.peach,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -96,12 +79,17 @@ class _SplashScreenState extends State<SplashScreen> {
                 context.tr('app_slogan'),
                 style: text.titleMedium?.copyWith(color: Colors.white70),
               ),
+              const SizedBox(height: 4),
+              Text(
+                context.tr('association'),
+                style: text.bodyMedium?.copyWith(color: Colors.white54),
+              ),
               const SizedBox(height: 40),
               const SizedBox(
                 width: 28,
                 height: 28,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: AppColors.peach,
                   strokeWidth: 3,
                 ),
               ),
@@ -165,11 +153,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Row(
                 children: [
                   TextButton.icon(
-                    onPressed: () => ref.read(localeProvider.notifier).set(
-                          Locale(locale.languageCode == 'ar' ? 'fr' : 'ar'),
-                        ),
+                    onPressed: () => ref
+                        .read(localeProvider.notifier)
+                        .set(Locale(locale.languageCode == 'ar' ? 'fr' : 'ar')),
                     icon: const Icon(Icons.language),
-                    label: Text(locale.languageCode == 'ar' ? 'Français' : 'العربية'),
+                    label: Text(
+                      locale.languageCode == 'ar' ? 'Français' : 'العربية',
+                    ),
                   ),
                   const Spacer(),
                   if (_page < _pages.length - 1)
@@ -193,7 +183,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           width: 220,
                           height: 220,
                           decoration: BoxDecoration(
-                            color: scheme.primaryContainer.withValues(alpha: .5),
+                            color: scheme.primaryContainer.withValues(
+                              alpha: .5,
+                            ),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(icon, size: 110, color: scheme.primary),
@@ -202,15 +194,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         Text(
                           context.tr(title),
                           textAlign: TextAlign.center,
-                          style: text.headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.w800),
+                          style: text.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                         const SizedBox(height: 14),
                         Text(
                           context.tr(body),
                           textAlign: TextAlign.center,
-                          style: text.bodyLarge
-                              ?.copyWith(color: scheme.onSurfaceVariant),
+                          style: text.bodyLarge?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
                         ),
                       ],
                     );
@@ -274,13 +268,14 @@ class RoleSelectScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 24),
-              const Center(child: AppLogo(size: 80)),
+              const Center(child: AppLogo(size: 110)),
               const SizedBox(height: 28),
               Text(
                 context.tr('who_are_you'),
                 textAlign: TextAlign.center,
-                style:
-                    text.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                style: text.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
@@ -293,7 +288,8 @@ class RoleSelectScreen extends ConsumerWidget {
                 icon: Icons.personal_injury_outlined,
                 title: context.tr('role_patient'),
                 subtitle: context.tr('role_patient_desc'),
-                color: AppColors.primary,
+                color: AppColors.patient,
+                darkColor: AppColors.patientDark,
                 onTap: () => choose(UserRole.patient),
               ),
               const SizedBox(height: 16),
@@ -301,7 +297,8 @@ class RoleSelectScreen extends ConsumerWidget {
                 icon: Icons.medical_services_outlined,
                 title: context.tr('role_doctor'),
                 subtitle: context.tr('role_doctor_desc'),
-                color: AppColors.info,
+                color: AppColors.doctor,
+                darkColor: AppColors.doctorDark,
                 onTap: () => choose(UserRole.doctor),
               ),
               const Spacer(),
@@ -324,12 +321,14 @@ class _RoleCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.color,
+    required this.darkColor,
     required this.onTap,
   });
   final IconData icon;
   final String title;
   final String subtitle;
   final Color color;
+  final Color darkColor;
   final VoidCallback onTap;
 
   @override
@@ -337,6 +336,10 @@ class _RoleCard extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     return Card(
       clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: color, width: 1.5),
+      ),
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -347,25 +350,28 @@ class _RoleCard extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: .12),
+                  color: color.withValues(alpha: .3),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: Icon(icon, size: 34, color: color),
+                child: Icon(icon, size: 34, color: darkColor),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title,
-                        style: text.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w800)),
+                    Text(
+                      title,
+                      style: text.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Text(subtitle, style: text.bodyMedium),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: color),
+              Icon(Icons.chevron_right, color: darkColor),
             ],
           ),
         ),

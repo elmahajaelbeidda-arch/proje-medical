@@ -14,8 +14,9 @@ class LocaleNotifier extends Notifier<Locale> {
   void set(Locale locale) => state = locale;
 }
 
-final localeProvider =
-    NotifierProvider<LocaleNotifier, Locale>(LocaleNotifier.new);
+final localeProvider = NotifierProvider<LocaleNotifier, Locale>(
+  LocaleNotifier.new,
+);
 
 class ThemeModeNotifier extends Notifier<ThemeMode> {
   @override
@@ -23,8 +24,9 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
   void set(ThemeMode mode) => state = mode;
 }
 
-final themeModeProvider =
-    NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);
+final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
+  ThemeModeNotifier.new,
+);
 
 // ---------------------------------------------------------------------------
 // Auth (mock)
@@ -49,6 +51,7 @@ class AuthState {
         ? MockData.doctorById(MockData.currentDoctorId)!.name
         : 'محمد الأمين';
   }
+
   String get userId =>
       isDoctor ? MockData.currentDoctorId : MockData.currentPatientId;
 }
@@ -74,7 +77,9 @@ class AuthNotifier extends Notifier<AuthState> {
   void logout() => state = const AuthState();
 }
 
-final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);
 
 // ---------------------------------------------------------------------------
 // Doctor availability
@@ -86,8 +91,9 @@ class AvailabilityNotifier extends Notifier<bool> {
   void set(bool value) => state = value;
 }
 
-final doctorAvailableProvider =
-    NotifierProvider<AvailabilityNotifier, bool>(AvailabilityNotifier.new);
+final doctorAvailableProvider = NotifierProvider<AvailabilityNotifier, bool>(
+  AvailabilityNotifier.new,
+);
 
 // ---------------------------------------------------------------------------
 // Health profile
@@ -96,20 +102,21 @@ final doctorAvailableProvider =
 class HealthProfileNotifier extends Notifier<HealthProfile> {
   @override
   HealthProfile build() => const HealthProfile(
-        age: 54,
-        male: true,
-        bloodType: 'O+',
-        chronicDiseases: {'cd_diabetes'},
-        allergies: '',
-        medications: 'Metformin 850mg',
-      );
+    age: 54,
+    male: true,
+    bloodType: 'O+',
+    chronicDiseases: {'cd_diabetes'},
+    allergies: '',
+    medications: 'Metformin 850mg',
+  );
 
   void update(HealthProfile profile) => state = profile;
 }
 
 final healthProfileProvider =
     NotifierProvider<HealthProfileNotifier, HealthProfile>(
-        HealthProfileNotifier.new);
+      HealthProfileNotifier.new,
+    );
 
 // ---------------------------------------------------------------------------
 // Consultations (in-memory repository)
@@ -165,14 +172,14 @@ class ConsultationsNotifier extends Notifier<List<Consultation>> {
   }
 
   void accept(String id, String doctorId) => _update(
-        id,
-        (c) => c.copyWith(status: ConsultationStatus.accepted, doctorId: doctorId),
-      );
+    id,
+    (c) => c.copyWith(status: ConsultationStatus.accepted, doctorId: doctorId),
+  );
 
   void reply(String id, DoctorReply reply) => _update(
-        id,
-        (c) => c.copyWith(status: ConsultationStatus.answered, reply: reply),
-      );
+    id,
+    (c) => c.copyWith(status: ConsultationStatus.answered, reply: reply),
+  );
 
   void sendMessage(String id, ChatMessage message) =>
       _update(id, (c) => c.copyWith(messages: [...c.messages, message]));
@@ -183,7 +190,8 @@ class ConsultationsNotifier extends Notifier<List<Consultation>> {
 
 final consultationsProvider =
     NotifierProvider<ConsultationsNotifier, List<Consultation>>(
-        ConsultationsNotifier.new);
+      ConsultationsNotifier.new,
+    );
 
 final consultationProvider = Provider.family<Consultation?, String>((ref, id) {
   final list = ref.watch(consultationsProvider);

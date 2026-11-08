@@ -38,6 +38,7 @@ class _PatientShellState extends State<PatientShell> {
             )
           : null,
       bottomNavigationBar: NavigationBar(
+        indicatorColor: AppColors.patient.withValues(alpha: .45),
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
@@ -97,13 +98,15 @@ class PatientHomeTab extends ConsumerWidget {
                   children: [
                     Text(
                       '${context.tr('hello')} ${auth.displayName.split(' ').first} 👋',
-                      style: text.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.w800),
+                      style: text.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     Text(
                       context.tr('how_feel'),
-                      style: text.bodyMedium
-                          ?.copyWith(color: scheme.onSurfaceVariant),
+                      style: text.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -124,7 +127,7 @@ class PatientHomeTab extends ConsumerWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.secondary],
+                colors: [AppColors.navy, AppColors.navyLight],
               ),
               borderRadius: BorderRadius.circular(22),
             ),
@@ -144,14 +147,15 @@ class PatientHomeTab extends ConsumerWidget {
                       const SizedBox(height: 6),
                       Text(
                         context.tr('request_consultation_desc'),
-                        style: text.bodyMedium
-                            ?.copyWith(color: Colors.white.withValues(alpha: .9)),
+                        style: text.bodyMedium?.copyWith(
+                          color: Colors.white.withValues(alpha: .9),
+                        ),
                       ),
                       const SizedBox(height: 14),
                       FilledButton.icon(
                         style: FilledButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.primary,
+                          backgroundColor: AppColors.peach,
+                          foregroundColor: AppColors.navy,
                           minimumSize: const Size(0, 44),
                         ),
                         onPressed: () => context.push('/patient/new'),
@@ -165,7 +169,7 @@ class PatientHomeTab extends ConsumerWidget {
                 Icon(
                   Icons.health_and_safety_rounded,
                   size: 90,
-                  color: Colors.white.withValues(alpha: .25),
+                  color: AppColors.peach.withValues(alpha: .35),
                 ),
               ],
             ),
@@ -180,8 +184,10 @@ class PatientHomeTab extends ConsumerWidget {
               side: BorderSide(color: AppColors.danger.withValues(alpha: .3)),
             ),
             child: ListTile(
-              leading: const Icon(Icons.emergency_outlined,
-                  color: AppColors.danger),
+              leading: const Icon(
+                Icons.emergency_outlined,
+                color: AppColors.danger,
+              ),
               title: Text(
                 context.tr('emergency_title'),
                 style: const TextStyle(
@@ -214,7 +220,9 @@ class PatientHomeTab extends ConsumerWidget {
                       onTap: () => context.push('/patient/new', extra: t),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 16, horizontal: 8),
+                          vertical: 16,
+                          horizontal: 8,
+                        ),
                         child: Column(
                           children: [
                             Icon(typeIcon(t), color: scheme.primary, size: 30),
@@ -222,8 +230,9 @@ class PatientHomeTab extends ConsumerWidget {
                             Text(
                               context.tr(typeKey(t)),
                               textAlign: TextAlign.center,
-                              style: text.labelLarge
-                                  ?.copyWith(fontWeight: FontWeight.w700),
+                              style: text.labelLarge?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ],
                         ),
@@ -231,7 +240,8 @@ class PatientHomeTab extends ConsumerWidget {
                     ),
                   ),
                 ),
-                if (t != ConsultationType.values.last) const SizedBox(width: 10),
+                if (t != ConsultationType.values.last)
+                  const SizedBox(width: 10),
               ],
             ],
           ),
@@ -249,9 +259,7 @@ class PatientHomeTab extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              const Expanded(
-                child: _AnsweredStat(),
-              ),
+              const Expanded(child: _AnsweredStat()),
               const SizedBox(width: 10),
               Expanded(
                 child: StatCard(
@@ -302,8 +310,9 @@ class PatientHomeTab extends ConsumerWidget {
                       const Spacer(),
                       Text(
                         context.tr(key),
-                        style: text.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                        style: text.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ],
                   ),
@@ -317,8 +326,8 @@ class PatientHomeTab extends ConsumerWidget {
   }
 
   static const _tips = [
-    (Icons.water_drop_outlined, 'tip1', AppColors.info),
-    (Icons.directions_walk, 'tip2', AppColors.success),
+    (Icons.water_drop_outlined, 'tip1', AppColors.patientDark),
+    (Icons.directions_walk, 'tip2', AppColors.doctorDark),
     (Icons.medication_outlined, 'tip3', AppColors.danger),
     (Icons.monitor_heart_outlined, 'tip4', AppColors.accent),
   ];
@@ -328,11 +337,11 @@ class _AnsweredStat extends StatelessWidget {
   const _AnsweredStat();
   @override
   Widget build(BuildContext context) => StatCard(
-        icon: Icons.task_alt,
-        value: '1.4K',
-        label: context.tr('answered_consultations'),
-        color: AppColors.success,
-      );
+    icon: Icons.task_alt,
+    value: '1.4K',
+    label: context.tr('answered_consultations'),
+    color: AppColors.success,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -479,10 +488,13 @@ class _JoinBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: AppColors.info.withValues(alpha: .08),
+      color: AppColors.doctor.withValues(alpha: .15),
       child: ListTile(
         contentPadding: const EdgeInsets.all(14),
-        leading: const Icon(Icons.volunteer_activism, color: AppColors.info),
+        leading: const Icon(
+          Icons.volunteer_activism,
+          color: AppColors.doctorDark,
+        ),
         title: Text(
           context.tr('join_as_doctor'),
           style: const TextStyle(fontWeight: FontWeight.w700),
@@ -534,8 +546,11 @@ class PatientProfileTab extends ConsumerWidget {
                 label: '${profile.age} ${context.tr('years')}',
                 color: scheme.primary,
               ),
-              Pill(label: profile.bloodType, color: AppColors.danger,
-                  icon: Icons.bloodtype),
+              Pill(
+                label: profile.bloodType,
+                color: AppColors.danger,
+                icon: Icons.bloodtype,
+              ),
             ],
           ),
           const SizedBox(height: 24),

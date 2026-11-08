@@ -15,23 +15,23 @@ String typeKey(ConsultationType t) => 'type_${t.name}';
 String urgencyKey(Urgency u) => 'urgency_${u.name}';
 
 Color statusColor(ConsultationStatus s) => switch (s) {
-      ConsultationStatus.pending => AppColors.warning,
-      ConsultationStatus.accepted => AppColors.info,
-      ConsultationStatus.answered => AppColors.success,
-      ConsultationStatus.closed => Colors.grey,
-    };
+  ConsultationStatus.pending => AppColors.warning,
+  ConsultationStatus.accepted => AppColors.info,
+  ConsultationStatus.answered => AppColors.success,
+  ConsultationStatus.closed => Colors.grey,
+};
 
 Color urgencyColor(Urgency u) => switch (u) {
-      Urgency.normal => AppColors.success,
-      Urgency.soon => AppColors.warning,
-      Urgency.urgent => AppColors.danger,
-    };
+  Urgency.normal => AppColors.success,
+  Urgency.soon => AppColors.warning,
+  Urgency.urgent => AppColors.danger,
+};
 
 IconData typeIcon(ConsultationType t) => switch (t) {
-      ConsultationType.lab => Icons.biotech_outlined,
-      ConsultationType.imaging => Icons.document_scanner_outlined,
-      ConsultationType.general => Icons.chat_outlined,
-    };
+  ConsultationType.lab => Icons.biotech_outlined,
+  ConsultationType.imaging => Icons.document_scanner_outlined,
+  ConsultationType.general => Icons.chat_outlined,
+};
 
 // ---------------------------------------------------------------------------
 // Small building blocks
@@ -60,10 +60,8 @@ class Pill extends StatelessWidget {
           ],
           Text(
             label,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: color, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -84,10 +82,10 @@ class UrgencyPill extends StatelessWidget {
   final Urgency urgency;
   @override
   Widget build(BuildContext context) => Pill(
-        label: context.tr(urgencyKey(urgency)),
-        color: urgencyColor(urgency),
-        icon: urgency == Urgency.urgent ? Icons.bolt : null,
-      );
+    label: context.tr(urgencyKey(urgency)),
+    color: urgencyColor(urgency),
+    icon: urgency == Urgency.urgent ? Icons.bolt : null,
+  );
 }
 
 class SectionHeader extends StatelessWidget {
@@ -105,9 +103,7 @@ class SectionHeader extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
+              style: Theme.of(context).textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.w800),
             ),
           ),
@@ -181,10 +177,8 @@ class InfoCard extends StatelessWidget {
                 ],
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: c,
-                      ),
+                  style: Theme.of(context).textTheme.titleSmall
+                      ?.copyWith(fontWeight: FontWeight.w800, color: c),
                 ),
               ],
             ),
@@ -261,13 +255,14 @@ class AttachmentTile extends StatelessWidget {
             color: color,
           ),
         ),
-        title: Text(attachment.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: Text(
+          attachment.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         subtitle: onRemove == null ? Text(context.tr('tap_to_preview')) : null,
         trailing: onRemove != null
-            ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: onRemove,
-              )
+            ? IconButton(icon: const Icon(Icons.close), onPressed: onRemove)
             : const Icon(Icons.zoom_in),
       ),
     );
@@ -367,13 +362,15 @@ class ConsultationCard extends StatelessWidget {
                           showPatient
                               ? '${c.displayPatientName} • ${c.patientAge} ${context.tr('years')}'
                               : context.tr(sp.key),
-                          style: text.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.w800),
+                          style: text.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                         Text(
                           '${context.tr(typeKey(c.type))} • ${context.timeAgo(c.createdAt)}',
-                          style: text.bodySmall
-                              ?.copyWith(color: scheme.onSurfaceVariant),
+                          style: text.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
                         ),
                       ],
                     ),
@@ -449,22 +446,30 @@ class DoctorCard extends StatelessWidget {
                   children: [
                     Text(
                       doctor.name,
-                      style:
-                          text.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                      style: text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     Text(
                       '${context.tr(Specialty.byId(doctor.specialtyId).key)} • ${doctor.city}',
-                      style: text.bodySmall
-                          ?.copyWith(color: scheme.onSurfaceVariant),
+                      style: text.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        const Icon(Icons.star_rounded,
-                            size: 18, color: AppColors.accent),
+                        const Icon(
+                          Icons.star_rounded,
+                          size: 18,
+                          color: AppColors.accent,
+                        ),
                         Text(' ${doctor.rating}  ', style: text.labelMedium),
-                        Icon(Icons.forum_outlined,
-                            size: 16, color: scheme.onSurfaceVariant),
+                        Icon(
+                          Icons.forum_outlined,
+                          size: 16,
+                          color: scheme.onSurfaceVariant,
+                        ),
                         Text(
                           ' ${doctor.consultationsCount}',
                           style: text.labelMedium,
@@ -476,7 +481,8 @@ class DoctorCard extends StatelessWidget {
               ),
               Pill(
                 label: context.tr(
-                    doctor.available ? 'available_now' : 'unavailable'),
+                  doctor.available ? 'available_now' : 'unavailable',
+                ),
                 color: doctor.available ? AppColors.success : Colors.grey,
               ),
             ],
@@ -501,8 +507,10 @@ void showDoctorSheet(BuildContext context, Doctor doctor) {
           children: [
             DoctorAvatar(doctor, radius: 42),
             const SizedBox(height: 12),
-            Text(doctor.name,
-                style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+            Text(
+              doctor.name,
+              style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+            ),
             Text(
               '${ctx.tr(Specialty.byId(doctor.specialtyId).key)} • ${doctor.city}',
             ),
@@ -612,8 +620,10 @@ class StatCard extends StatelessWidget {
               child: Icon(icon, color: color, size: 20),
             ),
             const SizedBox(height: 10),
-            Text(value,
-                style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+            Text(
+              value,
+              style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+            ),
             Text(label, style: text.bodySmall, maxLines: 2),
           ],
         ),
@@ -646,10 +656,7 @@ class MenuTile extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
+        style: TextStyle(fontWeight: FontWeight.w600, color: color),
       ),
       trailing: const Icon(Icons.chevron_right),
     );

@@ -27,7 +27,12 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
   final List<Attachment> _files = [];
   bool _hideName = false;
 
-  static const _durations = ['dur_days', 'dur_weeks', 'dur_months', 'dur_years'];
+  static const _durations = [
+    'dur_days',
+    'dur_weeks',
+    'dur_months',
+    'dur_years',
+  ];
 
   @override
   void dispose() {
@@ -36,24 +41,28 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
   }
 
   bool get _canContinue => switch (_step) {
-        0 => _specialty != null,
-        1 => _symptoms.text.trim().length >= 10,
-        _ => true,
-      };
+    0 => _specialty != null,
+    1 => _symptoms.text.trim().length >= 10,
+    _ => true,
+  };
 
   void _addFile(AttachmentKind kind, String prefix) {
     setState(() {
       final n = _files.length + 1;
-      _files.add(Attachment(
-        '${prefix}_$n.${kind == AttachmentKind.pdf ? 'pdf' : 'jpg'}',
-        kind,
-      ));
+      _files.add(
+        Attachment(
+          '${prefix}_$n.${kind == AttachmentKind.pdf ? 'pdf' : 'jpg'}',
+          kind,
+        ),
+      );
     });
   }
 
   void _submit() {
     final auth = ref.read(authProvider);
-    final id = ref.read(consultationsProvider.notifier).create(
+    final id = ref
+        .read(consultationsProvider.notifier)
+        .create(
           specialtyId: _specialty!,
           type: _type,
           urgency: _urgency,
@@ -69,7 +78,11 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        icon: const Icon(Icons.check_circle, color: AppColors.success, size: 64),
+        icon: const Icon(
+          Icons.check_circle,
+          color: AppColors.success,
+          size: 64,
+        ),
         title: Text(ctx.tr('request_sent')),
         content: Text(ctx.tr('request_sent_body'), textAlign: TextAlign.center),
         actions: [
@@ -87,7 +100,12 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final steps = ['step_specialty', 'step_symptoms', 'step_files', 'step_review'];
+    final steps = [
+      'step_specialty',
+      'step_symptoms',
+      'step_files',
+      'step_review',
+    ];
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -117,9 +135,11 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
                         const SizedBox(height: 6),
                         Text(
                           context.tr(steps[i]),
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                fontWeight:
-                                    i == _step ? FontWeight.w800 : FontWeight.w500,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                fontWeight: i == _step
+                                    ? FontWeight.w800
+                                    : FontWeight.w500,
                                 color: i <= _step
                                     ? scheme.primary
                                     : scheme.onSurfaceVariant,
@@ -163,11 +183,13 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
                       onPressed: !_canContinue
                           ? null
                           : _step == steps.length - 1
-                              ? _submit
-                              : () => setState(() => _step++),
-                      child: Text(context.tr(
-                        _step == steps.length - 1 ? 'submit_request' : 'next',
-                      )),
+                          ? _submit
+                          : () => setState(() => _step++),
+                      child: Text(
+                        context.tr(
+                          _step == steps.length - 1 ? 'submit_request' : 'next',
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -180,15 +202,13 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
   }
 
   Widget _title(String key) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: Text(
-          context.tr(key),
-          style: Theme.of(context)
-              .textTheme
-              .titleMedium
-              ?.copyWith(fontWeight: FontWeight.w800),
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: 12),
+    child: Text(
+      context.tr(key),
+      style: Theme.of(context).textTheme.titleMedium
+          ?.copyWith(fontWeight: FontWeight.w800),
+    ),
+  );
 
   Widget _specialtyStep(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -312,7 +332,10 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.warning_amber_rounded, color: AppColors.danger),
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  color: AppColors.danger,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -396,8 +419,10 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              Pill(label: context.tr(sp.key),
-                  color: Theme.of(context).colorScheme.primary),
+              Pill(
+                label: context.tr(sp.key),
+                color: Theme.of(context).colorScheme.primary,
+              ),
               Pill(label: context.tr(typeKey(_type)), color: AppColors.info),
               UrgencyPill(_urgency),
             ],
@@ -442,9 +467,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
         const SizedBox(height: 12),
         Text(
           context.tr('emergency_body'),
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
+          style: Theme.of(context).textTheme.bodySmall
               ?.copyWith(color: AppColors.danger),
         ),
       ],
@@ -470,7 +493,9 @@ class _UrgencyOption extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
         side: BorderSide(
-          color: selected ? color : Theme.of(context).colorScheme.outlineVariant,
+          color: selected
+              ? color
+              : Theme.of(context).colorScheme.outlineVariant,
           width: selected ? 2 : 1,
         ),
       ),
