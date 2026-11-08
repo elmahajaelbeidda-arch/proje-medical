@@ -110,6 +110,32 @@ class AppStrings {
     ],
     'voice_message': ['🎤 رسالة صوتية', '🎤 Message vocal'],
     'send_voice': ['إرسال التسجيل', 'Envoyer l’enregistrement'],
+    // Voice search
+    'voice_search': ['البحث الصوتي', 'Recherche vocale'],
+    'voice_search_listening': ['تحدّث الآن...', 'Parlez maintenant...'],
+    'voice_search_example_doctor': [
+      'مثلاً: «طبيب قلب في الدار البيضاء» أو «أطفال»',
+      'Ex : « cardiologue à Casablanca » ou « pédiatrie »',
+    ],
+    'voice_search_example_request': [
+      'مثلاً: «تحليل دم» أو «سعال»',
+      'Ex : « analyse de sang » ou « toux »',
+    ],
+    'voice_search_unavailable': [
+      'البحث الصوتي غير مدعوم في هذا المتصفح. جرّب Chrome أو Safari.',
+      'Recherche vocale non prise en charge ici. Essayez Chrome ou Safari.',
+    ],
+    'search_doctors': [
+      'ابحث بالاسم أو التخصص أو المدينة',
+      'Nom, spécialité ou ville',
+    ],
+    'search_requests': ['ابحث في الأعراض أو التخصص', 'Symptômes ou spécialité'],
+    'no_results': ['لا توجد نتائج لـ «{q}»', 'Aucun résultat pour « {q} »'],
+    'clear': ['مسح', 'Effacer'],
+    'voice_search_error': [
+      'لم نتمكن من فهم الكلام. تحدّث بوضوح وحاول مرة أخرى.',
+      'Parole non reconnue. Parlez distinctement et réessayez.',
+    ],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
     'skip': ['تخطي', 'Passer'],

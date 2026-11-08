@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>يستخدم التطبيق التعرف على الكلام للبحث بالصوت عن الأطباء والطلبات.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>يستخدم التطبيق الميكروفون لتسجيل رسالة صوتية تشرح حالتك للطبيب.</string>
 	<key>NSCameraUsageDescription</key>

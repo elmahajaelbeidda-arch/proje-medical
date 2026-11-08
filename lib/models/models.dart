@@ -48,6 +48,9 @@ class Doctor {
   final bool verified;
   final bool available;
   final String city;
+
+  /// City name in Latin letters (French interface and search).
+  final String cityFr;
   final String bio;
   final List<String> availability;
 
@@ -59,11 +62,14 @@ class Doctor {
     required this.rating,
     required this.consultationsCount,
     required this.city,
+    required this.cityFr,
     required this.bio,
     this.verified = true,
     this.available = true,
     this.availability = const [],
   });
+
+  String cityFor(String languageCode) => languageCode == 'fr' ? cityFr : city;
 
   String get initials => name.replaceAll('د. ', '').trim().characters.first;
 }

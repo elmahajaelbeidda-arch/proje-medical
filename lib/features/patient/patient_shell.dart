@@ -7,7 +7,9 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/models.dart';
+import '../../core/search.dart';
 import '../../widgets/common.dart';
+import '../../widgets/voice_search.dart';
 import '../onboarding/onboarding_screens.dart';
 
 class PatientShell extends StatefulWidget {
@@ -429,7 +431,15 @@ class _DoctorsTabState extends State<DoctorsTab> {
   Widget build(BuildContext context) {
     final doctors = MockData.doctors.where((d) {
       final okSpecialty = _specialty == null || d.specialtyId == _specialty;
-      final okQuery = _query.isEmpty || d.name.contains(_query);
+      final sp = Specialty.byId(d.specialtyId).key;
+      final okQuery = Search.matches(_query, [
+        d.name,
+        AppStrings.of('ar', sp),
+        AppStrings.of('fr', sp),
+        d.city,
+        d.cityFr,
+        d.bio,
+      ]);
       return okSpecialty && okQuery;
     }).toList();
 
@@ -439,12 +449,9 @@ class _DoctorsTabState extends State<DoctorsTab> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-            child: TextField(
+            child: VoiceSearchField(
+              hintKey: 'search_doctors',
               onChanged: (v) => setState(() => _query = v.trim()),
-              decoration: InputDecoration(
-                hintText: context.tr('search'),
-                prefixIcon: const Icon(Icons.search),
-              ),
             ),
           ),
           SizedBox(
@@ -477,7 +484,9 @@ class _DoctorsTabState extends State<DoctorsTab> {
             child: doctors.isEmpty
                 ? EmptyState(
                     icon: Icons.person_search_outlined,
-                    message: context.tr('none'),
+                    message: _query.isEmpty
+                        ? context.tr('none')
+                        : context.tr('no_results', args: {'q': _query}),
                   )
                 : ListView.separated(
                     padding: const EdgeInsets.all(16),

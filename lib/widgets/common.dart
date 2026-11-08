@@ -490,7 +490,7 @@ class DoctorCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${context.tr(Specialty.byId(doctor.specialtyId).key)} • ${doctor.city}',
+                      '${context.tr(Specialty.byId(doctor.specialtyId).key)} • ${doctor.cityFor(Localizations.localeOf(context).languageCode)}',
                       style: text.bodySmall?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
@@ -551,7 +551,7 @@ void showDoctorSheet(BuildContext context, Doctor doctor) {
               style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             Text(
-              '${ctx.tr(Specialty.byId(doctor.specialtyId).key)} • ${doctor.city}',
+              '${ctx.tr(Specialty.byId(doctor.specialtyId).key)} • ${doctor.cityFor(Localizations.localeOf(ctx).languageCode)}',
             ),
             if (doctor.verified) ...[
               const SizedBox(height: 8),

@@ -7,7 +7,9 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/models.dart';
+import '../../core/search.dart';
 import '../../widgets/common.dart';
+import '../../widgets/voice_search.dart';
 
 Doctor get _me => MockData.doctorById(MockData.currentDoctorId)!;
 
@@ -249,6 +251,21 @@ class OpenRequestsTab extends ConsumerStatefulWidget {
 class _OpenRequestsTabState extends ConsumerState<OpenRequestsTab> {
   String? _specialty = _me.specialtyId;
   bool _urgentOnly = false;
+  String _query = '';
+
+  bool _matchesQuery(Consultation c) {
+    final sp = Specialty.byId(c.specialtyId).key;
+    return Search.matches(_query, [
+      c.symptoms,
+      c.displayPatientName,
+      AppStrings.of('ar', sp),
+      AppStrings.of('fr', sp),
+      AppStrings.of('ar', typeKey(c.type)),
+      AppStrings.of('fr', typeKey(c.type)),
+      AppStrings.of('ar', urgencyKey(c.urgency)),
+      AppStrings.of('fr', urgencyKey(c.urgency)),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -256,8 +273,15 @@ class _OpenRequestsTabState extends ConsumerState<OpenRequestsTab> {
         ref
             .watch(consultationsProvider)
             .where((c) => c.status == ConsultationStatus.pending)
-            .where((c) => _specialty == null || c.specialtyId == _specialty)
+            // A search looks through every specialty.
+            .where(
+              (c) =>
+                  _query.isNotEmpty ||
+                  _specialty == null ||
+                  c.specialtyId == _specialty,
+            )
             .where((c) => !_urgentOnly || c.urgency == Urgency.urgent)
+            .where(_matchesQuery)
             .toList()
           ..sort((a, b) {
             final u = b.urgency.index.compareTo(a.urgency.index);
@@ -268,6 +292,14 @@ class _OpenRequestsTabState extends ConsumerState<OpenRequestsTab> {
       appBar: AppBar(title: Text(context.tr('nav_requests'))),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+            child: VoiceSearchField(
+              hintKey: 'search_requests',
+              exampleKey: 'voice_search_example_request',
+              onChanged: (v) => setState(() => _query = v.trim()),
+            ),
+          ),
           SizedBox(
             height: 48,
             child: ListView(
@@ -307,7 +339,9 @@ class _OpenRequestsTabState extends ConsumerState<OpenRequestsTab> {
             child: items.isEmpty
                 ? EmptyState(
                     icon: Icons.inbox_outlined,
-                    message: context.tr('no_requests'),
+                    message: _query.isEmpty
+                        ? context.tr('no_requests')
+                        : context.tr('no_results', args: {'q': _query}),
                   )
                 : ListView.separated(
                     padding: const EdgeInsets.all(16),
@@ -409,7 +443,7 @@ class DoctorProfileTab extends ConsumerWidget {
             style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
           ),
           Text(
-            '${context.tr(Specialty.byId(_me.specialtyId).key)} • ${_me.city}',
+            '${context.tr(Specialty.byId(_me.specialtyId).key)} • ${_me.cityFor(Localizations.localeOf(context).languageCode)}',
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
