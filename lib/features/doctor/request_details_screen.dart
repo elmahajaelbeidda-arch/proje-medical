@@ -1,0 +1,289 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/l10n.dart';
+import '../../core/providers.dart';
+import '../../core/theme.dart';
+import '../../data/mock_data.dart';
+import '../../models/models.dart';
+import '../../widgets/common.dart';
+import '../patient/consultation_details_screen.dart';
+
+class RequestDetailsScreen extends ConsumerWidget {
+  const RequestDetailsScreen({super.key, required this.id});
+  final String id;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final c = ref.watch(consultationProvider(id));
+    if (c == null) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: EmptyState(
+          icon: Icons.search_off,
+          message: context.tr('no_requests'),
+        ),
+      );
+    }
+    final sp = Specialty.byId(c.specialtyId);
+    final isMine = c.doctorId == MockData.currentDoctorId;
+    final takenByOther = c.doctorId != null && !isMine;
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: Text(context.tr('request_details'))),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        children: [
+          // Patient card
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 26,
+                        backgroundColor: scheme.secondaryContainer,
+                        child: Icon(
+                          c.patientMale ? Icons.man : Icons.woman,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              c.displayPatientName,
+                              style: text.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w800),
+                            ),
+                            Text(
+                              '${c.patientAge} ${context.tr('years')} • ${context.tr(c.patientMale ? 'male' : 'female')}',
+                              style: text.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                      StatusPill(c.status),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      Pill(label: context.tr(sp.key), color: scheme.primary,
+                          icon: sp.icon),
+                      Pill(
+                        label: context.tr(typeKey(c.type)),
+                        color: AppColors.info,
+                        icon: typeIcon(c.type),
+                      ),
+                      UrgencyPill(c.urgency),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    context.tr('chronic_diseases'),
+                    style: text.labelLarge
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    c.chronicDiseases.isEmpty
+                        ? context.tr('none')
+                        : c.chronicDiseases.map(context.tr).join('، '),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SectionHeader(context.tr('symptoms')),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(c.symptoms, style: text.bodyLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${context.tr('symptoms_duration')} ${context.tr(c.durationKey)} • ${context.timeAgo(c.createdAt)}',
+                    style: text.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          if (c.attachments.isNotEmpty) ...[
+            SectionHeader(context.tr('attachments')),
+            for (final a in c.attachments)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: AttachmentTile(a),
+              ),
+          ],
+
+          if (c.reply != null) ...[
+            SectionHeader(context.tr('doctor_reply')),
+            ReplyView(reply: c.reply!),
+          ],
+
+          const SizedBox(height: 20),
+          if (c.status == ConsultationStatus.pending)
+            FilledButton.icon(
+              onPressed: () {
+                ref
+                    .read(consultationsProvider.notifier)
+                    .accept(c.id, MockData.currentDoctorId);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(context.tr('case_accepted'))),
+                );
+              },
+              icon: const Icon(Icons.how_to_reg),
+              label: Text(context.tr('accept_case')),
+            )
+          else if (takenByOther)
+            Center(child: Text(context.tr('accepted_by_other')))
+          else ...[
+            if (c.status == ConsultationStatus.accepted)
+              FilledButton.icon(
+                onPressed: () => context.push('/doctor/reply/${c.id}'),
+                icon: const Icon(Icons.edit_note),
+                label: Text(context.tr('write_reply')),
+              ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              onPressed: () => context.push('/chat/${c.id}'),
+              icon: const Icon(Icons.chat_outlined),
+              label: Text(context.tr('chat')),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reply form
+// ---------------------------------------------------------------------------
+
+class ReplyScreen extends ConsumerStatefulWidget {
+  const ReplyScreen({super.key, required this.id});
+  final String id;
+  @override
+  ConsumerState<ReplyScreen> createState() => _ReplyScreenState();
+}
+
+class _ReplyScreenState extends ConsumerState<ReplyScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _findings = TextEditingController();
+  final _diagnosis = TextEditingController();
+  final _recommendations = TextEditingController();
+  bool _needsVisit = false;
+
+  @override
+  void dispose() {
+    _findings.dispose();
+    _diagnosis.dispose();
+    _recommendations.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+    ref.read(consultationsProvider.notifier).reply(
+          widget.id,
+          DoctorReply(
+            findings: _findings.text.trim(),
+            diagnosis: _diagnosis.text.trim(),
+            recommendations: _recommendations.text.trim(),
+            needsVisit: _needsVisit,
+            date: DateTime.now(),
+          ),
+        );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(context.tr('reply_sent'))));
+    context.pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ref.watch(consultationProvider(widget.id));
+    String? required(String? v) =>
+        (v == null || v.trim().isEmpty) ? context.tr('required_field') : null;
+
+    Widget field(TextEditingController ctrl, String label, String hint,
+            IconData icon) =>
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: TextFormField(
+            controller: ctrl,
+            maxLines: 4,
+            minLines: 2,
+            validator: required,
+            decoration: InputDecoration(
+              labelText: context.tr(label),
+              hintText: context.tr(hint),
+              alignLabelWithHint: true,
+              prefixIcon: Icon(icon),
+            ),
+          ),
+        );
+
+    return Scaffold(
+      appBar: AppBar(title: Text(context.tr('write_reply'))),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            if (c != null)
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.person_outline),
+                  title: Text(
+                      '${context.tr('patient_label')}: ${c.displayPatientName}'),
+                  subtitle: Text(
+                    c.symptoms,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 16),
+            field(_findings, 'findings', 'findings_hint', Icons.biotech_outlined),
+            field(_diagnosis, 'diagnosis', 'diagnosis_hint',
+                Icons.medical_information_outlined),
+            field(_recommendations, 'recommendations', 'recommendations_hint',
+                Icons.checklist_rounded),
+            Card(
+              child: SwitchListTile(
+                value: _needsVisit,
+                onChanged: (v) => setState(() => _needsVisit = v),
+                secondary: const Icon(Icons.local_hospital_outlined),
+                title: Text(context.tr('needs_visit')),
+              ),
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: _submit,
+              icon: const Icon(Icons.send),
+              label: Text(context.tr('send')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
