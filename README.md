@@ -53,3 +53,8 @@ lib/
 - رفع ملفات حقيقي (`image_picker` و`file_picker`)
 - لوحة مشرف للتحقق من الأطباء
 - مكالمات فيديو (اختياري)
+
+## العرض المباشر (Demo)
+https://elmahajaelbeidda-arch.github.io/proje-medical/
+
+يُبنى وينشر تلقائياً عبر GitHub Actions (`.github/workflows/deploy-pages.yml`) عند كل push.
