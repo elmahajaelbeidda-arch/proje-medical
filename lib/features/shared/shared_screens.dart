@@ -71,18 +71,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.peach,
+              color: AppColors.mint,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, size: 18, color: AppColors.navy),
+                const Icon(Icons.info_outline, size: 18, color: AppColors.ink),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     context.tr('chat_notice'),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.navy,
+                      color: AppColors.ink,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -217,7 +217,7 @@ class NotificationsScreen extends ConsumerWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
               side: BorderSide(
-                color: n.read ? scheme.outlineVariant : AppColors.peach,
+                color: n.read ? scheme.outlineVariant : AppColors.mint,
                 width: n.read ? 1 : 2.5,
               ),
             ),
@@ -227,10 +227,10 @@ class NotificationsScreen extends ConsumerWidget {
                 vertical: 6,
               ),
               leading: CircleAvatar(
-                backgroundColor: n.read ? AppColors.border : AppColors.navy,
+                backgroundColor: n.read ? AppColors.border : AppColors.ink,
                 child: Icon(
                   n.icon,
-                  color: n.read ? AppColors.navy : AppColors.peach,
+                  color: n.read ? AppColors.ink : AppColors.mint,
                 ),
               ),
               title: Text(

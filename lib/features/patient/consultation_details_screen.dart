@@ -84,12 +84,12 @@ class ConsultationDetailsScreen extends ConsumerWidget {
               child: ListTile(
                 leading: const Icon(
                   Icons.hourglass_top_rounded,
-                  color: AppColors.navy,
+                  color: AppColors.ink,
                 ),
                 title: Text(
                   context.tr('waiting_doctor'),
                   style: const TextStyle(
-                    color: AppColors.navy,
+                    color: AppColors.ink,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -314,17 +314,14 @@ class ReplyView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.local_hospital_outlined,
-                  color: AppColors.navy,
-                ),
+                const Icon(Icons.local_hospital_outlined, color: AppColors.ink),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     context.tr('needs_visit'),
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: AppColors.navy,
+                      color: AppColors.ink,
                     ),
                   ),
                 ),

@@ -132,8 +132,8 @@ class EmptyState extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 44,
-              backgroundColor: AppColors.peach,
-              child: Icon(icon, size: 44, color: AppColors.navy),
+              backgroundColor: AppColors.mint,
+              child: Icon(icon, size: 44, color: AppColors.ink),
             ),
             const SizedBox(height: 16),
             Text(
@@ -349,10 +349,10 @@ class ConsultationCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.navy,
+                      color: AppColors.ink,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(sp.icon, color: AppColors.peach),
+                    child: Icon(sp.icon, color: AppColors.mint),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -403,7 +403,7 @@ class ConsultationCard extends StatelessWidget {
                     Pill(
                       label:
                           '${c.attachments.length} ${context.tr('files_count')}',
-                      color: AppColors.navy,
+                      color: AppColors.ink,
                       icon: Icons.attach_file,
                     ),
                   if (!showPatient && doctor != null)

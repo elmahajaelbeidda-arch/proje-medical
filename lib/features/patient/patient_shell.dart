@@ -96,15 +96,15 @@ class PatientHomeTab extends ConsumerWidget {
                 child: Text(
                   '${context.tr('hello')} ${auth.displayName.split(' ').first} 👋',
                   style: text.titleMedium?.copyWith(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
               IconButton.filled(
                 style: IconButton.styleFrom(
-                  backgroundColor: AppColors.peach,
-                  foregroundColor: AppColors.navy,
+                  backgroundColor: AppColors.teal,
+                  foregroundColor: Colors.white,
                 ),
                 onPressed: () => context.push('/notifications'),
                 icon: const Badge(
@@ -124,7 +124,7 @@ class PatientHomeTab extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.peach,
+                  color: AppColors.mint,
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Row(
@@ -136,7 +136,7 @@ class PatientHomeTab extends ConsumerWidget {
                           Text(
                             context.tr('request_consultation'),
                             style: text.titleLarge?.copyWith(
-                              color: AppColors.navy,
+                              color: AppColors.ink,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -144,14 +144,14 @@ class PatientHomeTab extends ConsumerWidget {
                           Text(
                             context.tr('request_consultation_desc'),
                             style: text.bodyMedium?.copyWith(
-                              color: AppColors.navy,
+                              color: AppColors.ink,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 14),
                           FilledButton.icon(
                             style: FilledButton.styleFrom(
-                              backgroundColor: AppColors.navy,
+                              backgroundColor: AppColors.ink,
                               foregroundColor: Colors.white,
                               minimumSize: const Size(0, 46),
                             ),
@@ -165,11 +165,11 @@ class PatientHomeTab extends ConsumerWidget {
                     const SizedBox(width: 8),
                     const CircleAvatar(
                       radius: 44,
-                      backgroundColor: AppColors.navy,
+                      backgroundColor: AppColors.ink,
                       child: Icon(
                         Icons.health_and_safety_rounded,
                         size: 52,
-                        color: AppColors.peach,
+                        color: AppColors.mint,
                       ),
                     ),
                   ],
@@ -231,10 +231,10 @@ class PatientHomeTab extends ConsumerWidget {
                               children: [
                                 CircleAvatar(
                                   radius: 24,
-                                  backgroundColor: AppColors.navy,
+                                  backgroundColor: AppColors.ink,
                                   child: Icon(
                                     typeIcon(t),
-                                    color: AppColors.peach,
+                                    color: AppColors.mint,
                                     size: 26,
                                   ),
                                 ),
@@ -344,7 +344,7 @@ class PatientHomeTab extends ConsumerWidget {
     (Icons.water_drop_outlined, 'tip1', AppColors.info),
     (Icons.directions_walk, 'tip2', AppColors.success),
     (Icons.medication_outlined, 'tip3', AppColors.danger),
-    (Icons.monitor_heart_outlined, 'tip4', AppColors.navy),
+    (Icons.monitor_heart_outlined, 'tip4', AppColors.ink),
   ];
 }
 

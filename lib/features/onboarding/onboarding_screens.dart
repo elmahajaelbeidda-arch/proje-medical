@@ -7,37 +7,89 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
 
+/// The heart + cross icon of "شفاءٌ للنّاس".
 class AppLogo extends StatelessWidget {
   const AppLogo({super.key, this.size = 96});
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Image.asset(
+      'assets/images/logo_icon.png',
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(size * .26),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.navy.withValues(alpha: .25),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Image.asset(
-        'assets/images/logo.png',
-        fit: BoxFit.cover,
-        semanticLabel: 'جمعية عون وسند الخيرية',
-      ),
+      fit: BoxFit.contain,
+      semanticLabel: context.tr('app_name'),
     );
   }
 }
 
-/// Navy header with the association logo, the app name and the
-/// introduction of the platform. Used on the role screen and patient home.
+/// Full logo lockup, as in the brand image: heart icon next to the name,
+/// the tagline "تطبيق خيري طبي" and the association name.
+class ShifaLockup extends StatelessWidget {
+  const ShifaLockup({super.key, this.iconSize = 92, this.vertical = false});
+  final double iconSize;
+  final bool vertical;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final words = Column(
+      crossAxisAlignment: vertical
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          context.tr('app_name'),
+          style: text.headlineLarge?.copyWith(
+            color: dark ? Colors.white : AppColors.ink,
+            fontWeight: FontWeight.w900,
+            height: 1.25,
+          ),
+        ),
+        Text(
+          context.tr('app_tagline'),
+          style: text.titleMedium?.copyWith(
+            color: dark ? AppColors.mint : AppColors.green,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          context.tr('association'),
+          style: text.bodyMedium?.copyWith(
+            color: dark ? Colors.white70 : AppColors.grey,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+
+    if (vertical) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppLogo(size: iconSize),
+          const SizedBox(height: 16),
+          words,
+        ],
+      );
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AppLogo(size: iconSize),
+        const SizedBox(width: 14),
+        Flexible(child: words),
+      ],
+    );
+  }
+}
+
+/// Header with the app logo and the introduction of the platform.
+/// Used on the role screen and the patient home.
 class ShifaHero extends StatelessWidget {
   const ShifaHero({super.key, this.top});
 
@@ -47,51 +99,40 @@ class ShifaHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(
         20,
         MediaQuery.paddingOf(context).top + 12,
         20,
-        28,
+        20,
       ),
-      decoration: const BoxDecoration(
-        color: AppColors.navy,
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+        border: const Border(
+          bottom: BorderSide(color: AppColors.green, width: 4),
+        ),
       ),
       child: Column(
         children: [
           ?top,
-          const SizedBox(height: 8),
-          const AppLogo(size: 150),
-          const SizedBox(height: 14),
-          Text(
-            context.tr('app_name'),
-            style: text.displaySmall?.copyWith(
-              color: AppColors.peach,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          Text(
-            context.tr('association'),
-            textAlign: TextAlign.center,
-            style: text.titleMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
+          const ShifaLockup(),
+          const SizedBox(height: 20),
           Container(
-            width: 56,
-            height: 4,
+            width: double.infinity,
+            constraints: const BoxConstraints(maxWidth: 600),
+            padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: AppColors.peach,
-              borderRadius: BorderRadius.circular(4),
+              gradient: const LinearGradient(
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
+                colors: [AppColors.teal, AppColors.ink],
+              ),
+              borderRadius: BorderRadius.circular(20),
             ),
-          ),
-          const SizedBox(height: 14),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
             child: Text(
               context.tr('about_shifa'),
               textAlign: TextAlign.center,
@@ -129,39 +170,21 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
     return Scaffold(
-      body: Container(
-        color: AppColors.navy,
-        child: Center(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const AppLogo(size: 180),
-              const SizedBox(height: 24),
-              Text(
-                context.tr('app_name'),
-                style: text.displaySmall?.copyWith(
-                  color: AppColors.peach,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                context.tr('app_slogan'),
-                style: text.titleMedium?.copyWith(color: Colors.white70),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                context.tr('association'),
-                style: text.bodyMedium?.copyWith(color: Colors.white54),
-              ),
-              const SizedBox(height: 40),
+              const ShifaLockup(iconSize: 150, vertical: true),
+              const SizedBox(height: 48),
               const SizedBox(
                 width: 28,
                 height: 28,
                 child: CircularProgressIndicator(
-                  color: AppColors.peach,
+                  color: AppColors.teal,
                   strokeWidth: 3,
                 ),
               ),
@@ -427,7 +450,7 @@ class _RoleCard extends StatelessWidget {
                   color: color,
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: Icon(icon, size: 34, color: AppColors.navy),
+                child: Icon(icon, size: 34, color: AppColors.ink),
               ),
               const SizedBox(width: 16),
               Expanded(

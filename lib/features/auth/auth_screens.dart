@@ -65,7 +65,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         auth.isDoctor
                             ? Icons.medical_services_outlined
                             : Icons.personal_injury_outlined,
-                        color: AppColors.navy,
+                        color: AppColors.ink,
                         size: 18,
                       ),
                       label: Text(
@@ -216,7 +216,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           isDoctor
                               ? Icons.medical_services_outlined
                               : Icons.personal_injury_outlined,
-                          color: AppColors.navy,
+                          color: AppColors.ink,
                         ),
                         const SizedBox(width: 10),
                         Expanded(

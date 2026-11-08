@@ -28,6 +28,7 @@ class AppStrings {
       'شفاءٌ للنّاس هي منصة رقمية خيرية تابعة لجمعية عون وسند الخيرية، تهدف إلى تقديم الاستشارات الطبية الخيرية عن بُعد وتسهيل وصول الرعاية الصحية والدعم الطبي للفئات المستهدفة بسهولة وكرامة',
       'Chifa Linnas est une plateforme numérique solidaire de l’association caritative Aoun wa Sanad. Elle propose des consultations médicales à distance et facilite l’accès aux soins et au soutien médical pour les personnes ciblées, en toute simplicité et dans la dignité.',
     ],
+    'app_tagline': ['تطبيق خيري طبي', 'Application médicale solidaire'],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
     'skip': ['تخطي', 'Passer'],
