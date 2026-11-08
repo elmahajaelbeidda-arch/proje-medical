@@ -15,7 +15,7 @@ class AppStrings {
 
   static const Map<String, List<String>> _t = {
     // General
-    'app_name': ['شفاء', 'Chifa'],
+    'app_name': ['شفاءٌ للنّاس', 'Chifa Linnas'],
     'app_slogan': [
       'استشارات طبية خيرية عن بُعد',
       'Consultations médicales solidaires à distance',
@@ -25,8 +25,8 @@ class AppStrings {
       'Association caritative Aoun wa Sanad',
     ],
     'about_shifa': [
-      'شفاء هي منصة رقمية خيرية تابعة لجمعية عون وسند الخيرية، تهدف إلى تقديم الاستشارات الطبية الخيرية عن بُعد وتسهيل وصول الرعاية الصحية والدعم الطبي للفئات المستهدفة بسهولة وكرامة',
-      'Chifa est une plateforme numérique solidaire de l’association caritative Aoun wa Sanad. Elle propose des consultations médicales à distance et facilite l’accès aux soins et au soutien médical pour les personnes ciblées, en toute simplicité et dans la dignité.',
+      'شفاءٌ للنّاس هي منصة رقمية خيرية تابعة لجمعية عون وسند الخيرية، تهدف إلى تقديم الاستشارات الطبية الخيرية عن بُعد وتسهيل وصول الرعاية الصحية والدعم الطبي للفئات المستهدفة بسهولة وكرامة',
+      'Chifa Linnas est une plateforme numérique solidaire de l’association caritative Aoun wa Sanad. Elle propose des consultations médicales à distance et facilite l’accès aux soins et au soutien médical pour les personnes ciblées, en toute simplicité et dans la dignité.',
     ],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
@@ -352,12 +352,12 @@ class AppStrings {
 
     // Disclaimer
     'disclaimer_body': [
-      'الاستشارات المقدمة عبر تطبيق شفاء إرشادية وتطوعية، ولا تغني عن الكشف الطبي الحضوري أو العلاج في المستشفى.\n\n'
+      'الاستشارات المقدمة عبر تطبيق شفاءٌ للنّاس إرشادية وتطوعية، ولا تغني عن الكشف الطبي الحضوري أو العلاج في المستشفى.\n\n'
           '• التطبيق ليس مخصصاً لحالات الطوارئ. في الحالات الخطيرة اتصل بالإسعاف فوراً.\n\n'
           '• لا تتوقف عن أي دواء أو تغيّر جرعته دون الرجوع إلى طبيبك المعالج.\n\n'
           '• يتم التحقق من هوية الأطباء المتطوعين قبل قبولهم في المنصة.\n\n'
           '• بياناتك وفحوصك سرية، ولا يطّلع عليها إلا الطبيب الذي يتابع حالتك.',
-      'Les consultations proposées sur Chifa sont indicatives et bénévoles. Elles ne remplacent pas un examen médical en présentiel ni une prise en charge hospitalière.\n\n'
+      'Les consultations proposées sur Chifa Linnas sont indicatives et bénévoles. Elles ne remplacent pas un examen médical en présentiel ni une prise en charge hospitalière.\n\n'
           '• L’application n’est pas destinée aux urgences. En cas de danger, appelez immédiatement les secours.\n\n'
           '• N’arrêtez ni ne modifiez aucun traitement sans l’avis de votre médecin traitant.\n\n'
           '• L’identité des médecins bénévoles est vérifiée avant leur admission.\n\n'
