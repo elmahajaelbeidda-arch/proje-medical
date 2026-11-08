@@ -179,12 +179,12 @@ class AppStrings {
       'اختر نوع الحساب للمتابعة',
       'Choisissez votre type de compte',
     ],
-    'role_patient': ['أنا مريض', 'Je suis patient'],
+    'role_patient': ['مريض', 'Patient'],
     'role_patient_desc': [
       'أريد استشارة أو قراءة فحوصي',
       'Je veux une consultation ou une lecture d’analyses',
     ],
-    'role_doctor': ['أنا طبيب متطوع', 'Je suis médecin bénévole'],
+    'role_doctor': ['طبيب', 'Médecin'],
     'role_doctor_desc': [
       'أريد مساعدة المرضى بخبرتي',
       'Je veux aider les patients avec mon expertise',
