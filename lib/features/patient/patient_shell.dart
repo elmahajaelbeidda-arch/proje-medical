@@ -8,6 +8,7 @@ import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
+import '../onboarding/onboarding_screens.dart';
 
 class PatientShell extends StatefulWidget {
   const PatientShell({super.key});
@@ -38,7 +39,7 @@ class _PatientShellState extends State<PatientShell> {
             )
           : null,
       bottomNavigationBar: NavigationBar(
-        indicatorColor: AppColors.patient.withValues(alpha: .45),
+        indicatorColor: AppColors.patient,
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
@@ -84,34 +85,27 @@ class PatientHomeTab extends ConsumerWidget {
         .where((c) => c.patientId == MockData.currentPatientId)
         .toList();
     final text = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
 
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-        children: [
-          Row(
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        ShifaHero(
+          top: Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${context.tr('hello')} ${auth.displayName.split(' ').first} 👋',
-                      style: text.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    Text(
-                      context.tr('how_feel'),
-                      style: text.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  '${context.tr('hello')} ${auth.displayName.split(' ').first} 👋',
+                  style: text.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-              IconButton.filledTonal(
+              IconButton.filled(
+                style: IconButton.styleFrom(
+                  backgroundColor: AppColors.peach,
+                  foregroundColor: AppColors.navy,
+                ),
                 onPressed: () => context.push('/notifications'),
                 icon: const Badge(
                   smallSize: 8,
@@ -120,216 +114,237 @@ class PatientHomeTab extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-
-          // Main CTA
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.navy, AppColors.navyLight],
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Main CTA
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.peach,
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            context.tr('request_consultation'),
+                            style: text.titleLarge?.copyWith(
+                              color: AppColors.navy,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            context.tr('request_consultation_desc'),
+                            style: text.bodyMedium?.copyWith(
+                              color: AppColors.navy,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          FilledButton.icon(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.navy,
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size(0, 46),
+                            ),
+                            onPressed: () => context.push('/patient/new'),
+                            icon: const Icon(Icons.add_comment_outlined),
+                            label: Text(context.tr('start')),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const CircleAvatar(
+                      radius: 44,
+                      backgroundColor: AppColors.navy,
+                      child: Icon(
+                        Icons.health_and_safety_rounded,
+                        size: 52,
+                        color: AppColors.peach,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              borderRadius: BorderRadius.circular(22),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        context.tr('request_consultation'),
-                        style: text.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        context.tr('request_consultation_desc'),
-                        style: text.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: .9),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.peach,
-                          foregroundColor: AppColors.navy,
-                          minimumSize: const Size(0, 44),
-                        ),
-                        onPressed: () => context.push('/patient/new'),
-                        icon: const Icon(Icons.add_comment_outlined),
-                        label: Text(context.tr('start')),
-                      ),
-                    ],
+              const SizedBox(height: 14),
+
+              // Emergency
+              Card(
+                color: AppColors.danger,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.emergency_outlined,
+                    color: Colors.white,
+                  ),
+                  title: Text(
+                    context.tr('emergency_title'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
+                  ),
+                  subtitle: Text(
+                    context.tr('emergency_body'),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  trailing: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.danger,
+                      minimumSize: const Size(0, 40),
+                    ),
+                    onPressed: () {},
+                    child: Text(context.tr('call')),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.health_and_safety_rounded,
-                  size: 90,
-                  color: AppColors.peach.withValues(alpha: .35),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
+              ),
+              const SizedBox(height: 8),
 
-          // Emergency
-          Card(
-            color: AppColors.danger.withValues(alpha: .08),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-              side: BorderSide(color: AppColors.danger.withValues(alpha: .3)),
-            ),
-            child: ListTile(
-              leading: const Icon(
-                Icons.emergency_outlined,
-                color: AppColors.danger,
-              ),
-              title: Text(
-                context.tr('emergency_title'),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.danger,
-                ),
-              ),
-              subtitle: Text(context.tr('emergency_body')),
-              trailing: FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.danger,
-                  minimumSize: const Size(0, 40),
-                ),
-                onPressed: () {},
-                child: Text(context.tr('call')),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // Quick services
-          SectionHeader(context.tr('quick_services')),
-          Row(
-            children: [
-              for (final t in ConsultationType.values) ...[
-                Expanded(
-                  child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    child: InkWell(
-                      onTap: () => context.push('/patient/new', extra: t),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 8,
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(typeIcon(t), color: scheme.primary, size: 30),
-                            const SizedBox(height: 8),
-                            Text(
-                              context.tr(typeKey(t)),
-                              textAlign: TextAlign.center,
-                              style: text.labelLarge?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
+              // Quick services
+              SectionHeader(context.tr('quick_services')),
+              Row(
+                children: [
+                  for (final t in ConsultationType.values) ...[
+                    Expanded(
+                      child: Card(
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () => context.push('/patient/new', extra: t),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16,
+                              horizontal: 8,
                             ),
-                          ],
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 24,
+                                  backgroundColor: AppColors.navy,
+                                  child: Icon(
+                                    typeIcon(t),
+                                    color: AppColors.peach,
+                                    size: 26,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  context.tr(typeKey(t)),
+                                  textAlign: TextAlign.center,
+                                  style: text.labelLarge?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
+                    if (t != ConsultationType.values.last)
+                      const SizedBox(width: 10),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Stats
+              Row(
+                children: [
+                  Expanded(
+                    child: StatCard(
+                      icon: Icons.groups_outlined,
+                      value: '${MockData.doctors.length * 16}',
+                      label: context.tr('volunteer_doctors'),
+                      color: AppColors.info,
+                    ),
                   ),
-                ),
-                if (t != ConsultationType.values.last)
                   const SizedBox(width: 10),
+                  const Expanded(child: _AnsweredStat()),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: StatCard(
+                      icon: Icons.timer_outlined,
+                      value: '6h',
+                      label: context.tr('avg_response'),
+                      color: AppColors.accent,
+                    ),
+                  ),
+                ],
+              ),
+
+              if (mine.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                SectionHeader(
+                  context.tr('last_consultation'),
+                  action: context.tr('see_all'),
+                  onAction: onSeeConsultations,
+                ),
+                ConsultationCard(
+                  consultation: mine.first,
+                  onTap: () =>
+                      context.push('/patient/consultation/${mine.first.id}'),
+                ),
               ],
-            ],
-          ),
-          const SizedBox(height: 16),
 
-          // Stats
-          Row(
-            children: [
-              Expanded(
-                child: StatCard(
-                  icon: Icons.groups_outlined,
-                  value: '${MockData.doctors.length * 16}',
-                  label: context.tr('volunteer_doctors'),
-                  color: AppColors.info,
-                ),
-              ),
-              const SizedBox(width: 10),
-              const Expanded(child: _AnsweredStat()),
-              const SizedBox(width: 10),
-              Expanded(
-                child: StatCard(
-                  icon: Icons.timer_outlined,
-                  value: '6h',
-                  label: context.tr('avg_response'),
-                  color: AppColors.accent,
-                ),
-              ),
-            ],
-          ),
-
-          if (mine.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            SectionHeader(
-              context.tr('last_consultation'),
-              action: context.tr('see_all'),
-              onAction: onSeeConsultations,
-            ),
-            ConsultationCard(
-              consultation: mine.first,
-              onTap: () =>
-                  context.push('/patient/consultation/${mine.first.id}'),
-            ),
-          ],
-
-          const SizedBox(height: 8),
-          SectionHeader(context.tr('health_tips')),
-          SizedBox(
-            height: 120,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: _tips.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 10),
-              itemBuilder: (context, i) {
-                final (icon, key, color) = _tips[i];
-                return Container(
-                  width: 170,
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: .12),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(icon, color: color),
-                      const Spacer(),
-                      Text(
-                        context.tr(key),
-                        style: text.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+              const SizedBox(height: 8),
+              SectionHeader(context.tr('health_tips')),
+              SizedBox(
+                height: 120,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _tips.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 10),
+                  itemBuilder: (context, i) {
+                    final (icon, key, color) = _tips[i];
+                    return Container(
+                      width: 170,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(18),
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(icon, color: AppColors.on(color), size: 28),
+                          const Spacer(),
+                          Text(
+                            context.tr(key),
+                            style: text.bodyMedium?.copyWith(
+                              color: AppColors.on(color),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   static const _tips = [
-    (Icons.water_drop_outlined, 'tip1', AppColors.patientDark),
-    (Icons.directions_walk, 'tip2', AppColors.doctorDark),
+    (Icons.water_drop_outlined, 'tip1', AppColors.info),
+    (Icons.directions_walk, 'tip2', AppColors.success),
     (Icons.medication_outlined, 'tip3', AppColors.danger),
-    (Icons.monitor_heart_outlined, 'tip4', AppColors.accent),
+    (Icons.monitor_heart_outlined, 'tip4', AppColors.navy),
   ];
 }
 
@@ -488,13 +503,11 @@ class _JoinBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: AppColors.doctor.withValues(alpha: .15),
+      color: AppColors.doctorDark,
       child: ListTile(
+        textColor: Colors.white,
         contentPadding: const EdgeInsets.all(14),
-        leading: const Icon(
-          Icons.volunteer_activism,
-          color: AppColors.doctorDark,
-        ),
+        leading: const Icon(Icons.volunteer_activism, color: Colors.white),
         title: Text(
           context.tr('join_as_doctor'),
           style: const TextStyle(fontWeight: FontWeight.w700),

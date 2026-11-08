@@ -327,21 +327,18 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.danger.withValues(alpha: .1),
+              color: AppColors.danger,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.warning_amber_rounded,
-                  color: AppColors.danger,
-                ),
+                const Icon(Icons.warning_amber_rounded, color: Colors.white),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     context.tr('urgent_warning'),
                     style: const TextStyle(
-                      color: AppColors.danger,
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -489,7 +486,9 @@ class _UrgencyOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = urgencyColor(urgency);
     return Material(
-      color: selected ? color.withValues(alpha: .15) : Colors.transparent,
+      color: selected
+          ? color
+          : Theme.of(context).colorScheme.surfaceContainerLowest,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
         side: BorderSide(
@@ -506,13 +505,17 @@ class _UrgencyOption extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
           child: Column(
             children: [
-              Icon(Icons.circle, color: color, size: 14),
+              Icon(
+                selected ? Icons.check_circle : Icons.circle,
+                color: selected ? AppColors.on(color) : color,
+                size: selected ? 18 : 14,
+              ),
               const SizedBox(height: 6),
               Text(
                 context.tr(urgencyKey(urgency)),
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: selected ? color : null,
+                  color: selected ? AppColors.on(color) : null,
                 ),
               ),
             ],
@@ -537,7 +540,7 @@ class _UploadButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: scheme.primaryContainer.withValues(alpha: .4),
+      color: AppColors.peach,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),

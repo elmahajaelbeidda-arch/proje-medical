@@ -31,7 +31,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
     final text = Theme.of(context).textTheme;
-    final roleColor = AppColors.roleDark(auth.isDoctor);
 
     String? required(String? v) =>
         (v == null || v.trim().isEmpty) ? context.tr('required_field') : null;
@@ -60,14 +59,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 8),
                   Center(
                     child: Chip(
-                      backgroundColor: AppColors.role(auth.isDoctor)
-                          .withValues(alpha: .3),
+                      backgroundColor: AppColors.role(auth.isDoctor),
                       side: BorderSide.none,
                       avatar: Icon(
                         auth.isDoctor
                             ? Icons.medical_services_outlined
                             : Icons.personal_injury_outlined,
-                        color: roleColor,
+                        color: AppColors.navy,
                         size: 18,
                       ),
                       label: Text(
@@ -209,7 +207,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     padding: const EdgeInsets.all(14),
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
-                      color: AppColors.role(isDoctor).withValues(alpha: .3),
+                      color: AppColors.role(isDoctor),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
@@ -218,7 +216,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           isDoctor
                               ? Icons.medical_services_outlined
                               : Icons.personal_injury_outlined,
-                          color: AppColors.roleDark(isDoctor),
+                          color: AppColors.navy,
                         ),
                         const SizedBox(width: 10),
                         Expanded(

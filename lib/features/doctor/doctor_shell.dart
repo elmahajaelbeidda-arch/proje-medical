@@ -33,7 +33,7 @@ class _DoctorShellState extends State<DoctorShell> {
         ],
       ),
       bottomNavigationBar: NavigationBar(
-        indicatorColor: AppColors.doctor.withValues(alpha: .45),
+        indicatorColor: AppColors.doctor,
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
@@ -154,7 +154,7 @@ class DoctorHomeTab extends ConsumerWidget {
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.doctorDark, AppColors.doctor],
+                colors: [AppColors.doctorDark, Color(0xFF2E5E4B)],
               ),
               borderRadius: BorderRadius.circular(22),
             ),

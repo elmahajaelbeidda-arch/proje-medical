@@ -48,20 +48,22 @@ class Pill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: .12),
+        color: color,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 14, color: color),
+            Icon(icon, size: 14, color: AppColors.on(color)),
             const SizedBox(width: 4),
           ],
           Text(
             label,
-            style: Theme.of(context).textTheme.labelMedium
-                ?.copyWith(color: color, fontWeight: FontWeight.w700),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: AppColors.on(color),
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -122,7 +124,6 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -131,8 +132,8 @@ class EmptyState extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 44,
-              backgroundColor: scheme.primaryContainer.withValues(alpha: .5),
-              child: Icon(icon, size: 44, color: scheme.primary),
+              backgroundColor: AppColors.peach,
+              child: Icon(icon, size: 44, color: AppColors.navy),
             ),
             const SizedBox(height: 16),
             Text(
@@ -249,10 +250,10 @@ class AttachmentTile extends StatelessWidget {
       child: ListTile(
         onTap: onRemove == null ? () => showPreview(context) : null,
         leading: CircleAvatar(
-          backgroundColor: color.withValues(alpha: .12),
+          backgroundColor: color,
           child: Icon(
             isPdf ? Icons.picture_as_pdf_outlined : Icons.image_outlined,
-            color: color,
+            color: Colors.white,
           ),
         ),
         title: Text(
@@ -348,10 +349,10 @@ class ConsultationCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: scheme.primaryContainer.withValues(alpha: .6),
+                      color: AppColors.navy,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(sp.icon, color: scheme.primary),
+                    child: Icon(sp.icon, color: AppColors.peach),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -402,7 +403,7 @@ class ConsultationCard extends StatelessWidget {
                     Pill(
                       label:
                           '${c.attachments.length} ${context.tr('files_count')}',
-                      color: scheme.onSurfaceVariant,
+                      color: AppColors.navy,
                       icon: Icons.attach_file,
                     ),
                   if (!showPatient && doctor != null)
@@ -616,8 +617,8 @@ class StatCard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 18,
-              backgroundColor: color.withValues(alpha: .12),
-              child: Icon(icon, color: color, size: 20),
+              backgroundColor: color,
+              child: Icon(icon, color: AppColors.on(color), size: 20),
             ),
             const SizedBox(height: 10),
             Text(
@@ -651,8 +652,8 @@ class MenuTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: CircleAvatar(
-        backgroundColor: c.withValues(alpha: .12),
-        child: Icon(icon, color: c, size: 22),
+        backgroundColor: c,
+        child: Icon(icon, color: AppColors.on(c), size: 22),
       ),
       title: Text(
         title,

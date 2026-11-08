@@ -22,13 +22,31 @@ class AppColors {
 
   static const primary = navy;
   static const secondary = peach;
-  static const accent = peachDark;
-  static const info = patientDark;
+  static const accent = Color(
+    0xFFE0663F,
+  ); // saturated coral (stars, highlights)
+  static const info = Color(0xFF2F6DB5);
 
-  // Status colors (kept in the same soft palette)
-  static const danger = Color(0xFFC94A4A);
-  static const success = Color(0xFF4E8A6F);
-  static const warning = Color(0xFFD99A3D);
+  // Strong, saturated status colors
+  static const danger = Color(0xFFD7263D);
+  static const success = Color(0xFF1F8A5B);
+  static const warning = Color(0xFFF29E1F);
+
+  // Solid surfaces (no transparency)
+  static const background = Color(0xFFF4F3F9);
+  static const border = Color(0xFFDCD9EA);
+
+  /// Picks navy or white text, whichever contrasts more with [background].
+  static Color on(Color background) {
+    double contrast(Color a, Color b) {
+      final la = a.computeLuminance(), lb = b.computeLuminance();
+      return (la > lb ? la + .05 : lb + .05) / (la > lb ? lb + .05 : la + .05);
+    }
+
+    return contrast(background, Colors.white) >= contrast(background, navy)
+        ? Colors.white
+        : navy;
+  }
 
   static Color role(bool isDoctor) => isDoctor ? doctor : patient;
   static Color roleDark(bool isDoctor) => isDoctor ? doctorDark : patientDark;
@@ -94,7 +112,7 @@ class AppTheme {
         color: scheme.surfaceContainerLowest,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
-          side: BorderSide(color: scheme.outlineVariant.withValues(alpha: .5)),
+          side: BorderSide(color: scheme.outlineVariant),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -141,7 +159,7 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         height: 68,
         backgroundColor: scheme.surfaceContainerLowest,
-        indicatorColor: AppColors.peach.withValues(alpha: .45),
+        indicatorColor: AppColors.peach,
         labelTextStyle: WidgetStatePropertyAll(
           textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
@@ -165,9 +183,8 @@ class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: base.filledButtonTheme.style?.copyWith(
           backgroundColor: WidgetStateProperty.resolveWith(
-            (states) => states.contains(WidgetState.disabled)
-                ? tone.withValues(alpha: .4)
-                : tone,
+            (states) =>
+                states.contains(WidgetState.disabled) ? AppColors.border : tone,
           ),
           foregroundColor: const WidgetStatePropertyAll(AppColors.navy),
         ),

@@ -71,17 +71,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.warning.withValues(alpha: .12),
+              color: AppColors.peach,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, size: 18),
+                const Icon(Icons.info_outline, size: 18, color: AppColors.navy),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     context.tr('chat_notice'),
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.navy,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -133,8 +136,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           context.timeAgo(m.time),
                           style: TextStyle(
                             fontSize: 11,
-                            color: (mine ? scheme.onPrimary : scheme.onSurface)
-                                .withValues(alpha: .7),
+                            color: (mine ? scheme.onPrimary : scheme.onSurface),
                           ),
                         ),
                       ],
@@ -212,17 +214,24 @@ class NotificationsScreen extends ConsumerWidget {
         itemBuilder: (context, i) {
           final n = items[i];
           return Card(
-            color: n.read
-                ? null
-                : scheme.primaryContainer.withValues(alpha: .35),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+              side: BorderSide(
+                color: n.read ? scheme.outlineVariant : AppColors.peach,
+                width: n.read ? 1 : 2.5,
+              ),
+            ),
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 6,
               ),
               leading: CircleAvatar(
-                backgroundColor: scheme.primaryContainer,
-                child: Icon(n.icon, color: scheme.primary),
+                backgroundColor: n.read ? AppColors.border : AppColors.navy,
+                child: Icon(
+                  n.icon,
+                  color: n.read ? AppColors.navy : AppColors.peach,
+                ),
               ),
               title: Text(
                 n.title,

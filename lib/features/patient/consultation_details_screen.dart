@@ -80,13 +80,19 @@ class ConsultationDetailsScreen extends ConsumerWidget {
 
           if (c.status == ConsultationStatus.pending)
             Card(
-              color: AppColors.warning.withValues(alpha: .1),
+              color: AppColors.warning,
               child: ListTile(
                 leading: const Icon(
                   Icons.hourglass_top_rounded,
-                  color: AppColors.warning,
+                  color: AppColors.navy,
                 ),
-                title: Text(context.tr('waiting_doctor')),
+                title: Text(
+                  context.tr('waiting_doctor'),
+                  style: const TextStyle(
+                    color: AppColors.navy,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
 
@@ -303,20 +309,23 @@ class ReplyView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.warning.withValues(alpha: .14),
+              color: AppColors.warning,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
               children: [
                 const Icon(
                   Icons.local_hospital_outlined,
-                  color: AppColors.warning,
+                  color: AppColors.navy,
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     context.tr('needs_visit'),
-                    style: const TextStyle(fontWeight: FontWeight.w700),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.navy,
+                    ),
                   ),
                 ),
               ],

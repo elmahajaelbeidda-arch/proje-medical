@@ -36,6 +36,78 @@ class AppLogo extends StatelessWidget {
   }
 }
 
+/// Navy header with the association logo, the app name and the
+/// introduction of the platform. Used on the role screen and patient home.
+class ShifaHero extends StatelessWidget {
+  const ShifaHero({super.key, this.top});
+
+  /// Optional row shown above the logo (greeting, buttons...).
+  final Widget? top;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(
+        20,
+        MediaQuery.paddingOf(context).top + 12,
+        20,
+        28,
+      ),
+      decoration: const BoxDecoration(
+        color: AppColors.navy,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+      ),
+      child: Column(
+        children: [
+          ?top,
+          const SizedBox(height: 8),
+          const AppLogo(size: 150),
+          const SizedBox(height: 14),
+          Text(
+            context.tr('app_name'),
+            style: text.displaySmall?.copyWith(
+              color: AppColors.peach,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          Text(
+            context.tr('association'),
+            textAlign: TextAlign.center,
+            style: text.titleMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Container(
+            width: 56,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.peach,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(height: 14),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Text(
+              context.tr('about_shifa'),
+              textAlign: TextAlign.center,
+              style: text.bodyLarge?.copyWith(
+                color: Colors.white,
+                height: 1.8,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Splash
 // ---------------------------------------------------------------------------
@@ -261,55 +333,57 @@ class RoleSelectScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 24),
-              const Center(child: AppLogo(size: 110)),
-              const SizedBox(height: 28),
-              Text(
-                context.tr('who_are_you'),
-                textAlign: TextAlign.center,
-                style: text.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
+      body: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const ShifaHero(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  context.tr('who_are_you'),
+                  textAlign: TextAlign.center,
+                  style: text.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                context.tr('choose_role'),
-                textAlign: TextAlign.center,
-                style: text.bodyLarge,
-              ),
-              const SizedBox(height: 32),
-              _RoleCard(
-                icon: Icons.personal_injury_outlined,
-                title: context.tr('role_patient'),
-                subtitle: context.tr('role_patient_desc'),
-                color: AppColors.patient,
-                darkColor: AppColors.patientDark,
-                onTap: () => choose(UserRole.patient),
-              ),
-              const SizedBox(height: 16),
-              _RoleCard(
-                icon: Icons.medical_services_outlined,
-                title: context.tr('role_doctor'),
-                subtitle: context.tr('role_doctor_desc'),
-                color: AppColors.doctor,
-                darkColor: AppColors.doctorDark,
-                onTap: () => choose(UserRole.doctor),
-              ),
-              const Spacer(),
-              TextButton.icon(
-                onPressed: () => context.push('/disclaimer'),
-                icon: const Icon(Icons.info_outline),
-                label: Text(context.tr('disclaimer')),
-              ),
-            ],
+                const SizedBox(height: 4),
+                Text(
+                  context.tr('choose_role'),
+                  textAlign: TextAlign.center,
+                  style: text.bodyLarge,
+                ),
+                const SizedBox(height: 20),
+                _RoleCard(
+                  icon: Icons.personal_injury_outlined,
+                  title: context.tr('role_patient'),
+                  subtitle: context.tr('role_patient_desc'),
+                  color: AppColors.patient,
+                  darkColor: AppColors.patientDark,
+                  onTap: () => choose(UserRole.patient),
+                ),
+                const SizedBox(height: 14),
+                _RoleCard(
+                  icon: Icons.medical_services_outlined,
+                  title: context.tr('role_doctor'),
+                  subtitle: context.tr('role_doctor_desc'),
+                  color: AppColors.doctor,
+                  darkColor: AppColors.doctorDark,
+                  onTap: () => choose(UserRole.doctor),
+                ),
+                const SizedBox(height: 12),
+                TextButton.icon(
+                  onPressed: () => context.push('/disclaimer'),
+                  icon: const Icon(Icons.info_outline),
+                  label: Text(context.tr('disclaimer')),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -338,7 +412,7 @@ class _RoleCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: BorderSide(color: color, width: 1.5),
+        side: BorderSide(color: darkColor, width: 2),
       ),
       child: InkWell(
         onTap: onTap,
@@ -350,10 +424,10 @@ class _RoleCard extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: .3),
+                  color: color,
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: Icon(icon, size: 34, color: darkColor),
+                child: Icon(icon, size: 34, color: AppColors.navy),
               ),
               const SizedBox(width: 16),
               Expanded(
