@@ -42,6 +42,10 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
     final approved = blood.donors.where((d) => d.isApproved).length;
     final available = blood.donors.where((d) => d.canBeContacted).length;
     final openRequests = blood.requests.where((r) => r.isOpen).length;
+    // New requests from patients' profiles, not yet handled by the committee.
+    final newRequests = blood.requests
+        .where((r) => r.status == BloodRequestStatus.submitted)
+        .length;
 
     final cities = {for (final d in blood.donors) d.city.trim()}.toList()
       ..sort();
@@ -92,7 +96,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
           bottom: TabBar(
             tabs: [
               Tab(text: '${context.tr('donors_db')} ($pending)'),
-              Tab(text: context.tr('my_blood_requests')),
+              Tab(text: '${context.tr('my_blood_requests')} ($newRequests)'),
             ],
           ),
         ),
