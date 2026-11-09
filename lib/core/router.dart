@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/about/about_screen.dart';
 import '../features/auth/auth_screens.dart';
 import '../features/blood/blood_screens.dart';
 import '../features/blood/committee_screens.dart';
@@ -107,6 +108,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const NotificationsScreen(),
       ),
       GoRoute(path: '/settings', builder: (_, _) => const SettingsScreen()),
+      GoRoute(
+        path: '/about',
+        builder: (_, _) => const AboutAssociationScreen(),
+      ),
       GoRoute(path: '/disclaimer', builder: (_, _) => const DisclaimerScreen()),
     ],
   );

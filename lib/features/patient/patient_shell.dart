@@ -639,6 +639,11 @@ class PatientProfileTab extends ConsumerWidget {
             child: Column(
               children: [
                 MenuTile(
+                  icon: Icons.groups_outlined,
+                  title: context.tr('about_association'),
+                  onTap: () => context.push('/about'),
+                ),
+                MenuTile(
                   icon: Icons.gavel_outlined,
                   title: context.tr('disclaimer'),
                   onTap: () => context.push('/disclaimer'),

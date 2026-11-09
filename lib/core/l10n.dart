@@ -416,6 +416,17 @@ class AppStrings {
       'تنبيه: هذه الفصيلة غير متوافقة مع الفصيلة المطلوبة',
       'Attention : groupe non compatible avec la demande',
     ],
+    'about_association': ['عن الجمعية', 'L’association'],
+    'meet_team': ['تعرّف على فريق الجمعية', 'Découvrez l’équipe'],
+    'team_photo_caption': [
+      'أعضاء جمعية عون وسند الخيرية مع رئيس الجمعية',
+      'Les membres de l’association Aoun wa Sanad avec son président',
+    ],
+    'support_association': ['ادعم الجمعية', 'Soutenir l’association'],
+    'support_association_desc': [
+      'للتبرع لجمعية عون وسند الخيرية تواصل معنا على الرقم:',
+      'Pour faire un don à l’association, contactez-nous au :',
+    ],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
     'skip': ['تخطي', 'Passer'],

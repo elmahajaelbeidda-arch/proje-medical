@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/l10n.dart';
 import '../../core/providers.dart';
@@ -354,6 +355,15 @@ class SettingsScreen extends ConsumerWidget {
                 ref.read(themeModeProvider.notifier).set(s.first),
           ),
           const SizedBox(height: 24),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.groups_outlined),
+              title: Text(context.tr('about_association')),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/about'),
+            ),
+          ),
+          const SizedBox(height: 8),
           Card(
             child: ListTile(
               leading: const Icon(Icons.info_outline),
