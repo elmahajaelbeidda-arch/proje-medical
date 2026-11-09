@@ -368,14 +368,11 @@ class AppStrings {
       'Choisissez votre type de compte',
     ],
     'role_patient': ['مريض', 'Patient'],
-    'role_patient_desc': [
-      'أريد استشارة أو قراءة فحوصي',
-      'Je veux une consultation ou une lecture d’analyses',
-    ],
+    'role_patient_desc': ['سجِّل كمستفيد', 'Inscrivez-vous comme bénéficiaire'],
     'role_doctor': ['طبيب', 'Médecin'],
     'role_doctor_desc': [
-      'أريد مساعدة المرضى بخبرتي',
-      'Je veux aider les patients avec mon expertise',
+      'سجِّل كطبيب متطوع',
+      'Inscrivez-vous comme médecin bénévole',
     ],
     'login': ['تسجيل الدخول', 'Connexion'],
     'login_welcome': ['مرحباً بعودتك', 'Bon retour'],
