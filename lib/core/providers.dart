@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/mock_data.dart';
 import '../models/models.dart';
+import '../models/registration.dart';
 
 // ---------------------------------------------------------------------------
 // Settings
@@ -41,6 +42,10 @@ class AuthState {
   /// National ID card number (verified with the SMS code at sign-up).
   final String idNumber;
   final bool phoneVerified;
+
+  /// Registration sent to the committee at sign-up (null for the demo
+  /// accounts, which are already approved).
+  final String? registrationId;
   const AuthState({
     this.role = UserRole.patient,
     this.loggedIn = false,
@@ -48,6 +53,7 @@ class AuthState {
     this.phone = '',
     this.idNumber = '',
     this.phoneVerified = false,
+    this.registrationId,
   });
 
   /// e.g. "•••• 4821"
@@ -61,7 +67,7 @@ class AuthState {
   /// Name shown in the UI (falls back to the demo user's name).
   String get displayName {
     if (name.isNotEmpty) return name;
-    if (isCommittee) return 'لجنة التبرع بالدم';
+    if (isCommittee) return 'لجنة التبرع';
     return isDoctor
         ? MockData.doctorById(MockData.currentDoctorId)!.name
         : 'محمد الأمين';
@@ -83,12 +89,14 @@ class AuthNotifier extends Notifier<AuthState> {
     required String name,
     required String phone,
     required String idNumber,
+    String? registrationId,
   }) {
     state = AuthState(
       role: state.role,
       name: name.trim(),
       phone: phone.trim(),
       idNumber: idNumber.trim(),
+      registrationId: registrationId,
     );
   }
 
@@ -100,11 +108,12 @@ class AuthNotifier extends Notifier<AuthState> {
     phone: state.phone,
     idNumber: state.idNumber,
     phoneVerified: true,
+    registrationId: state.registrationId,
   );
 
   void login({String? name}) {
     final defaultName = state.isCommittee
-        ? 'لجنة التبرع بالدم'
+        ? 'لجنة التبرع'
         : state.isDoctor
         ? MockData.doctorById(MockData.currentDoctorId)!.name
         : 'محمد الأمين';
@@ -246,4 +255,78 @@ final consultationProvider = Provider.family<Consultation?, String>((ref, id) {
     if (c.id == id) return c;
   }
   return null;
+});
+
+// ---------------------------------------------------------------------------
+// Account registrations (reviewed by the committee)
+// ---------------------------------------------------------------------------
+
+class RegistrationsNotifier extends Notifier<List<Registration>> {
+  @override
+  List<Registration> build() => MockData.registrations();
+
+  Registration? byId(String? id) {
+    for (final r in state) {
+      if (r.id == id) return r;
+    }
+    return null;
+  }
+
+  String add({
+    required UserRole role,
+    required String name,
+    required String phone,
+    required String idNumber,
+    Attachment? idFront,
+    Attachment? idBack,
+    String? specialtyId,
+    String? licenseNumber,
+    Attachment? certificate,
+  }) {
+    final id = 'reg${DateTime.now().millisecondsSinceEpoch}';
+    state = [
+      Registration(
+        id: id,
+        role: role,
+        name: name.trim(),
+        phone: phone.trim(),
+        idNumber: idNumber.trim(),
+        idFront: idFront,
+        idBack: idBack,
+        specialtyId: specialtyId,
+        licenseNumber: licenseNumber?.trim(),
+        certificate: certificate,
+        createdAt: DateTime.now(),
+      ),
+      ...state,
+    ];
+    return id;
+  }
+
+  void _update(String id, Registration Function(Registration) f) {
+    state = [for (final r in state) r.id == id ? f(r) : r];
+  }
+
+  void markPhoneVerified(String id) =>
+      _update(id, (r) => r.copyWith(phoneVerified: true));
+
+  /// Committee: approve or reject an account.
+  void review(String id, ReviewStatus status) =>
+      _update(id, (r) => r.copyWith(status: status));
+}
+
+final registrationsProvider =
+    NotifierProvider<RegistrationsNotifier, List<Registration>>(
+      RegistrationsNotifier.new,
+    );
+
+/// Review status of the signed-in user's account (approved for demo
+/// accounts that have no registration).
+final myAccountStatusProvider = Provider<ReviewStatus>((ref) {
+  final id = ref.watch(authProvider).registrationId;
+  if (id == null) return ReviewStatus.approved;
+  for (final r in ref.watch(registrationsProvider)) {
+    if (r.id == id) return r.status;
+  }
+  return ReviewStatus.approved;
 });

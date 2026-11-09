@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/l10n.dart';
@@ -6,6 +7,7 @@ import '../core/providers.dart';
 import '../core/theme.dart';
 import '../data/mock_data.dart';
 import '../models/models.dart';
+import '../models/registration.dart';
 import 'media.dart';
 
 // ---------------------------------------------------------------------------
@@ -745,6 +747,48 @@ class IdVerifiedBadge extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// Notice shown to a new patient or doctor while the committee reviews the
+/// account (nothing once it is approved).
+class AccountReviewBanner extends ConsumerWidget {
+  const AccountReviewBanner({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final status = ref.watch(myAccountStatusProvider);
+    if (status == ReviewStatus.approved) return const SizedBox.shrink();
+    final pending = status == ReviewStatus.pending;
+    final isDoctor = ref.watch(authProvider).isDoctor;
+    return Card(
+      color: pending ? AppColors.warning : AppColors.grey,
+      child: ListTile(
+        leading: Icon(
+          pending ? Icons.hourglass_top : Icons.block,
+          color: pending ? AppColors.ink : Colors.white,
+        ),
+        title: Text(
+          context.tr(
+            pending ? 'account_pending_title' : 'account_rejected_title',
+          ),
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            color: pending ? AppColors.ink : Colors.white,
+          ),
+        ),
+        subtitle: Text(
+          context.tr(
+            !pending
+                ? 'account_rejected_body'
+                : isDoctor
+                ? 'account_pending_doctor'
+                : 'account_pending_patient',
+          ),
+          style: TextStyle(color: pending ? AppColors.ink : Colors.white),
+        ),
       ),
     );
   }

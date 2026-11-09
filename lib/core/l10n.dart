@@ -214,9 +214,9 @@ class AppStrings {
     // Blood donation: committee, privacy, personal info
     'role_committee': ['لجنة التبرع', 'Comité du don'],
     'committee_login': ['دخول لجنة التبرع', 'Accès comité du don'],
-    'committee_title': ['لجنة التبرع بالدم', 'Comité du don de sang'],
+    'committee_title': ['لجنة التبرع', 'Comité'],
     'committee_only': [
-      'هذه المعلومات لا تظهر إلا للجنة',
+      'هذه المعلومات لا تظهر إلا للجنة التبرع',
       'Informations visibles par le comité uniquement',
     ],
     'committee_will_contact': [
@@ -324,6 +324,46 @@ class AppStrings {
     ],
     'role_donor': ['متبرع بالدم', 'Donneur de sang'],
     'role_donor_desc': ['سجّل كمتبرع بالدم', 'Inscrivez-vous comme donneur'],
+    // Committee: account reviews
+    'patients': ['المرضى', 'Patients'],
+    'doctors': ['الأطباء', 'Médecins'],
+    'review_pending': ['قيد المراجعة', 'En attente'],
+    'review_approved': ['مقبول', 'Accepté'],
+    'review_rejected': ['مرفوض', 'Refusé'],
+    'account_pending_title': [
+      'حسابك قيد مراجعة لجنة التبرع',
+      'Votre compte est en cours de vérification',
+    ],
+    'account_pending_patient': [
+      'تتحقق اللجنة من بياناتك وبطاقة التعريف. يمكنك تصفّح التطبيق، وستصلك رسالة عند قبول حسابك.',
+      'Le comité vérifie vos informations. Vous serez notifié dès l’acceptation.',
+    ],
+    'account_pending_doctor': [
+      'تتحقق اللجنة من بطاقتك المهنية ورقم تسجيلك. لا يمكنك قبول الحالات قبل قبول حسابك.',
+      'Le comité vérifie votre carte professionnelle. Vous pourrez accepter des cas après validation.',
+    ],
+    'account_rejected_title': ['لم يُقبل حسابك', 'Compte refusé'],
+    'account_rejected_body': [
+      'تواصل مع الجمعية لمعرفة السبب وتصحيح بياناتك.',
+      'Contactez l’association pour en connaître la raison.',
+    ],
+    'doctor_not_approved': [
+      'يمكنك قبول الحالات بعد أن توافق لجنة التبرع على حسابك.',
+      'Vous pourrez accepter des cas après validation de votre compte.',
+    ],
+    'account_approved_msg': ['تم قبول الحساب', 'Compte accepté'],
+    'account_rejected_msg': ['تم رفض الحساب', 'Compte refusé'],
+    'phone_not_verified': ['الهاتف غير مؤكَّد', 'Téléphone non vérifié'],
+    'details': ['التفاصيل', 'Détails'],
+    'pending_registrations': [
+      'تسجيل بانتظار المراجعة',
+      'inscriptions à vérifier',
+    ],
+    'new_blood_requests': ['طلب دم جديد', 'demandes de sang'],
+    'search_people_hint': [
+      'ابحث بالاسم أو الرمز أو الهاتف',
+      'Nom, code ou téléphone',
+    ],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
     'skip': ['تخطي', 'Passer'],

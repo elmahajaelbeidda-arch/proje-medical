@@ -135,6 +135,7 @@ class DoctorHomeTab extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
+          const AccountReviewBanner(),
           Card(
             child: SwitchListTile(
               value: available,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/blood.dart';
 import '../models/models.dart';
+import '../models/registration.dart';
 
 /// Demo data used until the app is connected to a real backend.
 class MockData {
@@ -515,6 +516,80 @@ class MockData {
         phone: '0550 11 22 33',
         status: BloodRequestStatus.fulfilled,
         createdAt: now.subtract(const Duration(days: 3)),
+      ),
+    ];
+  }
+
+  // -------------------------------------------------------------------------
+  // New accounts waiting for the committee (fictitious data)
+  // -------------------------------------------------------------------------
+
+  static List<Registration> registrations() {
+    final now = DateTime.now();
+    return [
+      Registration(
+        id: 'reg11',
+        role: UserRole.patient,
+        name: 'زينب حمادي',
+        phone: '0661 20 30 40',
+        idNumber: '109912345678901',
+        phoneVerified: true,
+        createdAt: now.subtract(const Duration(hours: 3)),
+      ),
+      Registration(
+        id: 'reg12',
+        role: UserRole.patient,
+        name: 'عبد القادر بوزيان',
+        phone: '0770 11 22 33',
+        idNumber: '108765432109876',
+        phoneVerified: true,
+        createdAt: now.subtract(const Duration(days: 1)),
+      ),
+      Registration(
+        id: 'reg13',
+        role: UserRole.patient,
+        name: 'محمد الأمين',
+        phone: '0550 12 34 56',
+        idNumber: '109870512304821',
+        phoneVerified: true,
+        status: ReviewStatus.approved,
+        createdAt: now.subtract(const Duration(days: 30)),
+      ),
+      Registration(
+        id: 'reg21',
+        role: UserRole.doctor,
+        name: 'د. إيمان بلحاج',
+        phone: '0551 98 76 54',
+        idNumber: '107654321098765',
+        specialtyId: 'pediatrics',
+        licenseNumber: 'CNOM-16-04512',
+        certificate: const Attachment('diplome.pdf', AttachmentKind.pdf),
+        phoneVerified: true,
+        createdAt: now.subtract(const Duration(hours: 6)),
+      ),
+      Registration(
+        id: 'reg22',
+        role: UserRole.doctor,
+        name: 'د. رياض منصوري',
+        phone: '0662 45 67 89',
+        idNumber: '106543210987654',
+        specialtyId: 'cardio',
+        licenseNumber: 'CNOM-31-00987',
+        certificate: const Attachment('carte_pro.jpg', AttachmentKind.image),
+        phoneVerified: true,
+        createdAt: now.subtract(const Duration(days: 2)),
+      ),
+      Registration(
+        id: 'reg23',
+        role: UserRole.doctor,
+        name: 'د. سارة بن علي',
+        phone: '0550 00 01 11',
+        idNumber: '105432109876543',
+        specialtyId: 'internal',
+        licenseNumber: 'CNOM-16-01234',
+        phoneVerified: true,
+        status: ReviewStatus.approved,
+        createdAt: now.subtract(const Duration(days: 90)),
       ),
     ];
   }

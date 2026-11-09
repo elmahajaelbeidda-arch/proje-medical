@@ -177,6 +177,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _name = TextEditingController();
   final _phone = TextEditingController();
   final _idNumber = TextEditingController();
+  final _license = TextEditingController();
   String? _specialty;
   Attachment? _certificate;
   Attachment? _idFront;
@@ -188,6 +189,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _name.dispose();
     _phone.dispose();
     _idNumber.dispose();
+    _license.dispose();
     super.dispose();
   }
 
@@ -225,13 +227,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       ).showSnackBar(SnackBar(content: Text(context.tr('must_accept_terms'))));
       return;
     }
-    final isDoctor = ref.read(authProvider).isDoctor;
+    final auth = ref.read(authProvider);
+    final isDoctor = auth.isDoctor;
+    final name = isDoctor ? 'د. ${_name.text.trim()}' : _name.text;
+    // The new account is sent to the committee for review.
+    final registrationId = ref
+        .read(registrationsProvider.notifier)
+        .add(
+          role: auth.role,
+          name: name,
+          phone: _phone.text,
+          idNumber: _idNumber.text,
+          idFront: _idFront,
+          idBack: _idBack,
+          specialtyId: isDoctor ? _specialty : null,
+          licenseNumber: isDoctor ? _license.text : null,
+          certificate: isDoctor ? _certificate : null,
+        );
     ref
         .read(authProvider.notifier)
         .register(
-          name: isDoctor ? 'د. ${_name.text.trim()}' : _name.text,
+          name: name,
           phone: _phone.text,
           idNumber: _idNumber.text,
+          registrationId: registrationId,
         );
     // Step 2: confirm the phone number with the SMS code.
     context.push('/verify');
@@ -414,6 +433,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
+                      controller: _license,
                       decoration: InputDecoration(
                         labelText: context.tr('license_number'),
                         prefixIcon: const Icon(Icons.numbers),
@@ -620,6 +640,10 @@ class _VerifyPhoneScreenState extends ConsumerState<VerifyPhoneScreen> {
       return;
     }
     final isDoctor = ref.read(authProvider).isDoctor;
+    final regId = ref.read(authProvider).registrationId;
+    if (regId != null) {
+      ref.read(registrationsProvider.notifier).markPhoneVerified(regId);
+    }
     ref.read(authProvider.notifier).verifyPhone();
     final messenger = ScaffoldMessenger.of(context);
     messenger.showSnackBar(

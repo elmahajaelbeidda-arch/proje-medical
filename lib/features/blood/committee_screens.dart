@@ -8,15 +8,18 @@ import '../../core/providers.dart';
 import '../../core/search.dart';
 import '../../core/theme.dart';
 import '../../models/blood.dart';
+import '../../models/models.dart';
+import '../../models/registration.dart';
+import '../../widgets/media.dart';
 import '../../widgets/common.dart';
 import 'blood_screens.dart';
 
 String _date(DateTime d) => '${d.day}/${d.month}/${d.year}';
 
-/// Dashboard of the blood donation committee: reviews donor registrations,
-/// keeps the donor database (search by blood type and city) and follows the
-/// blood requests patients make from their profile. Only the committee sees
-/// full names and phone numbers.
+/// Dashboard of the committee, responsible for every request on the
+/// platform: donor registrations (database searchable by blood type and
+/// city), blood requests from patients' profiles, and new patient and doctor
+/// accounts. Only the committee sees full names and phone numbers.
 class CommitteeHomeScreen extends ConsumerStatefulWidget {
   const CommitteeHomeScreen({super.key});
   @override
@@ -41,7 +44,6 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
         .length;
     final approved = blood.donors.where((d) => d.isApproved).length;
     final available = blood.donors.where((d) => d.canBeContacted).length;
-    final openRequests = blood.requests.where((r) => r.isOpen).length;
     // New requests from patients' profiles, not yet handled by the committee.
     final newRequests = blood.requests
         .where((r) => r.status == BloodRequestStatus.submitted)
@@ -78,8 +80,15 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
             return s != 0 ? s : b.createdAt.compareTo(a.createdAt);
           });
 
+    final registrations = ref.watch(registrationsProvider);
+    int pendingOf(UserRole role) => registrations
+        .where((r) => r.role == role && r.status == ReviewStatus.pending)
+        .length;
+    final pendingPatients = pendingOf(UserRole.patient);
+    final pendingDoctors = pendingOf(UserRole.doctor);
+
     return DefaultTabController(
-      length: 2,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: Text(context.tr('committee_title')),
@@ -94,9 +103,13 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
             ),
           ],
           bottom: TabBar(
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
             tabs: [
               Tab(text: '${context.tr('donors_db')} ($pending)'),
               Tab(text: '${context.tr('my_blood_requests')} ($newRequests)'),
+              Tab(text: '${context.tr('patients')} ($pendingPatients)'),
+              Tab(text: '${context.tr('doctors')} ($pendingDoctors)'),
             ],
           ),
         ),
@@ -107,16 +120,20 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
               child: Row(
                 children: [
                   _Stat(
-                    value: pending,
-                    label: context.tr('pending_reviews'),
+                    value: pending + pendingPatients + pendingDoctors,
+                    label: context.tr('pending_registrations'),
                     color: AppColors.warning,
+                  ),
+                  _Stat(
+                    value: newRequests,
+                    label: context.tr('new_blood_requests'),
+                    color: AppColors.emergency,
                   ),
                   _Stat(value: approved, label: context.tr('approved_donors')),
                   _Stat(
                     value: available,
                     label: context.tr('available_donors'),
                   ),
-                  _Stat(value: openRequests, label: context.tr('requests')),
                 ],
               ),
             ),
@@ -221,6 +238,10 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                         ),
                     ],
                   ),
+
+                  // ---------------- New accounts ----------------
+                  const _RegistrationsTab(role: UserRole.patient),
+                  const _RegistrationsTab(role: UserRole.doctor),
                 ],
               ),
             ),
@@ -617,4 +638,277 @@ class CommitteeRequestScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// New patient / doctor accounts
+// ---------------------------------------------------------------------------
+
+String reviewKey(ReviewStatus s) => 'review_${s.name}';
+
+Color reviewColor(ReviewStatus s) => switch (s) {
+  ReviewStatus.pending => AppColors.warning,
+  ReviewStatus.approved => AppColors.success,
+  ReviewStatus.rejected => AppColors.grey,
+};
+
+class _RegistrationsTab extends ConsumerStatefulWidget {
+  const _RegistrationsTab({required this.role});
+  final UserRole role;
+  @override
+  ConsumerState<_RegistrationsTab> createState() => _RegistrationsTabState();
+}
+
+class _RegistrationsTabState extends ConsumerState<_RegistrationsTab> {
+  ReviewStatus? _status = ReviewStatus.pending;
+  String _query = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final list =
+        ref
+            .watch(registrationsProvider)
+            .where((r) => r.role == widget.role)
+            .where((r) => _status == null || r.status == _status)
+            .where(
+              (r) => Search.matches(_query, [
+                r.name,
+                r.code,
+                r.phone,
+                r.idNumber,
+                r.licenseNumber ?? '',
+                if (r.specialtyId != null)
+                  AppStrings.of('ar', 'sp_${r.specialtyId}'),
+              ]),
+            )
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    Widget chip(String label, bool selected, VoidCallback onTap) => Padding(
+      padding: const EdgeInsetsDirectional.only(end: 8),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: selected,
+        onSelected: (_) => onTap(),
+      ),
+    );
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        TextField(
+          onChanged: (v) => setState(() => _query = v),
+          decoration: InputDecoration(
+            hintText: context.tr('search_people_hint'),
+            prefixIcon: const Icon(Icons.search),
+          ),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 46,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              chip(
+                context.tr('all_statuses'),
+                _status == null,
+                () => setState(() => _status = null),
+              ),
+              for (final st in ReviewStatus.values)
+                chip(
+                  context.tr(reviewKey(st)),
+                  _status == st,
+                  () => setState(() => _status = st),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (list.isEmpty)
+          EmptyState(
+            icon: Icons.person_search_outlined,
+            message: context.tr('none'),
+          ),
+        for (final r in list)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: RegistrationCard(registration: r),
+          ),
+      ],
+    );
+  }
+}
+
+/// A new account with everything the committee needs to check it.
+class RegistrationCard extends ConsumerWidget {
+  const RegistrationCard({super.key, required this.registration});
+  final Registration registration;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final r = registration;
+    final text = Theme.of(context).textTheme;
+    final files = [?r.idFront, ?r.idBack, ?r.certificate];
+
+    void review(ReviewStatus status, String messageKey) {
+      ref.read(registrationsProvider.notifier).review(r.id, status);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(context.tr(messageKey))));
+    }
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: AppColors.primary,
+                  child: Icon(
+                    r.isDoctor
+                        ? Icons.medical_services_outlined
+                        : Icons.person_outline,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${r.code} • ${r.name}',
+                        style: text.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Text(
+                        context.tr(
+                          'registered_on',
+                          args: {'date': _date(r.createdAt)},
+                        ),
+                        style: text.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            _line(
+              context,
+              Icons.badge_outlined,
+              context.tr('id_number'),
+              r.idNumber,
+            ),
+            if (r.isDoctor) ...[
+              _line(
+                context,
+                Icons.local_hospital_outlined,
+                context.tr('specialty'),
+                r.specialtyId == null
+                    ? '—'
+                    : context.tr(Specialty.byId(r.specialtyId!).key),
+              ),
+              _line(
+                context,
+                Icons.numbers,
+                context.tr('license_number'),
+                r.licenseNumber ?? '—',
+              ),
+            ],
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                Pill(
+                  label: context.tr(reviewKey(r.status)),
+                  color: reviewColor(r.status),
+                ),
+                if (!r.phoneVerified)
+                  Pill(
+                    label: context.tr('phone_not_verified'),
+                    color: AppColors.warning,
+                  ),
+              ],
+            ),
+            if (files.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final f in files)
+                    InkWell(
+                      onTap: () => showAttachmentPreview(context, f),
+                      child: AttachmentThumb(f, size: 64),
+                    ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 10),
+            ContactButtons(phone: r.phone, preferred: ContactMethod.call),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                if (r.status != ReviewStatus.approved)
+                  Expanded(
+                    child: FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(0, 44),
+                      ),
+                      onPressed: () =>
+                          review(ReviewStatus.approved, 'account_approved_msg'),
+                      icon: const Icon(Icons.check),
+                      label: Text(context.tr('approve')),
+                    ),
+                  ),
+                if (r.status == ReviewStatus.pending) const SizedBox(width: 8),
+                if (r.status != ReviewStatus.rejected)
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 44),
+                        foregroundColor: AppColors.grey,
+                      ),
+                      onPressed: () =>
+                          review(ReviewStatus.rejected, 'account_rejected_msg'),
+                      icon: const Icon(Icons.close),
+                      label: Text(context.tr('reject')),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _line(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) => Padding(
+    padding: const EdgeInsets.only(bottom: 4),
+    child: Row(
+      children: [
+        Icon(icon, size: 18, color: AppColors.primary),
+        const SizedBox(width: 6),
+        Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w700)),
+        Expanded(
+          child: Text(
+            value,
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.end,
+          ),
+        ),
+      ],
+    ),
+  );
 }

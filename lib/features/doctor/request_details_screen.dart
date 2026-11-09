@@ -7,6 +7,7 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/models.dart';
+import '../../models/registration.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
 import '../patient/consultation_details_screen.dart';
@@ -151,7 +152,11 @@ class RequestDetailsScreen extends ConsumerWidget {
           ],
 
           const SizedBox(height: 20),
-          if (c.status == ConsultationStatus.pending)
+          if (c.status == ConsultationStatus.pending &&
+              ref.watch(myAccountStatusProvider) != ReviewStatus.approved)
+            // New doctors accept cases only after the committee's approval.
+            Text(context.tr('doctor_not_approved'), textAlign: TextAlign.center)
+          else if (c.status == ConsultationStatus.pending)
             FilledButton.icon(
               onPressed: () {
                 ref

@@ -138,6 +138,9 @@ class PatientHomeTab extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const AccountReviewBanner(),
+              const SizedBox(height: 4),
+
               // Main CTA
               Container(
                 padding: const EdgeInsets.all(20),
