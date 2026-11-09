@@ -13,8 +13,10 @@ import 'blood_screens.dart';
 
 String _date(DateTime d) => '${d.day}/${d.month}/${d.year}';
 
-/// Dashboard of the blood donation committee: the only place where full
-/// names and phone numbers of requesters and donors are visible.
+/// Dashboard of the blood donation committee: reviews donor registrations,
+/// keeps the donor database (search by blood type and city) and follows the
+/// blood requests patients make from their profile. Only the committee sees
+/// full names and phone numbers.
 class CommitteeHomeScreen extends ConsumerStatefulWidget {
   const CommitteeHomeScreen({super.key});
   @override
@@ -23,23 +25,41 @@ class CommitteeHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
-  BloodRequestStatus? _status;
-  String _donorQuery = '';
+  // Donors tab
+  DonorStatus? _donorStatus = DonorStatus.pending;
   String? _donorType;
+  String? _donorCity;
+  String _donorQuery = '';
+  // Requests tab
+  BloodRequestStatus? _status;
 
   @override
   Widget build(BuildContext context) {
     final blood = ref.watch(bloodProvider);
-    final newCount = blood.requests
-        .where((r) => r.status == BloodRequestStatus.submitted)
+    final pending = blood.donors
+        .where((d) => d.status == DonorStatus.pending)
         .length;
-    final urgentCount = blood.requests
-        .where((r) => r.isOpen && r.urgent)
-        .length;
-    final availableDonors = blood.donors.where((d) => d.canBeContacted).length;
-    final secured = blood.requests
-        .where((r) => r.status == BloodRequestStatus.fulfilled)
-        .length;
+    final approved = blood.donors.where((d) => d.isApproved).length;
+    final available = blood.donors.where((d) => d.canBeContacted).length;
+    final openRequests = blood.requests.where((r) => r.isOpen).length;
+
+    final cities = {for (final d in blood.donors) d.city.trim()}.toList()
+      ..sort();
+    final donors =
+        blood.donors
+            .where((d) => _donorStatus == null || d.status == _donorStatus)
+            .where((d) => _donorType == null || d.bloodType == _donorType)
+            .where((d) => _donorCity == null || d.city.trim() == _donorCity)
+            .where(
+              (d) => Search.matches(_donorQuery, [
+                d.name,
+                d.code,
+                d.city,
+                d.phone,
+              ]),
+            )
+            .toList()
+          ..sort((a, b) => b.registeredAt.compareTo(a.registeredAt));
 
     final requests =
         blood.requests
@@ -53,13 +73,6 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
             final s = score(b).compareTo(score(a));
             return s != 0 ? s : b.createdAt.compareTo(a.createdAt);
           });
-
-    final donors = blood.donors
-        .where((d) => _donorType == null || d.bloodType == _donorType)
-        .where(
-          (d) => Search.matches(_donorQuery, [d.name, d.code, d.city, d.phone]),
-        )
-        .toList();
 
     return DefaultTabController(
       length: 2,
@@ -78,8 +91,8 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
           ],
           bottom: TabBar(
             tabs: [
-              Tab(text: context.tr('requests')),
-              Tab(text: context.tr('donors')),
+              Tab(text: '${context.tr('donors_db')} ($pending)'),
+              Tab(text: context.tr('my_blood_requests')),
             ],
           ),
         ),
@@ -89,46 +102,105 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
               child: Row(
                 children: [
-                  _Stat(value: newCount, label: context.tr('new_requests')),
                   _Stat(
-                    value: urgentCount,
-                    label: context.tr('urgency_urgent'),
-                    color: AppColors.emergency,
+                    value: pending,
+                    label: context.tr('pending_reviews'),
+                    color: AppColors.warning,
                   ),
+                  _Stat(value: approved, label: context.tr('approved_donors')),
                   _Stat(
-                    value: availableDonors,
+                    value: available,
                     label: context.tr('available_donors'),
                   ),
-                  _Stat(value: secured, label: context.tr('secured')),
+                  _Stat(value: openRequests, label: context.tr('requests')),
                 ],
               ),
             ),
             Expanded(
               child: TabBarView(
                 children: [
-                  // ---------------- Requests ----------------
+                  // ---------------- Donors database ----------------
                   ListView(
                     padding: const EdgeInsets.all(16),
                     children: [
-                      SizedBox(
-                        height: 44,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            _chip(
-                              context.tr('all_statuses'),
-                              _status == null,
-                              () => setState(() => _status = null),
-                            ),
-                            for (final st in BloodRequestStatus.values)
-                              _chip(
-                                context.tr(bloodStatusKey(st)),
-                                _status == st,
-                                () => setState(() => _status = st),
-                              ),
-                          ],
+                      TextField(
+                        onChanged: (v) => setState(() => _donorQuery = v),
+                        decoration: InputDecoration(
+                          hintText: context.tr('search_donors_hint'),
+                          prefixIcon: const Icon(Icons.search),
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      _chips([
+                        _chip(
+                          context.tr('all_statuses'),
+                          _donorStatus == null,
+                          () => setState(() => _donorStatus = null),
+                        ),
+                        for (final st in DonorStatus.values)
+                          _chip(
+                            context.tr(donorStatusKey(st)),
+                            _donorStatus == st,
+                            () => setState(() => _donorStatus = st),
+                          ),
+                      ]),
+                      _chips([
+                        _chip(
+                          context.tr('all'),
+                          _donorType == null,
+                          () => setState(() => _donorType = null),
+                        ),
+                        for (final t in bloodTypes)
+                          _chip(
+                            t,
+                            _donorType == t,
+                            () => setState(() => _donorType = t),
+                          ),
+                      ]),
+                      _chips([
+                        _chip(
+                          context.tr('all_cities'),
+                          _donorCity == null,
+                          () => setState(() => _donorCity = null),
+                        ),
+                        for (final c in cities)
+                          _chip(
+                            c,
+                            _donorCity == c,
+                            () => setState(() => _donorCity = c),
+                          ),
+                      ]),
+                      const SizedBox(height: 8),
+                      if (donors.isEmpty)
+                        EmptyState(
+                          icon: Icons.person_search_outlined,
+                          message: context.tr('none'),
+                        ),
+                      for (final d in donors)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: CommitteeDonorCard(donor: d, showReview: true),
+                        ),
+                    ],
+                  ),
+
+                  // ---------------- Blood requests (from patients) ----------
+                  ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      _chips([
+                        _chip(
+                          context.tr('all_statuses'),
+                          _status == null,
+                          () => setState(() => _status = null),
+                        ),
+                        for (final st in BloodRequestStatus.values)
+                          _chip(
+                            context.tr(bloodStatusKey(st)),
+                            _status == st,
+                            () => setState(() => _status = st),
+                          ),
+                      ]),
                       const SizedBox(height: 8),
                       if (requests.isEmpty)
                         EmptyState(
@@ -145,46 +217,6 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                         ),
                     ],
                   ),
-
-                  // ---------------- Donors ----------------
-                  ListView(
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      TextField(
-                        onChanged: (v) => setState(() => _donorQuery = v),
-                        decoration: InputDecoration(
-                          hintText: context.tr('search_donors_hint'),
-                          prefixIcon: const Icon(Icons.search),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        height: 44,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            _chip(
-                              context.tr('all'),
-                              _donorType == null,
-                              () => setState(() => _donorType = null),
-                            ),
-                            for (final t in bloodTypes)
-                              _chip(
-                                t,
-                                _donorType == t,
-                                () => setState(() => _donorType = t),
-                              ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      for (final d in donors)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: CommitteeDonorCard(donor: d),
-                        ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -193,6 +225,11 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
       ),
     );
   }
+
+  Widget _chips(List<Widget> chips) => SizedBox(
+    height: 46,
+    child: ListView(scrollDirection: Axis.horizontal, children: chips),
+  );
 
   Widget _chip(String label, bool selected, VoidCallback onTap) => Padding(
     padding: const EdgeInsetsDirectional.only(end: 8),
@@ -239,22 +276,33 @@ class _Stat extends StatelessWidget {
   }
 }
 
-/// Donor with full personal data and contact buttons (committee only).
-class CommitteeDonorCard extends StatelessWidget {
+/// Donor with full personal data (committee only): review buttons for new
+/// registrations, contact buttons for accepted donors.
+class CommitteeDonorCard extends ConsumerWidget {
   const CommitteeDonorCard({
     super.key,
     required this.donor,
     this.trailing,
     this.badges = const [],
+    this.showReview = false,
   });
   final BloodDonor donor;
   final Widget? trailing;
   final List<Widget> badges;
+  final bool showReview;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final d = donor;
     final text = Theme.of(context).textTheme;
+    final notifier = ref.read(bloodProvider.notifier);
+
+    void review(DonorStatus status, String messageKey) {
+      notifier.reviewDonor(d.id, status);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(context.tr(messageKey))));
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -276,7 +324,7 @@ class CommitteeDonorCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '${d.city} • ${context.tr(d.male ? 'male' : 'female')} • ${d.age} ${context.tr('years')} • ${context.tr('kind_${d.kind.name}')}',
+                        '${d.city} • ${context.tr('kind_${d.kind.name}')} • ${context.tr('registered_on', args: {'date': _date(d.registeredAt)})}',
                         style: text.bodySmall,
                       ),
                     ],
@@ -291,32 +339,54 @@ class CommitteeDonorCard extends StatelessWidget {
               runSpacing: 6,
               children: [
                 ...badges,
-                if (!d.available)
-                  Pill(
-                    label: context.tr('unavailable_now'),
-                    color: AppColors.grey,
-                  )
-                else if (!d.eligibleNow)
-                  Pill(
-                    label:
-                        '${context.tr('too_soon')} • ${_date(d.nextEligibleDate!)}',
-                    color: AppColors.warning,
-                  )
-                else
-                  Pill(
-                    label: context.tr('available_to_donate'),
-                    color: AppColors.success,
-                  ),
-                if (d.lastDonation != null)
-                  Pill(
-                    label:
-                        '${context.tr('last_donation')}: ${_date(d.lastDonation!)}',
-                    color: AppColors.info,
-                  ),
+                DonorStatusPill(d.status),
+                if (d.isApproved)
+                  d.available
+                      ? Pill(
+                          label: context.tr('available_to_donate'),
+                          color: AppColors.success,
+                        )
+                      : Pill(
+                          label: context.tr('unavailable_now'),
+                          color: AppColors.grey,
+                        ),
               ],
             ),
             const SizedBox(height: 10),
             ContactButtons(phone: d.phone, preferred: d.contact),
+            if (showReview) ...[
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  if (d.status != DonorStatus.approved)
+                    Expanded(
+                      child: FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 44),
+                        ),
+                        onPressed: () =>
+                            review(DonorStatus.approved, 'donor_approved_msg'),
+                        icon: const Icon(Icons.check),
+                        label: Text(context.tr('approve')),
+                      ),
+                    ),
+                  if (d.status == DonorStatus.pending) const SizedBox(width: 8),
+                  if (d.status != DonorStatus.rejected)
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(0, 44),
+                          foregroundColor: AppColors.grey,
+                        ),
+                        onPressed: () =>
+                            review(DonorStatus.rejected, 'donor_rejected_msg'),
+                        icon: const Icon(Icons.close),
+                        label: Text(context.tr('reject')),
+                      ),
+                    ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
@@ -492,12 +562,6 @@ class CommitteeRequestScreen extends ConsumerWidget {
                   child: CommitteeDonorCard(
                     donor: d,
                     badges: [
-                      if (r.volunteerIds.contains(d.id))
-                        Pill(
-                          label: context.tr('volunteer_badge'),
-                          color: AppColors.success,
-                          icon: Icons.favorite,
-                        ),
                       if (d.city.trim().toLowerCase() ==
                           r.city.trim().toLowerCase())
                         Pill(

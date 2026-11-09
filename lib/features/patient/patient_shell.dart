@@ -608,6 +608,12 @@ class PatientProfileTab extends ConsumerWidget {
                   title: context.tr('health_profile'),
                   onTap: () => context.push('/patient/health-profile'),
                 ),
+                // Blood requests live only in the patient's profile.
+                MenuTile(
+                  icon: Icons.bloodtype_outlined,
+                  title: context.tr('my_blood_requests'),
+                  onTap: () => context.push('/patient/blood'),
+                ),
                 MenuTile(
                   icon: Icons.notifications_outlined,
                   title: context.tr('notifications'),
@@ -662,11 +668,7 @@ class _BloodBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final urgent = ref
-        .watch(bloodProvider)
-        .requests
-        .where((r) => r.isOpen && r.urgent)
-        .length;
+    final me = ref.watch(bloodProvider).myDonor;
     return Card(
       clipBehavior: Clip.antiAlias,
       child: ListTile(
@@ -677,32 +679,23 @@ class _BloodBanner extends ConsumerWidget {
           child: Icon(Icons.bloodtype, color: Colors.white),
         ),
         title: Text(
-          context.tr('blood_donation'),
+          context.tr(me == null ? 'become_donor_title' : 'my_donor_card'),
           style: const TextStyle(
             fontWeight: FontWeight.w800,
             color: AppColors.primary,
           ),
         ),
-        subtitle: Text(
-          urgent > 0
-              ? context.tr('urgent_blood_banner', args: {'n': urgent})
-              : context.tr('blood_intro'),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing: urgent > 0
-            ? CircleAvatar(
-                radius: 14,
-                backgroundColor: AppColors.emergency,
-                child: Text(
-                  '$urgent',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+        subtitle: me == null
+            ? Text(
+                context.tr('donor_section_intro'),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               )
-            : const Icon(Icons.chevron_right),
+            : Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: DonorStatusPill(me.status),
+              ),
+        trailing: const Icon(Icons.chevron_right),
       ),
     );
   }

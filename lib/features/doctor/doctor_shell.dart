@@ -226,7 +226,7 @@ class DoctorHomeTab extends ConsumerWidget {
                   color: AppColors.primary,
                 ),
               ),
-              subtitle: Text(context.tr('blood_intro'), maxLines: 2),
+              subtitle: Text(context.tr('donor_section_intro'), maxLines: 2),
               trailing: const Icon(Icons.chevron_right),
             ),
           ),

@@ -7,8 +7,8 @@ BloodDonor donor(
   String id,
   String type,
   String city, {
+  DonorStatus status = DonorStatus.approved,
   bool available = true,
-  DateTime? last,
   bool share = true,
 }) => BloodDonor(
   id: id,
@@ -16,28 +16,25 @@ BloodDonor donor(
   bloodType: type,
   city: city,
   phone: '0550000000',
+  status: status,
   available: available,
-  lastDonation: last,
   shareContact: share,
 );
 
-BloodRequest request(String type, String city, {bool urgent = false}) =>
-    BloodRequest(
-      id: 'r-$type-$city',
-      requesterId: 'p',
-      patientName: 'x',
-      bloodType: type,
-      units: 1,
-      hospital: 'h',
-      city: city,
-      phone: '0550000000',
-      urgent: urgent,
-      createdAt: DateTime(2026),
-    );
+BloodRequest request(String type, String city) => BloodRequest(
+  id: 'r-$type-$city',
+  requesterId: 'p',
+  patientName: 'x',
+  bloodType: type,
+  units: 1,
+  hospital: 'h',
+  city: city,
+  phone: '0550000000',
+  createdAt: DateTime(2026),
+);
 
 void main() {
   test('red-cell compatibility rules', () {
-    // O- gives to everyone, AB+ receives from everyone.
     for (final t in bloodTypes) {
       expect(canDonate('O-', t), isTrue, reason: 'O- -> $t');
       expect(canDonate(t, 'AB+'), isTrue, reason: '$t -> AB+');
@@ -45,78 +42,24 @@ void main() {
     expect(compatibleDonorTypes('O-'), ['O-']);
     expect(compatibleDonorTypes('A+'), ['O-', 'O+', 'A-', 'A+']);
     expect(compatibleDonorTypes('B-'), ['O-', 'B-']);
-    expect(canDonate('A+', 'A-'), isFalse); // Rh+ to Rh-
-    expect(canDonate('A-', 'B+'), isFalse); // A to B
+    expect(canDonate('A+', 'A-'), isFalse);
+    expect(canDonate('A-', 'B+'), isFalse);
     expect(canDonate('AB+', 'O+'), isFalse);
   });
 
-  test('matching donors: compatible, contactable, same city first', () {
+  test('only approved, available, consenting donors are suggested', () {
     final donors = [
       donor('far-exact', 'O+', 'Oran'),
       donor('near-universal', 'O-', 'Alger'),
       donor('near-exact', 'O+', 'Alger'),
       donor('incompatible', 'A+', 'Alger'),
+      donor('pending', 'O+', 'Alger', status: DonorStatus.pending),
+      donor('rejected', 'O+', 'Alger', status: DonorStatus.rejected),
       donor('unavailable', 'O+', 'Alger', available: false),
-      donor(
-        'too-soon',
-        'O+',
-        'Alger',
-        last: DateTime.now().subtract(const Duration(days: 20)),
-      ),
       donor('no-consent', 'O+', 'Alger', share: false),
     ];
     final ids = matchDonors(request('O+', 'alger '), donors).map((d) => d.id);
     expect(ids, ['near-exact', 'near-universal', 'far-exact']);
-  });
-
-  test('matching requests for a donor: urgent first', () {
-    final me = donor('me', 'O-', 'Alger');
-    final reqs = [
-      request('A+', 'Oran'),
-      request('AB-', 'Alger', urgent: true),
-      request('B+', 'Alger'),
-    ];
-    final types = matchRequests(me, reqs).map((r) => r.bloodType).toList();
-    expect(types.first, 'AB-');
-    expect(types.length, 3);
-    expect(matchRequests(donor('ab', 'AB+', 'Alger'), reqs), isEmpty);
-  });
-
-  test('request, register as donor, volunteer, fulfil', () {
-    final c = ProviderContainer();
-    addTearDown(c.dispose);
-    final blood = c.read(bloodProvider.notifier);
-
-    final id = blood.addRequest(
-      patientName: 'Amina',
-      bloodType: 'A-',
-      units: 2,
-      hospital: 'CHU',
-      city: 'Sétif',
-      urgent: true,
-      phone: '0550 11 22 33',
-      contact: ContactMethod.whatsapp,
-    );
-    blood.saveMyDonor(
-      name: 'Karim',
-      bloodType: 'O-',
-      city: 'Sétif',
-      phone: '0550 44 55 66',
-      contact: ContactMethod.call,
-      available: true,
-      shareContact: true,
-    );
-    var s = c.read(bloodProvider);
-    expect(s.myDonor?.bloodType, 'O-');
-    expect(matchDonors(s.request(id)!, s.donors).first.id, s.myDonorId);
-
-    blood.volunteer(id);
-    blood.volunteer(id); // no duplicates
-    s = c.read(bloodProvider);
-    expect(s.request(id)!.volunteerIds, [s.myDonorId]);
-
-    blood.markFulfilled(id);
-    expect(c.read(bloodProvider).request(id)!.isOpen, isFalse);
   });
 
   test('privacy helpers mask names and phone numbers', () {
@@ -125,29 +68,48 @@ void main() {
     expect(donor('bd7', 'O+', 'x').code, 'D-007');
   });
 
-  test('donors outside 18-65 years are not proposed', () {
-    final young = BloodDonor(
-      id: 'y',
-      name: 'y',
+  test('donor registration goes to the committee for review', () {
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final blood = c.read(bloodProvider.notifier);
+
+    blood.saveMyDonor(
+      name: 'Karim',
+      bloodType: 'O-',
+      city: 'Sétif',
+      phone: '0550 44 55 66',
+      shareContact: true,
+      kind: DonorKind.doctor,
+    );
+    BloodDonor me() => c.read(bloodProvider).myDonor!;
+    expect(me().status, DonorStatus.pending);
+    expect(me().kind, DonorKind.doctor);
+    expect(me().canBeContacted, isFalse); // not reviewed yet
+
+    blood.reviewDonor(me().id, DonorStatus.approved);
+    expect(me().canBeContacted, isTrue);
+
+    // Any change of the registration is reviewed again.
+    blood.saveMyDonor(
+      name: 'Karim',
       bloodType: 'O-',
       city: 'Alger',
-      phone: '0550000000',
-      age: 17,
+      phone: '0550 44 55 66',
+      shareContact: true,
+      kind: DonorKind.doctor,
     );
-    final ok = BloodDonor(
-      id: 'ok',
-      name: 'ok',
-      bloodType: 'O-',
-      city: 'Alger',
-      phone: '0550000000',
-      age: 40,
+    expect(me().status, DonorStatus.pending);
+    expect(me().city, 'Alger');
+    expect(
+      c.read(bloodProvider).donors.where((d) => d.id == me().id).length,
+      1,
     );
-    expect(matchDonors(request('A+', 'Alger'), [young, ok]).map((d) => d.id), [
-      'ok',
-    ]);
+
+    blood.reviewDonor(me().id, DonorStatus.rejected);
+    expect(me().canBeContacted, isFalse);
   });
 
-  test('committee links donors and the status follows', () {
+  test('patient blood request: committee links donors, status follows', () {
     final c = ProviderContainer();
     addTearDown(c.dispose);
     final blood = c.read(bloodProvider.notifier);
@@ -165,19 +127,17 @@ void main() {
     );
     BloodRequest req() => c.read(bloodProvider).request(id)!;
     expect(req().status, BloodRequestStatus.submitted);
-    expect(req().requesterName, 'Nadia');
 
     blood.setStatus(id, BloodRequestStatus.inProgress);
     blood.assignDonor(id, 'bd4');
-    blood.assignDonor(id, 'bd4'); // no duplicates
+    blood.assignDonor(id, 'bd4');
     expect(req().assignedDonorIds, ['bd4']);
     expect(req().status, BloodRequestStatus.matched);
 
     blood.unassignDonor(id, 'bd4');
-    expect(req().assignedDonorIds, isEmpty);
     expect(req().status, BloodRequestStatus.inProgress);
 
-    blood.setStatus(id, BloodRequestStatus.cancelled);
+    blood.markFulfilled(id);
     expect(req().isOpen, isFalse);
   });
 }

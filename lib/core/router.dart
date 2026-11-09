@@ -64,20 +64,26 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, state) => ReplyScreen(id: state.pathParameters['id']!),
       ),
 
-      // Blood donation
+      // Blood donation: donor registration only
       GoRoute(path: '/blood', builder: (_, _) => const BloodHomeScreen()),
-      GoRoute(
-        path: '/blood/request',
-        builder: (_, _) => const NewBloodRequestScreen(),
-      ),
-      GoRoute(
-        path: '/blood/request/:id',
-        builder: (_, state) =>
-            BloodRequestDetailsScreen(id: state.pathParameters['id']!),
-      ),
       GoRoute(
         path: '/blood/donor',
         builder: (_, _) => const DonorRegisterScreen(),
+      ),
+
+      // Blood requests: only from the patient's profile
+      GoRoute(
+        path: '/patient/blood',
+        builder: (_, _) => const MyBloodRequestsScreen(),
+      ),
+      GoRoute(
+        path: '/patient/blood/new',
+        builder: (_, _) => const NewBloodRequestScreen(),
+      ),
+      GoRoute(
+        path: '/patient/blood/:id',
+        builder: (_, state) =>
+            BloodRequestDetailsScreen(id: state.pathParameters['id']!),
       ),
 
       // Blood donation committee

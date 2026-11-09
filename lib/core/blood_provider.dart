@@ -93,35 +93,32 @@ class BloodNotifier extends Notifier<BloodState> {
     return id;
   }
 
-  /// Creates or updates the current user's donor profile.
+  /// Creates or updates the current user's donor registration. Every new
+  /// or edited registration goes back to the committee for review.
   void saveMyDonor({
     required String name,
     required String bloodType,
     required String city,
     required String phone,
-    required ContactMethod contact,
-    required bool available,
     required bool shareContact,
-    DonorKind kind = DonorKind.other,
-    bool male = true,
-    int age = 30,
-    DateTime? lastDonation,
+    required DonorKind kind,
+    String userId = '',
   }) {
-    final id = state.myDonorId ?? 'donor_me';
+    final id =
+        state.myDonorId ?? 'donor_${DateTime.now().millisecondsSinceEpoch}';
+    final previous = state.myDonor;
     final me = BloodDonor(
       id: id,
+      userId: userId,
       name: name.trim(),
       bloodType: bloodType,
       city: city.trim(),
       phone: phone.trim(),
-      contact: contact,
-      available: available,
-      shareContact: shareContact,
       kind: kind,
-      male: male,
-      age: age,
-      lastDonation: lastDonation,
-      registeredAt: state.myDonor?.registeredAt ?? DateTime.now(),
+      status: DonorStatus.pending,
+      available: previous?.available ?? true,
+      shareContact: shareContact,
+      registeredAt: previous?.registeredAt ?? DateTime.now(),
     );
     state = state.copyWith(
       donors: [me, ...state.donors.where((d) => d.id != id)],
@@ -132,28 +129,18 @@ class BloodNotifier extends Notifier<BloodState> {
   void setMyAvailability(bool available) {
     final id = state.myDonorId;
     if (id == null) return;
+    _updateDonor(id, (d) => d.copyWith(available: available));
+  }
+
+  void _updateDonor(String id, BloodDonor Function(BloodDonor) f) {
     state = state.copyWith(
-      donors: [
-        for (final d in state.donors)
-          d.id == id ? d.copyWith(available: available) : d,
-      ],
+      donors: [for (final d in state.donors) d.id == id ? f(d) : d],
     );
   }
 
-  /// The current donor answers "I can donate" to a request.
-  void volunteer(String requestId) {
-    final me = state.myDonorId;
-    if (me == null) return;
-    state = state.copyWith(
-      requests: [
-        for (final r in state.requests)
-          if (r.id == requestId && !r.volunteerIds.contains(me))
-            r.copyWith(volunteerIds: [...r.volunteerIds, me])
-          else
-            r,
-      ],
-    );
-  }
+  /// Committee: accept or reject a donor registration.
+  void reviewDonor(String donorId, DonorStatus status) =>
+      _updateDonor(donorId, (d) => d.copyWith(status: status));
 
   void _updateRequest(String id, BloodRequest Function(BloodRequest) f) {
     state = state.copyWith(

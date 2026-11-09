@@ -436,17 +436,6 @@ class RoleSelectScreen extends ConsumerWidget {
                   darkColor: AppColors.doctorDark,
                   onTap: () => choose(UserRole.doctor),
                 ),
-                const SizedBox(height: 14),
-                // Anyone (no account): register as a blood donor or post a
-                // blood request.
-                _RoleCard(
-                  icon: Icons.bloodtype_outlined,
-                  title: context.tr('role_donor'),
-                  subtitle: context.tr('role_donor_desc'),
-                  color: const Color(0xFFB9E2C3),
-                  darkColor: AppColors.primary,
-                  onTap: () => context.push('/blood'),
-                ),
                 const SizedBox(height: 8),
                 TextButton.icon(
                   onPressed: () => choose(UserRole.committee),

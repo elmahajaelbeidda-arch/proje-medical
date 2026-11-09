@@ -30,8 +30,11 @@ List<String> compatibleDonorTypes(String recipient) => [
 
 enum ContactMethod { call, whatsapp, sms }
 
-/// Who the donor is on the platform.
-enum DonorKind { patient, doctor, other }
+/// Who the donor is on the platform (registered users only).
+enum DonorKind { patient, doctor }
+
+/// Review of a donor registration by the donation committee.
+enum DonorStatus { pending, approved, rejected }
 
 /// Who posted a request, relative to the patient.
 enum RequesterRelation { self, family, other }
@@ -73,21 +76,23 @@ extension on String {
 
 class BloodDonor {
   final String id;
+
+  /// Platform account of the donor (patient or doctor).
+  final String userId;
   final String name;
   final String bloodType;
   final String city;
   final String phone;
-  final ContactMethod contact;
   final DonorKind kind;
-  final bool male;
-  final int age;
-  final bool available;
-  final DateTime? lastDonation;
-  final DateTime registeredAt;
+  final DonorStatus status;
 
-  /// The donor accepted that the committee shares the number with a
-  /// compatible person in need.
+  /// The donor can be called at the moment (set by the donor).
+  final bool available;
+
+  /// The donor accepted that the committee contacts them and shares the
+  /// number with a compatible patient when needed.
   final bool shareContact;
+  final DateTime registeredAt;
 
   BloodDonor({
     required this.id,
@@ -95,52 +100,34 @@ class BloodDonor {
     required this.bloodType,
     required this.city,
     required this.phone,
-    this.contact = ContactMethod.call,
-    this.kind = DonorKind.other,
-    this.male = true,
-    this.age = 30,
+    this.userId = '',
+    this.kind = DonorKind.patient,
+    this.status = DonorStatus.approved,
     this.available = true,
-    this.lastDonation,
     this.shareContact = true,
     DateTime? registeredAt,
   }) : registeredAt = registeredAt ?? DateTime(2026);
 
   String get code => _code('D', id);
 
-  /// Usual donor age range.
-  static const minAge = 18;
-  static const maxAge = 65;
+  bool get isApproved => status == DonorStatus.approved;
 
-  /// Whole blood: about 3 months between two donations.
-  static const minInterval = Duration(days: 90);
+  /// Approved donor the committee can call on right now.
+  bool get canBeContacted => isApproved && available && shareContact;
 
-  DateTime? get nextEligibleDate => lastDonation?.add(minInterval);
+  /// The committee always calls (no other contact preference is asked).
+  ContactMethod get contact => ContactMethod.call;
 
-  bool get eligibleNow {
-    final next = nextEligibleDate;
-    return next == null || !next.isAfter(DateTime.now());
-  }
-
-  /// Donor the committee can call on right now.
-  bool get canBeContacted =>
-      available &&
-      eligibleNow &&
-      shareContact &&
-      age >= minAge &&
-      age <= maxAge;
-
-  BloodDonor copyWith({bool? available}) => BloodDonor(
+  BloodDonor copyWith({bool? available, DonorStatus? status}) => BloodDonor(
     id: id,
+    userId: userId,
     name: name,
     bloodType: bloodType,
     city: city,
     phone: phone,
-    contact: contact,
     kind: kind,
-    male: male,
-    age: age,
+    status: status ?? this.status,
     available: available ?? this.available,
-    lastDonation: lastDonation,
     shareContact: shareContact,
     registeredAt: registeredAt,
   );
@@ -225,8 +212,7 @@ class BloodRequest {
 String _norm(String s) => s.trim().toLowerCase();
 
 /// Donors who can give to [request], best first: volunteers for this request,
-/// then same city, then exact blood type. Unavailable / not yet eligible
-/// donors are excluded.
+/// then same city, then exact blood type. Only approved, available donors.
 List<BloodDonor> matchDonors(BloodRequest request, List<BloodDonor> donors) {
   final list = donors
       .where(
@@ -238,22 +224,5 @@ List<BloodDonor> matchDonors(BloodRequest request, List<BloodDonor> donors) {
       (_norm(d.city) == _norm(request.city) ? 2 : 0) +
       (d.bloodType == request.bloodType ? 1 : 0);
   list.sort((a, b) => score(b).compareTo(score(a)));
-  return list;
-}
-
-/// Open requests that [donor] can answer: urgent first, then same city.
-List<BloodRequest> matchRequests(
-  BloodDonor donor,
-  List<BloodRequest> requests,
-) {
-  final list = requests
-      .where((r) => r.isOpen && canDonate(donor.bloodType, r.bloodType))
-      .toList();
-  int score(BloodRequest r) =>
-      (r.urgent ? 2 : 0) + (_norm(r.city) == _norm(donor.city) ? 1 : 0);
-  list.sort((a, b) {
-    final s = score(b).compareTo(score(a));
-    return s != 0 ? s : b.createdAt.compareTo(a.createdAt);
-  });
   return list;
 }

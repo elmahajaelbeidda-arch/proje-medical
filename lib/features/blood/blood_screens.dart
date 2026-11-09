@@ -16,8 +16,6 @@ import '../../widgets/common.dart';
 // Helpers
 // ---------------------------------------------------------------------------
 
-String _date(DateTime d) => '${d.day}/${d.month}/${d.year}';
-
 /// Blood types as left-to-right islands inside Arabic text ("O-  O+  A-").
 String _typesText(String recipient) =>
     compatibleDonorTypes(recipient).map((t) => '\u2066$t\u2069').join('  ');
@@ -163,43 +161,47 @@ class ContactButtons extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Home: actions, my donor card, open requests
+// Blood donation section: donor registration only
 // ---------------------------------------------------------------------------
 
-class BloodHomeScreen extends ConsumerStatefulWidget {
-  const BloodHomeScreen({super.key});
+String donorStatusKey(DonorStatus s) => 'donor_status_${s.name}';
+
+Color donorStatusColor(DonorStatus s) => switch (s) {
+  DonorStatus.pending => AppColors.warning,
+  DonorStatus.approved => AppColors.success,
+  DonorStatus.rejected => AppColors.grey,
+};
+
+class DonorStatusPill extends StatelessWidget {
+  const DonorStatusPill(this.status, {super.key});
+  final DonorStatus status;
   @override
-  ConsumerState<BloodHomeScreen> createState() => _BloodHomeScreenState();
+  Widget build(BuildContext context) => Pill(
+    label: context.tr(donorStatusKey(status)),
+    color: donorStatusColor(status),
+    icon: switch (status) {
+      DonorStatus.pending => Icons.hourglass_top,
+      DonorStatus.approved => Icons.verified,
+      DonorStatus.rejected => Icons.block,
+    },
+  );
 }
 
-class _BloodHomeScreenState extends ConsumerState<BloodHomeScreen> {
-  String? _type;
+/// "تبرع بالدم": registered patients and volunteer doctors register as
+/// blood donors; the committee reviews the registrations.
+class BloodHomeScreen extends ConsumerWidget {
+  const BloodHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final blood = ref.watch(bloodProvider);
-    final me = blood.myDonor;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final me = ref.watch(bloodProvider).myDonor;
     final text = Theme.of(context).textTheme;
-    final requests =
-        blood.requests
-            .where((r) => _type == null || r.bloodType == _type)
-            .toList()
-          ..sort((a, b) {
-            int score(BloodRequest r) =>
-                (r.isOpen ? 2 : 0) + (r.urgent ? 1 : 0);
-            final s = score(b).compareTo(score(a));
-            return s != 0 ? s : b.createdAt.compareTo(a.createdAt);
-          });
-    final forMe = me == null
-        ? <BloodRequest>[]
-        : matchRequests(me, blood.requests);
 
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('blood_donation'))),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
-          // Intro
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -220,7 +222,7 @@ class _BloodHomeScreenState extends ConsumerState<BloodHomeScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    context.tr('blood_intro'),
+                    context.tr('donor_section_intro'),
                     style: text.bodyMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -231,92 +233,46 @@ class _BloodHomeScreenState extends ConsumerState<BloodHomeScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 12),
-
-          // Actions
-          Row(
-            children: [
-              Expanded(
-                child: _ActionCard(
-                  icon: Icons.add_circle_outline,
-                  title: context.tr('need_blood'),
-                  subtitle: context.tr('need_blood_desc'),
-                  onTap: () => context.push('/blood/request'),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _ActionCard(
-                  icon: Icons.volunteer_activism,
-                  title: context.tr(
-                    me == null ? 'want_donate' : 'my_donor_card',
-                  ),
-                  subtitle: context.tr(
-                    me == null ? 'want_donate_desc' : 'edit',
-                  ),
-                  onTap: () => context.push('/blood/donor'),
-                ),
-              ),
-            ],
-          ),
-
-          // My donor card + requests I can answer
-          if (me != null) ...[
-            const SizedBox(height: 12),
-            _MyDonorCard(donor: me),
-            if (forMe.isNotEmpty) ...[
-              SectionHeader(context.tr('requests_for_you')),
-              for (final r in forMe.take(3))
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: BloodRequestCard(request: r),
-                ),
-            ],
-          ],
-
-          // All requests
-          SectionHeader(context.tr('blood_requests')),
-          SizedBox(
-            height: 44,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(end: 8),
-                  child: ChoiceChip(
-                    label: Text(context.tr('all')),
-                    selected: _type == null,
-                    onSelected: (_) => setState(() => _type = null),
-                  ),
-                ),
-                for (final t in bloodTypes)
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(end: 8),
-                    child: ChoiceChip(
-                      label: Text(t, textDirection: TextDirection.ltr),
-                      selected: _type == t,
-                      onSelected: (_) => setState(() => _type = t),
+          const SizedBox(height: 16),
+          if (me == null)
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Icon(
+                      Icons.volunteer_activism,
+                      size: 52,
+                      color: AppColors.primary,
                     ),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          if (requests.isEmpty)
-            EmptyState(
-              icon: Icons.bloodtype_outlined,
-              message: context.tr('no_requests'),
+                    const SizedBox(height: 10),
+                    Text(
+                      context.tr('become_donor_title'),
+                      textAlign: TextAlign.center,
+                      style: text.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      context.tr('become_donor_desc'),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton.icon(
+                      onPressed: () => context.push('/blood/donor'),
+                      icon: const Icon(Icons.how_to_reg),
+                      label: Text(context.tr('register_donor')),
+                    ),
+                  ],
+                ),
+              ),
             )
           else
-            for (final r in requests)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: BloodRequestCard(request: r),
-              ),
-
-          const SizedBox(height: 8),
-          const _CompatibilityTable(),
-          const SizedBox(height: 12),
+            _MyDonorCard(donor: me),
+          const SizedBox(height: 16),
           Row(
             children: [
               const Icon(Icons.lock_outline, size: 16, color: AppColors.grey),
@@ -335,52 +291,6 @@ class _BloodHomeScreenState extends ConsumerState<BloodHomeScreen> {
   }
 }
 
-class _ActionCard extends StatelessWidget {
-  const _ActionCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: AppColors.primary,
-                child: Icon(icon, color: Colors.white),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                style: text.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.primary,
-                ),
-              ),
-              Text(subtitle, style: text.bodySmall),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _MyDonorCard extends ConsumerWidget {
   const _MyDonorCard({required this.donor});
   final BloodDonor donor;
@@ -388,7 +298,11 @@ class _MyDonorCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
-    final next = donor.nextEligibleDate;
+    final note = switch (donor.status) {
+      DonorStatus.pending => 'donor_pending_note',
+      DonorStatus.approved => 'donor_approved_note',
+      DonorStatus.rejected => 'donor_rejected_note',
+    };
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
@@ -397,17 +311,18 @@ class _MyDonorCard extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               children: [
-                BloodTypeBadge(donor.bloodType, size: 58),
+                BloodTypeBadge(donor.bloodType, size: 60),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        context.tr('my_donor_card'),
+                        '${context.tr('my_donor_card')} • ${donor.code}',
                         style: text.labelMedium?.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w800,
@@ -420,7 +335,8 @@ class _MyDonorCard extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        '${donor.city} • ${context.tr(contactKey(donor.contact))}',
+                        '${donor.city} • ${donor.phone}',
+                        textDirection: TextDirection.rtl,
                         style: text.bodySmall,
                       ),
                     ],
@@ -433,22 +349,24 @@ class _MyDonorCard extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              value: donor.available,
-              onChanged: (v) =>
-                  ref.read(bloodProvider.notifier).setMyAvailability(v),
-              title: Text(
-                context.tr('available_to_donate'),
-                style: const TextStyle(fontWeight: FontWeight.w700),
-              ),
-              subtitle: Text(
-                donor.eligibleNow || next == null
-                    ? context.tr('eligible_now')
-                    : context.tr('next_eligible', args: {'date': _date(next)}),
-              ),
+            const SizedBox(height: 10),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: DonorStatusPill(donor.status),
             ),
+            const SizedBox(height: 8),
+            Text(context.tr(note)),
+            if (donor.isApproved)
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: donor.available,
+                onChanged: (v) =>
+                    ref.read(bloodProvider.notifier).setMyAvailability(v),
+                title: Text(
+                  context.tr('available_to_donate'),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
           ],
         ),
       ),
@@ -502,7 +420,7 @@ class BloodRequestCard extends ConsumerWidget {
         onTap: () => context.push(
           forCommittee
               ? '/committee/request/${r.id}'
-              : '/blood/request/${r.id}',
+              : '/patient/blood/${r.id}',
         ),
         child: Padding(
           padding: const EdgeInsets.all(14),
@@ -574,52 +492,6 @@ class BloodRequestCard extends ConsumerWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _CompatibilityTable extends StatelessWidget {
-  const _CompatibilityTable();
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: ExpansionTile(
-        leading: const Icon(Icons.info_outline, color: AppColors.primary),
-        title: Text(
-          context.tr('compat_title'),
-          style: const TextStyle(
-            fontWeight: FontWeight.w800,
-            color: AppColors.primary,
-          ),
-        ),
-        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        children: [
-          for (final t in bloodTypes)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                children: [
-                  BloodTypeBadge(t, size: 34),
-                  const SizedBox(width: 10),
-                  Text(
-                    '${context.tr('receives_from')}: ',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  Expanded(
-                    child: Text(
-                      _typesText(t),
-                      textDirection: TextDirection.ltr,
-                      textAlign: TextAlign.end,
-                      style: const TextStyle(fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-        ],
       ),
     );
   }
@@ -700,6 +572,52 @@ Widget _label(BuildContext context, String key) => Padding(
 );
 
 // ---------------------------------------------------------------------------
+// Blood requests: only from the patient's own profile
+// ---------------------------------------------------------------------------
+
+/// The patient's blood requests (Profile > Blood requests).
+class MyBloodRequestsScreen extends ConsumerWidget {
+  const MyBloodRequestsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mine =
+        ref
+            .watch(bloodProvider)
+            .requests
+            .where((r) => r.requesterId == MockData.currentPatientId)
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    return Scaffold(
+      appBar: AppBar(title: Text(context.tr('my_blood_requests'))),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/patient/blood/new'),
+        icon: const Icon(Icons.add),
+        label: Text(context.tr('new_blood_request')),
+      ),
+      body: mine.isEmpty
+          ? EmptyState(
+              icon: Icons.bloodtype_outlined,
+              message: context.tr('no_blood_requests'),
+            )
+          : ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+              children: [
+                Text(context.tr('committee_reviews_request')),
+                const SizedBox(height: 12),
+                for (final r in mine)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: BloodRequestCard(request: r),
+                  ),
+              ],
+            ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // New blood request
 // ---------------------------------------------------------------------------
 
@@ -766,7 +684,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(context.tr('blood_request_posted'))));
-    context.pushReplacement('/blood/request/$id');
+    context.pushReplacement('/patient/blood/$id');
   }
 
   @override
@@ -930,7 +848,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
 }
 
 // ---------------------------------------------------------------------------
-// Request details: matching donors (for the requester) or volunteering
+// Request details (the requester follows the committee's progress)
 // (for a donor)
 // ---------------------------------------------------------------------------
 
@@ -953,12 +871,9 @@ class BloodRequestDetailsScreen extends ConsumerWidget {
     }
     final text = Theme.of(context).textTheme;
     final mine = r.requesterId == MockData.currentPatientId;
-    final me = blood.myDonor;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.tr(mine ? 'your_request' : 'request_blood')),
-      ),
+      appBar: AppBar(title: Text(context.tr('your_request'))),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
         children: [
@@ -1026,10 +941,7 @@ class BloodRequestDetailsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          if (mine)
-            ..._requesterView(context, ref, r)
-          else
-            ..._donorView(context, ref, r, me),
+          ..._requesterView(context, ref, r),
         ],
       ),
     );
@@ -1091,66 +1003,6 @@ class BloodRequestDetailsScreen extends ConsumerWidget {
       ],
     ];
   }
-
-  /// A donor can volunteer; the committee then contacts them.
-  List<Widget> _donorView(
-    BuildContext context,
-    WidgetRef ref,
-    BloodRequest r,
-    BloodDonor? me,
-  ) {
-    if (!r.isOpen) return const [];
-    final volunteered = me != null && r.volunteerIds.contains(me.id);
-
-    if (volunteered) {
-      return [
-        const SizedBox(height: 16),
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.favorite, color: AppColors.success),
-            title: Text(
-              context.tr('volunteered'),
-              style: const TextStyle(fontWeight: FontWeight.w800),
-            ),
-            subtitle: Text(context.tr('committee_will_contact')),
-          ),
-        ),
-      ];
-    }
-
-    final String? blocker;
-    if (me == null) {
-      blocker = context.tr('must_register_donor');
-    } else if (!canDonate(me.bloodType, r.bloodType)) {
-      blocker = context.tr('not_compatible', args: {'type': me.bloodType});
-    } else {
-      blocker = null;
-    }
-
-    return [
-      const SizedBox(height: 16),
-      if (blocker != null) ...[
-        Text(blocker, textAlign: TextAlign.center),
-        const SizedBox(height: 10),
-        if (me == null)
-          FilledButton.icon(
-            onPressed: () => context.push('/blood/donor'),
-            icon: const Icon(Icons.volunteer_activism),
-            label: Text(context.tr('register_donor')),
-          ),
-      ] else
-        FilledButton.icon(
-          onPressed: () {
-            ref.read(bloodProvider.notifier).volunteer(r.id);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(context.tr('thanks_volunteer'))),
-            );
-          },
-          icon: const Icon(Icons.favorite),
-          label: Text(context.tr('i_can_donate')),
-        ),
-    ];
-  }
 }
 
 /// submitted -> in progress -> matched -> fulfilled.
@@ -1208,7 +1060,7 @@ class BloodStatusTimeline extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Donor registration
+// Donor registration (name, blood type, city, phone)
 // ---------------------------------------------------------------------------
 
 class DonorRegisterScreen extends ConsumerStatefulWidget {
@@ -1223,56 +1075,23 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
   late final BloodDonor? _existing = ref.read(bloodProvider).myDonor;
   late final _auth = ref.read(authProvider);
   late final _name = TextEditingController(
-    text: _existing?.name ?? (_auth.loggedIn ? _auth.displayName : ''),
+    text: _existing?.name ?? _auth.displayName,
   );
-  late final _age = TextEditingController(
-    text: _existing != null
-        ? '${_existing.age}'
-        : (_auth.loggedIn && !_auth.isDoctor
-              ? '${ref.read(healthProfileProvider).age}'
-              : ''),
-  );
-  // Patients, doctors or anyone else can register as donors.
-  late DonorKind _kind =
-      _existing?.kind ??
-      (!_auth.loggedIn
-          ? DonorKind.other
-          : _auth.isDoctor
-          ? DonorKind.doctor
-          : DonorKind.patient);
-  late bool _male = _existing?.male ?? ref.read(healthProfileProvider).male;
-  late bool _healthOk = _existing != null;
   late final _city = TextEditingController(text: _existing?.city ?? '');
   late final _phone = TextEditingController(
     text: _existing?.phone ?? _auth.phone,
   );
   late String? _type =
       _existing?.bloodType ??
-      (_auth.loggedIn && !_auth.isDoctor
-          ? ref.read(healthProfileProvider).bloodType
-          : null);
-  late ContactMethod _contact = _existing?.contact ?? ContactMethod.whatsapp;
-  late bool _available = _existing?.available ?? true;
+      (_auth.isDoctor ? null : ref.read(healthProfileProvider).bloodType);
   late bool _share = _existing?.shareContact ?? false;
-  late DateTime? _lastDonation = _existing?.lastDonation;
 
   @override
   void dispose() {
-    for (final c in [_name, _age, _city, _phone]) {
+    for (final c in [_name, _city, _phone]) {
       c.dispose();
     }
     super.dispose();
-  }
-
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _lastDonation ?? now,
-      firstDate: DateTime(now.year - 10),
-      lastDate: now,
-    );
-    if (picked != null) setState(() => _lastDonation = picked);
   }
 
   void _save() {
@@ -1280,12 +1099,6 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
     if (_type == null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(context.tr('blood_type'))));
-      return;
-    }
-    if (!_healthOk) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.tr('health_declaration_required'))),
-      );
       return;
     }
     if (!_share) {
@@ -1301,13 +1114,10 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
           bloodType: _type!,
           city: _city.text,
           phone: _phone.text,
-          contact: _contact,
-          available: _available,
           shareContact: _share,
-          kind: _kind,
-          male: _male,
-          age: int.parse(_age.text),
-          lastDonation: _lastDonation,
+          // Registered patients or volunteer doctors only.
+          kind: _auth.isDoctor ? DonorKind.doctor : DonorKind.patient,
+          userId: _auth.userId,
         );
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(context.tr('donor_saved'))));
@@ -1318,7 +1128,6 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
   Widget build(BuildContext context) {
     String? required(String? v) =>
         (v == null || v.trim().isEmpty) ? context.tr('required_field') : null;
-    final next = _lastDonation?.add(BloodDonor.minInterval);
 
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('register_donor'))),
@@ -1327,25 +1136,6 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
           children: [
-            _label(context, 'blood_type'),
-            _BloodTypePicker(
-              value: _type,
-              onChanged: (t) => setState(() => _type = t),
-            ),
-            _label(context, 'donor_kind'),
-            SegmentedButton<DonorKind>(
-              segments: [
-                for (final k in DonorKind.values)
-                  ButtonSegment(
-                    value: k,
-                    label: Text(context.tr('kind_${k.name}')),
-                  ),
-              ],
-              selected: {_kind},
-              showSelectedIcon: false,
-              onSelectionChanged: (v) => setState(() => _kind = v.first),
-            ),
-            _label(context, 'personal_info'),
             TextFormField(
               controller: _name,
               decoration: InputDecoration(
@@ -1354,49 +1144,12 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
               ),
               validator: required,
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _age,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: InputDecoration(
-                      labelText: context.tr('age_years'),
-                      prefixIcon: const Icon(Icons.cake_outlined),
-                    ),
-                    validator: (v) {
-                      final age = int.tryParse(v ?? '');
-                      if (age == null) return context.tr('required_field');
-                      if (age < BloodDonor.minAge || age > BloodDonor.maxAge) {
-                        return context.tr('age_out_of_range');
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SegmentedButton<bool>(
-                    segments: [
-                      ButtonSegment(
-                        value: true,
-                        label: Text(context.tr('male')),
-                      ),
-                      ButtonSegment(
-                        value: false,
-                        label: Text(context.tr('female')),
-                      ),
-                    ],
-                    selected: {_male},
-                    showSelectedIcon: false,
-                    onSelectionChanged: (v) => setState(() => _male = v.first),
-                  ),
-                ),
-              ],
+            _label(context, 'blood_type'),
+            _BloodTypePicker(
+              value: _type,
+              onChanged: (t) => setState(() => _type = t),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _city,
               decoration: InputDecoration(
@@ -1418,72 +1171,28 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
               ),
               validator: (v) => _phoneValidator(context, v),
             ),
-            _label(context, 'contact_method'),
-            _ContactPicker(
-              value: _contact,
-              onChanged: (m) => setState(() => _contact = m),
-            ),
-            _label(context, 'last_donation'),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _pickDate,
-                    icon: const Icon(Icons.event_outlined),
-                    label: Text(
-                      _lastDonation == null
-                          ? context.tr('never_donated')
-                          : _date(_lastDonation!),
-                    ),
-                  ),
-                ),
-                if (_lastDonation != null)
-                  IconButton(
-                    tooltip: context.tr('clear'),
-                    onPressed: () => setState(() => _lastDonation = null),
-                    icon: const Icon(Icons.close),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              next == null || !next.isAfter(DateTime.now())
-                  ? context.tr('eligible_now')
-                  : context.tr('next_eligible', args: {'date': _date(next)}),
-              style: const TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
             const SizedBox(height: 12),
             Card(
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    value: _available,
-                    onChanged: (v) => setState(() => _available = v),
-                    title: Text(context.tr('available_to_donate')),
-                  ),
-                  CheckboxListTile(
-                    value: _healthOk,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (v) => setState(() => _healthOk = v ?? false),
-                    title: Text(context.tr('health_declaration')),
-                  ),
-                  CheckboxListTile(
-                    value: _share,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (v) => setState(() => _share = v ?? false),
-                    title: Text(context.tr('share_contact_consent')),
-                  ),
-                ],
+              child: CheckboxListTile(
+                value: _share,
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: (v) => setState(() => _share = v ?? false),
+                title: Text(context.tr('share_contact_consent')),
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              context.tr('blood_privacy'),
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: AppColors.grey),
+            Row(
+              children: [
+                const Icon(Icons.info_outline, size: 16, color: AppColors.grey),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    context.tr('donor_review_info'),
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: AppColors.grey),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
