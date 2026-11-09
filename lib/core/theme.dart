@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Visual identity of "شفاءٌ للنّاس" (heart + cross logo).
+/// Visual identity of "شِفاءٌ لِلنّاس" (heart + cross logo).
 class AppColors {
   AppColors._();
 

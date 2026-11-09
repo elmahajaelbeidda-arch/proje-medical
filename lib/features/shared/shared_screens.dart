@@ -6,6 +6,7 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/models.dart';
+import '../../widgets/brand.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
 import '../onboarding/onboarding_screens.dart';
@@ -357,7 +358,7 @@ class SettingsScreen extends ConsumerWidget {
             child: ListTile(
               leading: const Icon(Icons.info_outline),
               title: Text(context.tr('about')),
-              subtitle: Text(
+              subtitle: BrandRichText(
                 '${context.tr('app_name')} — ${context.tr('app_slogan')}\n${context.tr('association')} • ${context.tr('version')} 1.0.0',
               ),
               isThreeLine: true,
@@ -384,11 +385,12 @@ class DisclaimerScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         children: [
           const Center(child: AppLogo(size: 96)),
+          const Center(child: BrandName(fontSize: 38)),
           const SizedBox(height: 16),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Text(
+              child: BrandRichText(
                 context.tr('disclaimer_body'),
                 style: Theme.of(context).textTheme.bodyLarge
                     ?.copyWith(height: 1.7),

@@ -337,7 +337,7 @@ class MockData {
       ),
       AppNotification(
         icon: Icons.volunteer_activism_outlined,
-        title: 'مرحباً بك في شفاءٌ للنّاس',
+        title: 'مرحباً بك في شِفاءٌ لِلنّاس',
         body: 'أكمل ملفك الصحي لتساعد الأطباء على فهم حالتك.',
         time: now.subtract(const Duration(days: 4)),
         read: true,

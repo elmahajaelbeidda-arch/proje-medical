@@ -6,8 +6,9 @@ import '../../core/l10n.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
+import '../../widgets/brand.dart';
 
-/// The heart + cross icon of "شفاءٌ للنّاس".
+/// The heart + cross icon of "شِفاءٌ لِلنّاس".
 class AppLogo extends StatelessWidget {
   const AppLogo({super.key, this.size = 96});
   final double size;
@@ -41,13 +42,9 @@ class ShifaLockup extends StatelessWidget {
           : CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          context.tr('app_name'),
-          style: text.headlineLarge?.copyWith(
-            color: dark ? Colors.white : AppColors.ink,
-            fontWeight: FontWeight.w900,
-            height: 1.25,
-          ),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: BrandName(fontSize: vertical ? 50 : 42),
         ),
         Text(
           context.tr('app_tagline'),
@@ -133,7 +130,7 @@ class ShifaHero extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
+            child: BrandRichText(
               context.tr('about_shifa'),
               textAlign: TextAlign.center,
               style: text.bodyLarge?.copyWith(

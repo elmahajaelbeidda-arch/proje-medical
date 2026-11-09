@@ -7,7 +7,7 @@ import 'package:shifa/models/models.dart';
 
 void main() {
   test('translations exist for Arabic and French', () {
-    expect(AppStrings.of('ar', 'app_name'), 'شفاءٌ للنّاس');
+    expect(AppStrings.of('ar', 'app_name'), 'شِفاءٌ لِلنّاس');
     expect(AppStrings.of('fr', 'app_name'), 'Chifa Linnas');
     expect(AppStrings.of('ar', 'missing_key'), 'missing_key');
   });
