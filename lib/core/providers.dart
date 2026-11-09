@@ -67,7 +67,7 @@ class AuthState {
   /// Name shown in the UI (falls back to the demo user's name).
   String get displayName {
     if (name.isNotEmpty) return name;
-    if (isCommittee) return 'لجنة التبرع';
+    if (isCommittee) return 'فريق المتابعة والإدارة';
     return isDoctor
         ? MockData.doctorById(MockData.currentDoctorId)!.name
         : 'محمد الأمين';
@@ -113,7 +113,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
   void login({String? name}) {
     final defaultName = state.isCommittee
-        ? 'لجنة التبرع'
+        ? 'فريق المتابعة والإدارة'
         : state.isDoctor
         ? MockData.doctorById(MockData.currentDoctorId)!.name
         : 'محمد الأمين';

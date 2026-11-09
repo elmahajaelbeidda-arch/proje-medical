@@ -189,8 +189,8 @@ class AppStrings {
     ],
     'available_to_donate': ['متاح للتبرع', 'Disponible pour donner'],
     'share_contact_consent': [
-      'أوافق على أن تتواصل معي لجنة التبرع عند الحاجة إلى فصيلتي',
-      'J’accepte que le comité me contacte si mon groupe est recherché',
+      'أوافق على أن يتواصل معي فريق المتابعة والإدارة عند الحاجة إلى فصيلتي',
+      'J’accepte que l’équipe de suivi me contacte si mon groupe est recherché',
     ],
     'share_contact_required': [
       'الموافقة مطلوبة ليتمكن المحتاجون من التواصل معك',
@@ -207,25 +207,25 @@ class AppStrings {
     ],
     'receives_from': ['يستقبل من', 'Reçoit de'],
     'blood_privacy': [
-      'بيانات المتبرعين سرية: لا يطّلع عليها إلا لجنة التبرع، ولا تُعرض على المستخدمين الآخرين.',
-      'Les données des donneurs sont confidentielles : seul le comité y a accès.',
+      'بيانات المتبرعين سرية: لا يطّلع عليها إلا فريق المتابعة والإدارة، ولا تُعرض على المستخدمين الآخرين.',
+      'Les données des donneurs sont confidentielles : seule l’équipe de suivi y a accès.',
     ],
     'your_request': ['طلبك', 'Votre demande'],
     // Blood donation: committee, privacy, personal info
-    'role_committee': ['لجنة التبرع', 'Comité du don'],
-    'committee_login': ['دخول لجنة التبرع', 'Accès comité du don'],
-    'committee_title': ['لجنة التبرع', 'Comité'],
+    'role_committee': ['فريق المتابعة والإدارة', 'Équipe de suivi et de gestion'],
+    'committee_login': ['دخول فريق المتابعة والإدارة', 'Accès équipe de suivi et de gestion'],
+    'committee_title': ['فريق المتابعة والإدارة', 'Équipe de suivi et de gestion'],
     'committee_only': [
-      'هذه المعلومات لا تظهر إلا للجنة التبرع',
-      'Informations visibles par le comité uniquement',
+      'هذه المعلومات لا تظهر إلا لفريق المتابعة والإدارة',
+      'Informations visibles par l’équipe de suivi uniquement',
     ],
     'committee_will_contact': [
-      'ستتواصل معك لجنة التبرع لترتيب التبرع. بياناتك لا تُعرض على أحد.',
-      'Le comité vous contactera pour organiser le don. Vos données restent confidentielles.',
+      'سيتواصل معك فريق المتابعة والإدارة لترتيب التبرع. بياناتك لا تُعرض على أحد.',
+      'L’équipe de suivi vous contactera pour organiser le don. Vos données restent confidentielles.',
     ],
     'committee_reviews_request': [
-      'تراجع لجنة التبرع طلبك وتربطه بمتبرعين مناسبين، ثم تتصل بك.',
-      'Le comité étudie votre demande, la relie à des donneurs compatibles puis vous appelle.',
+      'يراجع فريق المتابعة والإدارة طلبك ويربطه بمتبرعين مناسبين، ثم يتصل بك.',
+      'L’équipe de suivi étudie votre demande, la relie à des donneurs compatibles puis vous appelle.',
     ],
     'status_submitted': ['جديد', 'Nouvelle'],
     'status_inProgress': ['قيد المعالجة', 'En traitement'],
@@ -281,32 +281,32 @@ class AppStrings {
     'request_code': ['رمز الطلب', 'Code demande'],
     // Blood donation: donors only + committee review
     'donor_section_intro': [
-      'سجّل كمتبرع بالدم. تراجع لجنة التبرع تسجيلك، ثم تتواصل معك عند الحاجة إلى فصيلتك.',
-      'Inscrivez-vous comme donneur. Le comité valide votre inscription et vous contacte si votre groupe est recherché.',
+      'سجّل كمتبرع بالدم. يراجع فريق المتابعة والإدارة تسجيلك، ثم يتواصل معك عند الحاجة إلى فصيلتك.',
+      'Inscrivez-vous comme donneur. L’équipe de suivi valide votre inscription et vous contacte si votre groupe est recherché.',
     ],
     'become_donor_title': ['كن متبرعاً بالدم', 'Devenez donneur de sang'],
     'become_donor_desc': [
-      'سجّل اسمك وفصيلة دمك ومدينتك ورقم هاتفك، وستراجع لجنة التبرع تسجيلك.',
-      'Indiquez nom, groupe sanguin, ville et téléphone ; le comité validera votre inscription.',
+      'سجّل اسمك وفصيلة دمك ومدينتك ورقم هاتفك، وسيراجع فريق المتابعة والإدارة تسجيلك.',
+      'Indiquez nom, groupe sanguin, ville et téléphone ; l’équipe de suivi validera votre inscription.',
     ],
     'donor_status_pending': ['قيد المراجعة', 'En attente'],
     'donor_status_approved': ['مقبول', 'Accepté'],
     'donor_status_rejected': ['مرفوض', 'Refusé'],
     'donor_pending_note': [
-      'تسجيلك قيد مراجعة لجنة التبرع.',
-      'Votre inscription est en cours de vérification par le comité.',
+      'تسجيلك قيد مراجعة فريق المتابعة والإدارة.',
+      'Votre inscription est en cours de vérification par l’équipe de suivi.',
     ],
     'donor_approved_note': [
-      'تم قبولك كمتبرع. قد تتواصل معك اللجنة عند الحاجة إلى فصيلتك.',
-      'Vous êtes accepté. Le comité peut vous contacter si besoin.',
+      'تم قبولك كمتبرع. قد يتواصل معك الفريق عند الحاجة إلى فصيلتك.',
+      'Vous êtes accepté. L’équipe de suivi peut vous contacter si besoin.',
     ],
     'donor_rejected_note': [
       'لم يُقبل تسجيلك. يمكنك تعديل بياناتك لإعادة إرسالها أو التواصل مع الجمعية.',
       'Inscription refusée. Modifiez vos données pour la renvoyer ou contactez l’association.',
     ],
     'donor_review_info': [
-      'بعد الحفظ يُرسل تسجيلك إلى لجنة التبرع للمراجعة (وكذلك عند كل تعديل).',
-      'Après enregistrement, votre inscription est envoyée au comité (et à chaque modification).',
+      'بعد الحفظ يُرسل تسجيلك إلى فريق المتابعة والإدارة للمراجعة (وكذلك عند كل تعديل).',
+      'Après enregistrement, votre inscription est envoyée à l’équipe de suivi (et à chaque modification).',
     ],
     'approve': ['قبول', 'Accepter'],
     'reject': ['رفض', 'Refuser'],
@@ -331,16 +331,16 @@ class AppStrings {
     'review_approved': ['مقبول', 'Accepté'],
     'review_rejected': ['مرفوض', 'Refusé'],
     'account_pending_title': [
-      'حسابك قيد مراجعة لجنة التبرع',
+      'حسابك قيد مراجعة فريق المتابعة والإدارة',
       'Votre compte est en cours de vérification',
     ],
     'account_pending_patient': [
-      'تتحقق اللجنة من بياناتك وبطاقة التعريف. يمكنك تصفّح التطبيق، وستصلك رسالة عند قبول حسابك.',
-      'Le comité vérifie vos informations. Vous serez notifié dès l’acceptation.',
+      'يتحقق الفريق من بياناتك وبطاقة التعريف. يمكنك تصفّح التطبيق، وستصلك رسالة عند قبول حسابك.',
+      'L’équipe de suivi vérifie vos informations. Vous serez notifié dès l’acceptation.',
     ],
     'account_pending_doctor': [
-      'تتحقق اللجنة من بطاقتك المهنية ورقم تسجيلك. لا يمكنك قبول الحالات قبل قبول حسابك.',
-      'Le comité vérifie votre carte professionnelle. Vous pourrez accepter des cas après validation.',
+      'يتحقق الفريق من بطاقتك المهنية ورقم تسجيلك. لا يمكنك قبول الحالات قبل قبول حسابك.',
+      'L’équipe de suivi vérifie votre carte professionnelle. Vous pourrez accepter des cas après validation.',
     ],
     'account_rejected_title': ['لم يُقبل حسابك', 'Compte refusé'],
     'account_rejected_body': [
@@ -348,7 +348,7 @@ class AppStrings {
       'Contactez l’association pour en connaître la raison.',
     ],
     'doctor_not_approved': [
-      'يمكنك قبول الحالات بعد أن توافق لجنة التبرع على حسابك.',
+      'يمكنك قبول الحالات بعد أن يوافق فريق المتابعة والإدارة على حسابك.',
       'Vous pourrez accepter des cas après validation de votre compte.',
     ],
     'account_approved_msg': ['تم قبول الحساب', 'Compte accepté'],
