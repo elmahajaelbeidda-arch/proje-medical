@@ -24,21 +24,21 @@ List<String> find(String query) => MockData.doctors
 
 void main() {
   test('spoken Arabic sentence with filler words finds the doctor', () {
-    // d2 = cardiologist in Casablanca
-    expect(find('أريد طبيب قلب في الدار البيضاء'), ['d2']);
+    // d2 = cardiologist in Nouadhibou
+    expect(find('أريد طبيب قلب في نواذيبو'), ['d2']);
     expect(find('أُريدُ طبيبَ القلبِ'), ['d2']); // diacritics + article
   });
 
   test('specialty, city and name searches', () {
     expect(find('أطفال'), ['d3']);
     expect(find('الأطفال'), ['d3']);
-    expect(find('وهران'), ['d4']);
+    expect(find('كيفة'), ['d4']);
     expect(find('سارة'), ['d1']);
     expect(find('ساره'), ['d1']); // ة / ه
   });
 
   test('French queries, accents and word endings', () {
-    expect(find('cardiologue à Casablanca'), ['d2']);
+    expect(find('cardiologue à Nouadhibou'), ['d2']);
     expect(find('je cherche un pédiatre'), ['d3']);
     expect(find('DERMATOLOGIE'), ['d7']);
   });

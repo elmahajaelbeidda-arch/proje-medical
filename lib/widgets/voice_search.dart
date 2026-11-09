@@ -10,7 +10,7 @@ import '../core/theme.dart';
 final SpeechToText _speech = SpeechToText();
 
 /// Search box with a microphone: the user can type, or tap the mic and say
-/// what they are looking for (e.g. "طبيب قلب في وهران").
+/// what they are looking for (e.g. "طبيب قلب في نواكشوط").
 class VoiceSearchField extends StatefulWidget {
   const VoiceSearchField({
     super.key,

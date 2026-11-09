@@ -114,8 +114,8 @@ class AppStrings {
     'voice_search': ['البحث الصوتي', 'Recherche vocale'],
     'voice_search_listening': ['تحدّث الآن...', 'Parlez maintenant...'],
     'voice_search_example_doctor': [
-      'مثلاً: «طبيب قلب في الدار البيضاء» أو «أطفال»',
-      'Ex : « cardiologue à Casablanca » ou « pédiatrie »',
+      'مثلاً: «طبيب قلب في نواذيبو» أو «أطفال»',
+      'Ex : « cardiologue à Nouadhibou » ou « pédiatrie »',
     ],
     'voice_search_example_request': [
       'مثلاً: «تحليل دم» أو «سعال»',

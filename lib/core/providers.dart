@@ -122,8 +122,8 @@ class AuthNotifier extends Notifier<AuthState> {
       loggedIn: true,
       name: (name == null || name.trim().isEmpty) ? defaultName : name.trim(),
       // Demo account: already verified at sign-up.
-      phone: '0550 12 34 56',
-      idNumber: '109870512304821',
+      phone: '22 12 34 56',
+      idNumber: '1098705123',
       phoneVerified: true,
     );
   }

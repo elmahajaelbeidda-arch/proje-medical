@@ -34,6 +34,16 @@ IconData contactIcon(ContactMethod m) => switch (m) {
   ContactMethod.sms => Icons.sms_outlined,
 };
 
+/// International format for WhatsApp (digits only, no "+"). Local numbers
+/// are Mauritanian: +222 followed by 8 digits.
+String internationalNumber(String phone) {
+  final digits = phone.replaceAll(RegExp(r'[^0-9+]'), '');
+  if (digits.startsWith('+')) return digits.substring(1);
+  if (digits.startsWith('00')) return digits.substring(2);
+  if (digits.startsWith('222') && digits.length == 11) return digits;
+  return '222$digits';
+}
+
 /// Opens the phone app, WhatsApp or SMS for [phone].
 Future<void> openContact(
   BuildContext context,
@@ -41,19 +51,13 @@ Future<void> openContact(
   ContactMethod method,
 ) async {
   final digits = phone.replaceAll(RegExp(r'[^0-9+]'), '');
-  // WhatsApp needs the international format; local numbers starting with 0
-  // are assumed to be Algerian (+213).
-  String international() {
-    if (digits.startsWith('+')) return digits.substring(1);
-    if (digits.startsWith('00')) return digits.substring(2);
-    if (digits.startsWith('0')) return '213${digits.substring(1)}';
-    return digits;
-  }
 
   final uri = switch (method) {
     ContactMethod.call => Uri(scheme: 'tel', path: digits),
     ContactMethod.sms => Uri(scheme: 'sms', path: digits),
-    ContactMethod.whatsapp => Uri.parse('https://wa.me/${international()}'),
+    ContactMethod.whatsapp => Uri.parse(
+      'https://wa.me/${internationalNumber(phone)}',
+    ),
   };
   final messenger = ScaffoldMessenger.of(context);
   final failed = context.tr('pick_failed');
@@ -560,7 +564,7 @@ class _ContactPicker extends StatelessWidget {
 String? _phoneValidator(BuildContext context, String? v) {
   final digits = (v ?? '').replaceAll(RegExp(r'\D'), '');
   if (digits.isEmpty) return context.tr('required_field');
-  if (digits.length < 9) return context.tr('phone_invalid');
+  if (digits.length < 8) return context.tr('phone_invalid');
   return null;
 }
 

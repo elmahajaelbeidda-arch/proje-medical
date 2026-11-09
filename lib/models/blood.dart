@@ -66,11 +66,11 @@ String _code(String prefix, String id) {
   return '$prefix-${digits.padLeft(3, '0')}';
 }
 
-/// "0550 12 34 56" -> "0550 •• •• 56" (only the committee sees full numbers).
+/// "22 12 34 56" -> "22 •• •• 56" (only the team sees full numbers).
 String maskPhone(String phone) {
   final digits = phone.replaceAll(RegExp(r'\D'), '');
   if (digits.length < 6) return '•••';
-  return '${digits.substring(0, 4)} •• •• ${digits.substring(digits.length - 2)}';
+  return '${digits.substring(0, 2)} •• •• ${digits.substring(digits.length - 2)}';
 }
 
 /// "عائشة بن موسى" -> "ع. ب. م."

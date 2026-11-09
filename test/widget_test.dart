@@ -97,7 +97,7 @@ void main() {
     auth.selectRole(UserRole.patient);
     auth.register(
       name: 'Amina',
-      phone: '0550 11 22 33',
+      phone: '22 11 22 33',
       idNumber: '109870512304821',
     );
     var state = container.read(authProvider);

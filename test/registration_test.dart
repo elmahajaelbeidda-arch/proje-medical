@@ -15,14 +15,14 @@ void main() {
     final id = regs.add(
       role: UserRole.doctor,
       name: 'د. Nadia',
-      phone: '0550 11 22 33',
+      phone: '22 11 22 33',
       idNumber: '109870512304821',
       specialtyId: 'cardio',
-      licenseNumber: 'CNOM-16-1',
+      licenseNumber: 'ONMM-1',
     );
     auth.register(
       name: 'د. Nadia',
-      phone: '0550 11 22 33',
+      phone: '22 11 22 33',
       idNumber: '109870512304821',
       registrationId: id,
     );

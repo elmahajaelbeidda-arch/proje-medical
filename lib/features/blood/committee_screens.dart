@@ -1055,7 +1055,7 @@ Future<void> showExternalDonorSheet(
                     validator: (v) {
                       final digits = (v ?? '').replaceAll(RegExp(r'\D'), '');
                       if (digits.isEmpty) return ctx.tr('required_field');
-                      if (digits.length < 9) return ctx.tr('phone_invalid');
+                      if (digits.length < 8) return ctx.tr('phone_invalid');
                       return null;
                     },
                   ),

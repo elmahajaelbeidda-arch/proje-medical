@@ -1,7 +1,7 @@
 /// Tolerant text search for typed or spoken (speech-to-text) queries in
 /// Arabic and French.
 ///
-/// "أريد طبيب قلب في الدار البيضاء" matches a cardiologist in Casablanca:
+/// "أريد طبيب قلب في نواذيبو" matches a cardiologist in Nouadhibou:
 /// diacritics, letter variants, the article "ال" and filler words are ignored,
 /// and every remaining word must appear in one of the searched fields.
 class Search {

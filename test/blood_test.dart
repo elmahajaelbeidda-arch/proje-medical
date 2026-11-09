@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifa/core/blood_provider.dart';
+import 'package:shifa/features/blood/blood_screens.dart';
 import 'package:shifa/models/blood.dart';
 import 'package:shifa/models/models.dart';
 
@@ -16,7 +17,7 @@ BloodDonor donor(
   name: id,
   bloodType: type,
   city: city,
-  phone: '0550000000',
+  phone: '22000000',
   status: status,
   available: available,
   shareContact: share,
@@ -30,7 +31,7 @@ BloodRequest request(String type, String city) => BloodRequest(
   units: 1,
   hospital: 'h',
   city: city,
-  phone: '0550000000',
+  phone: '22000000',
   createdAt: DateTime(2026),
 );
 
@@ -64,7 +65,7 @@ void main() {
   });
 
   test('privacy helpers mask names and phone numbers', () {
-    expect(maskPhone('0550 12 34 56'), '0550 •• •• 56');
+    expect(maskPhone('22 12 34 56'), '22 •• •• 56');
     expect(maskName('عائشة بن موسى'), 'ع. ب. م.');
     expect(donor('bd7', 'O+', 'x').code, 'D-007');
   });
@@ -78,7 +79,7 @@ void main() {
       name: 'Karim',
       bloodType: 'O-',
       city: 'Sétif',
-      phone: '0550 44 55 66',
+      phone: '22 44 55 66',
       shareContact: true,
       kind: DonorKind.doctor,
     );
@@ -95,7 +96,7 @@ void main() {
       name: 'Karim',
       bloodType: 'O-',
       city: 'Alger',
-      phone: '0550 44 55 66',
+      phone: '22 44 55 66',
       shareContact: true,
       kind: DonorKind.doctor,
     );
@@ -123,7 +124,7 @@ void main() {
       hospital: 'CHU',
       city: 'Oran',
       urgent: false,
-      phone: '0550 11 22 33',
+      phone: '22 11 22 33',
       contact: ContactMethod.call,
     );
     BloodRequest req() => c.read(bloodProvider).request(id)!;
@@ -153,7 +154,7 @@ void main() {
       hospital: 'CHU Sétif',
       city: 'Sétif',
       urgent: true,
-      phone: '0550 11 22 33',
+      phone: '22 11 22 33',
       contact: ContactMethod.call,
       documents: const [
         Attachment(
@@ -188,5 +189,12 @@ void main() {
     blood.markFulfilled(id);
     expect(req().documents, isNotEmpty);
     expect(req().teamNotes, isNotEmpty);
+  });
+
+  test('WhatsApp numbers use the Mauritanian code +222', () {
+    expect(internationalNumber('32203250'), '22232203250');
+    expect(internationalNumber('22 12 34 56'), '22222123456');
+    expect(internationalNumber('+222 46 00 00 00'), '22246000000');
+    expect(internationalNumber('00213 550 11 22 33'), '213550112233');
   });
 }

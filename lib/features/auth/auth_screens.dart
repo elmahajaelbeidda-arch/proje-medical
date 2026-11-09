@@ -318,13 +318,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ],
                     decoration: InputDecoration(
                       labelText: context.tr('phone'),
-                      hintText: '05XX XX XX XX',
+                      hintText: 'XX XX XX XX',
                       prefixIcon: const Icon(Icons.phone_outlined),
                     ),
                     validator: (v) {
                       final digits = (v ?? '').replaceAll(RegExp(r'\D'), '');
                       if (digits.isEmpty) return context.tr('required_field');
-                      if (digits.length < 9) return context.tr('phone_invalid');
+                      if (digits.length < 8) return context.tr('phone_invalid');
                       return null;
                     },
                   ),
