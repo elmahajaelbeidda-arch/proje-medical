@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/mock_data.dart';
 import '../models/blood.dart';
+import '../models/models.dart';
 
 class BloodState {
   final List<BloodRequest> requests;
@@ -67,6 +68,7 @@ class BloodNotifier extends Notifier<BloodState> {
     required String phone,
     required ContactMethod contact,
     String note = '',
+    List<Attachment> documents = const [],
   }) {
     final id = 'b${DateTime.now().millisecondsSinceEpoch}';
     state = state.copyWith(
@@ -85,6 +87,7 @@ class BloodNotifier extends Notifier<BloodState> {
           phone: phone.trim(),
           contact: contact,
           note: note.trim(),
+          documents: documents,
           createdAt: DateTime.now(),
         ),
         ...state.requests,
@@ -135,6 +138,44 @@ class BloodNotifier extends Notifier<BloodState> {
   void _updateDonor(String id, BloodDonor Function(BloodDonor) f) {
     state = state.copyWith(
       donors: [for (final d in state.donors) d.id == id ? f(d) : d],
+    );
+  }
+
+  /// Team: add a donor from outside the platform (already checked by the
+  /// team, so approved directly). Returns the new donor id.
+  String addExternalDonor({
+    required String name,
+    required String bloodType,
+    required String city,
+    required String phone,
+  }) {
+    final id = 'ext${DateTime.now().millisecondsSinceEpoch}';
+    state = state.copyWith(
+      donors: [
+        BloodDonor(
+          id: id,
+          name: name.trim(),
+          bloodType: bloodType,
+          city: city.trim(),
+          phone: phone.trim(),
+          kind: DonorKind.other,
+          status: DonorStatus.approved,
+          registeredAt: DateTime.now(),
+        ),
+        ...state.donors,
+      ],
+    );
+    return id;
+  }
+
+  /// Team: internal follow-up note on a request.
+  void addTeamNote(String requestId, String text) {
+    if (text.trim().isEmpty) return;
+    _updateRequest(
+      requestId,
+      (r) => r.copyWith(
+        teamNotes: [...r.teamNotes, TeamNote(text.trim(), DateTime.now())],
+      ),
     );
   }
 

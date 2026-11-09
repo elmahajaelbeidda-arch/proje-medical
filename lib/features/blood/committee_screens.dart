@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -144,6 +145,12 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                   ListView(
                     padding: const EdgeInsets.all(16),
                     children: [
+                      OutlinedButton.icon(
+                        onPressed: () => showExternalDonorSheet(context, ref),
+                        icon: const Icon(Icons.person_add_alt_1),
+                        label: Text(context.tr('add_external_donor')),
+                      ),
+                      const SizedBox(height: 10),
                       TextField(
                         onChanged: (v) => setState(() => _donorQuery = v),
                         decoration: InputDecoration(
@@ -505,6 +512,19 @@ class CommitteeRequestScreen extends ConsumerWidget {
                     const SizedBox(height: 10),
                     Text(r.note),
                   ],
+                  if (r.documents.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      context.tr('documents'),
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 6),
+                    for (final d in r.documents)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: AttachmentTile(d),
+                      ),
+                  ],
                   const Divider(height: 28),
                   Text(
                     context.tr('requester'),
@@ -620,7 +640,18 @@ class CommitteeRequestScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
+            // Donor found outside the platform (relative, blood bank...).
+            OutlinedButton.icon(
+              onPressed: () =>
+                  showExternalDonorSheet(context, ref, linkToRequest: r),
+              icon: const Icon(Icons.person_add_alt_1),
+              label: Text(context.tr('add_external_donor')),
+            ),
           ],
+
+          // Internal follow-up notes
+          SectionHeader(context.tr('team_notes')),
+          _TeamNotes(request: r),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -911,4 +942,234 @@ class RegistrationCard extends ConsumerWidget {
       ],
     ),
   );
+}
+
+// ---------------------------------------------------------------------------
+// Donors from outside the platform, team notes
+// ---------------------------------------------------------------------------
+
+/// Team form to add a donor who is not registered on the platform; when
+/// [linkToRequest] is given the donor is linked to that request at once.
+Future<void> showExternalDonorSheet(
+  BuildContext context,
+  WidgetRef ref, {
+  BloodRequest? linkToRequest,
+}) {
+  final formKey = GlobalKey<FormState>();
+  final name = TextEditingController();
+  final city = TextEditingController(text: linkToRequest?.city ?? '');
+  final phone = TextEditingController();
+  String? type = linkToRequest?.bloodType;
+
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setSheet) {
+        String? required(String? v) =>
+            (v == null || v.trim().isEmpty) ? ctx.tr('required_field') : null;
+        return Padding(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            0,
+            20,
+            20 + MediaQuery.viewInsetsOf(ctx).bottom,
+          ),
+          child: Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    ctx.tr('add_external_donor'),
+                    style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    ctx.tr('external_donor_hint'),
+                    style: Theme.of(ctx).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: name,
+                    decoration: InputDecoration(
+                      labelText: ctx.tr('full_name'),
+                      prefixIcon: const Icon(Icons.person_outline),
+                    ),
+                    validator: required,
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      for (final t in bloodTypes)
+                        ChoiceChip(
+                          label: Text(t, textDirection: TextDirection.ltr),
+                          selected: type == t,
+                          showCheckmark: false,
+                          selectedColor: AppColors.primary,
+                          labelStyle: TextStyle(
+                            color: type == t ? Colors.white : AppColors.primary,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          onSelected: (_) => setSheet(() => type = t),
+                        ),
+                    ],
+                  ),
+                  if (linkToRequest != null &&
+                      type != null &&
+                      !canDonate(type!, linkToRequest.bloodType)) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      ctx.tr('not_compatible_type'),
+                      style: const TextStyle(color: AppColors.warning),
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: city,
+                    decoration: InputDecoration(
+                      labelText: ctx.tr('city'),
+                      prefixIcon: const Icon(Icons.location_city_outlined),
+                    ),
+                    validator: required,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: phone,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9+ ]')),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: ctx.tr('phone'),
+                      prefixIcon: const Icon(Icons.phone_outlined),
+                    ),
+                    validator: (v) {
+                      final digits = (v ?? '').replaceAll(RegExp(r'\D'), '');
+                      if (digits.isEmpty) return ctx.tr('required_field');
+                      if (digits.length < 9) return ctx.tr('phone_invalid');
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 18),
+                  FilledButton.icon(
+                    onPressed: () {
+                      if (!formKey.currentState!.validate() || type == null) {
+                        return;
+                      }
+                      final blood = ref.read(bloodProvider.notifier);
+                      final id = blood.addExternalDonor(
+                        name: name.text,
+                        bloodType: type!,
+                        city: city.text,
+                        phone: phone.text,
+                      );
+                      if (linkToRequest != null) {
+                        blood.assignDonor(linkToRequest.id, id);
+                      }
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(context.tr('external_donor_added')),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.person_add_alt_1),
+                    label: Text(
+                      ctx.tr(
+                        linkToRequest != null ? 'add_and_link' : 'add_donor',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    ),
+  );
+}
+
+class _TeamNotes extends ConsumerStatefulWidget {
+  const _TeamNotes({required this.request});
+  final BloodRequest request;
+  @override
+  ConsumerState<_TeamNotes> createState() => _TeamNotesState();
+}
+
+class _TeamNotesState extends ConsumerState<_TeamNotes> {
+  final _input = TextEditingController();
+
+  @override
+  void dispose() {
+    _input.dispose();
+    super.dispose();
+  }
+
+  void _add() {
+    ref
+        .read(bloodProvider.notifier)
+        .addTeamNote(widget.request.id, _input.text);
+    _input.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final notes = widget.request.teamNotes.reversed.toList();
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (notes.isEmpty)
+              Text(context.tr('no_notes'))
+            else
+              for (final n in notes)
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(
+                    Icons.sticky_note_2_outlined,
+                    color: AppColors.primary,
+                  ),
+                  title: Text(n.text),
+                  subtitle: Text(context.timeAgo(n.time)),
+                ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _input,
+                    minLines: 1,
+                    maxLines: 3,
+                    onSubmitted: (_) => _add(),
+                    decoration: InputDecoration(
+                      hintText: context.tr('team_notes_hint'),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton.filled(
+                  tooltip: context.tr('add_note'),
+                  onPressed: _add,
+                  icon: const Icon(Icons.add),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

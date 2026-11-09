@@ -2,6 +2,8 @@
 /// red-cell compatibility rules the committee uses to link them.
 library;
 
+import 'models.dart';
+
 const bloodTypes = ['O-', 'O+', 'A-', 'A+', 'B-', 'B+', 'AB-', 'AB+'];
 
 /// Red-cell compatibility: can a donor of [donor] give to a [recipient]?
@@ -40,7 +42,14 @@ enum DonorStatus { pending, approved, rejected }
 /// Who posted a request, relative to the patient.
 enum RequesterRelation { self, family, other }
 
-/// Request life cycle, handled by the donation committee.
+/// Internal follow-up note written by the team on a request.
+class TeamNote {
+  final String text;
+  final DateTime time;
+  const TeamNote(this.text, this.time);
+}
+
+/// Request life cycle, handled by the follow-up team.
 enum BloodRequestStatus {
   submitted, // new, not yet reviewed
   inProgress, // the committee is looking for donors
@@ -159,6 +168,12 @@ class BloodRequest {
   /// Donors the committee linked to this request.
   final List<String> assignedDonorIds;
 
+  /// Medical documents attached by the patient (report, prescription...).
+  final List<Attachment> documents;
+
+  /// Internal notes of the follow-up team (not shown to the patient).
+  final List<TeamNote> teamNotes;
+
   const BloodRequest({
     required this.id,
     required this.requesterId,
@@ -177,6 +192,8 @@ class BloodRequest {
     this.status = BloodRequestStatus.submitted,
     this.volunteerIds = const [],
     this.assignedDonorIds = const [],
+    this.documents = const [],
+    this.teamNotes = const [],
   }) : requesterName = requesterName ?? patientName;
 
   String get code => _code('R', id);
@@ -189,6 +206,7 @@ class BloodRequest {
     BloodRequestStatus? status,
     List<String>? volunteerIds,
     List<String>? assignedDonorIds,
+    List<TeamNote>? teamNotes,
   }) => BloodRequest(
     id: id,
     requesterId: requesterId,
@@ -207,6 +225,8 @@ class BloodRequest {
     status: status ?? this.status,
     volunteerIds: volunteerIds ?? this.volunteerIds,
     assignedDonorIds: assignedDonorIds ?? this.assignedDonorIds,
+    documents: documents,
+    teamNotes: teamNotes ?? this.teamNotes,
   );
 }
 

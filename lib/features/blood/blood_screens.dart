@@ -10,7 +10,9 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/blood.dart';
+import '../../models/models.dart';
 import '../../widgets/common.dart';
+import '../../widgets/media.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -641,6 +643,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
   final _city = TextEditingController();
   late final _phone = TextEditingController(text: _auth.phone);
   final _note = TextEditingController();
+  final List<Attachment> _docs = [];
   String? _type;
   int _units = 1;
   bool _urgent = false;
@@ -652,6 +655,15 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
       c.dispose();
     }
     super.dispose();
+  }
+
+  Future<void> _addDocs(PickSource source) async {
+    final files = await pickAttachments(
+      context,
+      source,
+      category: AttachmentCategory.prescription,
+    );
+    if (mounted && files.isNotEmpty) setState(() => _docs.addAll(files));
   }
 
   void _submit() {
@@ -680,6 +692,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
           phone: _phone.text,
           contact: _contact,
           note: _note.text,
+          documents: List.of(_docs),
         );
     ScaffoldMessenger.of(
       context,
@@ -711,7 +724,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
-            _label(context, 'units_needed'),
+            _label(context, 'quantity'),
             Row(
               children: [
                 IconButton.filledTonal(
@@ -793,7 +806,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
             TextFormField(
               controller: _hospital,
               decoration: InputDecoration(
-                labelText: context.tr('hospital'),
+                labelText: context.tr('location_hospital'),
                 prefixIcon: const Icon(Icons.local_hospital_outlined),
               ),
               validator: required,
@@ -815,7 +828,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9+ ]')),
               ],
               decoration: InputDecoration(
-                labelText: context.tr('phone'),
+                labelText: context.tr('contact_number'),
                 prefixIcon: const Icon(Icons.phone_outlined),
               ),
               validator: (v) => _phoneValidator(context, v),
@@ -833,6 +846,39 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
                 labelText: context.tr('note_optional'),
                 alignLabelWithHint: true,
               ),
+            ),
+            _label(context, 'medical_document'),
+            Text(
+              context.tr('medical_document_hint'),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 8),
+            for (var i = 0; i < _docs.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: AttachmentTile(
+                  _docs[i],
+                  onRemove: () => setState(() => _docs.removeAt(i)),
+                ),
+              ),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _addDocs(PickSource.camera),
+                    icon: const Icon(Icons.photo_camera_outlined),
+                    label: Text(context.tr('camera')),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _addDocs(PickSource.files),
+                    icon: const Icon(Icons.upload_file_outlined),
+                    label: Text(context.tr('pdf_file')),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
@@ -936,6 +982,20 @@ class BloodRequestDetailsScreen extends ConsumerWidget {
                   if (mine && r.note.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     Text(r.note, style: text.bodyLarge),
+                  ],
+                  if (mine && r.documents.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final d in r.documents)
+                          InkWell(
+                            onTap: () => showAttachmentPreview(context, d),
+                            child: AttachmentThumb(d, size: 60),
+                          ),
+                      ],
+                    ),
                   ],
                 ],
               ),

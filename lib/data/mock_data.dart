@@ -458,6 +458,13 @@ class MockData {
         phone: '0550 12 34 56',
         status: BloodRequestStatus.inProgress,
         note: 'عملية مبرمجة الأسبوع القادم.',
+        documents: const [
+          Attachment(
+            'تقرير_طبي.pdf',
+            AttachmentKind.pdf,
+            category: AttachmentCategory.prescription,
+          ),
+        ],
         createdAt: now.subtract(const Duration(days: 1)),
       ),
       BloodRequest(
@@ -466,6 +473,12 @@ class MockData {
         patientName: 'عائشة بن موسى',
         requesterName: 'يوسف بن موسى',
         relation: RequesterRelation.family,
+        teamNotes: [
+          TeamNote(
+            'تم التحقق من الطلب مع المستشفى.',
+            now.subtract(const Duration(hours: 1)),
+          ),
+        ],
         bloodType: 'O+',
         units: 3,
         hospital: 'مستشفى مصطفى باشا',

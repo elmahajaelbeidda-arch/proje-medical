@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifa/core/blood_provider.dart';
 import 'package:shifa/models/blood.dart';
+import 'package:shifa/models/models.dart';
 
 BloodDonor donor(
   String id,
@@ -139,5 +140,53 @@ void main() {
 
     blood.markFulfilled(id);
     expect(req().isOpen, isFalse);
+  });
+
+  test('team adds an outside donor, links it, keeps notes; documents kept', () {
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final blood = c.read(bloodProvider.notifier);
+    final id = blood.addRequest(
+      patientName: 'Amina',
+      bloodType: 'A-',
+      units: 2,
+      hospital: 'CHU Sétif',
+      city: 'Sétif',
+      urgent: true,
+      phone: '0550 11 22 33',
+      contact: ContactMethod.call,
+      documents: const [
+        Attachment(
+          'rapport.pdf',
+          AttachmentKind.pdf,
+          category: AttachmentCategory.prescription,
+        ),
+      ],
+    );
+    BloodRequest req() => c.read(bloodProvider).request(id)!;
+    expect(req().documents.single.name, 'rapport.pdf');
+
+    final donorId = blood.addExternalDonor(
+      name: 'Hakim',
+      bloodType: 'O-',
+      city: 'Sétif',
+      phone: '0661 00 00 00',
+    );
+    final external = c.read(bloodProvider).donor(donorId)!;
+    expect(external.kind, DonorKind.other);
+    expect(external.isApproved, isTrue);
+    expect(matchDonors(req(), c.read(bloodProvider).donors).first.id, donorId);
+
+    blood.assignDonor(id, donorId);
+    expect(req().assignedDonorIds, [donorId]);
+    expect(req().status, BloodRequestStatus.matched);
+
+    blood.addTeamNote(id, 'Donneur appelé, RDV demain');
+    blood.addTeamNote(id, '   '); // ignored
+    expect(req().teamNotes.map((n) => n.text), ['Donneur appelé, RDV demain']);
+    // Status changes keep documents and notes.
+    blood.markFulfilled(id);
+    expect(req().documents, isNotEmpty);
+    expect(req().teamNotes, isNotEmpty);
   });
 }
