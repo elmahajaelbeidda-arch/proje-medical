@@ -44,7 +44,7 @@ class ShifaLockup extends StatelessWidget {
       children: [
         FittedBox(
           fit: BoxFit.scaleDown,
-          child: BrandName(fontSize: vertical ? 50 : 42),
+          child: BrandName(fontSize: vertical ? 40 : 34),
         ),
         Text(
           context.tr('app_tagline'),

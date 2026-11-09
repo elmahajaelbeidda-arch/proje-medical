@@ -46,7 +46,7 @@
 
 الألوان معرّفة في `lib/core/theme.dart` (`AppColors`).
 
-اسم المنصة «شِفاءٌ لِلنّاس» يُكتب دائماً بخط **Amiri Bold** (مضمّن في `assets/fonts/`، رخصة SIL OFL) عبر `BrandName` و`BrandRichText` في `lib/widgets/brand.dart`.
+اسم المنصة «شِفاءٌ لِلنّاس» بالتشكيل يُعرض عبر `BrandName` و`BrandRichText` في `lib/widgets/brand.dart` (بارتفاع سطر كافٍ لظهور الحركات).
 
 ## التشغيل
 

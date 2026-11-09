@@ -54,7 +54,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Center(child: AppLogo(size: 72)),
-                  const Center(child: BrandName(fontSize: 34)),
+                  const Center(child: BrandName(fontSize: 30)),
                   const SizedBox(height: 24),
                   Text(
                     context.tr('login_welcome'),

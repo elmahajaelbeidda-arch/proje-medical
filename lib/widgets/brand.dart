@@ -3,26 +3,26 @@ import 'package:flutter/material.dart';
 import '../core/l10n.dart';
 import '../core/theme.dart';
 
-/// Typeface of the brand name "شِفاءٌ لِلنّاس" (bundled in assets/fonts).
-const brandFontFamily = 'Amiri';
-
-/// Style for the brand name: Amiri Bold with enough line height for the
-/// diacritics (kasra under ش and ل, tanween over ء, shadda over ن).
-TextStyle brandNameStyle({
+/// Style for the brand name "شِفاءٌ لِلنّاس", in the app's own font, with
+/// enough line height for the diacritics (kasra under ش and ل, tanween over
+/// ء, shadda over ن) so none of them is clipped.
+TextStyle brandNameStyle(
+  BuildContext context, {
   required double fontSize,
-  Color color = AppColors.ink,
+  Color? color,
 }) {
-  return TextStyle(
-    fontFamily: brandFontFamily,
-    fontWeight: FontWeight.w700,
+  final dark = Theme.of(context).brightness == Brightness.dark;
+  final base = Theme.of(context).textTheme.headlineLarge ?? const TextStyle();
+  return base.copyWith(
+    fontWeight: FontWeight.w800,
     fontSize: fontSize,
-    height: 1.55,
-    color: color,
+    height: 1.7,
+    color: color ?? (dark ? Colors.white : AppColors.ink),
     letterSpacing: 0,
   );
 }
 
-/// The app name, always written in Amiri Bold.
+/// The app name as a heading (logo lockup, splash, login...).
 class BrandName extends StatelessWidget {
   const BrandName({super.key, this.fontSize = 40, this.color, this.textAlign});
 
@@ -32,21 +32,17 @@ class BrandName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       context.tr('app_name'),
       textAlign: textAlign,
       maxLines: 1,
       softWrap: false,
-      style: brandNameStyle(
-        fontSize: fontSize,
-        color: color ?? (dark ? Colors.white : AppColors.ink),
-      ),
+      style: brandNameStyle(context, fontSize: fontSize, color: color),
     );
   }
 }
 
-/// Text in which every occurrence of the app name is set in Amiri Bold,
+/// Text in which every occurrence of the app name is emphasised (bold),
 /// e.g. the introduction "شِفاءٌ لِلنّاس هي منصة رقمية خيرية...".
 class BrandRichText extends StatelessWidget {
   const BrandRichText(this.text, {super.key, this.style, this.textAlign});
@@ -59,12 +55,7 @@ class BrandRichText extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = context.tr('app_name');
     final base = style ?? DefaultTextStyle.of(context).style;
-    final nameStyle = base.copyWith(
-      fontFamily: brandFontFamily,
-      fontWeight: FontWeight.w700,
-      // Amiri is optically smaller than the UI font.
-      fontSize: (base.fontSize ?? 14) * 1.2,
-    );
+    final nameStyle = base.copyWith(fontWeight: FontWeight.w800);
 
     final parts = text.split(name);
     final spans = <InlineSpan>[];

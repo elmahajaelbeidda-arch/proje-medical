@@ -385,7 +385,7 @@ class DisclaimerScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         children: [
           const Center(child: AppLogo(size: 96)),
-          const Center(child: BrandName(fontSize: 38)),
+          const Center(child: BrandName(fontSize: 32)),
           const SizedBox(height: 16),
           Card(
             child: Padding(
