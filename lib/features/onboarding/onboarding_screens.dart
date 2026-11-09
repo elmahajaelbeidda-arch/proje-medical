@@ -207,6 +207,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _controller = PageController();
   int _page = 0;
 
+  /// Page 0 is the platform introduction; the others follow.
   static const _pages = [
     (Icons.volunteer_activism_rounded, 'onb1_title', 'onb1_body'),
     (Icons.document_scanner_rounded, 'onb2_title', 'onb2_body'),
@@ -219,8 +220,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
+  int get _count => _pages.length + 1;
+
   void _next() {
-    if (_page == _pages.length - 1) {
+    if (_page == _count - 1) {
       context.go('/role');
     } else {
       _controller.nextPage(
@@ -254,7 +257,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ),
                   ),
                   const Spacer(),
-                  if (_page < _pages.length - 1)
+                  if (_page < _count - 1)
                     TextButton(
                       onPressed: () => context.go('/role'),
                       child: Text(context.tr('skip')),
@@ -264,10 +267,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Expanded(
                 child: PageView.builder(
                   controller: _controller,
-                  itemCount: _pages.length,
+                  itemCount: _count,
                   onPageChanged: (i) => setState(() => _page = i),
                   itemBuilder: (context, i) {
-                    final (icon, title, body) = _pages[i];
+                    if (i == 0) return const _IntroPage();
+                    final (icon, title, body) = _pages[i - 1];
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -275,9 +279,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           width: 220,
                           height: 220,
                           decoration: BoxDecoration(
-                            color: scheme.primaryContainer.withValues(
-                              alpha: .5,
-                            ),
+                            color: AppColors.secondary,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(icon, size: 110, color: scheme.primary),
@@ -306,7 +308,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (var i = 0; i < _pages.length; i++)
+                  for (var i = 0; i < _count; i++)
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
                       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -324,12 +326,52 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               const SizedBox(height: 28),
               FilledButton(
                 onPressed: _next,
-                child: Text(
-                  context.tr(_page == _pages.length - 1 ? 'start' : 'next'),
-                ),
+                child: Text(context.tr(_page == _count - 1 ? 'start' : 'next')),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// First onboarding page: logo, name and the introduction of the platform.
+class _IntroPage extends StatelessWidget {
+  const _IntroPage();
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const ShifaLockup(iconSize: 120, vertical: true),
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(maxWidth: 600),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: AlignmentDirectional.topStart,
+                  end: AlignmentDirectional.bottomEnd,
+                  colors: [AppColors.primary, AppColors.primaryDark],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: BrandRichText(
+                context.tr('about_shifa'),
+                textAlign: TextAlign.center,
+                style: text.bodyLarge?.copyWith(
+                  color: Colors.white,
+                  height: 1.8,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
