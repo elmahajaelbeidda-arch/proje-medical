@@ -212,9 +212,18 @@ class AppStrings {
     ],
     'your_request': ['طلبك', 'Votre demande'],
     // Blood donation: committee, privacy, personal info
-    'role_committee': ['فريق المتابعة والإدارة', 'Équipe de suivi et de gestion'],
-    'committee_login': ['دخول فريق المتابعة والإدارة', 'Accès équipe de suivi et de gestion'],
-    'committee_title': ['فريق المتابعة والإدارة', 'Équipe de suivi et de gestion'],
+    'role_committee': [
+      'فريق المتابعة والإدارة',
+      'Équipe de suivi et de gestion',
+    ],
+    'committee_login': [
+      'دخول فريق المتابعة والإدارة',
+      'Accès équipe de suivi et de gestion',
+    ],
+    'committee_title': [
+      'فريق المتابعة والإدارة',
+      'Équipe de suivi et de gestion',
+    ],
     'committee_only': [
       'هذه المعلومات لا تظهر إلا لفريق المتابعة والإدارة',
       'Informations visibles par l’équipe de suivi uniquement',
@@ -363,6 +372,14 @@ class AppStrings {
     'search_people_hint': [
       'ابحث بالاسم أو الرمز أو الهاتف',
       'Nom, code ou téléphone',
+    ],
+    'request_blood_desc': [
+      'لك أو لأحد أقاربك، ويتابعه فريق المتابعة والإدارة',
+      'Pour vous ou un proche, suivie par l’équipe',
+    ],
+    'blood_requests_open': [
+      'لديك {n} طلب دم قيد المتابعة',
+      '{n} demande(s) en cours',
     ],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],

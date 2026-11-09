@@ -233,7 +233,11 @@ class PatientHomeTab extends ConsumerWidget {
               ),
               const SizedBox(height: 10),
 
-              // Blood donation entry (urgent requests count)
+              // The patient's own blood requests (not in the donation tab).
+              const _BloodRequestCard(),
+              const SizedBox(height: 10),
+
+              // Blood donation: register as a donor
               _BloodBanner(onTap: onOpenBlood),
               const SizedBox(height: 8),
 
@@ -699,6 +703,74 @@ class _BloodBanner extends ConsumerWidget {
                 child: DonorStatusPill(me.status),
               ),
         trailing: const Icon(Icons.chevron_right),
+      ),
+    );
+  }
+}
+
+/// Patient home: request blood for oneself or a relative, and follow the
+/// requests already sent to the follow-up team.
+class _BloodRequestCard extends ConsumerWidget {
+  const _BloodRequestCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mine = ref
+        .watch(bloodProvider)
+        .requests
+        .where((r) => r.requesterId == MockData.currentPatientId && r.isOpen)
+        .length;
+    final text = Theme.of(context).textTheme;
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: const BorderSide(color: AppColors.primary, width: 1.5),
+      ),
+      child: InkWell(
+        onTap: () => context.push('/patient/blood'),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              const CircleAvatar(
+                radius: 24,
+                backgroundColor: AppColors.primary,
+                child: Icon(Icons.bloodtype, color: Colors.white),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.tr('request_blood'),
+                      style: text.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    Text(
+                      mine > 0
+                          ? context.tr('blood_requests_open', args: {'n': mine})
+                          : context.tr('request_blood_desc'),
+                      style: text.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(0, 42),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                ),
+                onPressed: () => context.push('/patient/blood/new'),
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(context.tr('new_blood_request')),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
