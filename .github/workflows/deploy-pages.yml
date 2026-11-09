@@ -26,7 +26,13 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter test
-      - run: flutter build web --release --pwa-strategy=none --base-href "/${{ github.event.repository.name }}/"
+      # Supabase keys come from the repository variables (Settings > Secrets
+      # and variables > Actions > Variables). Empty = demo data.
+      - run: >-
+          flutter build web --release --pwa-strategy=none
+          --base-href "/${{ github.event.repository.name }}/"
+          --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }}
+          --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
       # Always serve the latest version: remove old offline caches on
       # visitors' devices and version the app file with the commit id.
       - run: |

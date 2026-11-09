@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/l10n.dart';
 import 'core/providers.dart';
 import 'core/router.dart';
 import 'core/theme.dart';
+import 'features/aid/aid_repository.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Patient map backend (see supabase/migrations). Without the keys the
+  // feature runs on demo data.
+  if (supabaseConfigured) {
+    await Supabase.initialize(
+      url: supabaseUrl,
+      publishableKey: supabaseAnonKey,
+    );
+  }
   runApp(const ProviderScope(child: ShifaApp()));
 }
 

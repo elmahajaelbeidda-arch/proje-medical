@@ -3,6 +3,10 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Camera photos of medical documents and ID card -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Patient map: share the patient's location with the aid committee -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="shifa"
         android:name="${applicationName}"

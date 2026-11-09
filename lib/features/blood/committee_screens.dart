@@ -95,6 +95,11 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
           title: Text(context.tr('committee_title')),
           actions: [
             IconButton(
+              tooltip: context.tr('aid_map'),
+              onPressed: () => context.push('/aid/map'),
+              icon: const Icon(Icons.map_outlined),
+            ),
+            IconButton(
               tooltip: context.tr('logout'),
               onPressed: () {
                 ref.read(authProvider.notifier).logout();

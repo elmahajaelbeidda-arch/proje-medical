@@ -237,6 +237,32 @@ class PatientHomeTab extends ConsumerWidget {
               const _BloodRequestCard(),
               const SizedBox(height: 10),
 
+              // Aid request with location (patient map).
+              Card(
+                clipBehavior: Clip.antiAlias,
+                child: ListTile(
+                  onTap: () => context.push('/aid'),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
+                  leading: const CircleAvatar(
+                    backgroundColor: AppColors.primary,
+                    child: Icon(Icons.add_location_alt, color: Colors.white),
+                  ),
+                  title: Text(
+                    context.tr('aid_title'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  subtitle: Text(context.tr('aid_home_desc')),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+              ),
+              const SizedBox(height: 10),
+
               // Blood donation: register as a donor
               _BloodBanner(onTap: onOpenBlood),
               const SizedBox(height: 8),

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/about/about_screen.dart';
+import '../features/aid/aid_screens.dart';
 import '../features/auth/auth_screens.dart';
 import '../features/blood/blood_screens.dart';
 import '../features/blood/committee_screens.dart';
@@ -96,6 +97,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/committee/request/:id',
         builder: (_, state) =>
             CommitteeRequestScreen(id: state.pathParameters['id']!),
+      ),
+
+      // Patient map (medical aid committee)
+      GoRoute(path: '/aid', builder: (_, _) => const MyAidRequestsScreen()),
+      GoRoute(
+        path: '/aid/new',
+        builder: (_, _) => const AidRequestFormScreen(),
+      ),
+      GoRoute(path: '/aid/map', builder: (_, _) => const AidMapScreen()),
+      GoRoute(
+        path: '/aid/members',
+        builder: (_, _) => const AidMembersScreen(),
       ),
 
       // Shared
