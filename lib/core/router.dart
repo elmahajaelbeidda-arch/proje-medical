@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/auth_screens.dart';
+import '../features/blood/blood_screens.dart';
 import '../features/doctor/doctor_shell.dart';
 import '../features/doctor/request_details_screen.dart';
 import '../features/onboarding/onboarding_screens.dart';
@@ -53,6 +54,22 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/doctor/reply/:id',
         builder: (_, state) => ReplyScreen(id: state.pathParameters['id']!),
+      ),
+
+      // Blood donation
+      GoRoute(path: '/blood', builder: (_, _) => const BloodHomeScreen()),
+      GoRoute(
+        path: '/blood/request',
+        builder: (_, _) => const NewBloodRequestScreen(),
+      ),
+      GoRoute(
+        path: '/blood/request/:id',
+        builder: (_, state) =>
+            BloodRequestDetailsScreen(id: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/blood/donor',
+        builder: (_, _) => const DonorRegisterScreen(),
       ),
 
       // Shared

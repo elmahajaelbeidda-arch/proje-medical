@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/blood.dart';
 import '../models/models.dart';
 
 /// Demo data used until the app is connected to a real backend.
@@ -341,6 +342,150 @@ class MockData {
         body: 'أكمل ملفك الصحي لتساعد الأطباء على فهم حالتك.',
         time: now.subtract(const Duration(days: 4)),
         read: true,
+      ),
+    ];
+  }
+
+  // -------------------------------------------------------------------------
+  // Blood donation (demo data, fictitious names and numbers)
+  // -------------------------------------------------------------------------
+
+  static List<BloodDonor> bloodDonors() {
+    final now = DateTime.now();
+    return [
+      const BloodDonor(
+        id: 'bd1',
+        name: 'كمال حمدي',
+        bloodType: 'O-',
+        city: 'الجزائر',
+        phone: '0550 00 01 11',
+        contact: ContactMethod.whatsapp,
+      ),
+      const BloodDonor(
+        id: 'bd2',
+        name: 'سمية رحال',
+        bloodType: 'A+',
+        city: 'الجزائر',
+        phone: '0550 00 02 22',
+      ),
+      BloodDonor(
+        id: 'bd3',
+        name: 'ياسين مقراني',
+        bloodType: 'O+',
+        city: 'وهران',
+        phone: '0550 00 03 33',
+        contact: ContactMethod.sms,
+        lastDonation: now.subtract(const Duration(days: 120)),
+      ),
+      const BloodDonor(
+        id: 'bd4',
+        name: 'هدى بلعيد',
+        bloodType: 'B+',
+        city: 'قسنطينة',
+        phone: '0550 00 04 44',
+        contact: ContactMethod.whatsapp,
+      ),
+      const BloodDonor(
+        id: 'bd5',
+        name: 'أنيس طالبي',
+        bloodType: 'AB+',
+        city: 'الجزائر',
+        phone: '0550 00 05 55',
+      ),
+      BloodDonor(
+        id: 'bd6',
+        name: 'ريم بوشامة',
+        bloodType: 'O+',
+        city: 'الجزائر',
+        phone: '0550 00 06 66',
+        lastDonation: now.subtract(const Duration(days: 30)),
+      ),
+      const BloodDonor(
+        id: 'bd7',
+        name: 'منير زيتوني',
+        bloodType: 'A-',
+        city: 'سطيف',
+        phone: '0550 00 07 77',
+        contact: ContactMethod.whatsapp,
+      ),
+      const BloodDonor(
+        id: 'bd8',
+        name: 'نوال عيساوي',
+        bloodType: 'B-',
+        city: 'عنابة',
+        phone: '0550 00 08 88',
+      ),
+      const BloodDonor(
+        id: 'bd9',
+        name: 'فريد قادري',
+        bloodType: 'O+',
+        city: 'الجزائر',
+        phone: '0550 00 09 99',
+        contact: ContactMethod.whatsapp,
+      ),
+      const BloodDonor(
+        id: 'bd10',
+        name: 'ليلى سعدي',
+        bloodType: 'A+',
+        city: 'وهران',
+        phone: '0550 00 10 10',
+        available: false,
+      ),
+    ];
+  }
+
+  static List<BloodRequest> bloodRequests() {
+    final now = DateTime.now();
+    return [
+      BloodRequest(
+        id: 'br1',
+        requesterId: 'p8',
+        patientName: 'عائشة بن موسى',
+        bloodType: 'O+',
+        units: 3,
+        hospital: 'مستشفى مصطفى باشا',
+        city: 'الجزائر',
+        urgent: true,
+        phone: '0550 10 20 30',
+        contact: ContactMethod.whatsapp,
+        note: 'عملية جراحية غداً صباحاً.',
+        createdAt: now.subtract(const Duration(hours: 2)),
+      ),
+      BloodRequest(
+        id: 'br2',
+        requesterId: 'p9',
+        patientName: 'سليم عبادة',
+        bloodType: 'A-',
+        units: 2,
+        hospital: 'المستشفى الجامعي',
+        city: 'سطيف',
+        phone: '0550 40 50 60',
+        note: 'مريض فقر دم يحتاج نقل دم دوري.',
+        createdAt: now.subtract(const Duration(hours: 20)),
+      ),
+      BloodRequest(
+        id: 'br3',
+        requesterId: 'p10',
+        patientName: 'رضا حمودي',
+        bloodType: 'AB+',
+        units: 1,
+        hospital: 'مستشفى ابن رشد',
+        city: 'عنابة',
+        phone: '0550 70 80 90',
+        contact: ContactMethod.sms,
+        createdAt: now.subtract(const Duration(days: 1)),
+      ),
+      BloodRequest(
+        id: 'br4',
+        requesterId: 'p11',
+        patientName: 'مريم شريف',
+        bloodType: 'B+',
+        units: 2,
+        hospital: 'مستشفى قسنطينة الجامعي',
+        city: 'قسنطينة',
+        phone: '0550 11 22 33',
+        status: BloodRequestStatus.fulfilled,
+        createdAt: now.subtract(const Duration(days: 3)),
       ),
     ];
   }

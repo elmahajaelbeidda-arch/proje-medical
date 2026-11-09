@@ -211,6 +211,25 @@ class DoctorHomeTab extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          Card(
+            child: ListTile(
+              onTap: () => context.push('/blood'),
+              leading: const CircleAvatar(
+                backgroundColor: AppColors.primary,
+                child: Icon(Icons.bloodtype, color: Colors.white),
+              ),
+              title: Text(
+                context.tr('blood_donation'),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                ),
+              ),
+              subtitle: Text(context.tr('blood_intro'), maxLines: 2),
+              trailing: const Icon(Icons.chevron_right),
+            ),
+          ),
           const SizedBox(height: 8),
           SectionHeader(
             context.tr('urgent_requests'),

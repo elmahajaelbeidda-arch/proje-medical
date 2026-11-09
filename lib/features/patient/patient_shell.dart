@@ -8,7 +8,9 @@ import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../core/search.dart';
+import '../../core/blood_provider.dart';
 import '../../widgets/common.dart';
+import '../blood/blood_screens.dart';
 import '../../widgets/voice_search.dart';
 import '../onboarding/onboarding_screens.dart';
 
@@ -27,9 +29,13 @@ class _PatientShellState extends State<PatientShell> {
       body: IndexedStack(
         index: _index,
         children: [
-          PatientHomeTab(onSeeConsultations: () => setState(() => _index = 1)),
+          PatientHomeTab(
+            onSeeConsultations: () => setState(() => _index = 1),
+            onOpenBlood: () => setState(() => _index = 3),
+          ),
           const MyConsultationsTab(),
           const DoctorsTab(),
+          const BloodHomeScreen(),
           const PatientProfileTab(),
         ],
       ),
@@ -60,6 +66,11 @@ class _PatientShellState extends State<PatientShell> {
             label: context.tr('nav_doctors'),
           ),
           NavigationDestination(
+            icon: const Icon(Icons.bloodtype_outlined),
+            selectedIcon: const Icon(Icons.bloodtype),
+            label: context.tr('nav_blood'),
+          ),
+          NavigationDestination(
             icon: const Icon(Icons.person_outline),
             selectedIcon: const Icon(Icons.person),
             label: context.tr('nav_profile'),
@@ -75,8 +86,13 @@ class _PatientShellState extends State<PatientShell> {
 // ---------------------------------------------------------------------------
 
 class PatientHomeTab extends ConsumerWidget {
-  const PatientHomeTab({super.key, required this.onSeeConsultations});
+  const PatientHomeTab({
+    super.key,
+    required this.onSeeConsultations,
+    required this.onOpenBlood,
+  });
   final VoidCallback onSeeConsultations;
+  final VoidCallback onOpenBlood;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -212,6 +228,10 @@ class PatientHomeTab extends ConsumerWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 10),
+
+              // Blood donation entry (urgent requests count)
+              _BloodBanner(onTap: onOpenBlood),
               const SizedBox(height: 8),
 
               // Quick services
@@ -631,6 +651,58 @@ class PatientProfileTab extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _BloodBanner extends ConsumerWidget {
+  const _BloodBanner({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final urgent = ref
+        .watch(bloodProvider)
+        .requests
+        .where((r) => r.isOpen && r.urgent)
+        .length;
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        leading: const CircleAvatar(
+          backgroundColor: AppColors.primary,
+          child: Icon(Icons.bloodtype, color: Colors.white),
+        ),
+        title: Text(
+          context.tr('blood_donation'),
+          style: const TextStyle(
+            fontWeight: FontWeight.w800,
+            color: AppColors.primary,
+          ),
+        ),
+        subtitle: Text(
+          urgent > 0
+              ? context.tr('urgent_blood_banner', args: {'n': urgent})
+              : context.tr('blood_intro'),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: urgent > 0
+            ? CircleAvatar(
+                radius: 14,
+                backgroundColor: AppColors.emergency,
+                child: Text(
+                  '$urgent',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              )
+            : const Icon(Icons.chevron_right),
       ),
     );
   }
