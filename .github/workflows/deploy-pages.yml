@@ -46,3 +46,6 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # GitHub Pages is sometimes slow to confirm a deployment.
+          timeout: 1800000
