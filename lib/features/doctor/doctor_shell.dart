@@ -35,7 +35,6 @@ class _DoctorShellState extends State<DoctorShell> {
         ],
       ),
       bottomNavigationBar: NavigationBar(
-        indicatorColor: AppColors.doctor,
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
@@ -129,6 +128,7 @@ class DoctorHomeTab extends ConsumerWidget {
                 onPressed: () => context.push('/notifications'),
                 icon: const Badge(
                   smallSize: 8,
+                  backgroundColor: AppColors.accent,
                   child: Icon(Icons.notifications_outlined),
                 ),
               ),
@@ -156,7 +156,7 @@ class DoctorHomeTab extends ConsumerWidget {
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.doctorDark, Color(0xFF2E5E4B)],
+                colors: [AppColors.primary, AppColors.primaryDark],
               ),
               borderRadius: BorderRadius.circular(22),
             ),
@@ -188,7 +188,7 @@ class DoctorHomeTab extends ConsumerWidget {
                   icon: Icons.favorite_outline,
                   value: '${_me.consultationsCount + helped}',
                   label: context.tr('helped_patients'),
-                  color: AppColors.danger,
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(width: 10),
@@ -518,7 +518,7 @@ class DoctorProfileTab extends ConsumerWidget {
             child: MenuTile(
               icon: Icons.logout,
               title: context.tr('logout'),
-              color: AppColors.danger,
+              color: AppColors.text,
               onTap: () {
                 ref.read(authProvider.notifier).logout();
                 context.go('/role');

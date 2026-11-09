@@ -126,7 +126,7 @@ class ShifaHero extends StatelessWidget {
               gradient: const LinearGradient(
                 begin: AlignmentDirectional.topStart,
                 end: AlignmentDirectional.bottomEnd,
-                colors: [AppColors.teal, AppColors.ink],
+                colors: [AppColors.primary, AppColors.primaryDark],
               ),
               borderRadius: BorderRadius.circular(20),
             ),

@@ -272,7 +272,7 @@ class NotificationsScreen extends ConsumerWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
               side: BorderSide(
-                color: n.read ? scheme.outlineVariant : AppColors.mint,
+                color: n.read ? scheme.outlineVariant : AppColors.primary,
                 width: n.read ? 1 : 2.5,
               ),
             ),

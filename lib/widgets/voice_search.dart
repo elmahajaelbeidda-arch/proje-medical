@@ -143,7 +143,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                     tooltip: context.tr('voice_search'),
                     style: IconButton.styleFrom(
                       backgroundColor: _listening
-                          ? AppColors.danger
+                          ? AppColors.primaryDark
                           : AppColors.teal,
                       foregroundColor: Colors.white,
                     ),
@@ -166,7 +166,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.danger,
+                    color: AppColors.primaryDark,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Row(
@@ -181,7 +181,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                         ),
                         child: const Icon(
                           Icons.mic,
-                          color: AppColors.danger,
+                          color: AppColors.primaryDark,
                           size: 18,
                         ),
                       ),

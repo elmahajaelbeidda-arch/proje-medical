@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Visual identity of "شِفاءٌ لِلنّاس" (heart + cross logo).
+/// Visual identity of "شِفاءٌ لِلنّاس".
 class AppColors {
   AppColors._();
 
-  // Brand colors (from the app logo)
-  static const ink = Color(0xFF0B4747); // dark teal: titles, dark surfaces
-  static const teal = Color(0xFF0E7C7B); // heart (left) + cross
-  static const green = Color(0xFF2E9E5A); // heart (right)
-  static const mint = Color(0xFF8ED1A8); // light green fill (dark text on it)
-  static const inkLight = Color(0xFF136262);
-  static const grey = Color(0xFF5B6168); // association line in the logo
+  // Main palette
+  static const primary = Color(0xFF0A5C36); // emerald: titles, buttons, nav
+  static const primaryDark = Color(0xFF07432A); // gradients, pressed states
+  static const secondary = Color(0xFFE8F5E9); // mint: cards and boxes
+  static const emergency = Color(0xFFD9534F); // emergencies & urgent only
+  static const background = Color(0xFFF8F9FA); // app background
+  static const text = Color(0xFF2C3E50); // body text
+
+  // Aliases used across the screens
+  static const ink = primary; // titles, brand name, dark surfaces
+  static const teal = primary; // buttons, icons
+  static const inkLight = Color(0xFF0E7A48);
+  static const green = Color(0xFF1E8449); // tagline, highlights
+  static const mint = secondary; // light fill with dark text on it
+  static const grey = Color(0xFF5B6168); // secondary text, neutral icons
 
   // Role colors
   static const patient = Color(0xFF91AFCB); // sky blue  -> patients
@@ -22,19 +30,17 @@ class AppColors {
   static const patientDark = Color(0xFF4D6F91);
   static const doctorDark = Color(0xFF4A7362);
 
-  static const primary = teal;
-  static const secondary = green;
   static const accent = Color(0xFFF29E1F); // amber (stars, highlights)
   static const info = Color(0xFF2F6DB5);
 
-  // Strong, saturated status colors
-  static const danger = Color(0xFFD7263D);
+  // Status colors. [danger] is the emergency red: only for emergencies and
+  // urgent requests.
+  static const danger = emergency;
   static const success = Color(0xFF1F8A5B);
   static const warning = Color(0xFFF29E1F);
 
   // Solid surfaces (no transparency)
-  static const background = Color(0xFFF2F7F6);
-  static const border = Color(0xFFD3E3E0);
+  static const border = Color(0xFFD5E8D8);
 
   /// Picks ink or white text, whichever contrasts more with [background].
   static Color on(Color background) {
@@ -64,11 +70,11 @@ class AppTheme {
     final isLight = brightness == Brightness.light;
     final scheme =
         ColorScheme.fromSeed(
-          seedColor: AppColors.teal,
+          seedColor: AppColors.primary,
           brightness: brightness,
         ).copyWith(
-          primary: isLight ? AppColors.teal : AppColors.mint,
-          onPrimary: isLight ? Colors.white : AppColors.ink,
+          primary: isLight ? AppColors.primary : AppColors.secondary,
+          onPrimary: isLight ? Colors.white : AppColors.primary,
           primaryContainer: AppColors.mint,
           onPrimaryContainer: AppColors.ink,
           secondary: AppColors.green,
@@ -76,6 +82,8 @@ class AppTheme {
           secondaryContainer: AppColors.mint,
           onSecondaryContainer: AppColors.ink,
           tertiary: AppColors.doctor,
+          onSurface: isLight ? AppColors.text : Colors.white,
+          error: AppColors.emergency,
           outlineVariant: isLight ? AppColors.border : const Color(0xFF2A5552),
           surface: isLight ? Colors.white : const Color(0xFF102E2D),
           surfaceContainerLowest: isLight
@@ -83,9 +91,23 @@ class AppTheme {
               : const Color(0xFF143837),
         );
     final base = ThemeData(colorScheme: scheme, useMaterial3: true);
-    final textTheme = languageCode == 'ar'
+    final fontTheme = languageCode == 'ar'
         ? GoogleFonts.cairoTextTheme(base.textTheme)
         : GoogleFonts.poppinsTextTheme(base.textTheme);
+    // Body text in dark grey; titles in the primary green.
+    final textTheme = fontTheme
+        .apply(
+          bodyColor: isLight ? AppColors.text : Colors.white,
+          displayColor: isLight ? AppColors.text : Colors.white,
+        )
+        .copyWith(
+          titleLarge: fontTheme.titleLarge?.copyWith(
+            color: isLight ? AppColors.primary : Colors.white,
+          ),
+          headlineSmall: fontTheme.headlineSmall?.copyWith(
+            color: isLight ? AppColors.primary : Colors.white,
+          ),
+        );
 
     return base.copyWith(
       textTheme: textTheme,
@@ -97,16 +119,17 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: scheme.onSurface,
+        foregroundColor: isLight ? AppColors.primary : Colors.white,
         titleTextStyle: textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w700,
-          color: scheme.onSurface,
+          fontWeight: FontWeight.w800,
+          color: isLight ? AppColors.primary : Colors.white,
         ),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
         margin: EdgeInsets.zero,
-        color: scheme.surfaceContainerLowest,
+        // Mint cards and boxes for comfortable reading.
+        color: isLight ? AppColors.secondary : scheme.surfaceContainerLowest,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
           side: BorderSide(color: scheme.outlineVariant),
@@ -153,12 +176,25 @@ class AppTheme {
       chipTheme: base.chipTheme.copyWith(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
+      // Bottom bar in the primary green.
       navigationBarTheme: NavigationBarThemeData(
-        height: 68,
-        backgroundColor: scheme.surfaceContainerLowest,
-        indicatorColor: AppColors.mint,
-        labelTextStyle: WidgetStatePropertyAll(
-          textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
+        height: 70,
+        backgroundColor: AppColors.primary,
+        indicatorColor: AppColors.secondary,
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) => IconThemeData(
+            color: states.contains(WidgetState.selected)
+                ? AppColors.primary
+                : Colors.white,
+          ),
+        ),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => textTheme.labelMedium?.copyWith(
+            color: Colors.white,
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w800
+                : FontWeight.w500,
+          ),
         ),
       ),
     );

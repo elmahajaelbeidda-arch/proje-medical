@@ -41,7 +41,6 @@ class _PatientShellState extends State<PatientShell> {
             )
           : null,
       bottomNavigationBar: NavigationBar(
-        indicatorColor: AppColors.patient,
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
@@ -111,6 +110,7 @@ class PatientHomeTab extends ConsumerWidget {
                 onPressed: () => context.push('/notifications'),
                 icon: const Badge(
                   smallSize: 8,
+                  backgroundColor: AppColors.accent,
                   child: Icon(Icons.notifications_outlined),
                 ),
               ),
@@ -126,7 +126,7 @@ class PatientHomeTab extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.mint,
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Row(
@@ -138,7 +138,7 @@ class PatientHomeTab extends ConsumerWidget {
                           Text(
                             context.tr('request_consultation'),
                             style: text.titleLarge?.copyWith(
-                              color: AppColors.ink,
+                              color: Colors.white,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -146,15 +146,15 @@ class PatientHomeTab extends ConsumerWidget {
                           Text(
                             context.tr('request_consultation_desc'),
                             style: text.bodyMedium?.copyWith(
-                              color: AppColors.ink,
+                              color: Colors.white,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 14),
                           FilledButton.icon(
                             style: FilledButton.styleFrom(
-                              backgroundColor: AppColors.ink,
-                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.white,
+                              foregroundColor: AppColors.primary,
                               minimumSize: const Size(0, 46),
                             ),
                             onPressed: () => context.push('/patient/new'),
@@ -167,11 +167,11 @@ class PatientHomeTab extends ConsumerWidget {
                     const SizedBox(width: 8),
                     const CircleAvatar(
                       radius: 44,
-                      backgroundColor: AppColors.ink,
+                      backgroundColor: AppColors.secondary,
                       child: Icon(
                         Icons.health_and_safety_rounded,
                         size: 52,
-                        color: AppColors.mint,
+                        color: AppColors.primary,
                       ),
                     ),
                   ],
@@ -345,7 +345,7 @@ class PatientHomeTab extends ConsumerWidget {
   static const _tips = [
     (Icons.water_drop_outlined, 'tip1', AppColors.info),
     (Icons.directions_walk, 'tip2', AppColors.success),
-    (Icons.medication_outlined, 'tip3', AppColors.danger),
+    (Icons.medication_outlined, 'tip3', AppColors.primary),
     (Icons.monitor_heart_outlined, 'tip4', AppColors.ink),
   ];
 }
@@ -570,7 +570,7 @@ class PatientProfileTab extends ConsumerWidget {
               ),
               Pill(
                 label: profile.bloodType,
-                color: AppColors.danger,
+                color: AppColors.primary,
                 icon: Icons.bloodtype,
               ),
             ],
@@ -623,7 +623,7 @@ class PatientProfileTab extends ConsumerWidget {
             child: MenuTile(
               icon: Icons.logout,
               title: context.tr('logout'),
-              color: AppColors.danger,
+              color: AppColors.text,
               onTap: () {
                 ref.read(authProvider.notifier).logout();
                 context.go('/role');

@@ -170,7 +170,7 @@ class AttachmentThumb extends StatelessWidget {
       );
     }
     final isPdf = attachment.kind == AttachmentKind.pdf;
-    final color = isPdf ? AppColors.danger : categoryColor(attachment.category);
+    final color = isPdf ? AppColors.grey : categoryColor(attachment.category);
     return Container(
       width: size,
       height: size,
@@ -332,7 +332,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.danger,
+          color: AppColors.primary,
           borderRadius: BorderRadius.circular(18),
         ),
         child: Row(
@@ -345,7 +345,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.mic, color: AppColors.danger),
+              child: const Icon(Icons.mic, color: AppColors.primary),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -373,7 +373,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
             FilledButton.icon(
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: AppColors.danger,
+                foregroundColor: AppColors.primary,
                 minimumSize: const Size(0, 44),
               ),
               onPressed: _stop,
@@ -400,7 +400,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
               ),
               const Spacer(),
               TextButton.icon(
-                style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+                style: TextButton.styleFrom(foregroundColor: AppColors.grey),
                 onPressed: _delete,
                 icon: const Icon(Icons.delete_outline),
                 label: Text(context.tr('delete')),
