@@ -118,4 +118,66 @@ void main() {
     blood.markFulfilled(id);
     expect(c.read(bloodProvider).request(id)!.isOpen, isFalse);
   });
+
+  test('privacy helpers mask names and phone numbers', () {
+    expect(maskPhone('0550 12 34 56'), '0550 •• •• 56');
+    expect(maskName('عائشة بن موسى'), 'ع. ب. م.');
+    expect(donor('bd7', 'O+', 'x').code, 'D-007');
+  });
+
+  test('donors outside 18-65 years are not proposed', () {
+    final young = BloodDonor(
+      id: 'y',
+      name: 'y',
+      bloodType: 'O-',
+      city: 'Alger',
+      phone: '0550000000',
+      age: 17,
+    );
+    final ok = BloodDonor(
+      id: 'ok',
+      name: 'ok',
+      bloodType: 'O-',
+      city: 'Alger',
+      phone: '0550000000',
+      age: 40,
+    );
+    expect(matchDonors(request('A+', 'Alger'), [young, ok]).map((d) => d.id), [
+      'ok',
+    ]);
+  });
+
+  test('committee links donors and the status follows', () {
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final blood = c.read(bloodProvider.notifier);
+    final id = blood.addRequest(
+      patientName: 'Salim',
+      requesterName: 'Nadia',
+      relation: RequesterRelation.family,
+      bloodType: 'B+',
+      units: 1,
+      hospital: 'CHU',
+      city: 'Oran',
+      urgent: false,
+      phone: '0550 11 22 33',
+      contact: ContactMethod.call,
+    );
+    BloodRequest req() => c.read(bloodProvider).request(id)!;
+    expect(req().status, BloodRequestStatus.submitted);
+    expect(req().requesterName, 'Nadia');
+
+    blood.setStatus(id, BloodRequestStatus.inProgress);
+    blood.assignDonor(id, 'bd4');
+    blood.assignDonor(id, 'bd4'); // no duplicates
+    expect(req().assignedDonorIds, ['bd4']);
+    expect(req().status, BloodRequestStatus.matched);
+
+    blood.unassignDonor(id, 'bd4');
+    expect(req().assignedDonorIds, isEmpty);
+    expect(req().status, BloodRequestStatus.inProgress);
+
+    blood.setStatus(id, BloodRequestStatus.cancelled);
+    expect(req().isOpen, isFalse);
+  });
 }

@@ -56,10 +56,12 @@ class AuthState {
       : '•••• ${idNumber.substring(idNumber.length - 4)}';
 
   bool get isDoctor => role == UserRole.doctor;
+  bool get isCommittee => role == UserRole.committee;
 
   /// Name shown in the UI (falls back to the demo user's name).
   String get displayName {
     if (name.isNotEmpty) return name;
+    if (isCommittee) return 'لجنة التبرع بالدم';
     return isDoctor
         ? MockData.doctorById(MockData.currentDoctorId)!.name
         : 'محمد الأمين';
@@ -101,7 +103,9 @@ class AuthNotifier extends Notifier<AuthState> {
   );
 
   void login({String? name}) {
-    final defaultName = state.isDoctor
+    final defaultName = state.isCommittee
+        ? 'لجنة التبرع بالدم'
+        : state.isDoctor
         ? MockData.doctorById(MockData.currentDoctorId)!.name
         : 'محمد الأمين';
     state = AuthState(

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-enum UserRole { patient, doctor }
+enum UserRole { patient, doctor, committee }
 
 enum ConsultationStatus { pending, accepted, answered, closed }
 

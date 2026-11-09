@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../features/auth/auth_screens.dart';
 import '../features/blood/blood_screens.dart';
+import '../features/blood/committee_screens.dart';
 import '../features/doctor/doctor_shell.dart';
 import '../features/doctor/request_details_screen.dart';
 import '../features/onboarding/onboarding_screens.dart';
@@ -12,10 +13,17 @@ import '../features/patient/new_consultation_screen.dart';
 import '../features/patient/patient_shell.dart';
 import '../features/shared/shared_screens.dart';
 import '../models/models.dart';
+import 'providers.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
+    // Committee pages hold personal data: committee members only.
+    redirect: (context, state) {
+      final committeePage = state.matchedLocation.startsWith('/committee');
+      if (committeePage && !ref.read(authProvider).isCommittee) return '/role';
+      return null;
+    },
     routes: [
       GoRoute(path: '/', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingScreen()),
@@ -70,6 +78,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/blood/donor',
         builder: (_, _) => const DonorRegisterScreen(),
+      ),
+
+      // Blood donation committee
+      GoRoute(
+        path: '/committee',
+        builder: (_, _) => const CommitteeHomeScreen(),
+      ),
+      GoRoute(
+        path: '/committee/request/:id',
+        builder: (_, state) =>
+            CommitteeRequestScreen(id: state.pathParameters['id']!),
       ),
 
       // Shared

@@ -15,8 +15,14 @@ import '../../widgets/media.dart';
 import '../onboarding/onboarding_screens.dart';
 
 void _goHome(BuildContext context, WidgetRef ref) {
-  final isDoctor = ref.read(authProvider).isDoctor;
-  context.go(isDoctor ? '/doctor' : '/patient');
+  final auth = ref.read(authProvider);
+  context.go(
+    auth.isCommittee
+        ? '/committee'
+        : auth.isDoctor
+        ? '/doctor'
+        : '/patient',
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -42,7 +48,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         (v == null || v.trim().isEmpty) ? context.tr('required_field') : null;
 
     return Theme(
-      data: AppTheme.forRole(Theme.of(context), isDoctor: auth.isDoctor),
+      data: auth.isCommittee
+          ? Theme.of(context)
+          : AppTheme.forRole(Theme.of(context), isDoctor: auth.isDoctor),
       child: Scaffold(
         appBar: AppBar(),
         body: SafeArea(
@@ -66,10 +74,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 8),
                   Center(
                     child: Chip(
-                      backgroundColor: AppColors.role(auth.isDoctor),
+                      backgroundColor: auth.isCommittee
+                          ? AppColors.secondary
+                          : AppColors.role(auth.isDoctor),
                       side: BorderSide.none,
                       avatar: Icon(
-                        auth.isDoctor
+                        auth.isCommittee
+                            ? Icons.groups_outlined
+                            : auth.isDoctor
                             ? Icons.medical_services_outlined
                             : Icons.personal_injury_outlined,
                         color: AppColors.ink,
@@ -77,7 +89,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       label: Text(
                         context.tr(
-                          auth.isDoctor ? 'role_doctor' : 'role_patient',
+                          auth.isCommittee
+                              ? 'role_committee'
+                              : auth.isDoctor
+                              ? 'role_doctor'
+                              : 'role_patient',
                         ),
                       ),
                     ),
@@ -125,16 +141,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: Text(context.tr('login')),
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(context.tr('no_account')),
-                      TextButton(
-                        onPressed: () => context.push('/register'),
-                        child: Text(context.tr('register')),
-                      ),
-                    ],
-                  ),
+                  if (!auth.isCommittee)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(context.tr('no_account')),
+                        TextButton(
+                          onPressed: () => context.push('/register'),
+                          child: Text(context.tr('register')),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -621,7 +638,9 @@ class _VerifyPhoneScreenState extends ConsumerState<VerifyPhoneScreen> {
     final text = Theme.of(context).textTheme;
 
     return Theme(
-      data: AppTheme.forRole(Theme.of(context), isDoctor: auth.isDoctor),
+      data: auth.isCommittee
+          ? Theme.of(context)
+          : AppTheme.forRole(Theme.of(context), isDoctor: auth.isDoctor),
       child: Scaffold(
         appBar: AppBar(title: Text(context.tr('verify_phone'))),
         body: SafeArea(

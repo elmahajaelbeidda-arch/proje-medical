@@ -353,16 +353,20 @@ class MockData {
   static List<BloodDonor> bloodDonors() {
     final now = DateTime.now();
     return [
-      const BloodDonor(
+      BloodDonor(
         id: 'bd1',
+        kind: DonorKind.doctor,
+        age: 41,
         name: 'كمال حمدي',
         bloodType: 'O-',
         city: 'الجزائر',
         phone: '0550 00 01 11',
         contact: ContactMethod.whatsapp,
       ),
-      const BloodDonor(
+      BloodDonor(
         id: 'bd2',
+        male: false,
+        age: 27,
         name: 'سمية رحال',
         bloodType: 'A+',
         city: 'الجزائر',
@@ -377,16 +381,20 @@ class MockData {
         contact: ContactMethod.sms,
         lastDonation: now.subtract(const Duration(days: 120)),
       ),
-      const BloodDonor(
+      BloodDonor(
         id: 'bd4',
+        male: false,
+        age: 34,
+        kind: DonorKind.patient,
         name: 'هدى بلعيد',
         bloodType: 'B+',
         city: 'قسنطينة',
         phone: '0550 00 04 44',
         contact: ContactMethod.whatsapp,
       ),
-      const BloodDonor(
+      BloodDonor(
         id: 'bd5',
+        age: 52,
         name: 'أنيس طالبي',
         bloodType: 'AB+',
         city: 'الجزائر',
@@ -394,37 +402,47 @@ class MockData {
       ),
       BloodDonor(
         id: 'bd6',
+        male: false,
+        age: 23,
         name: 'ريم بوشامة',
         bloodType: 'O+',
         city: 'الجزائر',
         phone: '0550 00 06 66',
         lastDonation: now.subtract(const Duration(days: 30)),
       ),
-      const BloodDonor(
+      BloodDonor(
         id: 'bd7',
+        kind: DonorKind.doctor,
+        age: 38,
         name: 'منير زيتوني',
         bloodType: 'A-',
         city: 'سطيف',
         phone: '0550 00 07 77',
         contact: ContactMethod.whatsapp,
       ),
-      const BloodDonor(
+      BloodDonor(
         id: 'bd8',
+        male: false,
+        age: 45,
         name: 'نوال عيساوي',
         bloodType: 'B-',
         city: 'عنابة',
         phone: '0550 00 08 88',
       ),
-      const BloodDonor(
+      BloodDonor(
         id: 'bd9',
+        kind: DonorKind.patient,
+        age: 33,
         name: 'فريد قادري',
         bloodType: 'O+',
         city: 'الجزائر',
         phone: '0550 00 09 99',
         contact: ContactMethod.whatsapp,
       ),
-      const BloodDonor(
+      BloodDonor(
         id: 'bd10',
+        male: false,
+        age: 29,
         name: 'ليلى سعدي',
         bloodType: 'A+',
         city: 'وهران',
@@ -441,9 +459,12 @@ class MockData {
         id: 'br1',
         requesterId: 'p8',
         patientName: 'عائشة بن موسى',
+        requesterName: 'يوسف بن موسى',
+        relation: RequesterRelation.family,
         bloodType: 'O+',
         units: 3,
         hospital: 'مستشفى مصطفى باشا',
+        volunteerIds: const ['bd9'],
         city: 'الجزائر',
         urgent: true,
         phone: '0550 10 20 30',
@@ -455,6 +476,7 @@ class MockData {
         id: 'br2',
         requesterId: 'p9',
         patientName: 'سليم عبادة',
+        status: BloodRequestStatus.inProgress,
         bloodType: 'A-',
         units: 2,
         hospital: 'المستشفى الجامعي',
@@ -467,6 +489,10 @@ class MockData {
         id: 'br3',
         requesterId: 'p10',
         patientName: 'رضا حمودي',
+        requesterName: 'سهام حمودي',
+        relation: RequesterRelation.family,
+        status: BloodRequestStatus.matched,
+        assignedDonorIds: const ['bd5'],
         bloodType: 'AB+',
         units: 1,
         hospital: 'مستشفى ابن رشد',
