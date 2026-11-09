@@ -254,7 +254,7 @@ class AppStrings {
     'donor_kind': ['أنت', 'Vous êtes'],
     'kind_patient': ['مريض', 'Patient'],
     'kind_doctor': ['طبيب', 'Médecin'],
-    'kind_other': ['آخر', 'Autre'],
+    'kind_other': ['متبرع دون حساب', 'Donneur sans compte'],
     'age_years': ['العمر (بالسنوات)', 'Âge (ans)'],
     'age_out_of_range': [
       'يجب أن يكون عمر المتبرع بين 18 و65 سنة',
@@ -286,8 +286,8 @@ class AppStrings {
     ],
     'become_donor_title': ['كن متبرعاً بالدم', 'Devenez donneur de sang'],
     'become_donor_desc': [
-      'التسجيل متاح للمرضى المسجلين والأطباء المتطوعين: الاسم، وفصيلة الدم، والمدينة، ورقم الهاتف.',
-      'Ouvert aux patients inscrits et aux médecins bénévoles : nom, groupe sanguin, ville et téléphone.',
+      'سجّل اسمك وفصيلة دمك ومدينتك ورقم هاتفك، وستراجع لجنة التبرع تسجيلك.',
+      'Indiquez nom, groupe sanguin, ville et téléphone ; le comité validera votre inscription.',
     ],
     'donor_status_pending': ['قيد المراجعة', 'En attente'],
     'donor_status_approved': ['مقبول', 'Accepté'],
@@ -322,6 +322,8 @@ class AppStrings {
       'لا توجد طلبات دم. يمكنك تقديم طلب إذا احتجت دماً.',
       'Aucune demande. Vous pouvez en créer une si besoin.',
     ],
+    'role_donor': ['متبرع بالدم', 'Donneur de sang'],
+    'role_donor_desc': ['سجّل كمتبرع بالدم', 'Inscrivez-vous comme donneur'],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
     'skip': ['تخطي', 'Passer'],

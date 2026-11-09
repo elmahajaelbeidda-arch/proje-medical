@@ -1075,7 +1075,7 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
   late final BloodDonor? _existing = ref.read(bloodProvider).myDonor;
   late final _auth = ref.read(authProvider);
   late final _name = TextEditingController(
-    text: _existing?.name ?? _auth.displayName,
+    text: _existing?.name ?? (_auth.loggedIn ? _auth.displayName : ''),
   );
   late final _city = TextEditingController(text: _existing?.city ?? '');
   late final _phone = TextEditingController(
@@ -1083,7 +1083,9 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
   );
   late String? _type =
       _existing?.bloodType ??
-      (_auth.isDoctor ? null : ref.read(healthProfileProvider).bloodType);
+      (_auth.loggedIn && !_auth.isDoctor
+          ? ref.read(healthProfileProvider).bloodType
+          : null);
   late bool _share = _existing?.shareContact ?? false;
 
   @override
@@ -1115,8 +1117,11 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
           city: _city.text,
           phone: _phone.text,
           shareContact: _share,
-          // Registered patients or volunteer doctors only.
-          kind: _auth.isDoctor ? DonorKind.doctor : DonorKind.patient,
+          kind: !_auth.loggedIn
+              ? DonorKind.other
+              : _auth.isDoctor
+              ? DonorKind.doctor
+              : DonorKind.patient,
           userId: _auth.userId,
         );
     ScaffoldMessenger.of(context)

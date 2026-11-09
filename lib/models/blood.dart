@@ -30,8 +30,9 @@ List<String> compatibleDonorTypes(String recipient) => [
 
 enum ContactMethod { call, whatsapp, sms }
 
-/// Who the donor is on the platform (registered users only).
-enum DonorKind { patient, doctor }
+/// Who the donor is: a registered patient or doctor, or someone without an
+/// account who registered from the "Blood donor" entry.
+enum DonorKind { patient, doctor, other }
 
 /// Review of a donor registration by the donation committee.
 enum DonorStatus { pending, approved, rejected }
