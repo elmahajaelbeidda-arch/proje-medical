@@ -10,10 +10,7 @@ import '../onboarding/onboarding_screens.dart';
 /// Phone number for donations to the association (from its poster).
 const associationDonationPhone = '32203250';
 
-/// Photo of the association members with the president.
-const teamPhotoAsset = 'assets/images/team.jpg';
-
-/// "عن الجمعية": team photo, introduction and donation number.
+/// "عن الجمعية": introduction and donation number.
 class AboutAssociationScreen extends StatelessWidget {
   const AboutAssociationScreen({super.key});
 
@@ -25,27 +22,6 @@ class AboutAssociationScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: GestureDetector(
-              onTap: () => _openPhoto(context),
-              child: Image.asset(
-                teamPhotoAsset,
-                fit: BoxFit.cover,
-                semanticLabel: context.tr('team_photo_caption'),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            context.tr('team_photo_caption'),
-            textAlign: TextAlign.center,
-            style: text.bodyMedium?.copyWith(
-              color: AppColors.grey,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 20),
           const Center(child: ShifaLockup(iconSize: 72)),
           const SizedBox(height: 16),
           Container(
@@ -108,57 +84,6 @@ class AboutAssociationScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void _openPhoto(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => Dialog(
-        insetPadding: const EdgeInsets.all(12),
-        clipBehavior: Clip.antiAlias,
-        child: InteractiveViewer(
-          maxScale: 4,
-          child: Image.asset(teamPhotoAsset, fit: BoxFit.contain),
-        ),
-      ),
-    );
-  }
-}
-
-/// Card with the team photo that opens the "about" page.
-class TeamPhotoCard extends StatelessWidget {
-  const TeamPhotoCard({super.key, required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.asset(teamPhotoAsset, fit: BoxFit.cover),
-            ),
-            ListTile(
-              title: Text(
-                context.tr('meet_team'),
-                style: text.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.primary,
-                ),
-              ),
-              subtitle: Text(context.tr('team_photo_caption')),
-              trailing: const Icon(Icons.chevron_right),
-            ),
-          ],
-        ),
       ),
     );
   }

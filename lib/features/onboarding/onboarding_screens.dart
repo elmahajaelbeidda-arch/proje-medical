@@ -7,7 +7,6 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
 import '../../widgets/brand.dart';
-import '../about/about_screen.dart';
 
 /// The heart + cross icon of "شِفاءٌ لِلنّاس".
 class AppLogo extends StatelessWidget {
@@ -447,8 +446,12 @@ class RoleSelectScreen extends ConsumerWidget {
                   darkColor: AppColors.primary,
                   onTap: () => context.push('/blood'),
                 ),
-                const SizedBox(height: 20),
-                TeamPhotoCard(onTap: () => context.push('/about')),
+                const SizedBox(height: 8),
+                TextButton.icon(
+                  onPressed: () => context.push('/about'),
+                  icon: const Icon(Icons.groups_outlined),
+                  label: Text(context.tr('about_association')),
+                ),
                 const SizedBox(height: 8),
                 TextButton.icon(
                   onPressed: () => choose(UserRole.committee),
