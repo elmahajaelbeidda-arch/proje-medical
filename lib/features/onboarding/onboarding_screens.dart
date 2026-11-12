@@ -470,15 +470,9 @@ class RoleSelectScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 TextButton.icon(
-                  onPressed: () => choose(UserRole.committee),
+                  onPressed: () => context.push('/admin'),
                   icon: const Icon(Icons.groups_outlined),
                   label: Text(context.tr('committee_login')),
-                ),
-                const SizedBox(height: 12),
-                TextButton.icon(
-                  onPressed: () => context.push('/admin'),
-                  icon: const Icon(Icons.admin_panel_settings_outlined),
-                  label: Text(context.tr('admin_entry')),
                 ),
                 TextButton.icon(
                   onPressed: () => context.push('/verify-card'),

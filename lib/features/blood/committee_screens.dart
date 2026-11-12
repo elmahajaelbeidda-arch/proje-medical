@@ -26,7 +26,11 @@ String _date(DateTime d) => '${d.day}/${d.month}/${d.year}';
 /// city), blood requests from patients' profiles, and new patient and doctor
 /// accounts. Only the committee sees full names and phone numbers.
 class CommitteeHomeScreen extends ConsumerStatefulWidget {
-  const CommitteeHomeScreen({super.key});
+  const CommitteeHomeScreen({super.key, this.embedded = false});
+
+  /// Inside the follow-up & management dashboard: only the blood donation
+  /// tabs (donors and blood requests); accounts are in the users section.
+  final bool embedded;
   @override
   ConsumerState<CommitteeHomeScreen> createState() =>
       _CommitteeHomeScreenState();
@@ -97,31 +101,36 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
         .where((f) => f.status == FacilityStatus.pending)
         .length;
 
+    final tabCount = widget.embedded ? 2 : 5;
     return DefaultTabController(
-      length: 5,
+      length: tabCount,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(context.tr('committee_title')),
-          actions: [
-            IconButton(
-              tooltip: context.tr('mc_verify_title'),
-              onPressed: () => context.push('/verify-card'),
-              icon: const Icon(Icons.qr_code_scanner),
-            ),
-            IconButton(
-              tooltip: context.tr('aid_map'),
-              onPressed: () => context.push('/aid/map'),
-              icon: const Icon(Icons.map_outlined),
-            ),
-            IconButton(
-              tooltip: context.tr('logout'),
-              onPressed: () {
-                ref.read(authProvider.notifier).logout();
-                context.go('/role');
-              },
-              icon: const Icon(Icons.logout),
-            ),
-          ],
+          automaticallyImplyLeading: !widget.embedded,
+          toolbarHeight: widget.embedded ? 0 : null,
+          title: widget.embedded ? null : Text(context.tr('committee_title')),
+          actions: widget.embedded
+              ? null
+              : [
+                  IconButton(
+                    tooltip: context.tr('mc_verify_title'),
+                    onPressed: () => context.push('/verify-card'),
+                    icon: const Icon(Icons.qr_code_scanner),
+                  ),
+                  IconButton(
+                    tooltip: context.tr('aid_map'),
+                    onPressed: () => context.push('/aid/map'),
+                    icon: const Icon(Icons.map_outlined),
+                  ),
+                  IconButton(
+                    tooltip: context.tr('logout'),
+                    onPressed: () {
+                      ref.read(authProvider.notifier).logout();
+                      context.go('/role');
+                    },
+                    icon: const Icon(Icons.logout),
+                  ),
+                ],
           bottom: TabBar(
             isScrollable: true,
             tabAlignment: TabAlignment.start,
@@ -131,7 +140,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
               Tab(text: '${context.tr('patients')} ($pendingPatients)'),
               Tab(text: '${context.tr('doctors')} ($pendingDoctors)'),
               Tab(text: '${context.tr('facilities')} ($pendingFacilities)'),
-            ],
+            ].take(tabCount).toList(),
           ),
         ),
         body: Column(
@@ -141,11 +150,12 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
               child: Row(
                 children: [
                   _Stat(
-                    value:
-                        pending +
-                        pendingPatients +
-                        pendingDoctors +
-                        pendingFacilities,
+                    value: widget.embedded
+                        ? pending
+                        : pending +
+                              pendingPatients +
+                              pendingDoctors +
+                              pendingFacilities,
                     label: context.tr('pending_registrations'),
                     color: AppColors.warning,
                   ),
@@ -274,7 +284,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                   const _RegistrationsTab(role: UserRole.patient),
                   const _RegistrationsTab(role: UserRole.doctor),
                   const CommitteeFacilitiesTab(),
-                ],
+                ].take(tabCount).toList(),
               ),
             ),
           ],

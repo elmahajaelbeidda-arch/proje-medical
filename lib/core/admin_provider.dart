@@ -166,6 +166,18 @@ class AdminNotifier extends Notifier<AdminState> {
   /// Public wrapper for actions done in other providers (approvals...).
   void authorize(AdminPermission p) => _require(p);
 
+  /// Logs an action done in another part of the app, only when it is done
+  /// by a signed-in member of the follow-up & management team.
+  void recordIfAdmin(
+    String action, {
+    String target = '',
+    String details = '',
+    bool sensitive = false,
+  }) {
+    if (state.me == null) return;
+    _log(action, target: target, details: details, sensitive: sensitive);
+  }
+
   /// Logs an action done elsewhere (e.g. approving a registration).
   void record(
     String action, {
@@ -787,6 +799,13 @@ class AdminNotifier extends Notifier<AdminState> {
           'audit@shifa.mr',
           'Audit@2026',
           AdminRole.auditor,
+        ),
+        admin(
+          'adm7',
+          'عضو فريق المتابعة',
+          'team@shifa.mr',
+          'Team@2026!',
+          AdminRole.followUp,
         ),
       ],
       donations: [

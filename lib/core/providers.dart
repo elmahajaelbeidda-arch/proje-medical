@@ -347,10 +347,16 @@ class RegistrationsNotifier extends Notifier<List<Registration>> {
       _update(id, (r) => r.copyWith(phoneVerified: true));
 
   /// Committee: approve or reject an account.
-  void review(String id, ReviewStatus status) => _update(
-    id,
-    (r) => r.copyWith(status: status, reviewedAt: DateTime.now()),
-  );
+  void review(String id, ReviewStatus status) {
+    _update(id, (r) => r.copyWith(status: status, reviewedAt: DateTime.now()));
+    final r = byId(id);
+    ref
+        .read(adminProvider.notifier)
+        .recordIfAdmin(
+          status == ReviewStatus.approved ? 'au_approve' : 'au_reject',
+          target: r == null ? id : '${r.code} ${r.name}',
+        );
+  }
 }
 
 final registrationsProvider =

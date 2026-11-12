@@ -6,6 +6,7 @@ import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
 import '../../core/theme.dart';
 import '../../models/admin.dart';
+import '../blood/committee_screens.dart' show CommitteeHomeScreen;
 import '../onboarding/onboarding_screens.dart' show AppLogo;
 import 'admin_ui.dart';
 import 'sections/cases_section.dart';
@@ -28,6 +29,7 @@ enum AdminSection {
     AdminPermission.manageCards,
   }),
   cases(Icons.medical_information_outlined, {AdminPermission.viewCases}),
+  blood(Icons.bloodtype_outlined, {AdminPermission.manageBlood}),
   doctors(Icons.medical_services_outlined, {AdminPermission.manageDoctors}),
   facilities(Icons.local_hospital_outlined, {AdminPermission.manageFacilities}),
   finance(Icons.volunteer_activism_outlined, {AdminPermission.viewFinance}),
@@ -90,6 +92,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
     ('finance@shifa.mr', 'Finance@2026', AdminRole.finance),
     ('comm@shifa.mr', 'Comm@2026!', AdminRole.communications),
     ('audit@shifa.mr', 'Audit@2026', AdminRole.auditor),
+    ('team@shifa.mr', 'Team@2026!', AdminRole.followUp),
   ];
 
   @override
@@ -298,6 +301,8 @@ class AdminShell extends ConsumerWidget {
             AdminSection.overview => const OverviewSection(),
             AdminSection.users => const UsersSection(),
             AdminSection.cases => const CasesSection(),
+            // Donors database, blood requests and donor matching.
+            AdminSection.blood => const CommitteeHomeScreen(embedded: true),
             AdminSection.doctors => const DoctorsSection(),
             AdminSection.facilities => const FacilitiesSection(),
             AdminSection.finance => const FinanceSection(),

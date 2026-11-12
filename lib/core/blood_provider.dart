@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/mock_data.dart';
 import '../models/blood.dart';
 import '../models/models.dart';
+import 'admin_provider.dart';
 
 class BloodState {
   final List<BloodRequest> requests;
@@ -165,8 +166,18 @@ class BloodNotifier extends Notifier<BloodState> {
         ...state.donors,
       ],
     );
+    _audit('au_external_donor', '$bloodType ${city.trim()}');
     return id;
   }
+
+  /// Every team action is written to the audit log.
+  void _audit(String action, String target, [String details = '']) => ref
+      .read(adminProvider.notifier)
+      .recordIfAdmin(action, target: target, details: details);
+
+  String _code(String requestId) =>
+      state.requests.where((r) => r.id == requestId).firstOrNull?.code ??
+      requestId;
 
   /// Team: internal follow-up note on a request.
   void addTeamNote(String requestId, String text) {
@@ -177,11 +188,15 @@ class BloodNotifier extends Notifier<BloodState> {
         teamNotes: [...r.teamNotes, TeamNote(text.trim(), DateTime.now())],
       ),
     );
+    _audit('au_team_note', _code(requestId));
   }
 
   /// Committee: accept or reject a donor registration.
-  void reviewDonor(String donorId, DonorStatus status) =>
-      _updateDonor(donorId, (d) => d.copyWith(status: status));
+  void reviewDonor(String donorId, DonorStatus status) {
+    _updateDonor(donorId, (d) => d.copyWith(status: status));
+    final d = state.donors.where((x) => x.id == donorId).firstOrNull;
+    _audit('au_donor_${status.name}', d?.code ?? donorId);
+  }
 
   void _updateRequest(String id, BloodRequest Function(BloodRequest) f) {
     state = state.copyWith(
@@ -189,22 +204,27 @@ class BloodNotifier extends Notifier<BloodState> {
     );
   }
 
-  void setStatus(String requestId, BloodRequestStatus status) =>
-      _updateRequest(requestId, (r) => r.copyWith(status: status));
+  void setStatus(String requestId, BloodRequestStatus status) {
+    _updateRequest(requestId, (r) => r.copyWith(status: status));
+    _audit('au_blood_status', _code(requestId), status.name);
+  }
 
   void markFulfilled(String requestId) =>
       setStatus(requestId, BloodRequestStatus.fulfilled);
 
   /// Committee: link a donor to a request (status becomes "matched").
-  void assignDonor(String requestId, String donorId) => _updateRequest(
-    requestId,
-    (r) => r.assignedDonorIds.contains(donorId)
-        ? r
-        : r.copyWith(
-            assignedDonorIds: [...r.assignedDonorIds, donorId],
-            status: r.isOpen ? BloodRequestStatus.matched : r.status,
-          ),
-  );
+  void assignDonor(String requestId, String donorId) {
+    _updateRequest(
+      requestId,
+      (r) => r.assignedDonorIds.contains(donorId)
+          ? r
+          : r.copyWith(
+              assignedDonorIds: [...r.assignedDonorIds, donorId],
+              status: r.isOpen ? BloodRequestStatus.matched : r.status,
+            ),
+    );
+    _audit('au_donor_assigned', _code(requestId), donorId);
+  }
 
   /// Committee: remove a linked donor.
   void unassignDonor(String requestId, String donorId) =>

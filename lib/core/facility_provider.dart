@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/mock_data.dart';
 import '../models/facility.dart';
 import '../models/registration.dart';
+import 'admin_provider.dart';
 import '../models/models.dart';
 
 class FacilityState {
@@ -124,6 +125,10 @@ class FacilityNotifier extends Notifier<FacilityState> {
     return updated;
   }
 
+  void _audit(String action, String target, [String details = '']) => ref
+      .read(adminProvider.notifier)
+      .recordIfAdmin(action, target: target, details: details);
+
   /// Association (step 6): tick a verification item.
   void toggleCheck(String id, VerificationCheck check) => _update(id, (f) {
     final checks = {...f.checks};
@@ -145,6 +150,7 @@ class FacilityNotifier extends Notifier<FacilityState> {
     if (decision == FacilityStatus.approved && !f.isVerified) {
       throw StateError('verification not complete');
     }
+    _audit('au_facility_${decision.name}', '${f.code} ${f.name}', note.trim());
     _update(
       id,
       (f) => f.copyWith(
@@ -215,6 +221,7 @@ class FacilityNotifier extends Notifier<FacilityState> {
         ...state.referrals,
       ],
     );
+    _audit('au_referral_sent', f.name, service.trim());
     return id;
   }
 

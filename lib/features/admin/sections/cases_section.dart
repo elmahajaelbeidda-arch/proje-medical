@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/admin_data.dart';
 import '../../../core/admin_provider.dart';
@@ -89,6 +90,12 @@ class _CasesSectionState extends ConsumerState<CasesSection> {
       title: context.tr('ads_cases'),
       subtitle: context.tr(medical ? 'ad_medical_access' : 'ad_masked_note'),
       actions: [
+        // Map of aid requests with location (patients' consent).
+        OutlinedButton.icon(
+          onPressed: () => context.push('/aid/map'),
+          icon: const Icon(Icons.map_outlined),
+          label: Text(context.tr('aid_map')),
+        ),
         if (admin.can(AdminPermission.exportReports))
           ExportButtons(
             title: context.tr('ads_cases'),

@@ -29,8 +29,25 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     // Committee pages hold personal data: committee members only.
     redirect: (context, state) {
-      final committeePage = state.matchedLocation.startsWith('/committee');
-      if (committeePage && !ref.read(authProvider).isCommittee) return '/role';
+      // The follow-up & management team works from the dashboard: its
+      // pages need a signed-in team member with the matching permission.
+      final loc0 = state.matchedLocation;
+      if (loc0 == '/committee') return '/admin/blood';
+      if (loc0.startsWith('/committee/')) {
+        final admin = ref.read(adminProvider);
+        final needed = loc0.startsWith('/committee/request/')
+            ? [AdminPermission.manageBlood]
+            : loc0.startsWith('/committee/facility/')
+            ? [
+                AdminPermission.manageFacilities,
+                AdminPermission.manageRegistrations,
+              ]
+            : [
+                AdminPermission.manageCards,
+                AdminPermission.manageRegistrations,
+              ];
+        if (!needed.any(admin.can)) return '/admin';
+      }
       // Sections switched off by the administration.
       final loc = state.matchedLocation;
       final settings = ref.read(appSettingsProvider);

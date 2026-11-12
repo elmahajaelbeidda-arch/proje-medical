@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin_provider.dart';
 import '../../core/providers.dart';
+import '../../models/admin.dart';
 import '../../data/mock_data.dart';
 import 'aid_models.dart';
 import 'aid_repository.dart';
@@ -9,10 +11,14 @@ import 'aid_repository.dart';
 /// (the follow-up team login acts as committee supervisor in the demo).
 final aidRepositoryProvider = Provider<AidRepository>((ref) {
   if (supabaseConfigured) return SupabaseAidRepository();
-  final auth = ref.watch(authProvider);
+  // Members of the follow-up & management team (dashboard) supervise.
+  final team = ref.watch(
+    adminProvider.select((s) => s.can(AdminPermission.viewCases)),
+  );
+  ref.watch(authProvider);
   return DemoAidRepository(
-    role: auth.isCommittee ? CommitteeRole.supervisor : null,
-    userId: auth.isCommittee ? 'demo-supervisor' : MockData.currentPatientId,
+    role: team ? CommitteeRole.supervisor : null,
+    userId: team ? 'demo-supervisor' : MockData.currentPatientId,
   );
 });
 

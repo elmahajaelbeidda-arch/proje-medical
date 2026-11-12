@@ -14,7 +14,8 @@ import '../../facility/facility_screens.dart'
         CooperationChips,
         facilityTypeKey,
         referralStatusColor,
-        referralStatusKey;
+        referralStatusKey,
+        showReferPatientSheet;
 import '../admin_ui.dart';
 import 'overview_section.dart' show Pill;
 import 'users_section.dart' show AdminFacilityPage;
@@ -313,6 +314,11 @@ class _FacilityPanel extends ConsumerWidget {
                   onPressed: () => _editAgreement(context, ref, f, agreement),
                   icon: const Icon(Icons.edit_calendar),
                   label: Text(context.tr('ad_agreement_edit')),
+                ),
+                TextButton.icon(
+                  onPressed: () => showReferPatientSheet(context, ref, f),
+                  icon: const Icon(Icons.assignment_ind_outlined),
+                  label: Text(context.tr('refer_patient')),
                 ),
                 TextButton.icon(
                   onPressed: () => _addService(context, ref, f),

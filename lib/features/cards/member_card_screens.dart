@@ -5,10 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:printing/printing.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
 import '../../core/member_card_provider.dart';
-import '../../core/providers.dart';
 import '../../core/theme.dart';
+import '../../models/admin.dart';
 import '../../models/blood.dart' show maskName;
 import '../../models/member_card.dart';
 import '../../widgets/common.dart';
@@ -451,7 +452,10 @@ class _VerifyCardScreenState extends ConsumerState<VerifyCardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isTeam = ref.watch(authProvider).isCommittee;
+    final admin = ref.watch(adminProvider);
+    final isTeam =
+        admin.can(AdminPermission.manageCards) ||
+        admin.can(AdminPermission.manageRegistrations);
     final cards = ref.watch(memberCardsProvider);
     final result = _query == null
         ? null

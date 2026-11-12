@@ -19,6 +19,7 @@ enum AdminPermission {
   viewCases,
   viewMedicalRecords,
   manageCases,
+  manageBlood,
   manageDoctors,
   manageFacilities,
   viewFinance,
@@ -39,6 +40,7 @@ enum AdminRole {
   finance,
   communications,
   auditor,
+  followUp,
   custom,
 }
 
@@ -58,6 +60,7 @@ Set<AdminPermission> rolePermissions(AdminRole role) => switch (role) {
     AdminPermission.viewCases,
     AdminPermission.viewMedicalRecords,
     AdminPermission.manageCases,
+    AdminPermission.manageBlood,
     AdminPermission.manageDoctors,
     AdminPermission.manageFacilities,
     AdminPermission.sendNotifications,
@@ -77,6 +80,14 @@ Set<AdminPermission> rolePermissions(AdminRole role) => switch (role) {
     AdminPermission.viewFinance,
     AdminPermission.exportReports,
     AdminPermission.viewAudit,
+  },
+  // Field volunteers of the follow-up team: day-to-day work only.
+  AdminRole.followUp => {
+    AdminPermission.manageRegistrations,
+    AdminPermission.manageBlood,
+    AdminPermission.manageFacilities,
+    AdminPermission.viewCases,
+    AdminPermission.manageCards,
   },
   AdminRole.custom => const {},
 };

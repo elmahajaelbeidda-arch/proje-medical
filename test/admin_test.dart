@@ -5,6 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifa/core/admin_data.dart';
 import 'package:shifa/core/admin_provider.dart';
+import 'package:shifa/core/blood_provider.dart';
+import 'package:shifa/core/providers.dart';
+import 'package:shifa/models/blood.dart';
+import 'package:shifa/models/registration.dart';
 import 'package:shifa/core/member_card_provider.dart';
 import 'package:shifa/features/admin/totp.dart';
 import 'package:shifa/features/admin/xlsx.dart';
@@ -188,6 +192,35 @@ void main() {
     expect(xml, contains('المرضى'));
     expect(xml, contains('<v>12</v>'));
     expect(zip.findFile('[Content_Types].xml'), isNotNull);
+  });
+
+  test('follow-up team member: field work only', () {
+    signIn('team@shifa.mr', 'Team@2026!');
+    expect(s().can(AdminPermission.manageBlood), isTrue);
+    expect(s().can(AdminPermission.manageRegistrations), isTrue);
+    expect(s().can(AdminPermission.viewFinance), isFalse);
+    expect(s().can(AdminPermission.viewMedicalRecords), isFalse);
+    expect(s().can(AdminPermission.manageAdmins), isFalse);
+  });
+
+  test('team actions on blood and registrations go to the audit log', () {
+    // Not signed in to the dashboard: nothing is logged.
+    final before = s().audit.length;
+    final donor = c.read(bloodProvider).donors.first;
+    c.read(bloodProvider.notifier).reviewDonor(donor.id, DonorStatus.approved);
+    expect(s().audit.length, before);
+
+    signIn('team@shifa.mr', 'Team@2026!');
+    c.read(bloodProvider.notifier).reviewDonor(donor.id, DonorStatus.rejected);
+    expect(s().audit.first.action, 'au_donor_rejected');
+    expect(s().audit.first.adminName, 'عضو فريق المتابعة');
+    final request = c.read(bloodProvider).requests.first;
+    c.read(bloodProvider.notifier).assignDonor(request.id, donor.id);
+    expect(s().audit.first.action, 'au_donor_assigned');
+    c
+        .read(registrationsProvider.notifier)
+        .review('reg11', ReviewStatus.approved);
+    expect(s().audit.first.action, 'au_approve');
   });
 }
 
