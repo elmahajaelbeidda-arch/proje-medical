@@ -446,6 +446,15 @@ class RoleSelectScreen extends ConsumerWidget {
                   darkColor: AppColors.primary,
                   onTap: () => context.push('/blood'),
                 ),
+                const SizedBox(height: 14),
+                _RoleCard(
+                  icon: Icons.local_hospital_outlined,
+                  title: context.tr('role_facility'),
+                  subtitle: context.tr('role_facility_desc'),
+                  color: AppColors.secondary,
+                  darkColor: AppColors.primary,
+                  onTap: () => context.push('/facility'),
+                ),
                 const SizedBox(height: 8),
                 TextButton.icon(
                   onPressed: () => context.push('/about'),

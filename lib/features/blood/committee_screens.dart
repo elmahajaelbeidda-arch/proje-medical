@@ -13,6 +13,8 @@ import '../../models/models.dart';
 import '../../models/registration.dart';
 import '../../widgets/media.dart';
 import '../../widgets/common.dart';
+import '../../core/facility_provider.dart';
+import '../facility/facility_screens.dart';
 import 'blood_screens.dart';
 
 String _date(DateTime d) => '${d.day}/${d.month}/${d.year}';
@@ -87,9 +89,14 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
         .length;
     final pendingPatients = pendingOf(UserRole.patient);
     final pendingDoctors = pendingOf(UserRole.doctor);
+    final pendingFacilities = ref
+        .watch(facilityProvider)
+        .facilities
+        .where((f) => f.status == ReviewStatus.pending)
+        .length;
 
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           title: Text(context.tr('committee_title')),
@@ -116,6 +123,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
               Tab(text: '${context.tr('my_blood_requests')} ($newRequests)'),
               Tab(text: '${context.tr('patients')} ($pendingPatients)'),
               Tab(text: '${context.tr('doctors')} ($pendingDoctors)'),
+              Tab(text: '${context.tr('facilities')} ($pendingFacilities)'),
             ],
           ),
         ),
@@ -126,7 +134,11 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
               child: Row(
                 children: [
                   _Stat(
-                    value: pending + pendingPatients + pendingDoctors,
+                    value:
+                        pending +
+                        pendingPatients +
+                        pendingDoctors +
+                        pendingFacilities,
                     label: context.tr('pending_registrations'),
                     color: AppColors.warning,
                   ),
@@ -254,6 +266,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                   // ---------------- New accounts ----------------
                   const _RegistrationsTab(role: UserRole.patient),
                   const _RegistrationsTab(role: UserRole.doctor),
+                  const CommitteeFacilitiesTab(),
                 ],
               ),
             ),

@@ -7,6 +7,7 @@ import '../features/auth/auth_screens.dart';
 import '../features/blood/blood_screens.dart';
 import '../features/blood/committee_screens.dart';
 import '../features/doctor/doctor_shell.dart';
+import '../features/facility/facility_screens.dart';
 import '../features/doctor/request_details_screen.dart';
 import '../features/onboarding/onboarding_screens.dart';
 import '../features/patient/consultation_details_screen.dart';
@@ -97,6 +98,35 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/committee/request/:id',
         builder: (_, state) =>
             CommitteeRequestScreen(id: state.pathParameters['id']!),
+      ),
+
+      GoRoute(
+        path: '/committee/facility/:id',
+        builder: (_, state) =>
+            CommitteeFacilityScreen(id: state.pathParameters['id']!),
+      ),
+
+      // Medical facilities (hospitals, clinics, labs, pharmacies, radiology)
+      GoRoute(
+        path: '/facility',
+        builder: (_, _) => const FacilityEntryScreen(),
+      ),
+      GoRoute(
+        path: '/facility/register',
+        builder: (_, _) => const FacilityRegisterScreen(),
+      ),
+      GoRoute(
+        path: '/facility/login',
+        builder: (_, _) => const FacilityLoginScreen(),
+      ),
+      GoRoute(
+        path: '/facility/home',
+        builder: (_, _) => const FacilityHomeScreen(),
+      ),
+      GoRoute(
+        path: '/facility/referral/:id',
+        builder: (_, state) =>
+            FacilityReferralScreen(id: state.pathParameters['id']!),
       ),
 
       // Patient map (medical aid committee)
