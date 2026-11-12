@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="tube" x1="0" y1="0" x2="1" y2="0.35">
+      <stop offset="0" stop-color="#398B89"/>
+      <stop offset="0.55" stop-color="#3F9A80"/>
+      <stop offset="1" stop-color="#55A879"/>
+    </linearGradient>
+    <linearGradient id="tubeLow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2F7F7A"/>
+      <stop offset="1" stop-color="#398B89"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#55A879"/>
+      <stop offset="0.5" stop-color="#176B55"/>
+      <stop offset="1" stop-color="#55A879"/>
+    </linearGradient>
+    <radialGradient id="bell" cx="0.4" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#5FA3A0"/>
+      <stop offset="1" stop-color="#176B55"/>
+    </radialGradient>
+  </defs>
+  <!-- stethoscope tube drawn as a heart -->
+  <path d="M232 122 C200 66 112 56 74 112 C34 172 66 246 132 306 C176 346 222 382 256 420
+           C290 382 336 346 380 306 C446 246 478 172 438 112 C400 56 312 66 280 122"
+        fill="none" stroke="url(#tube)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- ear tips -->
+  <path d="M232 122 C238 130 240 136 238 142" fill="none" stroke="#398B89" stroke-width="30" stroke-linecap="round"/>
+  <path d="M280 122 C274 130 272 136 274 142" fill="none" stroke="#55A879" stroke-width="30" stroke-linecap="round"/>
+  <circle cx="236" cy="146" r="17" fill="#2F7F7A"/>
+  <circle cx="276" cy="146" r="17" fill="#4A9E70"/>
+  <!-- tube to the chest piece -->
+  <path d="M256 420 C292 460 352 470 392 446 C420 430 430 410 430 392"
+        fill="none" stroke="url(#tubeLow)" stroke-width="22" stroke-linecap="round"/>
+  <!-- chest piece -->
+  <circle cx="432" cy="366" r="40" fill="url(#bell)"/>
+  <circle cx="432" cy="366" r="25" fill="#DCEFE5"/>
+  <circle cx="432" cy="366" r="13" fill="#398B89"/>
+  <!-- heartbeat -->
+  <path d="M112 244 H184 L208 204 L242 306 L270 188 L300 244 H402"
+        fill="none" stroke="url(#pulse)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
