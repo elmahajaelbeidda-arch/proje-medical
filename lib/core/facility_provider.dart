@@ -29,6 +29,8 @@ class FacilityState {
 }
 
 class FacilityNotifier extends Notifier<FacilityState> {
+  int _seq = 0;
+
   @override
   FacilityState build() =>
       FacilityState(facilities: _seedFacilities(), referrals: _seedReferrals());
@@ -52,7 +54,7 @@ class FacilityNotifier extends Notifier<FacilityState> {
     Attachment? licenseDocument,
     List<Attachment> documents = const [],
   }) {
-    final id = 'fac${DateTime.now().millisecondsSinceEpoch}';
+    final id = 'fac${DateTime.now().millisecondsSinceEpoch}${_seq++}';
     final now = DateTime.now();
     state = state.copyWith(
       facilities: [
@@ -181,7 +183,7 @@ class FacilityNotifier extends Notifier<FacilityState> {
     if (f == null || !f.isApproved) {
       throw StateError('facility not approved');
     }
-    final id = 'ref${DateTime.now().millisecondsSinceEpoch}';
+    final id = 'ref${DateTime.now().millisecondsSinceEpoch}${_seq++}';
     state = state.copyWith(
       referrals: [
         Referral(

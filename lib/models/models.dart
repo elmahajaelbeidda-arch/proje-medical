@@ -32,6 +32,7 @@ class Specialty {
     Specialty('ortho', Icons.accessibility_new_outlined),
     Specialty('endo', Icons.bloodtype_outlined),
     Specialty('radiology', Icons.document_scanner_outlined),
+    Specialty('psych', Icons.psychology_outlined),
   ];
 
   static Specialty byId(String id) =>

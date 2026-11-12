@@ -243,6 +243,23 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
         ),
         const SizedBox(height: 24),
         _title('choose_specialty'),
+        Card(
+          color: AppColors.secondary,
+          child: ListTile(
+            leading: const Icon(
+              Icons.psychology_outlined,
+              color: AppColors.primary,
+            ),
+            title: Text(
+              context.tr('psych_title'),
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+            subtitle: Text(context.tr('psych_card_desc')),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.pushReplacement('/patient/psych/new'),
+          ),
+        ),
+        const SizedBox(height: 10),
         GridView.count(
           crossAxisCount: 3,
           shrinkWrap: true,
@@ -251,7 +268,8 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           crossAxisSpacing: 10,
           childAspectRatio: .95,
           children: [
-            for (final s in Specialty.all)
+            // Psychiatry has its own confidential flow with appointments.
+            for (final s in Specialty.all.where((s) => s.id != 'psych'))
               Material(
                 color: _specialty == s.id
                     ? scheme.primaryContainer

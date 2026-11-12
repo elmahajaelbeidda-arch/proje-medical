@@ -19,6 +19,8 @@ void _goHome(BuildContext context, WidgetRef ref) {
   context.go(
     auth.isCommittee
         ? '/committee'
+        : auth.isPsychDoctor
+        ? '/psych/doctor'
         : auth.isDoctor
         ? '/doctor'
         : '/patient',
@@ -140,6 +142,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     },
                     child: Text(context.tr('login')),
                   ),
+                  // Demo account of a volunteer psychiatrist.
+                  if (auth.isDoctor)
+                    TextButton.icon(
+                      onPressed: () {
+                        ref
+                            .read(authProvider.notifier)
+                            .login(specialtyId: 'psych');
+                        _goHome(context, ref);
+                      },
+                      icon: const Icon(Icons.psychology_outlined),
+                      label: Text(context.tr('psych_demo_login')),
+                    ),
                   const SizedBox(height: 16),
                   if (!auth.isCommittee)
                     Row(
@@ -183,6 +197,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Attachment? _idFront;
   Attachment? _idBack;
   bool _accepted = false;
+  bool _psychPledge = false;
 
   @override
   void dispose() {
@@ -227,6 +242,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       ).showSnackBar(SnackBar(content: Text(context.tr('must_accept_terms'))));
       return;
     }
+    if (ref.read(authProvider).isDoctor &&
+        _specialty == 'psych' &&
+        !_psychPledge) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.tr('psych_pledge_required'))),
+      );
+      return;
+    }
     final auth = ref.read(authProvider);
     final isDoctor = auth.isDoctor;
     final name = isDoctor ? 'د. ${_name.text.trim()}' : _name.text;
@@ -251,6 +274,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           phone: _phone.text,
           idNumber: _idNumber.text,
           registrationId: registrationId,
+          specialtyId: isDoctor ? _specialty : null,
         );
     // Step 2: confirm the phone number with the SMS code.
     context.push('/verify');
@@ -431,6 +455,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       onChanged: (v) => setState(() => _specialty = v),
                       validator: required,
                     ),
+                    // Volunteer psychiatrists commit to confidentiality.
+                    if (_specialty == 'psych') ...[
+                      const SizedBox(height: 12),
+                      Card(
+                        color: AppColors.secondary,
+                        child: CheckboxListTile(
+                          value: _psychPledge,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          onChanged: (v) =>
+                              setState(() => _psychPledge = v ?? false),
+                          title: Text(
+                            context.tr('psych_pledge_title'),
+                            style: const TextStyle(fontWeight: FontWeight.w800),
+                          ),
+                          subtitle: Text(context.tr('psych_pledge')),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _license,

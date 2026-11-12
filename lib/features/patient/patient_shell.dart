@@ -233,6 +233,32 @@ class PatientHomeTab extends ConsumerWidget {
               ),
               const SizedBox(height: 10),
 
+              // Psychological consultations (confidential, by appointment).
+              Card(
+                clipBehavior: Clip.antiAlias,
+                child: ListTile(
+                  onTap: () => context.push('/patient/psych'),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
+                  leading: const CircleAvatar(
+                    backgroundColor: AppColors.primary,
+                    child: Icon(Icons.psychology_outlined, color: Colors.white),
+                  ),
+                  title: Text(
+                    context.tr('psych_title'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  subtitle: Text(context.tr('psych_card_desc')),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+              ),
+              const SizedBox(height: 10),
+
               // The patient's own blood requests (not in the donation tab).
               const _BloodRequestCard(),
               const SizedBox(height: 10),

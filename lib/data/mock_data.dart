@@ -11,6 +11,9 @@ class MockData {
   static const currentPatientId = 'p1';
   static const currentDoctorId = 'd1';
 
+  /// Demo volunteer psychiatrist account.
+  static const psychDoctorId = 'd9';
+
   static const doctors = <Doctor>[
     Doctor(
       id: 'd1',
@@ -108,6 +111,38 @@ class MockData {
       cityFr: 'Néma',
       bio: 'طبيب عام، أساعد في توجيه المرضى إلى التخصص المناسب.',
       availability: ['يومياً 22:00 - 23:00'],
+    ),
+    Doctor(
+      id: 'd9',
+      name: 'د. خديجة ولد السالك',
+      specialtyId: 'psych',
+      yearsOfExperience: 11,
+      rating: 4.9,
+      consultationsCount: 132,
+      city: 'نواكشوط',
+      cityFr: 'Nouakchott',
+      bio: 'طبيبة نفسية: القلق والاكتئاب والضغوط الأسرية، بسرية تامة.',
+      availability: [
+        'السبت 17:00 - 20:00',
+        'الاثنين 20:00 - 22:00',
+        'الأربعاء 18:00 - 21:00',
+      ],
+    ),
+    Doctor(
+      id: 'd10',
+      name: 'د. أحمد ولد بابا',
+      specialtyId: 'psych',
+      yearsOfExperience: 8,
+      rating: 4.8,
+      consultationsCount: 97,
+      city: 'نواذيبو',
+      cityFr: 'Nouadhibou',
+      bio: 'أخصائي نفسي إكلينيكي: اضطرابات النوم والضغوط والإدمان.',
+      availability: [
+        'الأحد 16:00 - 19:00',
+        'الثلاثاء 19:00 - 22:00',
+        'الخميس 17:00 - 19:00',
+      ],
     ),
   ];
 

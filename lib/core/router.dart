@@ -14,6 +14,7 @@ import '../features/patient/consultation_details_screen.dart';
 import '../features/patient/health_profile_screen.dart';
 import '../features/patient/new_consultation_screen.dart';
 import '../features/patient/patient_shell.dart';
+import '../features/psych/psych_screens.dart';
 import '../features/shared/shared_screens.dart';
 import '../models/models.dart';
 import 'providers.dart';
@@ -25,6 +26,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final committeePage = state.matchedLocation.startsWith('/committee');
       if (committeePage && !ref.read(authProvider).isCommittee) return '/role';
+      // Psychiatrist workspace: volunteer psychiatrists only.
+      final psychDoctorPage = state.matchedLocation.startsWith('/psych/doctor');
+      if (psychDoctorPage && !ref.read(authProvider).isPsychDoctor) {
+        return '/role';
+      }
       return null;
     },
     routes: [
@@ -53,6 +59,33 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/patient/health-profile',
         builder: (_, _) => const HealthProfileScreen(),
+      ),
+
+      // Psychological consultations
+      GoRoute(
+        path: '/patient/psych',
+        builder: (_, _) => const PsychHomeScreen(),
+      ),
+      GoRoute(
+        path: '/patient/psych/new',
+        builder: (_, state) =>
+            PsychBookingScreen(doctorId: state.extra as String?),
+      ),
+      GoRoute(
+        path: '/patient/psych/:id',
+        builder: (_, state) => PsychSessionScreen(
+          id: state.pathParameters['id']!,
+          asDoctor: false,
+        ),
+      ),
+      GoRoute(
+        path: '/psych/doctor',
+        builder: (_, _) => const PsychDoctorShell(),
+      ),
+      GoRoute(
+        path: '/psych/doctor/session/:id',
+        builder: (_, state) =>
+            PsychSessionScreen(id: state.pathParameters['id']!, asDoctor: true),
       ),
 
       // Doctor

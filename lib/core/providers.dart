@@ -46,6 +46,9 @@ class AuthState {
   /// Registration sent to the committee at sign-up (null for the demo
   /// accounts, which are already approved).
   final String? registrationId;
+
+  /// Doctor's specialty chosen at sign-up (null: the demo doctor's).
+  final String? specialtyId;
   const AuthState({
     this.role = UserRole.patient,
     this.loggedIn = false,
@@ -54,7 +57,15 @@ class AuthState {
     this.idNumber = '',
     this.phoneVerified = false,
     this.registrationId,
+    this.specialtyId,
   });
+
+  /// Volunteer psychiatrists get their own confidential workspace.
+  bool get isPsychDoctor => isDoctor && specialtyId == 'psych';
+
+  /// Doctor account behind this session (demo data).
+  String get doctorId =>
+      isPsychDoctor ? MockData.psychDoctorId : MockData.currentDoctorId;
 
   /// e.g. "•••• 4821"
   String get maskedId => idNumber.length <= 4
@@ -68,13 +79,10 @@ class AuthState {
   String get displayName {
     if (name.isNotEmpty) return name;
     if (isCommittee) return 'فريق المتابعة والإدارة';
-    return isDoctor
-        ? MockData.doctorById(MockData.currentDoctorId)!.name
-        : 'محمد الأمين';
+    return isDoctor ? MockData.doctorById(doctorId)!.name : 'محمد الأمين';
   }
 
-  String get userId =>
-      isDoctor ? MockData.currentDoctorId : MockData.currentPatientId;
+  String get userId => isDoctor ? doctorId : MockData.currentPatientId;
 }
 
 class AuthNotifier extends Notifier<AuthState> {
@@ -90,6 +98,7 @@ class AuthNotifier extends Notifier<AuthState> {
     required String phone,
     required String idNumber,
     String? registrationId,
+    String? specialtyId,
   }) {
     state = AuthState(
       role: state.role,
@@ -97,6 +106,7 @@ class AuthNotifier extends Notifier<AuthState> {
       phone: phone.trim(),
       idNumber: idNumber.trim(),
       registrationId: registrationId,
+      specialtyId: specialtyId,
     );
   }
 
@@ -109,16 +119,22 @@ class AuthNotifier extends Notifier<AuthState> {
     idNumber: state.idNumber,
     phoneVerified: true,
     registrationId: state.registrationId,
+    specialtyId: state.specialtyId,
   );
 
-  void login({String? name}) {
+  /// [specialtyId] 'psych' opens the demo psychiatrist account.
+  void login({String? name, String? specialtyId}) {
+    final sp = state.isDoctor ? specialtyId : null;
     final defaultName = state.isCommittee
         ? 'فريق المتابعة والإدارة'
         : state.isDoctor
-        ? MockData.doctorById(MockData.currentDoctorId)!.name
+        ? MockData.doctorById(
+            sp == 'psych' ? MockData.psychDoctorId : MockData.currentDoctorId,
+          )!.name
         : 'محمد الأمين';
     state = AuthState(
       role: state.role,
+      specialtyId: sp,
       loggedIn: true,
       name: (name == null || name.trim().isEmpty) ? defaultName : name.trim(),
       // Demo account: already verified at sign-up.
