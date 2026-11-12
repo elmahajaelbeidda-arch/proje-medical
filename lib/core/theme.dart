@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Visual identity of "شِفاءٌ لِلنّاس".
 class AppColors {
@@ -90,10 +89,14 @@ class AppTheme {
               ? Colors.white
               : const Color(0xFF143837),
         );
-    final base = ThemeData(colorScheme: scheme, useMaterial3: true);
-    final fontTheme = languageCode == 'ar'
-        ? GoogleFonts.cairoTextTheme(base.textTheme)
-        : GoogleFonts.poppinsTextTheme(base.textTheme);
+    // El Messiri for the whole app (Arabic and French), bundled in
+    // assets/fonts with its four weights, so it works offline.
+    final base = ThemeData(
+      colorScheme: scheme,
+      useMaterial3: true,
+      fontFamily: 'ElMessiri',
+    );
+    final fontTheme = base.textTheme;
     // Body text in dark grey; titles in the primary green.
     final textTheme = fontTheme
         .apply(

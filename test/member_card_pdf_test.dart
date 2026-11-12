@@ -11,10 +11,10 @@ void main() {
   test('registration card PDF in Arabic and French', () async {
     final assets = SummonsPdfAssets(
       regular: ByteData.sublistView(
-        File('assets/fonts/Cairo-Regular.ttf').readAsBytesSync(),
+        File('assets/fonts/ElMessiri-Regular.ttf').readAsBytesSync(),
       ),
       bold: ByteData.sublistView(
-        File('assets/fonts/Cairo-Bold.ttf').readAsBytesSync(),
+        File('assets/fonts/ElMessiri-Bold.ttf').readAsBytesSync(),
       ),
       logo: File('assets/images/logo_icon.png').readAsBytesSync(),
     );

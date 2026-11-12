@@ -314,7 +314,7 @@ Future<Uint8List> buildMemberCardPdf(
           ),
           pw.SizedBox(height: 8),
           pw.Text(
-            '✂  ${tr('mc_cut_here')}',
+            tr('mc_cut_here'),
             textAlign: pw.TextAlign.center,
             style: const pw.TextStyle(fontSize: 8, color: _grey),
           ),
