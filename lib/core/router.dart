@@ -2,12 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/about/about_screen.dart';
-import '../features/admin/admin_shell.dart';
 import '../features/aid/aid_screens.dart';
 import '../features/auth/auth_screens.dart';
 import '../features/cards/member_card_screens.dart';
 import '../features/blood/blood_screens.dart';
-import '../features/blood/committee_screens.dart';
 import '../features/doctor/doctor_shell.dart';
 import '../features/facility/facility_screens.dart';
 import '../features/doctor/request_details_screen.dart';
@@ -24,30 +22,16 @@ import '../models/admin.dart';
 import 'admin_provider.dart';
 import 'providers.dart';
 
+/// Routes of the users' app (patients, doctors, facilities, donors).
+/// The follow-up & management dashboard is a separate app: see
+/// admin_router.dart and main_admin.dart.
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
-    // Committee pages hold personal data: committee members only.
+    // Unknown links (e.g. dashboard pages, which are not part of this app)
+    // lead to the start screen.
+    onException: (_, _, router) => router.go('/role'),
     redirect: (context, state) {
-      // The follow-up & management team works from the dashboard: its
-      // pages need a signed-in team member with the matching permission.
-      final loc0 = state.matchedLocation;
-      if (loc0 == '/committee') return '/admin/blood';
-      if (loc0.startsWith('/committee/')) {
-        final admin = ref.read(adminProvider);
-        final needed = loc0.startsWith('/committee/request/')
-            ? [AdminPermission.manageBlood]
-            : loc0.startsWith('/committee/facility/')
-            ? [
-                AdminPermission.manageFacilities,
-                AdminPermission.manageRegistrations,
-              ]
-            : [
-                AdminPermission.manageCards,
-                AdminPermission.manageRegistrations,
-              ];
-        if (!needed.any(admin.can)) return '/admin';
-      }
       // Sections switched off by the administration.
       final loc = state.matchedLocation;
       final settings = ref.read(appSettingsProvider);
@@ -161,23 +145,6 @@ final routerProvider = Provider<GoRouter>((ref) {
             BloodRequestDetailsScreen(id: state.pathParameters['id']!),
       ),
 
-      // Blood donation committee
-      GoRoute(
-        path: '/committee',
-        builder: (_, _) => const CommitteeHomeScreen(),
-      ),
-      GoRoute(
-        path: '/committee/request/:id',
-        builder: (_, state) =>
-            CommitteeRequestScreen(id: state.pathParameters['id']!),
-      ),
-
-      GoRoute(
-        path: '/committee/facility/:id',
-        builder: (_, state) =>
-            CommitteeFacilityScreen(id: state.pathParameters['id']!),
-      ),
-
       // Medical facilities (hospitals, clinics, labs, pharmacies, radiology)
       GoRoute(
         path: '/facility',
@@ -207,23 +174,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/aid/new',
         builder: (_, _) => const AidRequestFormScreen(),
       ),
-      GoRoute(path: '/aid/map', builder: (_, _) => const AidMapScreen()),
-      GoRoute(
-        path: '/aid/members',
-        builder: (_, _) => const AidMembersScreen(),
-      ),
 
       GoRoute(
         path: '/section-off',
         builder: (_, _) => const SectionOffScreen(),
-      ),
-
-      // Admin dashboard (own sign-in with second factor)
-      GoRoute(path: '/admin', builder: (_, _) => const AdminGate()),
-      GoRoute(
-        path: '/admin/:section',
-        builder: (_, state) =>
-            AdminGate(section: state.pathParameters['section']),
       ),
 
       // Registration cards
@@ -235,13 +189,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           code: state.uri.queryParameters['c'],
         ),
       ),
-      GoRoute(
-        path: '/committee/card/:holder',
-        builder: (_, state) => CommitteeMemberCardScreen(
-          holderId: state.pathParameters['holder']!,
-        ),
-      ),
-
       // Medical summons cards
       GoRoute(
         path: '/patient/summons',

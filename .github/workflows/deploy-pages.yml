@@ -33,12 +33,24 @@ jobs:
           --base-href "/${{ github.event.repository.name }}/"
           --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }}
           --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
+      # The follow-up & management dashboard: a separate app for the
+      # association's staff, published under /admin/.
+      - run: >-
+          flutter build web --release --pwa-strategy=none
+          -t lib/main_admin.dart -o build/web_admin
+          --base-href "/${{ github.event.repository.name }}/admin/"
+          --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }}
+          --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
       # Always serve the latest version: remove old offline caches on
       # visitors' devices and version the app file with the commit id.
       - run: |
-          cp tool/sw_cleanup.js build/web/flutter_service_worker.js
-          sed -i "s/__APP_VERSION__/${GITHUB_SHA::8}/" build/web/flutter_bootstrap.js
-          grep -q "main.dart.js?v=" build/web/flutter_bootstrap.js
+          for d in build/web build/web_admin; do
+            cp tool/sw_cleanup.js $d/flutter_service_worker.js
+            sed -i "s/__APP_VERSION__/${GITHUB_SHA::8}/" $d/flutter_bootstrap.js
+            grep -q "main.dart.js?v=" $d/flutter_bootstrap.js
+          done
+          rm -rf build/web/admin
+          cp -r build/web_admin build/web/admin
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web

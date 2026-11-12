@@ -10,13 +10,18 @@ import 'package:shifa/core/providers.dart';
 import 'package:shifa/models/blood.dart';
 import 'package:shifa/models/registration.dart';
 import 'package:shifa/core/member_card_provider.dart';
+import 'package:shifa/features/admin/demo_admins.dart';
 import 'package:shifa/features/admin/totp.dart';
 import 'package:shifa/features/admin/xlsx.dart';
 import 'package:shifa/models/admin.dart';
 
 void main() {
   late ProviderContainer c;
-  setUp(() => c = ProviderContainer());
+  setUp(
+    () => c = ProviderContainer(
+      overrides: [adminSeedAccountsProvider.overrideWithValue(demoAdmins())],
+    ),
+  );
   tearDown(() => c.dispose());
 
   AdminNotifier n() => c.read(adminProvider.notifier);

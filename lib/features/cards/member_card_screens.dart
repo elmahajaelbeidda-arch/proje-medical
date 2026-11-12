@@ -23,7 +23,7 @@ const _publicSite = 'https://elmahajaelbeidda-arch.github.io/proje-medical/';
 String verifyUrl(MemberCard c) {
   final base = Uri.base;
   final site = (base.scheme == 'http' || base.scheme == 'https')
-      ? '${base.origin}${base.path}'
+      ? '${base.origin}${base.path.replaceFirst(RegExp(r'admin/$'), '')}'
       : _publicSite;
   return '$site#/verify-card?n=${c.number}&c=${c.verificationCode}';
 }

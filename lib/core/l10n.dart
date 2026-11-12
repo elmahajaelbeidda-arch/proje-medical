@@ -1121,7 +1121,10 @@ class AppStrings {
     ],
     // ---------------- Admin dashboard ----------------
     'ad_title': ['فريق المتابعة والإدارة', 'Équipe de suivi et de gestion'],
-    'ad_login_hint': ['دخول أعضاء فريق المتابعة والإدارة: كلمة المرور ثم رمز التحقق الثنائي', 'Accès de l’équipe de suivi et de gestion : mot de passe puis code de double authentification'],
+    'ad_login_hint': [
+      'دخول أعضاء فريق المتابعة والإدارة: كلمة المرور ثم رمز التحقق الثنائي',
+      'Accès de l’équipe de suivi et de gestion : mot de passe puis code de double authentification',
+    ],
     'ad_code_step': [
       'أدخل رمز التحقق من تطبيق المصادقة (6 أرقام)',
       'Saisissez le code de votre application d’authentification (6 chiffres)',
@@ -1600,16 +1603,28 @@ class AppStrings {
       'Ce service est temporairement indisponible',
     ],
     'ads_blood': ['التبرع بالدم والمتبرعون', 'Don de sang et donneurs'],
-    'ap_manageBlood': ['إدارة المتبرعين وطلبات الدم', 'Gérer donneurs et demandes de sang'],
+    'ap_manageBlood': [
+      'إدارة المتبرعين وطلبات الدم',
+      'Gérer donneurs et demandes de sang',
+    ],
     'ar_followUp': ['عضو فريق المتابعة', 'Membre de l’équipe de suivi'],
-    'au_external_donor': ['إضافة متبرع من خارج المنصة', 'Donneur externe ajouté'],
+    'au_external_donor': [
+      'إضافة متبرع من خارج المنصة',
+      'Donneur externe ajouté',
+    ],
     'au_team_note': ['ملاحظة متابعة على طلب دم', 'Note de suivi (sang)'],
     'au_donor_pending': ['إعادة متبرع للمراجعة', 'Donneur remis en attente'],
     'au_donor_approved': ['قبول متبرع بالدم', 'Donneur accepté'],
     'au_donor_rejected': ['رفض متبرع بالدم', 'Donneur refusé'],
-    'au_blood_status': ['تغيير حالة طلب دم', 'Statut de demande de sang modifié'],
+    'au_blood_status': [
+      'تغيير حالة طلب دم',
+      'Statut de demande de sang modifié',
+    ],
     'au_donor_assigned': ['ربط متبرع بطلب دم', 'Donneur associé à une demande'],
-    'au_referral_sent': ['إحالة مريض إلى جهة طبية', 'Patient orienté vers une structure'],
+    'au_referral_sent': [
+      'إحالة مريض إلى جهة طبية',
+      'Patient orienté vers une structure',
+    ],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
     'skip': ['تخطي', 'Passer'],

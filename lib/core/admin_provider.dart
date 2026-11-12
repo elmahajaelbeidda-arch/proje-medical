@@ -121,7 +121,7 @@ class AdminNotifier extends Notifier<AdminState> {
       '$prefix${DateTime.now().millisecondsSinceEpoch}${_seq++}';
 
   @override
-  AdminState build() => _seed();
+  AdminState build() => _seed(ref.read(adminSeedAccountsProvider));
 
   // -------------------------------------------------------------------------
   // Audit
@@ -737,77 +737,11 @@ class AdminNotifier extends Notifier<AdminState> {
   // Demo data
   // -------------------------------------------------------------------------
 
-  static AdminState _seed() {
-    AdminAccount admin(
-      String id,
-      String name,
-      String email,
-      String password,
-      AdminRole role,
-    ) => AdminAccount(
-      id: id,
-      name: name,
-      email: email,
-      salt: 'seed-$id',
-      passwordHash: hashPassword('seed-$id', password),
-      role: role,
-      permissions: rolePermissions(role),
-      createdAt: DateTime(2026, 9, 1),
-    );
+  static AdminState _seed(List<AdminAccount> seedAdmins) {
     final now = DateTime.now();
     DateTime ago(int days) => now.subtract(Duration(days: days));
     return AdminState(
-      admins: [
-        admin(
-          'adm1',
-          'المدير العام',
-          'admin@shifa.mr',
-          'Admin@2026',
-          AdminRole.superAdmin,
-        ),
-        admin(
-          'adm2',
-          'مسؤول التسجيلات',
-          'reg@shifa.mr',
-          'Reg@2026!',
-          AdminRole.registrations,
-        ),
-        admin(
-          'adm3',
-          'المنسق الطبي',
-          'medical@shifa.mr',
-          'Medical@2026',
-          AdminRole.medical,
-        ),
-        admin(
-          'adm4',
-          'المسؤول المالي',
-          'finance@shifa.mr',
-          'Finance@2026',
-          AdminRole.finance,
-        ),
-        admin(
-          'adm5',
-          'مسؤول التواصل',
-          'comm@shifa.mr',
-          'Comm@2026!',
-          AdminRole.communications,
-        ),
-        admin(
-          'adm6',
-          'المدقق',
-          'audit@shifa.mr',
-          'Audit@2026',
-          AdminRole.auditor,
-        ),
-        admin(
-          'adm7',
-          'عضو فريق المتابعة',
-          'team@shifa.mr',
-          'Team@2026!',
-          AdminRole.followUp,
-        ),
-      ],
+      admins: seedAdmins,
       donations: [
         Donation(
           id: 'dn1',
@@ -983,12 +917,18 @@ class AdminNotifier extends Notifier<AdminState> {
           adminId: 'adm1',
           adminName: 'المدير العام',
           action: 'au_login',
-          target: 'admin@shifa.mr',
         ),
       ],
     );
   }
 }
+
+/// Staff accounts loaded at start. Empty in the users' app: the demo
+/// accounts are only given by the dashboard app (main_admin.dart), so no
+/// staff data is shipped to users.
+final adminSeedAccountsProvider = Provider<List<AdminAccount>>(
+  (ref) => const [],
+);
 
 final adminProvider = NotifierProvider<AdminNotifier, AdminState>(
   AdminNotifier.new,
