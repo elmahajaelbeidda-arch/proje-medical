@@ -14,6 +14,7 @@ import '../../models/registration.dart';
 import '../../widgets/media.dart';
 import '../../widgets/common.dart';
 import '../../core/facility_provider.dart';
+import '../../models/facility.dart';
 import '../facility/facility_screens.dart';
 import 'blood_screens.dart';
 
@@ -92,7 +93,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
     final pendingFacilities = ref
         .watch(facilityProvider)
         .facilities
-        .where((f) => f.status == ReviewStatus.pending)
+        .where((f) => f.status == FacilityStatus.pending)
         .length;
 
     return DefaultTabController(

@@ -10,11 +10,9 @@ import '../../core/theme.dart';
 import '../../models/blood.dart';
 import '../../models/facility.dart';
 import '../../models/models.dart';
-import '../../models/registration.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
 import '../blood/blood_screens.dart';
-import '../blood/committee_screens.dart' show reviewColor, reviewKey;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -38,6 +36,15 @@ Color referralStatusColor(ReferralStatus s) => switch (s) {
   ReferralStatus.inProgress => AppColors.warning,
   ReferralStatus.completed => AppColors.success,
   ReferralStatus.declined => AppColors.grey,
+};
+
+String facilityStatusKey(FacilityStatus s) => 'fs_${s.name}';
+
+Color facilityStatusColor(FacilityStatus s) => switch (s) {
+  FacilityStatus.pending => AppColors.warning,
+  FacilityStatus.needsInfo => AppColors.info,
+  FacilityStatus.approved => AppColors.success,
+  FacilityStatus.rejected => AppColors.grey,
 };
 
 String coopKey(CooperationType c) => 'coop_${c.name}';
@@ -200,6 +207,8 @@ class FacilityEntryScreen extends ConsumerWidget {
 // Registration form
 // ---------------------------------------------------------------------------
 
+/// Registration in 5 steps: basic data, type/specialties/services,
+/// manager/contact/address, licence and legal documents, review and send.
 class FacilityRegisterScreen extends ConsumerStatefulWidget {
   const FacilityRegisterScreen({super.key});
   @override
@@ -209,7 +218,9 @@ class FacilityRegisterScreen extends ConsumerStatefulWidget {
 
 class _FacilityRegisterScreenState
     extends ConsumerState<FacilityRegisterScreen> {
-  final _form = GlobalKey<FormState>();
+  final _forms = List.generate(5, (_) => GlobalKey<FormState>());
+  int _step = 0;
+
   FacilityType _type = FacilityType.hospital;
   final _name = TextEditingController();
   final _manager = TextEditingController();
@@ -226,6 +237,7 @@ class _FacilityRegisterScreenState
   final List<String> _services = [];
   final Set<CooperationType> _coop = {CooperationType.referrals};
   Attachment? _licenseDoc;
+  final List<Attachment> _documents = [];
   bool _consent = false;
 
   @override
@@ -251,6 +263,10 @@ class _FacilityRegisterScreenState
   String? _required(String? v) =>
       (v == null || v.trim().isEmpty) ? context.tr('required_field') : null;
 
+  void _snack(String key) =>
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(context.tr(key))));
+
   void _addService() {
     final s = _service.text.trim();
     if (s.isEmpty || _services.contains(s)) return;
@@ -269,16 +285,43 @@ class _FacilityRegisterScreenState
     if (files.isNotEmpty) setState(() => _licenseDoc = files.first);
   }
 
-  void _submit() {
-    final messenger = ScaffoldMessenger.of(context);
-    if (!_form.currentState!.validate()) return;
-    if (_coop.isEmpty) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(context.tr('facility_need_coop'))),
-      );
-      return;
+  Future<void> _pickDocuments() async {
+    final files = await pickAttachments(
+      context,
+      PickSource.files,
+      category: AttachmentCategory.other,
+    );
+    if (files.isNotEmpty) setState(() => _documents.addAll(files));
+  }
+
+  /// Validates the current step before moving on.
+  bool _stepValid(int i) {
+    if (!(_forms[i].currentState?.validate() ?? true)) return false;
+    if (i == 1) {
+      _addService();
+      if (_coop.isEmpty) {
+        _snack('facility_need_coop');
+        return false;
+      }
     }
-    _addService();
+    if (i == 3 && _licenseDoc == null) {
+      _snack('license_required');
+      return false;
+    }
+    return true;
+  }
+
+  void _next() {
+    if (!_stepValid(_step)) return;
+    if (_step < 4) {
+      setState(() => _step++);
+    } else {
+      _submit();
+    }
+  }
+
+  void _submit() {
+    if (!_consent) return;
     final id = ref
         .read(facilityProvider.notifier)
         .register(
@@ -297,273 +340,392 @@ class _FacilityRegisterScreenState
           monthlyCapacity: int.tryParse(_capacity.text.trim()),
           notes: _notes.text,
           licenseDocument: _licenseDoc,
+          documents: [..._documents],
         );
     ref.read(facilitySessionProvider.notifier).signIn(id);
-    messenger.showSnackBar(
-      SnackBar(content: Text(context.tr('facility_submitted'))),
-    );
+    _snack('facility_submitted');
     context.go('/facility/home');
   }
 
-  Widget _section(String title) => Padding(
-    padding: const EdgeInsets.only(top: 18, bottom: 10),
+  Widget _label(String key) => Padding(
+    padding: const EdgeInsets.only(bottom: 8),
     child: Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium
-          ?.copyWith(fontWeight: FontWeight.w900, color: AppColors.primary),
+      context.tr(key),
+      style: const TextStyle(fontWeight: FontWeight.w700),
     ),
   );
 
   @override
   Widget build(BuildContext context) {
     const gap = SizedBox(height: 12);
-    return Scaffold(
-      appBar: AppBar(title: Text(context.tr('facility_register'))),
-      body: Form(
-        key: _form,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+
+    // 1. Basic data
+    final basic = Column(
+      children: [
+        TextFormField(
+          controller: _name,
+          validator: _required,
+          decoration: InputDecoration(
+            labelText: context.tr('facility_name'),
+            prefixIcon: Icon(facilityTypeIcon(_type)),
+          ),
+        ),
+        gap,
+        TextFormField(
+          controller: _license,
+          validator: _required,
+          textDirection: TextDirection.ltr,
+          decoration: InputDecoration(
+            labelText: context.tr('facility_license'),
+            prefixIcon: const Icon(Icons.verified_outlined),
+          ),
+        ),
+        gap,
+        TextFormField(
+          controller: _city,
+          validator: _required,
+          decoration: InputDecoration(
+            labelText: context.tr('city'),
+            prefixIcon: const Icon(Icons.location_city_outlined),
+          ),
+        ),
+      ],
+    );
+
+    // 2. Type, specialties, services and cooperation
+    final services = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _label('facility_type'),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
           children: [
-            _section(context.tr('facility_type')),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final t in FacilityType.values)
-                  ChoiceChip(
-                    avatar: Icon(facilityTypeIcon(t), size: 18),
-                    label: Text(context.tr(facilityTypeKey(t))),
-                    selected: _type == t,
-                    onSelected: (_) => setState(() => _type = t),
-                  ),
-              ],
-            ),
-            _section(context.tr('facility_section_info')),
-            TextFormField(
-              controller: _name,
-              validator: _required,
-              decoration: InputDecoration(
-                labelText: context.tr('facility_name'),
-                prefixIcon: Icon(facilityTypeIcon(_type)),
+            for (final t in FacilityType.values)
+              ChoiceChip(
+                avatar: Icon(facilityTypeIcon(t), size: 18),
+                label: Text(context.tr(facilityTypeKey(t))),
+                selected: _type == t,
+                onSelected: (_) => setState(() => _type = t),
               ),
-            ),
-            gap,
-            TextFormField(
-              controller: _manager,
-              validator: _required,
-              decoration: InputDecoration(
-                labelText: context.tr('facility_manager'),
-                prefixIcon: const Icon(Icons.person_outline),
-              ),
-            ),
-            gap,
-            TextFormField(
-              controller: _license,
-              validator: _required,
-              textDirection: TextDirection.ltr,
-              decoration: InputDecoration(
-                labelText: context.tr('facility_license'),
-                prefixIcon: const Icon(Icons.verified_outlined),
-              ),
-            ),
-            gap,
-            if (_licenseDoc == null)
-              OutlinedButton.icon(
-                onPressed: _pickLicense,
-                icon: const Icon(Icons.upload_file),
-                label: Text(context.tr('facility_license_doc')),
-              )
-            else
-              AttachmentTile(
-                _licenseDoc!,
-                onRemove: () => setState(() => _licenseDoc = null),
-              ),
-            gap,
-            TextFormField(
-              controller: _city,
-              validator: _required,
-              decoration: InputDecoration(
-                labelText: context.tr('city'),
-                prefixIcon: const Icon(Icons.location_city_outlined),
-              ),
-            ),
-            gap,
-            TextFormField(
-              controller: _address,
-              validator: _required,
-              decoration: InputDecoration(
-                labelText: context.tr('address'),
-                prefixIcon: const Icon(Icons.place_outlined),
-              ),
-            ),
-            gap,
-            TextFormField(
-              controller: _phone,
-              keyboardType: TextInputType.phone,
-              textDirection: TextDirection.ltr,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9 +]')),
-              ],
-              validator: (v) {
-                final d = (v ?? '').replaceAll(RegExp(r'\D'), '');
-                return d.length < 8 ? context.tr('required_field') : null;
-              },
-              decoration: InputDecoration(
-                labelText: context.tr('phone'),
-                prefixIcon: const Icon(Icons.phone_outlined),
-                prefixText: '+222 ',
-              ),
-            ),
-            gap,
-            TextFormField(
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              textDirection: TextDirection.ltr,
-              decoration: InputDecoration(
-                labelText: context.tr('email'),
-                prefixIcon: const Icon(Icons.alternate_email),
-              ),
-            ),
-
-            _section(context.tr('facility_section_services')),
-            Text(
-              context.tr('facility_specialties'),
-              style: const TextStyle(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: [
-                for (final s in Specialty.all)
-                  FilterChip(
-                    label: Text(context.tr(s.key)),
-                    selected: _specialties.contains(s.id),
-                    onSelected: (v) => setState(
-                      () => v
-                          ? _specialties.add(s.id)
-                          : _specialties.remove(s.id),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Text(
-              context.tr('facility_services'),
-              style: const TextStyle(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _service,
-                    onSubmitted: (_) => _addService(),
-                    decoration: InputDecoration(
-                      hintText: context.tr('facility_services_hint'),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                FilledButton(
-                  onPressed: _addService,
-                  child: Text(context.tr('add')),
-                ),
-              ],
-            ),
-            if (_services.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  for (final s in _services)
-                    InputChip(
-                      label: Text(s),
-                      onDeleted: () => setState(() => _services.remove(s)),
-                    ),
-                ],
-              ),
-            ],
-
-            _section(context.tr('facility_section_coop')),
-            for (final c in CooperationType.values) ...[
-              Card(
-                child: CheckboxListTile(
-                  value: _coop.contains(c),
-                  onChanged: (v) => setState(
-                    () => v == true ? _coop.add(c) : _coop.remove(c),
-                  ),
-                  secondary: Icon(coopIcon(c), color: AppColors.primary),
-                  title: Text(
-                    context.tr(coopKey(c)),
-                    style: const TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                  subtitle: Text(context.tr('${coopKey(c)}_desc')),
+          ],
+        ),
+        const SizedBox(height: 14),
+        _label('facility_specialties'),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (final s in Specialty.all)
+              FilterChip(
+                label: Text(context.tr(s.key)),
+                selected: _specialties.contains(s.id),
+                onSelected: (v) => setState(
+                  () => v ? _specialties.add(s.id) : _specialties.remove(s.id),
                 ),
               ),
-              if (c == CooperationType.discounted && _coop.contains(c))
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
-                  child: TextFormField(
-                    controller: _discount,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    validator: (v) {
-                      final n = int.tryParse(v ?? '');
-                      return (n == null || n < 1 || n > 100)
-                          ? context.tr('required_field')
-                          : null;
-                    },
-                    decoration: InputDecoration(
-                      labelText: context.tr('discount_percent'),
-                      prefixIcon: const Icon(Icons.percent),
-                    ),
-                  ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        _label('facility_services'),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _service,
+                onSubmitted: (_) => _addService(),
+                decoration: InputDecoration(
+                  hintText: context.tr('facility_services_hint'),
                 ),
-              if (c == CooperationType.referrals && _coop.contains(c))
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
-                  child: TextFormField(
-                    controller: _capacity,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: InputDecoration(
-                      labelText: context.tr('monthly_capacity'),
-                      prefixIcon: const Icon(Icons.groups_outlined),
-                    ),
-                  ),
-                ),
-            ],
-            gap,
-            TextFormField(
-              controller: _notes,
-              maxLines: 3,
-              decoration: InputDecoration(
-                labelText: context.tr('facility_notes'),
-                alignLabelWithHint: true,
               ),
             ),
-            gap,
-            CheckboxListTile(
-              value: _consent,
-              onChanged: (v) => setState(() => _consent = v ?? false),
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                context.tr('facility_consent'),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ),
-            gap,
-            FilledButton.icon(
-              style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
-              onPressed: _consent ? _submit : null,
-              icon: const Icon(Icons.send),
-              label: Text(context.tr('facility_submit')),
+            const SizedBox(width: 8),
+            FilledButton(
+              onPressed: _addService,
+              child: Text(context.tr('add')),
             ),
           ],
         ),
+        if (_services.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final s in _services)
+                InputChip(
+                  label: Text(s),
+                  onDeleted: () => setState(() => _services.remove(s)),
+                ),
+            ],
+          ),
+        ],
+        const SizedBox(height: 14),
+        _label('facility_section_coop'),
+        for (final c in CooperationType.values) ...[
+          Card(
+            child: CheckboxListTile(
+              value: _coop.contains(c),
+              onChanged: (v) =>
+                  setState(() => v == true ? _coop.add(c) : _coop.remove(c)),
+              secondary: Icon(coopIcon(c), color: AppColors.primary),
+              title: Text(
+                context.tr(coopKey(c)),
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+              subtitle: Text(context.tr('${coopKey(c)}_desc')),
+            ),
+          ),
+          if (c == CooperationType.discounted && _coop.contains(c))
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
+              child: TextFormField(
+                controller: _discount,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (v) {
+                  final n = int.tryParse(v ?? '');
+                  return (n == null || n < 1 || n > 100)
+                      ? context.tr('required_field')
+                      : null;
+                },
+                decoration: InputDecoration(
+                  labelText: context.tr('discount_percent'),
+                  prefixIcon: const Icon(Icons.percent),
+                ),
+              ),
+            ),
+          if (c == CooperationType.referrals && _coop.contains(c))
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
+              child: TextFormField(
+                controller: _capacity,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  labelText: context.tr('monthly_capacity'),
+                  prefixIcon: const Icon(Icons.groups_outlined),
+                ),
+              ),
+            ),
+        ],
+      ],
+    );
+
+    // 3. Manager, contact and address
+    final contact = Column(
+      children: [
+        TextFormField(
+          controller: _manager,
+          validator: _required,
+          decoration: InputDecoration(
+            labelText: context.tr('facility_manager'),
+            prefixIcon: const Icon(Icons.person_outline),
+          ),
+        ),
+        gap,
+        TextFormField(
+          controller: _phone,
+          keyboardType: TextInputType.phone,
+          textDirection: TextDirection.ltr,
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9 +]')),
+          ],
+          validator: (v) {
+            final d = (v ?? '').replaceAll(RegExp(r'\D'), '');
+            return d.length < 8 ? context.tr('required_field') : null;
+          },
+          decoration: InputDecoration(
+            labelText: context.tr('phone'),
+            prefixIcon: const Icon(Icons.phone_outlined),
+            prefixText: '+222 ',
+          ),
+        ),
+        gap,
+        TextFormField(
+          controller: _email,
+          keyboardType: TextInputType.emailAddress,
+          textDirection: TextDirection.ltr,
+          decoration: InputDecoration(
+            labelText: context.tr('email'),
+            prefixIcon: const Icon(Icons.alternate_email),
+          ),
+        ),
+        gap,
+        TextFormField(
+          controller: _address,
+          validator: _required,
+          decoration: InputDecoration(
+            labelText: context.tr('address'),
+            prefixIcon: const Icon(Icons.place_outlined),
+          ),
+        ),
+      ],
+    );
+
+    // 4. Official licence and legal documents
+    final documents = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _label('facility_license_doc'),
+        if (_licenseDoc == null)
+          OutlinedButton.icon(
+            onPressed: _pickLicense,
+            icon: const Icon(Icons.upload_file),
+            label: Text(context.tr('facility_license_doc')),
+          )
+        else
+          AttachmentTile(
+            _licenseDoc!,
+            onRemove: () => setState(() => _licenseDoc = null),
+          ),
+        const SizedBox(height: 14),
+        _label('legal_documents'),
+        Text(
+          context.tr('legal_documents_hint'),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8),
+        for (final d in _documents)
+          AttachmentTile(
+            d,
+            onRemove: () => setState(() => _documents.remove(d)),
+          ),
+        OutlinedButton.icon(
+          onPressed: _pickDocuments,
+          icon: const Icon(Icons.note_add_outlined),
+          label: Text(context.tr('add_document')),
+        ),
+      ],
+    );
+
+    // 5. Review and send
+    final summary = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _line(
+          context,
+          facilityTypeIcon(_type),
+          context.tr('facility_name'),
+          '${_name.text} (${context.tr(facilityTypeKey(_type))})',
+        ),
+        _line(
+          context,
+          Icons.verified_outlined,
+          context.tr('facility_license'),
+          _license.text,
+        ),
+        _line(
+          context,
+          Icons.person_outline,
+          context.tr('facility_manager'),
+          _manager.text,
+        ),
+        _line(context, Icons.phone_outlined, context.tr('phone'), _phone.text),
+        _line(
+          context,
+          Icons.place_outlined,
+          context.tr('address'),
+          '${_city.text} — ${_address.text}',
+        ),
+        _line(
+          context,
+          Icons.handshake_outlined,
+          context.tr('facility_section_coop'),
+          [
+            for (final c in CooperationType.values)
+              if (_coop.contains(c)) context.tr(coopKey(c)),
+          ].join('، '),
+        ),
+        _line(
+          context,
+          Icons.folder_outlined,
+          context.tr('documents'),
+          '${(_licenseDoc == null ? 0 : 1) + _documents.length}',
+        ),
+        gap,
+        TextFormField(
+          controller: _notes,
+          maxLines: 3,
+          decoration: InputDecoration(
+            labelText: context.tr('facility_notes'),
+            alignLabelWithHint: true,
+          ),
+        ),
+        CheckboxListTile(
+          value: _consent,
+          onChanged: (v) => setState(() => _consent = v ?? false),
+          controlAffinity: ListTileControlAffinity.leading,
+          contentPadding: EdgeInsets.zero,
+          title: Text(
+            context.tr('facility_consent'),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+      ],
+    );
+
+    final contents = [basic, services, contact, documents, summary];
+    const titles = [
+      'fstep_basic',
+      'fstep_services',
+      'fstep_contact',
+      'fstep_documents',
+      'fstep_send',
+    ];
+
+    return Scaffold(
+      appBar: AppBar(title: Text(context.tr('facility_register'))),
+      body: Stepper(
+        currentStep: _step,
+        onStepTapped: (i) {
+          // Going back is free; going forward validates each step.
+          if (i < _step) return setState(() => _step = i);
+          for (var s = _step; s < i; s++) {
+            if (!_stepValid(s)) return setState(() => _step = s);
+          }
+          setState(() => _step = i);
+        },
+        onStepContinue: _next,
+        onStepCancel: _step == 0 ? null : () => setState(() => _step--),
+        controlsBuilder: (context, details) => Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
+                  onPressed: _step == 4 && !_consent
+                      ? null
+                      : details.onStepContinue,
+                  icon: Icon(_step == 4 ? Icons.send : Icons.arrow_forward),
+                  label: Text(
+                    context.tr(_step == 4 ? 'facility_submit' : 'next'),
+                  ),
+                ),
+              ),
+              if (_step > 0) ...[
+                const SizedBox(width: 8),
+                TextButton(
+                  onPressed: details.onStepCancel,
+                  child: Text(context.tr('back')),
+                ),
+              ],
+            ],
+          ),
+        ),
+        steps: [
+          for (var i = 0; i < 5; i++)
+            Step(
+              title: Text(
+                context.tr(titles[i]),
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+              isActive: _step >= i,
+              state: _step > i ? StepState.complete : StepState.indexed,
+              content: Form(key: _forms[i], child: contents[i]),
+            ),
+        ],
       ),
     );
   }
@@ -710,26 +872,19 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
     );
 
     if (!f.isApproved) {
-      final pending = f.status == ReviewStatus.pending;
       return Scaffold(
         appBar: appBar,
         body: ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           children: [
-            EmptyState(
-              icon: pending ? Icons.hourglass_top : Icons.block,
-              message: context.tr(
-                pending ? 'facility_pending_title' : 'facility_rejected_title',
-              ),
-            ),
-            Text(
-              context.tr(
-                pending ? 'facility_pending_body' : 'facility_rejected_body',
-              ),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 20),
+            _RegistrationStatusCard(facility: f),
+            const SizedBox(height: 12),
+            if (f.status == FacilityStatus.needsInfo) ...[
+              _CompleteDocumentsCard(facility: f),
+              const SizedBox(height: 12),
+            ],
+            FacilityHistory(facility: f),
+            const SizedBox(height: 12),
             _FacilityProfile(facility: f),
           ],
         ),
@@ -739,12 +894,54 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
     final referrals = state.referralsOf(f.id);
     return Scaffold(
       appBar: appBar,
-      body: _tab == 0
-          ? _ReferralsTab(referrals: referrals)
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [_FacilityProfile(facility: f)],
+      body: Column(
+        children: [
+          // Step 8: the facility is told its account is now active.
+          if (!f.approvalSeen)
+            MaterialBanner(
+              backgroundColor: AppColors.secondary,
+              leading: const Icon(
+                Icons.verified,
+                color: AppColors.success,
+                size: 32,
+              ),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.tr('approval_notice_title'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(context.tr('approval_notice_body')),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => ref
+                      .read(facilityProvider.notifier)
+                      .markApprovalSeen(f.id),
+                  child: Text(context.tr('got_it')),
+                ),
+              ],
             ),
+          Expanded(
+            child: _tab == 0
+                ? _ReferralsTab(referrals: referrals)
+                : ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      _FacilityProfile(facility: f),
+                      const SizedBox(height: 12),
+                      FacilityHistory(facility: f),
+                    ],
+                  ),
+          ),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _tab,
         onDestinationSelected: (i) => setState(() => _tab = i),
@@ -763,6 +960,233 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
             label: context.tr('facility_tab_profile'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Where the request stands (pending / documents requested / rejected).
+class _RegistrationStatusCard extends StatelessWidget {
+  const _RegistrationStatusCard({required this.facility});
+  final MedicalFacility facility;
+
+  @override
+  Widget build(BuildContext context) {
+    final f = facility;
+    final text = Theme.of(context).textTheme;
+    final (icon, title, body) = switch (f.status) {
+      FacilityStatus.needsInfo => (
+        Icons.upload_file,
+        'fs_needsInfo',
+        'needs_info_body',
+      ),
+      FacilityStatus.rejected => (
+        Icons.block,
+        'facility_rejected_title',
+        'facility_rejected_body',
+      ),
+      _ => (
+        Icons.hourglass_top,
+        'facility_pending_title',
+        'facility_pending_body',
+      ),
+    };
+    final color = facilityStatusColor(f.status);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: 32,
+              backgroundColor: color,
+              child: Icon(icon, color: AppColors.on(color), size: 32),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              context.tr(title),
+              textAlign: TextAlign.center,
+              style: text.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              context.tr(body),
+              textAlign: TextAlign.center,
+              style: text.bodyMedium?.copyWith(height: 1.6),
+            ),
+            if (f.teamNote.isNotEmpty &&
+                f.status != FacilityStatus.pending) ...[
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.secondary,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: color, width: 1.5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.tr('team_message'),
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(f.teamNote),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Step 7 (facility side): upload what the association asked for.
+class _CompleteDocumentsCard extends ConsumerStatefulWidget {
+  const _CompleteDocumentsCard({required this.facility});
+  final MedicalFacility facility;
+  @override
+  ConsumerState<_CompleteDocumentsCard> createState() =>
+      _CompleteDocumentsCardState();
+}
+
+class _CompleteDocumentsCardState
+    extends ConsumerState<_CompleteDocumentsCard> {
+  final List<Attachment> _files = [];
+  final _note = TextEditingController();
+
+  @override
+  void dispose() {
+    _note.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pick() async {
+    final files = await pickAttachments(
+      context,
+      PickSource.files,
+      category: AttachmentCategory.other,
+    );
+    if (files.isNotEmpty) setState(() => _files.addAll(files));
+  }
+
+  void _send() {
+    ref
+        .read(facilityProvider.notifier)
+        .resubmit(widget.facility.id, documents: [..._files], note: _note.text);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(context.tr('resent_msg'))));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              context.tr('complete_and_resend'),
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 10),
+            for (final d in _files)
+              AttachmentTile(
+                d,
+                onRemove: () => setState(() => _files.remove(d)),
+              ),
+            OutlinedButton.icon(
+              onPressed: _pick,
+              icon: const Icon(Icons.note_add_outlined),
+              label: Text(context.tr('add_document')),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _note,
+              maxLines: 2,
+              decoration: InputDecoration(labelText: context.tr('resend_note')),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
+              onPressed: _files.isEmpty ? null : _send,
+              icon: const Icon(Icons.send),
+              label: Text(context.tr('complete_and_resend')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Timeline of the registration request, seen by both sides.
+class FacilityHistory extends StatelessWidget {
+  const FacilityHistory({super.key, required this.facility});
+  final MedicalFacility facility;
+
+  String _key(FacilityEvent e, int i) => switch (e.status) {
+    FacilityStatus.pending => i == 0 ? 'fe_submitted' : 'fe_resubmitted',
+    FacilityStatus.needsInfo => 'fe_needsInfo',
+    FacilityStatus.approved => 'fe_approved',
+    FacilityStatus.rejected => 'fe_rejected',
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final h = facility.history;
+    if (h.isEmpty) return const SizedBox.shrink();
+    final text = Theme.of(context).textTheme;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              context.tr('registration_history'),
+              style: text.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 10),
+            for (var i = 0; i < h.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      size: 14,
+                      color: facilityStatusColor(h[i].status),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            context.tr(_key(h[i], i)),
+                            style: const TextStyle(fontWeight: FontWeight.w800),
+                          ),
+                          if (h[i].note.isNotEmpty) Text(h[i].note),
+                          Text(
+                            '${_date(h[i].at)} • ${context.timeAgo(h[i].at)}',
+                            style: text.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -970,8 +1394,8 @@ class _FacilityProfile extends StatelessWidget {
                 Pill(
                   label: f.isApproved
                       ? context.tr('facility_approved_badge')
-                      : context.tr(reviewKey(f.status)),
-                  color: reviewColor(f.status),
+                      : context.tr(facilityStatusKey(f.status)),
+                  color: facilityStatusColor(f.status),
                   icon: f.isApproved ? Icons.verified : null,
                 ),
               ],
@@ -1040,15 +1464,23 @@ class _FacilityProfile extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             CooperationChips(facility: f),
-            if (f.licenseDocument != null) ...[
-              const SizedBox(height: 10),
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: InkWell(
-                  onTap: () =>
-                      showAttachmentPreview(context, f.licenseDocument!),
-                  child: AttachmentThumb(f.licenseDocument!, size: 64),
-                ),
+            if (f.licenseDocument != null || f.documents.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                context.tr('documents'),
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final d in [?f.licenseDocument, ...f.documents])
+                    InkWell(
+                      onTap: () => showAttachmentPreview(context, d),
+                      child: AttachmentThumb(d, size: 64),
+                    ),
+                ],
               ),
             ],
           ],
@@ -1318,6 +1750,172 @@ class ReferralTimeline extends StatelessWidget {
 // Association side («فريق المتابعة والإدارة»)
 // ---------------------------------------------------------------------------
 
+/// Association (steps 6-8): verification checklist and decision.
+class FacilityReviewPanel extends ConsumerWidget {
+  const FacilityReviewPanel({super.key, required this.facility});
+  final MedicalFacility facility;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final f = facility;
+    final text = Theme.of(context).textTheme;
+    final notifier = ref.read(facilityProvider.notifier);
+
+    Future<void> decide(
+      FacilityStatus decision,
+      String labelKey,
+      String messageKey,
+    ) async {
+      String note = '';
+      if (decision != FacilityStatus.approved) {
+        final controller = TextEditingController();
+        final ok = await showDialog<bool>(
+          context: context,
+          builder: (ctx) {
+            var error = false;
+            return StatefulBuilder(
+              builder: (ctx, setState) => AlertDialog(
+                title: Text(
+                  ctx.tr(
+                    decision == FacilityStatus.rejected
+                        ? 'reject'
+                        : 'request_completion',
+                  ),
+                ),
+                content: TextField(
+                  controller: controller,
+                  maxLines: 3,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    labelText: ctx.tr(labelKey),
+                    alignLabelWithHint: true,
+                    errorText: error ? ctx.tr('reason_required') : null,
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: Text(ctx.tr('cancel')),
+                  ),
+                  FilledButton(
+                    onPressed: () {
+                      if (controller.text.trim().isEmpty) {
+                        setState(() => error = true);
+                      } else {
+                        Navigator.pop(ctx, true);
+                      }
+                    },
+                    child: Text(ctx.tr('confirm')),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+        note = controller.text;
+        controller.dispose();
+        if (ok != true) return;
+      }
+      if (!context.mounted) return;
+      notifier.review(f.id, decision, note: note);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(context.tr(messageKey))));
+    }
+
+    final open =
+        f.status == FacilityStatus.pending ||
+        f.status == FacilityStatus.needsInfo;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              context.tr('verification'),
+              style: text.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+            ),
+            for (final c in VerificationCheck.values)
+              CheckboxListTile(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                value: f.checks.contains(c),
+                onChanged: open ? (_) => notifier.toggleCheck(f.id, c) : null,
+                title: Text(context.tr('vc_${c.name}')),
+              ),
+            if (open) ...[
+              const Divider(height: 24),
+              Text(
+                context.tr('decision'),
+                style: text.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+              ),
+              const SizedBox(height: 10),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(minimumSize: const Size(0, 46)),
+                onPressed: f.isVerified
+                    ? () => decide(
+                        FacilityStatus.approved,
+                        '',
+                        'facility_approved_msg',
+                      )
+                    : null,
+                icon: const Icon(Icons.verified),
+                label: Text(context.tr('approve')),
+              ),
+              if (!f.isVerified)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    context.tr('verify_first'),
+                    textAlign: TextAlign.center,
+                    style: text.bodySmall,
+                  ),
+                ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 46),
+                      ),
+                      onPressed: () => decide(
+                        FacilityStatus.needsInfo,
+                        'missing_documents',
+                        'completion_requested_msg',
+                      ),
+                      icon: const Icon(Icons.upload_file),
+                      label: Text(context.tr('request_completion')),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 46),
+                        foregroundColor: AppColors.grey,
+                      ),
+                      onPressed: () => decide(
+                        FacilityStatus.rejected,
+                        'reject_reason',
+                        'facility_rejected_msg',
+                      ),
+                      icon: const Icon(Icons.close),
+                      label: Text(context.tr('reject')),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Committee dashboard tab: review facility registrations, approve them and
 /// refer patients to approved facilities.
 class CommitteeFacilitiesTab extends ConsumerStatefulWidget {
@@ -1329,7 +1927,7 @@ class CommitteeFacilitiesTab extends ConsumerStatefulWidget {
 
 class _CommitteeFacilitiesTabState
     extends ConsumerState<CommitteeFacilitiesTab> {
-  ReviewStatus? _status;
+  FacilityStatus? _status;
   FacilityType? _type;
   String _query = '';
 
@@ -1351,9 +1949,7 @@ class _CommitteeFacilitiesTabState
             )
             .toList()
           ..sort((a, b) {
-            final p = (a.status == ReviewStatus.pending ? 0 : 1).compareTo(
-              b.status == ReviewStatus.pending ? 0 : 1,
-            );
+            final p = a.status.index.compareTo(b.status.index);
             return p != 0 ? p : b.createdAt.compareTo(a.createdAt);
           });
 
@@ -1387,9 +1983,9 @@ class _CommitteeFacilitiesTabState
                 _status == null,
                 () => setState(() => _status = null),
               ),
-              for (final s in ReviewStatus.values)
+              for (final s in FacilityStatus.values)
                 chip(
-                  context.tr(reviewKey(s)),
+                  context.tr(facilityStatusKey(s)),
                   _status == s,
                   () => setState(() => _status = s),
                 ),
@@ -1441,12 +2037,6 @@ class CommitteeFacilityCard extends ConsumerWidget {
     final text = Theme.of(context).textTheme;
     final referrals = ref.watch(facilityProvider).referralsOf(f.id);
 
-    void review(ReviewStatus status, String messageKey) {
-      ref.read(facilityProvider.notifier).review(f.id, status);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(context.tr(messageKey))));
-    }
-
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -1478,8 +2068,8 @@ class CommitteeFacilityCard extends ConsumerWidget {
                     ),
                   ),
                   Pill(
-                    label: context.tr(reviewKey(f.status)),
-                    color: reviewColor(f.status),
+                    label: context.tr(facilityStatusKey(f.status)),
+                    color: facilityStatusColor(f.status),
                   ),
                 ],
               ),
@@ -1502,38 +2092,12 @@ class CommitteeFacilityCard extends ConsumerWidget {
                 ),
               ],
               const SizedBox(height: 10),
-              if (f.status == ReviewStatus.pending)
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size(0, 44),
-                        ),
-                        onPressed: () => review(
-                          ReviewStatus.approved,
-                          'facility_approved_msg',
-                        ),
-                        icon: const Icon(Icons.check),
-                        label: Text(context.tr('approve')),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(0, 44),
-                          foregroundColor: AppColors.grey,
-                        ),
-                        onPressed: () => review(
-                          ReviewStatus.rejected,
-                          'facility_rejected_msg',
-                        ),
-                        icon: const Icon(Icons.close),
-                        label: Text(context.tr('reject')),
-                      ),
-                    ),
-                  ],
+              if (!f.isApproved && f.status != FacilityStatus.rejected)
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
+                  onPressed: () => context.push('/committee/facility/${f.id}'),
+                  icon: const Icon(Icons.fact_check_outlined),
+                  label: Text(context.tr('review_request')),
                 )
               else if (f.isApproved)
                 FilledButton.tonalIcon(
@@ -1735,10 +2299,10 @@ class CommitteeFacilityScreen extends ConsumerWidget {
           _FacilityProfile(facility: f),
           const SizedBox(height: 8),
           ContactButtons(phone: f.phone, preferred: ContactMethod.call),
-          if (f.status == ReviewStatus.pending) ...[
-            const SizedBox(height: 10),
-            CommitteeFacilityCard(facility: f),
-          ],
+          const SizedBox(height: 10),
+          FacilityReviewPanel(facility: f),
+          const SizedBox(height: 10),
+          FacilityHistory(facility: f),
           if (f.isApproved) ...[
             SectionHeader(context.tr('referrals_of_facility')),
             if (referrals.isEmpty)

@@ -693,6 +693,105 @@ class AppStrings {
     'last_update': ['آخر تحديث: {t}', 'Mise à jour : {t}'],
     'referrals_count': ['{n} إحالة', '{n} orientation(s)'],
     'referrals_of_facility': ['إحالات الجهة', 'Orientations de la structure'],
+    'fstep_basic': ['البيانات الأساسية', 'Informations de base'],
+    'fstep_services': [
+      'النوع والتخصصات والخدمات',
+      'Type, spécialités et services',
+    ],
+    'fstep_contact': [
+      'المسؤول والتواصل والعنوان',
+      'Responsable, contact et adresse',
+    ],
+    'fstep_documents': ['الترخيص والوثائق', 'Autorisation et documents'],
+    'fstep_send': ['مراجعة وإرسال', 'Vérifier et envoyer'],
+    'legal_documents': ['الوثائق القانونية الأخرى', 'Autres documents légaux'],
+    'legal_documents_hint': [
+      'مثل: السجل التجاري، بطاقة تعريف المسؤول، شهادة مزاولة المهنة',
+      'Ex. : registre de commerce, pièce d’identité du responsable, attestation d’exercice',
+    ],
+    'license_required': [
+      'يرجى رفع صورة الترخيص الرسمي',
+      'Veuillez joindre l’autorisation officielle',
+    ],
+    'fs_pending': ['قيد المراجعة', 'En cours d’examen'],
+    'fs_needsInfo': ['مطلوب استكمال الوثائق', 'Documents à compléter'],
+    'fs_approved': ['معتمدة', 'Agréée'],
+    'fs_rejected': ['مرفوضة', 'Refusée'],
+    'fe_submitted': ['تم إرسال طلب التسجيل', 'Demande envoyée'],
+    'fe_resubmitted': [
+      'أُرسلت الوثائق المطلوبة',
+      'Documents complétés envoyés',
+    ],
+    'fe_needsInfo': [
+      'طلبت الإدارة استكمال الوثائق',
+      'L’administration demande des compléments',
+    ],
+    'fe_approved': [
+      'تم اعتماد الجهة وتفعيل حسابها',
+      'Structure agréée, compte activé',
+    ],
+    'fe_rejected': ['تم رفض الطلب', 'Demande refusée'],
+    'registration_history': ['مسار طلب التسجيل', 'Suivi de la demande'],
+    'verification': [
+      'التحقق من البيانات والوثائق',
+      'Vérification des données et documents',
+    ],
+    'vc_data': [
+      'بيانات الجهة صحيحة ومكتملة',
+      'Informations exactes et complètes',
+    ],
+    'vc_license': [
+      'الترخيص الرسمي صحيح وساري المفعول',
+      'Autorisation officielle valide',
+    ],
+    'vc_documents': ['الوثائق القانونية مكتملة', 'Documents légaux complets'],
+    'vc_contact': [
+      'تم التواصل مع المسؤول والتأكد منه',
+      'Responsable contacté et confirmé',
+    ],
+    'verify_first': [
+      'أكمل بنود التحقق قبل الاعتماد',
+      'Complétez la vérification avant de valider',
+    ],
+    'decision': ['القرار', 'Décision'],
+    'request_completion': ['طلب استكمال', 'Demander des compléments'],
+    'reject_reason': ['سبب الرفض', 'Motif du refus'],
+    'missing_documents': [
+      'الوثائق أو البيانات المطلوب استكمالها',
+      'Documents ou informations à compléter',
+    ],
+    'reason_required': ['يرجى كتابة السبب', 'Veuillez indiquer le motif'],
+    'completion_requested_msg': [
+      'تم إرسال طلب الاستكمال إلى الجهة',
+      'Demande de compléments envoyée',
+    ],
+    'review_request': ['مراجعة الطلب', 'Examiner la demande'],
+    'team_message': ['رسالة الإدارة', 'Message de l’administration'],
+    'complete_and_resend': [
+      'إرسال الوثائق المطلوبة',
+      'Envoyer les compléments',
+    ],
+    'resend_note': [
+      'ملاحظة للإدارة (اختياري)',
+      'Note pour l’administration (facultatif)',
+    ],
+    'resent_msg': [
+      'تم إرسال الوثائق، والطلب قيد المراجعة من جديد',
+      'Compléments envoyés, demande réexaminée',
+    ],
+    'needs_info_body': [
+      'طلبت إدارة الجمعية استكمال بعض الوثائق أو البيانات. ارفعوها ثم أعيدوا إرسال الطلب.',
+      'L’association demande des documents ou informations supplémentaires. Ajoutez-les puis renvoyez la demande.',
+    ],
+    'approval_notice_title': [
+      'مبروك! تم اعتماد جهتكم',
+      'Félicitations ! Votre structure est agréée',
+    ],
+    'approval_notice_body': [
+      'تم تفعيل حساب الجهة لدى جمعية عون وسند الخيرية، وستصلكم هنا إحالات المرضى من الجمعية.',
+      'Le compte de votre structure est activé auprès de l’association Aoun wa Sanad. Les orientations de patients arriveront ici.',
+    ],
+    'got_it': ['حسناً', 'Compris'],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],
     'skip': ['تخطي', 'Passer'],

@@ -3,12 +3,33 @@
 library;
 
 import 'models.dart';
-import 'registration.dart';
 
 enum FacilityType { hospital, clinic, lab, pharmacy, radiology }
 
 /// What the facility offers to the association (one or more).
 enum CooperationType { free, discounted, referrals }
+
+/// Registration life cycle of a facility (steps 5 to 8).
+enum FacilityStatus { pending, needsInfo, approved, rejected }
+
+/// What the association checks before approving a facility (step 6).
+enum VerificationCheck { data, license, documents, contact }
+
+/// One step of the registration history, shown to both sides.
+class FacilityEvent {
+  final FacilityStatus status;
+  final String note;
+  final DateTime at;
+
+  /// true when written by the facility (submission, completed documents).
+  final bool byFacility;
+  const FacilityEvent(
+    this.status,
+    this.at, {
+    this.note = '',
+    this.byFacility = false,
+  });
+}
 
 enum ReferralStatus { sent, accepted, inProgress, completed, declined }
 
@@ -33,7 +54,15 @@ class MedicalFacility {
   final int? monthlyCapacity;
   final String notes;
   final Attachment? licenseDocument;
-  final ReviewStatus status;
+
+  /// Other legal documents (commercial register, manager's ID...).
+  final List<Attachment> documents;
+  final FacilityStatus status;
+  final Set<VerificationCheck> checks;
+  final List<FacilityEvent> history;
+
+  /// The facility has seen its approval notice.
+  final bool approvalSeen;
   final DateTime createdAt;
 
   const MedicalFacility({
@@ -54,10 +83,24 @@ class MedicalFacility {
     this.monthlyCapacity,
     this.notes = '',
     this.licenseDocument,
-    this.status = ReviewStatus.pending,
+    this.documents = const [],
+    this.status = FacilityStatus.pending,
+    this.checks = const {},
+    this.history = const [],
+    this.approvalSeen = false,
   });
 
-  bool get isApproved => status == ReviewStatus.approved;
+  bool get isApproved => status == FacilityStatus.approved;
+  bool get isVerified => checks.length == VerificationCheck.values.length;
+
+  /// Last note written by the association (reason, missing documents...).
+  String get teamNote {
+    for (final e in history.reversed) {
+      if (!e.byFacility && e.note.isNotEmpty) return e.note;
+    }
+    return '';
+  }
+
   bool get acceptsReferrals => cooperation.contains(CooperationType.referrals);
 
   /// "H-001", "C-002", "L-003", "P-004", "R-005".
@@ -75,7 +118,13 @@ class MedicalFacility {
     return '${prefix[type]}-${digits.padLeft(3, '0')}';
   }
 
-  MedicalFacility copyWith({ReviewStatus? status}) => MedicalFacility(
+  MedicalFacility copyWith({
+    FacilityStatus? status,
+    Set<VerificationCheck>? checks,
+    List<FacilityEvent>? history,
+    List<Attachment>? documents,
+    bool? approvalSeen,
+  }) => MedicalFacility(
     id: id,
     type: type,
     name: name,
@@ -93,7 +142,11 @@ class MedicalFacility {
     monthlyCapacity: monthlyCapacity,
     notes: notes,
     licenseDocument: licenseDocument,
+    documents: documents ?? this.documents,
     status: status ?? this.status,
+    checks: checks ?? this.checks,
+    history: history ?? this.history,
+    approvalSeen: approvalSeen ?? this.approvalSeen,
   );
 }
 

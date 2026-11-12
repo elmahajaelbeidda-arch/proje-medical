@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/facility.dart';
 import '../models/models.dart';
-import '../models/registration.dart';
 
 class FacilityState {
   final List<MedicalFacility> facilities;
@@ -51,8 +50,10 @@ class FacilityNotifier extends Notifier<FacilityState> {
     int? monthlyCapacity,
     String notes = '',
     Attachment? licenseDocument,
+    List<Attachment> documents = const [],
   }) {
     final id = 'fac${DateTime.now().millisecondsSinceEpoch}';
+    final now = DateTime.now();
     state = state.copyWith(
       facilities: [
         MedicalFacility(
@@ -79,7 +80,11 @@ class FacilityNotifier extends Notifier<FacilityState> {
               : null,
           notes: notes.trim(),
           licenseDocument: licenseDocument,
-          createdAt: DateTime.now(),
+          documents: documents,
+          history: [
+            FacilityEvent(FacilityStatus.pending, now, byFacility: true),
+          ],
+          createdAt: now,
         ),
         ...state.facilities,
       ],
@@ -87,13 +92,81 @@ class FacilityNotifier extends Notifier<FacilityState> {
     return id;
   }
 
-  /// Association: approve or reject a facility.
-  void review(String id, ReviewStatus status) => state = state.copyWith(
-    facilities: [
-      for (final f in state.facilities)
-        f.id == id ? f.copyWith(status: status) : f,
-    ],
-  );
+  MedicalFacility _update(
+    String id,
+    MedicalFacility Function(MedicalFacility f) change,
+  ) {
+    late MedicalFacility updated;
+    state = state.copyWith(
+      facilities: [
+        for (final f in state.facilities)
+          if (f.id == id) updated = change(f) else f,
+      ],
+    );
+    return updated;
+  }
+
+  /// Association (step 6): tick a verification item.
+  void toggleCheck(String id, VerificationCheck check) => _update(id, (f) {
+    final checks = {...f.checks};
+    checks.contains(check) ? checks.remove(check) : checks.add(check);
+    return f.copyWith(checks: checks);
+  });
+
+  /// Association (steps 7-8): approve, reject or ask for missing documents.
+  /// Rejection and requests need a reason; approval needs every check.
+  void review(String id, FacilityStatus decision, {String note = ''}) {
+    final f = state.facility(id);
+    if (f == null) throw StateError('unknown facility');
+    if (decision == FacilityStatus.pending) {
+      throw ArgumentError('pending is not a decision');
+    }
+    if (decision != FacilityStatus.approved && note.trim().isEmpty) {
+      throw ArgumentError('a reason is required');
+    }
+    if (decision == FacilityStatus.approved && !f.isVerified) {
+      throw StateError('verification not complete');
+    }
+    _update(
+      id,
+      (f) => f.copyWith(
+        status: decision,
+        approvalSeen: false,
+        history: [
+          ...f.history,
+          FacilityEvent(decision, DateTime.now(), note: note.trim()),
+        ],
+      ),
+    );
+  }
+
+  /// Facility: send the missing documents and resubmit the request.
+  void resubmit(
+    String id, {
+    List<Attachment> documents = const [],
+    String note = '',
+  }) => _update(id, (f) {
+    if (f.status != FacilityStatus.needsInfo) {
+      throw StateError('nothing requested');
+    }
+    return f.copyWith(
+      status: FacilityStatus.pending,
+      documents: [...f.documents, ...documents],
+      history: [
+        ...f.history,
+        FacilityEvent(
+          FacilityStatus.pending,
+          DateTime.now(),
+          note: note.trim(),
+          byFacility: true,
+        ),
+      ],
+    );
+  });
+
+  /// Facility: approval notice read.
+  void markApprovalSeen(String id) =>
+      _update(id, (f) => f.copyWith(approvalSeen: true));
 
   /// Association: refer a patient to an approved facility.
   String refer({
@@ -159,7 +232,9 @@ class FacilityNotifier extends Notifier<FacilityState> {
         services: const ['استشارات تخصصية', 'عمليات بسيطة', 'متابعة الحمل'],
         cooperation: const {CooperationType.free, CooperationType.referrals},
         monthlyCapacity: 20,
-        status: ReviewStatus.approved,
+        status: FacilityStatus.approved,
+        checks: VerificationCheck.values.toSet(),
+        approvalSeen: true,
         createdAt: now.subtract(const Duration(days: 60)),
       ),
       MedicalFacility(
@@ -179,7 +254,9 @@ class FacilityNotifier extends Notifier<FacilityState> {
         },
         discountPercent: 50,
         monthlyCapacity: 40,
-        status: ReviewStatus.approved,
+        status: FacilityStatus.approved,
+        checks: VerificationCheck.values.toSet(),
+        approvalSeen: true,
         createdAt: now.subtract(const Duration(days: 40)),
       ),
       MedicalFacility(
@@ -194,7 +271,9 @@ class FacilityNotifier extends Notifier<FacilityState> {
         services: const ['أدوية الأمراض المزمنة', 'أدوية الأطفال'],
         cooperation: const {CooperationType.discounted},
         discountPercent: 30,
-        status: ReviewStatus.approved,
+        status: FacilityStatus.approved,
+        checks: VerificationCheck.values.toSet(),
+        approvalSeen: true,
         createdAt: now.subtract(const Duration(days: 25)),
       ),
       MedicalFacility(
@@ -210,7 +289,9 @@ class FacilityNotifier extends Notifier<FacilityState> {
         services: const ['أشعة سينية', 'إيكوغرافيا', 'سكانر'],
         cooperation: const {CooperationType.free, CooperationType.referrals},
         monthlyCapacity: 10,
-        status: ReviewStatus.approved,
+        status: FacilityStatus.approved,
+        checks: VerificationCheck.values.toSet(),
+        approvalSeen: true,
         createdAt: now.subtract(const Duration(days: 15)),
       ),
       MedicalFacility(
@@ -230,7 +311,44 @@ class FacilityNotifier extends Notifier<FacilityState> {
           'رخصة_العيادة.pdf',
           AttachmentKind.pdf,
         ),
+        documents: const [Attachment('السجل_التجاري.pdf', AttachmentKind.pdf)],
+        checks: const {VerificationCheck.data},
+        history: [
+          FacilityEvent(
+            FacilityStatus.pending,
+            now.subtract(const Duration(hours: 5)),
+            byFacility: true,
+          ),
+        ],
         createdAt: now.subtract(const Duration(hours: 5)),
+      ),
+      MedicalFacility(
+        id: 'f6',
+        type: FacilityType.lab,
+        name: 'مختبر الرحمة',
+        managerName: 'محمد فال',
+        licenseNumber: 'LAB-KIF-2022-011',
+        city: 'كيفة',
+        address: 'قرب المستشفى الجهوي',
+        phone: '46 55 44 33',
+        services: const ['تحاليل الملاريا', 'فصيلة الدم'],
+        cooperation: const {CooperationType.discounted},
+        discountPercent: 25,
+        status: FacilityStatus.needsInfo,
+        checks: const {VerificationCheck.data, VerificationCheck.contact},
+        history: [
+          FacilityEvent(
+            FacilityStatus.pending,
+            now.subtract(const Duration(days: 3)),
+            byFacility: true,
+          ),
+          FacilityEvent(
+            FacilityStatus.needsInfo,
+            now.subtract(const Duration(days: 1)),
+            note: 'يرجى رفع صورة واضحة من الترخيص الرسمي ساري المفعول.',
+          ),
+        ],
+        createdAt: now.subtract(const Duration(days: 3)),
       ),
     ];
   }

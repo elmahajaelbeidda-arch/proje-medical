@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifa/core/facility_provider.dart';
 import 'package:shifa/models/facility.dart';
-import 'package:shifa/models/registration.dart';
+import 'package:shifa/models/models.dart';
 
 void main() {
   late ProviderContainer c;
@@ -10,6 +10,13 @@ void main() {
   tearDown(() => c.dispose());
 
   FacilityNotifier n() => c.read(facilityProvider.notifier);
+
+  void approve(String id) {
+    for (final v in VerificationCheck.values) {
+      n().toggleCheck(id, v);
+    }
+    n().review(id, FacilityStatus.approved);
+  }
 
   String register() => n().register(
     type: FacilityType.lab,
@@ -28,7 +35,8 @@ void main() {
   test('new facility is pending, trimmed, and ignores unused fields', () {
     final id = register();
     final f = c.read(facilityProvider).facility(id)!;
-    expect(f.status, ReviewStatus.pending);
+    expect(f.status, FacilityStatus.pending);
+    expect(f.history.single.byFacility, isTrue);
     expect(f.name, 'مختبر تجريبي');
     expect(f.services, ['تحليل']);
     expect(f.discountPercent, isNull);
@@ -47,7 +55,7 @@ void main() {
       ),
       throwsStateError,
     );
-    n().review(id, ReviewStatus.approved);
+    approve(id);
     final rid = n().refer(
       facilityId: id,
       patientName: 'مريم',
@@ -59,7 +67,7 @@ void main() {
 
   test('referral moves through the allowed steps only', () {
     final id = register();
-    n().review(id, ReviewStatus.approved);
+    approve(id);
     final rid = n().refer(
       facilityId: id,
       patientName: 'مريم',
@@ -87,5 +95,48 @@ void main() {
       'f1',
     );
     expect(findFacilityAccount(s, '45251010', 'wrong'), isNull);
+  });
+
+  test('approval needs every verification check', () {
+    final id = register();
+    n().toggleCheck(id, VerificationCheck.data);
+    expect(() => n().review(id, FacilityStatus.approved), throwsStateError);
+    n().toggleCheck(id, VerificationCheck.data); // unticks it again
+    approve(id);
+    final f = c.read(facilityProvider).facility(id)!;
+    expect(f.isApproved, isTrue);
+    expect(f.approvalSeen, isFalse);
+    expect(f.history.last.status, FacilityStatus.approved);
+    n().markApprovalSeen(id);
+    expect(c.read(facilityProvider).facility(id)!.approvalSeen, isTrue);
+  });
+
+  test('reject and request completion need a reason', () {
+    final id = register();
+    expect(() => n().review(id, FacilityStatus.rejected), throwsArgumentError);
+    expect(
+      () => n().review(id, FacilityStatus.needsInfo, note: '  '),
+      throwsArgumentError,
+    );
+    n().review(id, FacilityStatus.needsInfo, note: 'ارفعوا الترخيص');
+    var f = c.read(facilityProvider).facility(id)!;
+    expect(f.status, FacilityStatus.needsInfo);
+    expect(f.teamNote, 'ارفعوا الترخيص');
+
+    n().resubmit(
+      id,
+      documents: const [Attachment('ترخيص.pdf', AttachmentKind.pdf)],
+    );
+    f = c.read(facilityProvider).facility(id)!;
+    expect(f.status, FacilityStatus.pending);
+    expect(f.documents, hasLength(1));
+    expect(f.history, hasLength(3));
+    expect(() => n().resubmit(id), throwsStateError);
+
+    n().review(id, FacilityStatus.rejected, note: 'ترخيص منتهي');
+    expect(
+      c.read(facilityProvider).facility(id)!.status,
+      FacilityStatus.rejected,
+    );
   });
 }
