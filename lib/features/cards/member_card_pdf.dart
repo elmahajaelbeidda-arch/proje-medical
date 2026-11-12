@@ -6,11 +6,11 @@ import 'package:pdf/widgets.dart' as pw;
 import '../../models/member_card.dart';
 import '../summons/summons_pdf.dart' show SummonsPdfAssets;
 
-const _green = PdfColor.fromInt(0xFF0A5C36);
-const _mint = PdfColor.fromInt(0xFFE8F5E9);
-const _ink = PdfColor.fromInt(0xFF2C3E50);
-const _grey = PdfColor.fromInt(0xFF5B6168);
-const _red = PdfColor.fromInt(0xFFD9534F);
+const _green = PdfColor.fromInt(0xFF176B55);
+const _mint = PdfColor.fromInt(0xFFDCEFE5);
+const _ink = PdfColor.fromInt(0xFF263B36);
+const _grey = PdfColor.fromInt(0xFF5F716C);
+const _turquoise = PdfColor.fromInt(0xFF398B89);
 
 String _d(DateTime d) =>
     '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
@@ -219,7 +219,7 @@ Future<Uint8List> buildMemberCardPdf(
       ),
       if (card.suspended)
         pw.Container(
-          color: _red,
+          color: _turquoise,
           padding: const pw.EdgeInsets.all(2),
           child: pw.Text(
             tr('cc_suspended'),

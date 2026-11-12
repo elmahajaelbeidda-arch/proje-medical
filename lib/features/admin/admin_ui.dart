@@ -381,8 +381,8 @@ Future<Uint8List> buildReportPdf({
     base: pw.Font.ttf(assets.regular),
     bold: pw.Font.ttf(assets.bold),
   );
-  const green = PdfColor.fromInt(0xFF0A5C36);
-  const mint = PdfColor.fromInt(0xFFE8F5E9);
+  const green = PdfColor.fromInt(0xFF176B55);
+  const mint = PdfColor.fromInt(0xFFDCEFE5);
   final doc = pw.Document(title: title, author: tr('association_name'));
   pw.TextDirection? dir(String s) =>
       _arabic.hasMatch(s) ? pw.TextDirection.rtl : pw.TextDirection.ltr;

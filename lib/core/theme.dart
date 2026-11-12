@@ -4,42 +4,53 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Main palette
-  static const primary = Color(0xFF0A5C36); // emerald: titles, buttons, nav
-  static const primaryDark = Color(0xFF07432A); // gradients, pressed states
-  static const secondary = Color(0xFFE8F5E9); // mint: cards and boxes
-  static const emergency = Color(0xFFD9534F); // emergencies & urgent only
-  static const background = Color(0xFFF8F9FA); // app background
-  static const text = Color(0xFF2C3E50); // body text
+  // Main palette (medical, calm and soft on the eyes)
+  static const primary = Color(
+    0xFF176B55,
+  ); // dark medical green: titles, main buttons
+  static const primaryDark = Color(0xFF0F5242); // gradients, pressed states
+  static const calm = Color(
+    0xFF55A879,
+  ); // calm green: icons, secondary elements
+  static const turquoise = Color(0xFF398B89); // medical turquoise: highlights
+  static const secondary = Color(
+    0xFFDCEFE5,
+  ); // light green: secondary backgrounds
+  static const background = Color(0xFFF3F7F5); // app background
+  static const surface = Color(0xFFFFFFFF); // cards and inner spaces
+  static const text = Color(0xFF263B36); // body text
+
+  /// Urgent cases: medical turquoise (no red), always shown with an icon
+  /// (priority / emergency) so they stay easy to spot.
+  static const emergency = turquoise;
 
   // Aliases used across the screens
   static const ink = primary; // titles, brand name, dark surfaces
-  static const teal = primary; // buttons, icons
-  static const inkLight = Color(0xFF0E7A48);
-  static const green = Color(0xFF1E8449); // tagline, highlights
+  static const teal = turquoise; // highlighted buttons and cards
+  static const inkLight = Color(0xFF1F8A6E);
+  static const green = calm; // tagline, highlights
   static const mint = secondary; // light fill with dark text on it
-  static const grey = Color(0xFF5B6168); // secondary text, neutral icons
+  static const grey = Color(0xFF5F716C); // secondary text, neutral icons
 
-  // Role colors
-  static const patient = Color(0xFF91AFCB); // sky blue  -> patients
-  static const doctor = Color(0xFF6E9B87); // medical green -> doctors
+  // Role colors (soft tints of the palette)
+  static const patient = Color(0xFFA9D6D4); // light turquoise -> patients
+  static const doctor = Color(0xFFA8D8BC); // light calm green -> doctors
 
-  // Darker shades of the role/brand colors, used for text & icons on light
-  // backgrounds where the original tone would not be readable enough.
-  static const patientDark = Color(0xFF4D6F91);
-  static const doctorDark = Color(0xFF4A7362);
+  // Darker shades of the role colors, for text, icons and borders.
+  static const patientDark = turquoise;
+  static const doctorDark = Color(0xFF3F8A60);
 
-  static const accent = Color(0xFFF29E1F); // amber (stars, highlights)
-  static const info = Color(0xFF2F6DB5);
+  static const accent = Color(0xFFD9A441); // soft gold (stars)
+  static const info = Color(0xFF4F7F9E); // muted slate blue
 
-  // Status colors. [danger] is the emergency red: only for emergencies and
-  // urgent requests.
+  // Status colors (no red anywhere in the app).
   static const danger = emergency;
-  static const success = Color(0xFF1F8A5B);
-  static const warning = Color(0xFFF29E1F);
+  static const success = calm;
+  static const warning = Color(0xFFD9A441); // soft gold: pending
+  static const error = Color(0xFF2C6F6D); // deep turquoise: form errors
 
   // Solid surfaces (no transparency)
-  static const border = Color(0xFFD5E8D8);
+  static const border = Color(0xFFCFE5D9);
 
   /// Picks ink or white text, whichever contrasts more with [background].
   static Color on(Color background) {
@@ -80,14 +91,15 @@ class AppTheme {
           onSecondary: Colors.white,
           secondaryContainer: AppColors.mint,
           onSecondaryContainer: AppColors.ink,
-          tertiary: AppColors.doctor,
+          tertiary: AppColors.turquoise,
+          onTertiary: Colors.white,
           onSurface: isLight ? AppColors.text : Colors.white,
-          error: AppColors.emergency,
-          outlineVariant: isLight ? AppColors.border : const Color(0xFF2A5552),
-          surface: isLight ? Colors.white : const Color(0xFF102E2D),
+          error: AppColors.error,
+          outlineVariant: isLight ? AppColors.border : const Color(0xFF2E5248),
+          surface: isLight ? AppColors.surface : const Color(0xFF10291F),
           surfaceContainerLowest: isLight
-              ? Colors.white
-              : const Color(0xFF143837),
+              ? AppColors.surface
+              : const Color(0xFF15342A),
         );
     // El Messiri for the whole app (Arabic and French), bundled in
     // assets/fonts with its four weights, so it works offline.
@@ -116,7 +128,7 @@ class AppTheme {
       textTheme: textTheme,
       scaffoldBackgroundColor: isLight
           ? AppColors.background
-          : const Color(0xFF0C2423),
+          : const Color(0xFF0B201A),
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
@@ -131,8 +143,8 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         margin: EdgeInsets.zero,
-        // Mint cards and boxes for comfortable reading.
-        color: isLight ? AppColors.secondary : scheme.surfaceContainerLowest,
+        // White cards on the soft green background.
+        color: isLight ? AppColors.surface : scheme.surfaceContainerLowest,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
           side: BorderSide(color: scheme.outlineVariant),
@@ -205,8 +217,8 @@ class AppTheme {
 
   /// Theme used on the patient / doctor sign-in & sign-up screens:
   /// sky blue for patients, medical green for volunteer doctors.
-  /// Buttons use the exact brand tone with dark text (good contrast);
-  /// text, focus borders and checkboxes use the darker shade.
+  /// Buttons, text, focus borders and checkboxes use the darker shade of
+  /// the role tone (white text on buttons for good contrast).
   static ThemeData forRole(ThemeData base, {required bool isDoctor}) {
     final isLight = base.brightness == Brightness.light;
     final tone = AppColors.role(isDoctor);
@@ -220,9 +232,9 @@ class AppTheme {
         style: base.filledButtonTheme.style?.copyWith(
           backgroundColor: WidgetStateProperty.resolveWith(
             (states) =>
-                states.contains(WidgetState.disabled) ? AppColors.border : tone,
+                states.contains(WidgetState.disabled) ? AppColors.border : dark,
           ),
-          foregroundColor: const WidgetStatePropertyAll(AppColors.ink),
+          foregroundColor: const WidgetStatePropertyAll(Colors.white),
         ),
       ),
     );

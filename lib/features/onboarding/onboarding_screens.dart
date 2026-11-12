@@ -446,7 +446,7 @@ class RoleSelectScreen extends ConsumerWidget {
                     icon: Icons.bloodtype_outlined,
                     title: context.tr('role_donor'),
                     subtitle: context.tr('role_donor_desc'),
-                    color: const Color(0xFFB9E2C3),
+                    color: AppColors.secondary,
                     darkColor: AppColors.primary,
                     onTap: () => context.push('/blood'),
                   ),
