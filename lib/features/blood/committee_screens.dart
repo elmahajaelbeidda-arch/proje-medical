@@ -823,7 +823,7 @@ class RegistrationCard extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: AppColors.teal,
                   child: Icon(
                     r.isDoctor
                         ? Icons.medical_services_outlined

@@ -140,7 +140,7 @@ class Kpi extends StatelessWidget {
     required this.label,
     required this.value,
     required this.icon,
-    this.color = AppColors.primary,
+    this.color = AppColors.teal,
     this.onTap,
   });
   final String label;
@@ -381,8 +381,8 @@ Future<Uint8List> buildReportPdf({
     base: pw.Font.ttf(assets.regular),
     bold: pw.Font.ttf(assets.bold),
   );
-  const green = PdfColor.fromInt(0xFF176B55);
-  const mint = PdfColor.fromInt(0xFFDCEFE5);
+  const green = PdfColor.fromInt(0xFF126B50);
+  const mint = PdfColor.fromInt(0xFFE4F1EB);
   final doc = pw.Document(title: title, author: tr('association_name'));
   pw.TextDirection? dir(String s) =>
       _arabic.hasMatch(s) ? pw.TextDirection.rtl : pw.TextDirection.ltr;

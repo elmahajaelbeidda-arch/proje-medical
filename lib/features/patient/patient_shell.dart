@@ -172,7 +172,11 @@ class PatientHomeTab extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    gradient: const LinearGradient(
+                      begin: AlignmentDirectional.centerStart,
+                      end: AlignmentDirectional.centerEnd,
+                      colors: [AppColors.vivid, AppColors.turquoise],
+                    ),
                     borderRadius: BorderRadius.circular(22),
                   ),
                   child: Row(
@@ -275,7 +279,7 @@ class PatientHomeTab extends ConsumerWidget {
                       vertical: 6,
                     ),
                     leading: const CircleAvatar(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: AppColors.teal,
                       child: Icon(
                         Icons.psychology_outlined,
                         color: Colors.white,
@@ -310,7 +314,7 @@ class PatientHomeTab extends ConsumerWidget {
                       vertical: 6,
                     ),
                     leading: const CircleAvatar(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: AppColors.teal,
                       child: Icon(Icons.add_location_alt, color: Colors.white),
                     ),
                     title: Text(
@@ -351,7 +355,7 @@ class PatientHomeTab extends ConsumerWidget {
                                 children: [
                                   CircleAvatar(
                                     radius: 24,
-                                    backgroundColor: AppColors.ink,
+                                    backgroundColor: AppColors.teal,
                                     child: Icon(
                                       typeIcon(t),
                                       color: AppColors.mint,
@@ -785,7 +789,7 @@ class _BloodBanner extends ConsumerWidget {
         onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
         leading: const CircleAvatar(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.teal,
           child: Icon(Icons.bloodtype, color: Colors.white),
         ),
         title: Text(
@@ -838,7 +842,7 @@ class _BloodRequestCard extends ConsumerWidget {
             children: [
               const CircleAvatar(
                 radius: 24,
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.teal,
                 child: Icon(Icons.bloodtype, color: Colors.white),
               ),
               const SizedBox(width: 12),

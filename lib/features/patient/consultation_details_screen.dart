@@ -82,12 +82,17 @@ class ConsultationDetailsScreen extends ConsumerWidget {
           const SizedBox(height: 12),
 
           if (c.status == ConsultationStatus.pending)
+            // Light notice with a gold accent (gold used sparingly).
             Card(
-              color: AppColors.warning,
+              color: AppColors.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+                side: const BorderSide(color: AppColors.gold, width: 1.5),
+              ),
               child: ListTile(
                 leading: const Icon(
                   Icons.hourglass_top_rounded,
-                  color: AppColors.ink,
+                  color: AppColors.gold,
                 ),
                 title: Text(
                   context.tr('waiting_doctor'),

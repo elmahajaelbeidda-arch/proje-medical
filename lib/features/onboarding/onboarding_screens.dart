@@ -51,7 +51,7 @@ class ShifaLockup extends StatelessWidget {
         Text(
           context.tr('app_tagline'),
           style: text.titleMedium?.copyWith(
-            color: dark ? AppColors.mint : AppColors.green,
+            color: dark ? AppColors.mint : AppColors.teal,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -128,7 +128,7 @@ class ShifaHero extends StatelessWidget {
               gradient: const LinearGradient(
                 begin: AlignmentDirectional.topStart,
                 end: AlignmentDirectional.bottomEnd,
-                colors: [AppColors.primary, AppColors.primaryDark],
+                colors: AppColors.heroGradient,
               ),
               borderRadius: BorderRadius.circular(20),
             ),
@@ -359,7 +359,7 @@ class _IntroPage extends StatelessWidget {
                 gradient: const LinearGradient(
                   begin: AlignmentDirectional.topStart,
                   end: AlignmentDirectional.bottomEnd,
-                  colors: [AppColors.primary, AppColors.primaryDark],
+                  colors: AppColors.heroGradient,
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),

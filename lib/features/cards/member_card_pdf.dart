@@ -6,11 +6,11 @@ import 'package:pdf/widgets.dart' as pw;
 import '../../models/member_card.dart';
 import '../summons/summons_pdf.dart' show SummonsPdfAssets;
 
-const _green = PdfColor.fromInt(0xFF176B55);
-const _mint = PdfColor.fromInt(0xFFDCEFE5);
+const _green = PdfColor.fromInt(0xFF126B50);
+const _mint = PdfColor.fromInt(0xFFE4F1EB);
 const _ink = PdfColor.fromInt(0xFF263B36);
-const _grey = PdfColor.fromInt(0xFF5F716C);
-const _turquoise = PdfColor.fromInt(0xFF398B89);
+const _grey = PdfColor.fromInt(0xFF5E706B);
+const _turquoise = PdfColor.fromInt(0xFF258C91);
 
 String _d(DateTime d) =>
     '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';

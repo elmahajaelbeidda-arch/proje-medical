@@ -17,10 +17,10 @@ class SummonsPdfAssets {
   });
 }
 
-const _green = PdfColor.fromInt(0xFF176B55);
-const _mint = PdfColor.fromInt(0xFFDCEFE5);
+const _green = PdfColor.fromInt(0xFF126B50);
+const _mint = PdfColor.fromInt(0xFFE4F1EB);
 const _ink = PdfColor.fromInt(0xFF263B36);
-const _grey = PdfColor.fromInt(0xFF5F716C);
+const _grey = PdfColor.fromInt(0xFF5E706B);
 
 String _two(int n) => n.toString().padLeft(2, '0');
 

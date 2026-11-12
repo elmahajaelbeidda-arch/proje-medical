@@ -157,9 +157,7 @@ class DoctorHomeTab extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.primaryDark],
-              ),
+              gradient: const LinearGradient(colors: AppColors.heroGradient),
               borderRadius: BorderRadius.circular(22),
             ),
             child: Row(
@@ -218,7 +216,7 @@ class DoctorHomeTab extends ConsumerWidget {
             child: ListTile(
               onTap: () => context.push('/blood'),
               leading: const CircleAvatar(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.teal,
                 child: Icon(Icons.bloodtype, color: Colors.white),
               ),
               title: Text(

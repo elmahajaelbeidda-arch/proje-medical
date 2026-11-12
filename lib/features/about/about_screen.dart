@@ -34,7 +34,7 @@ class AboutAssociationScreen extends ConsumerWidget {
               gradient: const LinearGradient(
                 begin: AlignmentDirectional.topStart,
                 end: AlignmentDirectional.bottomEnd,
-                colors: [AppColors.primary, AppColors.primaryDark],
+                colors: AppColors.heroGradient,
               ),
               borderRadius: BorderRadius.circular(20),
             ),
@@ -58,7 +58,7 @@ class AboutAssociationScreen extends ConsumerWidget {
                   Row(
                     children: [
                       const CircleAvatar(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: AppColors.teal,
                         child: Icon(
                           Icons.volunteer_activism,
                           color: Colors.white,

@@ -184,7 +184,7 @@ class _PersonCard extends ConsumerWidget {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.teal,
                 child: Icon(
                   r.isDoctor
                       ? Icons.medical_services_outlined
@@ -364,7 +364,7 @@ class _FacilityListState extends ConsumerState<_FacilityList> {
             child: ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const CircleAvatar(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.teal,
                 child: Icon(Icons.local_hospital_outlined, color: Colors.white),
               ),
               title: Text(

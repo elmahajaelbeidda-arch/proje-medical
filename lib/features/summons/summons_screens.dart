@@ -368,7 +368,7 @@ class SummonsTile extends StatelessWidget {
       child: ListTile(
         onTap: () => context.push('/summons/${s.id}'),
         leading: CircleAvatar(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.teal,
           child: Icon(
             s.issuer == SummonsIssuer.doctor
                 ? Icons.medical_services_outlined
@@ -454,7 +454,7 @@ class SummonsBanner extends ConsumerWidget {
         child: ListTile(
           onTap: () => context.push('/summons/${next.id}'),
           leading: const CircleAvatar(
-            backgroundColor: AppColors.primary,
+            backgroundColor: AppColors.teal,
             child: Icon(Icons.badge_outlined, color: Colors.white),
           ),
           title: Text(

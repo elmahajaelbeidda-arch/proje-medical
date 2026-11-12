@@ -272,7 +272,7 @@ class OverviewSection extends ConsumerWidget {
 
 Color stageColor(CaseStage s) => switch (s) {
   CaseStage.pending => AppColors.warning,
-  CaseStage.accepted => AppColors.primary,
+  CaseStage.accepted => AppColors.teal,
   CaseStage.onHold => AppColors.info,
   CaseStage.rejected => AppColors.grey,
   CaseStage.completed => AppColors.success,

@@ -4,53 +4,55 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Main palette (medical, calm and soft on the eyes)
-  static const primary = Color(
-    0xFF176B55,
-  ); // dark medical green: titles, main buttons
-  static const primaryDark = Color(0xFF0F5242); // gradients, pressed states
-  static const calm = Color(
-    0xFF55A879,
-  ); // calm green: icons, secondary elements
-  static const turquoise = Color(0xFF398B89); // medical turquoise: highlights
-  static const secondary = Color(
-    0xFFDCEFE5,
-  ); // light green: secondary backgrounds
-  static const background = Color(0xFFF3F7F5); // app background
+  // Main palette: emerald for the brand and titles, vivid green for actions,
+  // rich turquoise for icons and highlights, white cards, gold sparingly.
+  static const primary = Color(0xFF126B50); // emerald: titles, brand
+  static const primaryDark = Color(0xFF0D5640); // pressed states
+  static const vivid = Color(0xFF269B72); // vivid green: buttons, actions
+  static const turquoise = Color(
+    0xFF258C91,
+  ); // rich turquoise: icons, highlights
+  static const secondary = Color(0xFFE4F1EB); // snow green: soft fills
+  static const background = Color(0xFFF7F9F8); // white-grey app background
   static const surface = Color(0xFFFFFFFF); // cards and inner spaces
   static const text = Color(0xFF263B36); // body text
+  static const gold = Color(0xFFD9A441); // calm gold: used sparingly
 
-  /// Urgent cases: medical turquoise (no red), always shown with an icon
+  /// Lively gradient for the few large colored boxes (intro, main action).
+  static const heroGradient = [turquoise, vivid];
+
+  /// Urgent cases: rich turquoise (no red), always with an icon
   /// (priority / emergency) so they stay easy to spot.
   static const emergency = turquoise;
 
   // Aliases used across the screens
-  static const ink = primary; // titles, brand name, dark surfaces
-  static const teal = turquoise; // highlighted buttons and cards
-  static const inkLight = Color(0xFF1F8A6E);
-  static const green = calm; // tagline, highlights
+  static const ink = primary; // titles, brand name
+  static const teal = turquoise; // icon bubbles, highlighted buttons
+  static const calm = vivid;
+  static const inkLight = Color(0xFF1C8562);
+  static const green = vivid; // tagline, highlights
   static const mint = secondary; // light fill with dark text on it
-  static const grey = Color(0xFF5F716C); // secondary text, neutral icons
+  static const grey = Color(0xFF5E706B); // secondary text, neutral icons
 
   // Role colors (soft tints of the palette)
-  static const patient = Color(0xFFA9D6D4); // light turquoise -> patients
-  static const doctor = Color(0xFFA8D8BC); // light calm green -> doctors
+  static const patient = Color(0xFFCDE8EA); // turquoise tint -> patients
+  static const doctor = Color(0xFFCFEBDD); // green tint -> doctors
 
-  // Darker shades of the role colors, for text, icons and borders.
+  // Darker shades of the role colors, for text, icons, borders and buttons.
   static const patientDark = turquoise;
-  static const doctorDark = Color(0xFF3F8A60);
+  static const doctorDark = vivid;
 
-  static const accent = Color(0xFFD9A441); // soft gold (stars)
-  static const info = Color(0xFF4F7F9E); // muted slate blue
+  static const accent = gold; // stars
+  static const info = Color(0xFF3F7DA6); // calm blue: information
 
   // Status colors (no red anywhere in the app).
   static const danger = emergency;
-  static const success = calm;
-  static const warning = Color(0xFFD9A441); // soft gold: pending
-  static const error = Color(0xFF2C6F6D); // deep turquoise: form errors
+  static const success = vivid;
+  static const warning = gold; // pending
+  static const error = Color(0xFF1E7478); // deep turquoise: form errors
 
   // Solid surfaces (no transparency)
-  static const border = Color(0xFFCFE5D9);
+  static const border = Color(0xFFDCE8E2);
 
   /// Picks ink or white text, whichever contrasts more with [background].
   static Color on(Color background) {
@@ -83,11 +85,12 @@ class AppTheme {
           seedColor: AppColors.primary,
           brightness: brightness,
         ).copyWith(
-          primary: isLight ? AppColors.primary : AppColors.secondary,
+          // Buttons, switches, selections: vivid green.
+          primary: isLight ? AppColors.vivid : AppColors.secondary,
           onPrimary: isLight ? Colors.white : AppColors.primary,
           primaryContainer: AppColors.mint,
           onPrimaryContainer: AppColors.ink,
-          secondary: AppColors.green,
+          secondary: AppColors.turquoise,
           onSecondary: Colors.white,
           secondaryContainer: AppColors.mint,
           onSecondaryContainer: AppColors.ink,
@@ -141,9 +144,11 @@ class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        elevation: 0,
+        // White cards with a soft shadow on the white-grey background.
+        elevation: isLight ? 1.5 : 0,
+        shadowColor: const Color(0x1A126B50),
+        surfaceTintColor: Colors.transparent,
         margin: EdgeInsets.zero,
-        // White cards on the soft green background.
         color: isLight ? AppColors.surface : scheme.surfaceContainerLowest,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
@@ -191,21 +196,26 @@ class AppTheme {
       chipTheme: base.chipTheme.copyWith(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      // Bottom bar in the primary green.
+      // Light bottom bar: white, the selected tab on a snow-green pill.
       navigationBarTheme: NavigationBarThemeData(
         height: 70,
-        backgroundColor: AppColors.primary,
-        indicatorColor: AppColors.secondary,
+        elevation: 3,
+        shadowColor: const Color(0x22126B50),
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: isLight ? AppColors.surface : const Color(0xFF15342A),
+        indicatorColor: isLight ? AppColors.secondary : AppColors.vivid,
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color: states.contains(WidgetState.selected)
-                ? AppColors.primary
-                : Colors.white,
+                ? (isLight ? AppColors.vivid : Colors.white)
+                : (isLight ? AppColors.grey : Colors.white70),
           ),
         ),
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => textTheme.labelMedium?.copyWith(
-            color: Colors.white,
+            color: states.contains(WidgetState.selected)
+                ? (isLight ? AppColors.primary : Colors.white)
+                : (isLight ? AppColors.grey : Colors.white70),
             fontWeight: states.contains(WidgetState.selected)
                 ? FontWeight.w800
                 : FontWeight.w500,
