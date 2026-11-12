@@ -156,6 +156,10 @@ class Referral {
   final String facilityId;
   final String patientName;
 
+  /// Patient's account in the app, when the patient has one (receives the
+  /// summons card).
+  final String patientId;
+
   /// Reference of the patient at the association (no ID card number).
   final String patientRef;
   final String service;
@@ -176,6 +180,7 @@ class Referral {
     required this.service,
     required this.createdAt,
     DateTime? updatedAt,
+    this.patientId = '',
     this.notes = '',
     this.urgent = false,
     this.status = ReferralStatus.sent,
@@ -196,6 +201,7 @@ class Referral {
     id: id,
     facilityId: facilityId,
     patientName: patientName,
+    patientId: patientId,
     patientRef: patientRef,
     service: service,
     notes: notes,

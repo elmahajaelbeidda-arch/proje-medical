@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/l10n.dart';
+import '../summons/summons_screens.dart';
+import '../../models/summons.dart';
+import '../../core/summons_provider.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
@@ -184,6 +187,8 @@ class RequestDetailsScreen extends ConsumerWidget {
               icon: const Icon(Icons.chat_outlined),
               label: Text(context.tr('chat')),
             ),
+            const SizedBox(height: 10),
+            _SummonsAction(consultation: c),
           ],
         ],
       ),
@@ -316,6 +321,95 @@ class _ReplyScreenState extends ConsumerState<ReplyScreen> {
               onPressed: _submit,
               icon: const Icon(Icons.send),
               label: Text(context.tr('send')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// In-person visit: the doctor issues a summons card to the patient.
+class _SummonsAction extends ConsumerWidget {
+  const _SummonsAction({required this.consultation});
+  final Consultation consultation;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final c = consultation;
+    ref.watch(summonsProvider);
+    final existing = ref.read(summonsProvider.notifier).bySource(c.id);
+    final me = MockData.doctorById(MockData.currentDoctorId)!;
+
+    Future<void> issue() async {
+      final draft = await showSummonsForm(
+        context,
+        place: existing?.place ?? '',
+        city: existing?.city ?? me.city,
+        instructions: existing?.instructions ?? '',
+        appointment: existing?.appointment,
+        title: context.tr(
+          existing == null ? 'summons_issue' : 'summons_update',
+        ),
+      );
+      if (draft == null || !context.mounted) return;
+      final phone = ref.read(authProvider).phone;
+      final id = ref
+          .read(summonsProvider.notifier)
+          .issue(
+            patientId: c.patientId,
+            patientName: c.patientName,
+            issuer: SummonsIssuer.doctor,
+            issuerId: me.id,
+            issuerName: me.name,
+            issuerDetailKey: Specialty.byId(me.specialtyId).key,
+            issuerPhone: phone.isEmpty ? '22 12 34 56' : phone,
+            place: draft.place,
+            city: draft.city,
+            appointment: draft.appointment,
+            instructions: draft.instructions,
+            sourceId: c.id,
+          );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.tr('summons_issued_msg'))));
+      context.push('/summons/$id');
+    }
+
+    if (existing != null) {
+      return Row(
+        children: [
+          Expanded(
+            child: FilledButton.tonalIcon(
+              onPressed: () => context.push('/summons/${existing.id}'),
+              icon: const Icon(Icons.badge_outlined),
+              label: Text(context.tr('summons_view')),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: issue,
+              icon: const Icon(Icons.edit_calendar),
+              label: Text(context.tr('summons_update')),
+            ),
+          ),
+        ],
+      );
+    }
+    return Card(
+      color: AppColors.secondary,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(context.tr('summons_visit_needed')),
+            const SizedBox(height: 8),
+            FilledButton.icon(
+              onPressed: issue,
+              icon: const Icon(Icons.badge_outlined),
+              label: Text(context.tr('summons_issue')),
             ),
           ],
         ),

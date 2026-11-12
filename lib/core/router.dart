@@ -16,6 +16,7 @@ import '../features/patient/new_consultation_screen.dart';
 import '../features/patient/patient_shell.dart';
 import '../features/psych/psych_screens.dart';
 import '../features/shared/shared_screens.dart';
+import '../features/summons/summons_screens.dart';
 import '../models/models.dart';
 import 'providers.dart';
 
@@ -172,6 +173,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/aid/members',
         builder: (_, _) => const AidMembersScreen(),
+      ),
+
+      // Medical summons cards
+      GoRoute(
+        path: '/patient/summons',
+        builder: (_, _) => const SummonsListScreen(),
+      ),
+      GoRoute(
+        path: '/summons/:id',
+        builder: (_, state) => SummonsScreen(id: state.pathParameters['id']!),
       ),
 
       // Shared

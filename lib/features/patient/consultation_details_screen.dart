@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/l10n.dart';
+import '../../core/summons_provider.dart';
+import '../summons/summons_screens.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
@@ -105,6 +107,11 @@ class ConsultationDetailsScreen extends ConsumerWidget {
             ),
           ],
 
+          if (ref.watch(summonsProvider.notifier).bySource(c.id)
+              case final summons?) ...[
+            const SizedBox(height: 12),
+            SummonsTile(summons: summons),
+          ],
           if (c.reply != null) ...[
             SectionHeader(context.tr('doctor_reply')),
             ReplyView(reply: c.reply!),

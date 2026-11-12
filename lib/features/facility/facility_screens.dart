@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/facility_provider.dart';
 import '../../core/l10n.dart';
+import '../../core/summons_provider.dart';
+import '../../models/summons.dart';
+import '../summons/summons_screens.dart';
 import '../../core/search.dart';
 import '../../core/theme.dart';
 import '../../models/blood.dart';
@@ -1519,7 +1522,61 @@ class FacilityReferralScreen extends ConsumerWidget {
     final referral = r;
     final text = Theme.of(context).textTheme;
 
+    final summons = ref.watch(summonsProvider.notifier).bySource(referral.id);
+    ref.watch(summonsProvider);
+
+    /// Accepting a referred patient = giving an appointment: a summons card
+    /// is issued to the patient with the facility's details.
+    Future<void> issueSummons({required bool accepting}) async {
+      final f = state.facility(referral.facilityId)!;
+      final draft = await showSummonsForm(
+        context,
+        place: summons?.place ?? f.address,
+        city: summons?.city ?? f.city,
+        instructions: summons?.instructions ?? '',
+        appointment: summons?.appointment,
+        title: context.tr(accepting ? 'ra_accepted' : 'summons_update'),
+      );
+      if (draft == null || !context.mounted) return;
+      if (accepting) {
+        ref
+            .read(facilityProvider.notifier)
+            .updateReferral(
+              referral.id,
+              ReferralStatus.accepted,
+              note:
+                  '${summonsDate(context, draft.appointment)} ${summonsTime(draft.appointment)}',
+            );
+      }
+      final id = ref
+          .read(summonsProvider.notifier)
+          .issue(
+            patientId: referral.patientId.isEmpty
+                ? 'ref:${referral.patientRef}'
+                : referral.patientId,
+            patientName: referral.patientName,
+            patientRef: referral.patientRef,
+            issuer: SummonsIssuer.facility,
+            issuerId: f.id,
+            issuerName: f.name,
+            issuerDetailKey: facilityTypeKey(f.type),
+            issuerPhone: f.phone,
+            place: draft.place,
+            city: draft.city,
+            appointment: draft.appointment,
+            instructions: draft.instructions,
+            sourceId: referral.id,
+          );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.tr('summons_issued_msg'))));
+      context.push('/summons/$id');
+    }
+
     Future<void> step(ReferralStatus next) async {
+      if (next == ReferralStatus.accepted) {
+        return issueSummons(accepting: true);
+      }
       final note = TextEditingController(text: referral.facilityNote);
       final ok = await showDialog<bool>(
         context: context,
@@ -1565,6 +1622,30 @@ class FacilityReferralScreen extends ConsumerWidget {
           ReferralDetailsCard(referral: referral),
           const SizedBox(height: 12),
           ReferralTimeline(status: referral.status),
+          if (summons != null) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.tonalIcon(
+                    onPressed: () => context.push('/summons/${summons.id}'),
+                    icon: const Icon(Icons.badge_outlined),
+                    label: Text(context.tr('summons_view')),
+                  ),
+                ),
+                if (referral.isOpen) ...[
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => issueSummons(accepting: false),
+                      icon: const Icon(Icons.edit_calendar),
+                      label: Text(context.tr('summons_update')),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
           const SizedBox(height: 16),
           for (final s in steps)
             Padding(

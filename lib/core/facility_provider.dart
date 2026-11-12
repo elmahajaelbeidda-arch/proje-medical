@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/mock_data.dart';
 import '../models/facility.dart';
 import '../models/models.dart';
 
@@ -358,6 +359,18 @@ class FacilityNotifier extends Notifier<FacilityState> {
   static List<Referral> _seedReferrals() {
     final now = DateTime.now();
     return [
+      // Referral of the demo patient: accepting it issues a summons card
+      // that appears in the patient's account.
+      Referral(
+        id: 'ref6',
+        facilityId: 'f1',
+        patientId: MockData.currentPatientId,
+        patientName: 'محمد الأمين',
+        patientRef: 'P-001',
+        service: 'فحص السكري الشامل ومتابعة الضغط',
+        notes: 'مريض سكري، يحتاج تحاليل وفحص قدم.',
+        createdAt: now.subtract(const Duration(hours: 1)),
+      ),
       Referral(
         id: 'ref1',
         facilityId: 'f1',

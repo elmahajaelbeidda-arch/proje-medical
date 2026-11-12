@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/l10n.dart';
+import '../summons/summons_screens.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
@@ -232,6 +233,9 @@ class PatientHomeTab extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 10),
+
+              // Upcoming visit: summons card to download or print.
+              const SummonsBanner(),
 
               // Psychological consultations (confidential, by appointment).
               Card(
@@ -672,6 +676,11 @@ class PatientProfileTab extends ConsumerWidget {
                   icon: Icons.bloodtype_outlined,
                   title: context.tr('my_blood_requests'),
                   onTap: () => context.push('/patient/blood'),
+                ),
+                MenuTile(
+                  icon: Icons.badge_outlined,
+                  title: context.tr('summons_cards'),
+                  onTap: () => context.push('/patient/summons'),
                 ),
                 MenuTile(
                   icon: Icons.notifications_outlined,
