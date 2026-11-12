@@ -15,6 +15,7 @@ import '../../widgets/media.dart';
 import '../../widgets/common.dart';
 import '../../core/facility_provider.dart';
 import '../../models/facility.dart';
+import '../cards/member_card_screens.dart';
 import '../facility/facility_screens.dart';
 import 'blood_screens.dart';
 
@@ -102,6 +103,11 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
         appBar: AppBar(
           title: Text(context.tr('committee_title')),
           actions: [
+            IconButton(
+              tooltip: context.tr('mc_verify_title'),
+              onPressed: () => context.push('/verify-card'),
+              icon: const Icon(Icons.qr_code_scanner),
+            ),
             IconButton(
               tooltip: context.tr('aid_map'),
               onPressed: () => context.push('/aid/map'),
@@ -799,6 +805,7 @@ class RegistrationCard extends ConsumerWidget {
     final r = registration;
     final text = Theme.of(context).textTheme;
     final files = [?r.idFront, ?r.idBack, ?r.certificate];
+    final duplicates = possibleDuplicates(r, ref.watch(registrationsProvider));
 
     void review(ReviewStatus status, String messageKey) {
       ref.read(registrationsProvider.notifier).review(r.id, status);
@@ -884,8 +891,39 @@ class RegistrationCard extends ConsumerWidget {
                     label: context.tr('phone_not_verified'),
                     color: AppColors.warning,
                   ),
+                if (duplicates.isNotEmpty)
+                  Pill(
+                    label: context.tr('dup_warning'),
+                    color: AppColors.emergency,
+                    icon: Icons.content_copy,
+                  ),
               ],
             ),
+            if (duplicates.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                context.tr(
+                  'dup_warning_detail',
+                  args: {
+                    'list': duplicates
+                        .map(
+                          (d) =>
+                              '${d.code} (${context.tr(reviewKey(d.status))})',
+                        )
+                        .join('، '),
+                  },
+                ),
+                style: const TextStyle(
+                  color: AppColors.emergency,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+            if (r.status == ReviewStatus.approved)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: ViewMemberCardButton(holderId: r.id),
+              ),
             if (files.isNotEmpty) ...[
               const SizedBox(height: 10),
               Wrap(

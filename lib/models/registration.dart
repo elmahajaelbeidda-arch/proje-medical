@@ -23,6 +23,9 @@ class Registration {
   final DateTime createdAt;
   final ReviewStatus status;
 
+  /// When the committee approved or rejected the account.
+  final DateTime? reviewedAt;
+
   const Registration({
     required this.id,
     required this.role,
@@ -37,6 +40,7 @@ class Registration {
     this.certificate,
     this.phoneVerified = false,
     this.status = ReviewStatus.pending,
+    this.reviewedAt,
   });
 
   bool get isDoctor => role == UserRole.doctor;
@@ -49,20 +53,55 @@ class Registration {
     return '${isDoctor ? 'M' : 'P'}-${digits.padLeft(3, '0')}';
   }
 
-  Registration copyWith({ReviewStatus? status, bool? phoneVerified}) =>
-      Registration(
-        id: id,
-        role: role,
-        name: name,
-        phone: phone,
-        idNumber: idNumber,
-        createdAt: createdAt,
-        idFront: idFront,
-        idBack: idBack,
-        specialtyId: specialtyId,
-        licenseNumber: licenseNumber,
-        certificate: certificate,
-        phoneVerified: phoneVerified ?? this.phoneVerified,
-        status: status ?? this.status,
-      );
+  Registration copyWith({
+    ReviewStatus? status,
+    bool? phoneVerified,
+    DateTime? reviewedAt,
+  }) => Registration(
+    id: id,
+    role: role,
+    name: name,
+    phone: phone,
+    idNumber: idNumber,
+    createdAt: createdAt,
+    idFront: idFront,
+    idBack: idBack,
+    specialtyId: specialtyId,
+    licenseNumber: licenseNumber,
+    certificate: certificate,
+    phoneVerified: phoneVerified ?? this.phoneVerified,
+    status: status ?? this.status,
+    reviewedAt: reviewedAt ?? this.reviewedAt,
+  );
 }
+
+/// Same ID card number, phone or licence already registered.
+class DuplicateRegistrationException implements Exception {
+  /// 'id', 'phone' or 'license'.
+  final String field;
+  const DuplicateRegistrationException(this.field);
+  @override
+  String toString() => 'DuplicateRegistrationException($field)';
+}
+
+String digitsOnly(String s) => s.replaceAll(RegExp(r'\D'), '');
+
+/// Last 8 digits: "+222 22 12 34 56" and "22123456" are the same number.
+String normalizePhone(String s) {
+  final d = digitsOnly(s);
+  return d.length > 8 ? d.substring(d.length - 8) : d;
+}
+
+/// Other registrations sharing the ID number or phone (committee warning).
+List<Registration> possibleDuplicates(
+  Registration r,
+  Iterable<Registration> all,
+) => [
+  for (final o in all)
+    if (o.id != r.id &&
+        ((digitsOnly(o.idNumber).isNotEmpty &&
+                digitsOnly(o.idNumber) == digitsOnly(r.idNumber)) ||
+            (normalizePhone(o.phone).isNotEmpty &&
+                normalizePhone(o.phone) == normalizePhone(r.phone))))
+      o,
+];

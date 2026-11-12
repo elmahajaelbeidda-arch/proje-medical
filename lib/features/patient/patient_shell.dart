@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/l10n.dart';
+import '../cards/member_card_screens.dart';
 import '../summons/summons_screens.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
@@ -677,8 +678,9 @@ class PatientProfileTab extends ConsumerWidget {
                   title: context.tr('my_blood_requests'),
                   onTap: () => context.push('/patient/blood'),
                 ),
+                const MyCardTile(),
                 MenuTile(
-                  icon: Icons.badge_outlined,
+                  icon: Icons.event_note_outlined,
                   title: context.tr('summons_cards'),
                   onTap: () => context.push('/patient/summons'),
                 ),

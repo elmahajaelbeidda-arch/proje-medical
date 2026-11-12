@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/l10n.dart';
+import '../cards/member_card_screens.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
@@ -525,6 +526,7 @@ class DoctorProfileTab extends ConsumerWidget {
                   title: context.tr('settings'),
                   onTap: () => context.push('/settings'),
                 ),
+                const MyCardTile(),
                 MenuTile(
                   icon: Icons.groups_outlined,
                   title: context.tr('about_association'),

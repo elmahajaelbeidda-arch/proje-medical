@@ -20,7 +20,7 @@ import 'summons_pdf.dart';
 
 SummonsPdfAssets? _assets;
 
-Future<SummonsPdfAssets> _loadAssets() async => _assets ??= SummonsPdfAssets(
+Future<SummonsPdfAssets> loadPdfAssets() async => _assets ??= SummonsPdfAssets(
   regular: await rootBundle.load('assets/fonts/Cairo-Regular.ttf'),
   bold: await rootBundle.load('assets/fonts/Cairo-Bold.ttf'),
   logo: (await rootBundle.load('assets/images/logo_icon.png')).buffer
@@ -34,7 +34,7 @@ Future<Uint8List?> _pdf(BuildContext context, Summons s) async {
   try {
     return await buildSummonsPdf(
       s,
-      await _loadAssets(),
+      await loadPdfAssets(),
       tr: (k) => AppStrings.of(lang, k),
       rtl: lang == 'ar',
     );

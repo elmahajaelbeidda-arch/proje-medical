@@ -9,6 +9,7 @@ import '../../core/l10n.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
+import '../../models/registration.dart';
 import '../../widgets/brand.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
@@ -254,19 +255,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final isDoctor = auth.isDoctor;
     final name = isDoctor ? 'د. ${_name.text.trim()}' : _name.text;
     // The new account is sent to the committee for review.
-    final registrationId = ref
-        .read(registrationsProvider.notifier)
-        .add(
-          role: auth.role,
-          name: name,
-          phone: _phone.text,
-          idNumber: _idNumber.text,
-          idFront: _idFront,
-          idBack: _idBack,
-          specialtyId: isDoctor ? _specialty : null,
-          licenseNumber: isDoctor ? _license.text : null,
-          certificate: isDoctor ? _certificate : null,
-        );
+    final String registrationId;
+    try {
+      registrationId = ref
+          .read(registrationsProvider.notifier)
+          .add(
+            role: auth.role,
+            name: name,
+            phone: _phone.text,
+            idNumber: _idNumber.text,
+            idFront: _idFront,
+            idBack: _idBack,
+            specialtyId: isDoctor ? _specialty : null,
+            licenseNumber: isDoctor ? _license.text : null,
+            certificate: isDoctor ? _certificate : null,
+          );
+    } on DuplicateRegistrationException catch (e) {
+      // One account per person: same ID card number or phone.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.tr('dup_${e.field}')),
+          backgroundColor: AppColors.emergency,
+        ),
+      );
+      return;
+    }
     ref
         .read(authProvider.notifier)
         .register(

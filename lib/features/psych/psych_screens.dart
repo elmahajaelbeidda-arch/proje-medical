@@ -10,6 +10,7 @@ import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../models/psych.dart';
 import '../../widgets/common.dart';
+import '../cards/member_card_screens.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -1275,6 +1276,8 @@ class _PsychDoctorShellState extends ConsumerState<PsychDoctorShell> {
             ),
           ),
         ),
+        const Card(child: MyCardTile()),
+        const SizedBox(height: 10),
         InfoCard(
           title: context.tr('psych_hours'),
           icon: Icons.schedule,

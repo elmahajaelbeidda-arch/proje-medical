@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../features/about/about_screen.dart';
 import '../features/aid/aid_screens.dart';
 import '../features/auth/auth_screens.dart';
+import '../features/cards/member_card_screens.dart';
 import '../features/blood/blood_screens.dart';
 import '../features/blood/committee_screens.dart';
 import '../features/doctor/doctor_shell.dart';
@@ -173,6 +174,22 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/aid/members',
         builder: (_, _) => const AidMembersScreen(),
+      ),
+
+      // Registration cards
+      GoRoute(path: '/my-card', builder: (_, _) => const MyMemberCardScreen()),
+      GoRoute(
+        path: '/verify-card',
+        builder: (_, state) => VerifyCardScreen(
+          number: state.uri.queryParameters['n'],
+          code: state.uri.queryParameters['c'],
+        ),
+      ),
+      GoRoute(
+        path: '/committee/card/:holder',
+        builder: (_, state) => CommitteeMemberCardScreen(
+          holderId: state.pathParameters['holder']!,
+        ),
       ),
 
       // Medical summons cards

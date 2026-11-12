@@ -13,8 +13,10 @@ import '../../core/theme.dart';
 import '../../models/blood.dart';
 import '../../models/facility.dart';
 import '../../models/models.dart';
+import '../../models/registration.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
+import '../cards/member_card_screens.dart';
 import '../blood/blood_screens.dart';
 
 // ---------------------------------------------------------------------------
@@ -325,26 +327,34 @@ class _FacilityRegisterScreenState
 
   void _submit() {
     if (!_consent) return;
-    final id = ref
-        .read(facilityProvider.notifier)
-        .register(
-          type: _type,
-          name: _name.text,
-          managerName: _manager.text,
-          licenseNumber: _license.text,
-          city: _city.text,
-          address: _address.text,
-          phone: _phone.text,
-          email: _email.text,
-          specialtyIds: _specialties.toList(),
-          services: _services,
-          cooperation: {..._coop},
-          discountPercent: int.tryParse(_discount.text.trim()),
-          monthlyCapacity: int.tryParse(_capacity.text.trim()),
-          notes: _notes.text,
-          licenseDocument: _licenseDoc,
-          documents: [..._documents],
-        );
+    final String id;
+    try {
+      id = ref
+          .read(facilityProvider.notifier)
+          .register(
+            type: _type,
+            name: _name.text,
+            managerName: _manager.text,
+            licenseNumber: _license.text,
+            city: _city.text,
+            address: _address.text,
+            phone: _phone.text,
+            email: _email.text,
+            specialtyIds: _specialties.toList(),
+            services: _services,
+            cooperation: {..._coop},
+            discountPercent: int.tryParse(_discount.text.trim()),
+            monthlyCapacity: int.tryParse(_capacity.text.trim()),
+            notes: _notes.text,
+            licenseDocument: _licenseDoc,
+            documents: [..._documents],
+          );
+    } on DuplicateRegistrationException catch (e) {
+      _snack('dup_${e.field}');
+      // Back to the step holding the duplicated field.
+      setState(() => _step = e.field == 'phone' ? 2 : 0);
+      return;
+    }
     ref.read(facilitySessionProvider.notifier).signIn(id);
     _snack('facility_submitted');
     context.go('/facility/home');
@@ -937,6 +947,8 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
                 : ListView(
                     padding: const EdgeInsets.all(16),
                     children: [
+                      const Card(child: MyCardTile()),
+                      const SizedBox(height: 12),
                       _FacilityProfile(facility: f),
                       const SizedBox(height: 12),
                       FacilityHistory(facility: f),
@@ -2380,6 +2392,7 @@ class CommitteeFacilityScreen extends ConsumerWidget {
           _FacilityProfile(facility: f),
           const SizedBox(height: 8),
           ContactButtons(phone: f.phone, preferred: ContactMethod.call),
+          if (f.isApproved) ViewMemberCardButton(holderId: f.id),
           const SizedBox(height: 10),
           FacilityReviewPanel(facility: f),
           const SizedBox(height: 10),

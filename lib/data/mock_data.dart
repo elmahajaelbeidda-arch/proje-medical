@@ -11,6 +11,9 @@ class MockData {
   static const currentPatientId = 'p1';
   static const currentDoctorId = 'd1';
 
+  /// ID card number of the demo accounts.
+  static const demoIdNumber = '1098705123';
+
   /// Demo volunteer psychiatrist account.
   static const psychDoctorId = 'd9';
 
@@ -601,6 +604,7 @@ class MockData {
         idNumber: '1098705123',
         phoneVerified: true,
         status: ReviewStatus.approved,
+        reviewedAt: DateTime(2026, 10, 13),
         createdAt: now.subtract(const Duration(days: 30)),
       ),
       Registration(
@@ -637,8 +641,28 @@ class MockData {
         licenseNumber: 'ONMM-01234',
         phoneVerified: true,
         status: ReviewStatus.approved,
+        reviewedAt: DateTime(2026, 8, 14),
         createdAt: now.subtract(const Duration(days: 90)),
+      ),
+      Registration(
+        id: 'reg24',
+        role: UserRole.doctor,
+        name: 'د. خديجة ولد السالك',
+        phone: '22 33 44 01',
+        idNumber: '1043210987',
+        specialtyId: 'psych',
+        licenseNumber: 'ONMM-02231',
+        phoneVerified: true,
+        status: ReviewStatus.approved,
+        reviewedAt: DateTime(2026, 9, 13),
+        createdAt: now.subtract(const Duration(days: 60)),
       ),
     ];
   }
+
+  /// Registration behind each demo account (they are already approved).
+  static String demoRegistrationId({
+    required bool doctor,
+    bool psych = false,
+  }) => !doctor ? 'reg13' : (psych ? 'reg24' : 'reg23');
 }

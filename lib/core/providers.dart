@@ -139,7 +139,7 @@ class AuthNotifier extends Notifier<AuthState> {
       name: (name == null || name.trim().isEmpty) ? defaultName : name.trim(),
       // Demo account: already verified at sign-up.
       phone: '22 12 34 56',
-      idNumber: '1098705123',
+      idNumber: MockData.demoIdNumber,
       phoneVerified: true,
     );
   }
@@ -278,6 +278,7 @@ final consultationProvider = Provider.family<Consultation?, String>((ref, id) {
 // ---------------------------------------------------------------------------
 
 class RegistrationsNotifier extends Notifier<List<Registration>> {
+  int _seq = 0;
   @override
   List<Registration> build() => MockData.registrations();
 
@@ -299,7 +300,20 @@ class RegistrationsNotifier extends Notifier<List<Registration>> {
     String? licenseNumber,
     Attachment? certificate,
   }) {
-    final id = 'reg${DateTime.now().millisecondsSinceEpoch}';
+    // One account per person and role: block a second sign-up with the same
+    // ID card number or phone (unless the earlier one was rejected).
+    final active = state.where(
+      (r) => r.role == role && r.status != ReviewStatus.rejected,
+    );
+    final idDigits = digitsOnly(idNumber);
+    final phoneDigits = normalizePhone(phone);
+    if (active.any((r) => digitsOnly(r.idNumber) == idDigits)) {
+      throw const DuplicateRegistrationException('id');
+    }
+    if (active.any((r) => normalizePhone(r.phone) == phoneDigits)) {
+      throw const DuplicateRegistrationException('phone');
+    }
+    final id = 'reg${DateTime.now().millisecondsSinceEpoch}${_seq++}';
     state = [
       Registration(
         id: id,
@@ -327,8 +341,10 @@ class RegistrationsNotifier extends Notifier<List<Registration>> {
       _update(id, (r) => r.copyWith(phoneVerified: true));
 
   /// Committee: approve or reject an account.
-  void review(String id, ReviewStatus status) =>
-      _update(id, (r) => r.copyWith(status: status));
+  void review(String id, ReviewStatus status) => _update(
+    id,
+    (r) => r.copyWith(status: status, reviewedAt: DateTime.now()),
+  );
 }
 
 final registrationsProvider =

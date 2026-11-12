@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/mock_data.dart';
 import '../models/facility.dart';
+import '../models/registration.dart';
 import '../models/models.dart';
 
 class FacilityState {
@@ -55,6 +56,20 @@ class FacilityNotifier extends Notifier<FacilityState> {
     Attachment? licenseDocument,
     List<Attachment> documents = const [],
   }) {
+    // One account per facility: same licence or phone already registered.
+    final active = state.facilities.where(
+      (f) => f.status != FacilityStatus.rejected,
+    );
+    if (active.any(
+      (f) =>
+          f.licenseNumber.trim().toUpperCase() ==
+          licenseNumber.trim().toUpperCase(),
+    )) {
+      throw const DuplicateRegistrationException('license');
+    }
+    if (active.any((f) => normalizePhone(f.phone) == normalizePhone(phone))) {
+      throw const DuplicateRegistrationException('phone');
+    }
     final id = 'fac${DateTime.now().millisecondsSinceEpoch}${_seq++}';
     final now = DateTime.now();
     state = state.copyWith(
@@ -238,6 +253,9 @@ class FacilityNotifier extends Notifier<FacilityState> {
         status: FacilityStatus.approved,
         checks: VerificationCheck.values.toSet(),
         approvalSeen: true,
+        history: [
+          FacilityEvent(FacilityStatus.approved, DateTime(2026, 9, 12)),
+        ],
         createdAt: now.subtract(const Duration(days: 60)),
       ),
       MedicalFacility(
@@ -260,6 +278,9 @@ class FacilityNotifier extends Notifier<FacilityState> {
         status: FacilityStatus.approved,
         checks: VerificationCheck.values.toSet(),
         approvalSeen: true,
+        history: [
+          FacilityEvent(FacilityStatus.approved, DateTime(2026, 10, 2)),
+        ],
         createdAt: now.subtract(const Duration(days: 40)),
       ),
       MedicalFacility(
@@ -277,6 +298,9 @@ class FacilityNotifier extends Notifier<FacilityState> {
         status: FacilityStatus.approved,
         checks: VerificationCheck.values.toSet(),
         approvalSeen: true,
+        history: [
+          FacilityEvent(FacilityStatus.approved, DateTime(2026, 10, 17)),
+        ],
         createdAt: now.subtract(const Duration(days: 25)),
       ),
       MedicalFacility(
@@ -295,6 +319,9 @@ class FacilityNotifier extends Notifier<FacilityState> {
         status: FacilityStatus.approved,
         checks: VerificationCheck.values.toSet(),
         approvalSeen: true,
+        history: [
+          FacilityEvent(FacilityStatus.approved, DateTime(2026, 10, 28)),
+        ],
         createdAt: now.subtract(const Duration(days: 15)),
       ),
       MedicalFacility(
