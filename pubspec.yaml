@@ -54,6 +54,9 @@ dependencies:
   pdf: ^3.13.1
   printing: ^5.15.1
   qr_flutter: ^4.1.0
+  crypto: ^3.0.8
+  archive: ^4.6.0
+  web: ^1.1.2
 
 dev_dependencies:
   flutter_test:

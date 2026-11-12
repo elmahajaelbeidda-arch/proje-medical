@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../data/mock_data.dart';
+import '../../models/admin.dart';
 import '../../models/models.dart';
 import '../../widgets/brand.dart';
 import '../../widgets/common.dart';
@@ -259,7 +261,28 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final items = MockData.notifications(ref.watch(authProvider).isDoctor);
+    final auth = ref.watch(authProvider);
+    final me =
+        auth.registrationId ??
+        MockData.demoRegistrationId(
+          doctor: auth.isDoctor,
+          psych: auth.isPsychDoctor,
+        );
+    // Messages sent from the admin dashboard to this user.
+    final fromAdmin = [
+      for (final m in ref.watch(adminProvider).messages)
+        if (m.audience == MessageAudience.all ||
+            (m.audience == MessageAudience.patients && !auth.isDoctor) ||
+            (m.audience == MessageAudience.doctors && auth.isDoctor) ||
+            (m.audience == MessageAudience.user && m.targetId == me))
+          AppNotification(
+            icon: Icons.campaign_outlined,
+            title: m.title,
+            body: m.body,
+            time: m.at,
+          ),
+    ];
+    final items = [...fromAdmin, ...MockData.notifications(auth.isDoctor)];
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('notifications'))),
@@ -322,9 +345,10 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           SectionHeader(context.tr('language')),
           SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(value: 'ar', label: Text('العربية')),
-              ButtonSegment(value: 'fr', label: Text('Français')),
+            segments: [
+              const ButtonSegment(value: 'ar', label: Text('العربية')),
+              if (ref.watch(appSettingsProvider).frenchEnabled)
+                const ButtonSegment(value: 'fr', label: Text('Français')),
             ],
             selected: {locale.languageCode},
             onSelectionChanged: (s) =>
@@ -411,4 +435,17 @@ class DisclaimerScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Shown when the administration has switched a service off.
+class SectionOffScreen extends StatelessWidget {
+  const SectionOffScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(),
+    body: EmptyState(
+      icon: Icons.pause_circle_outline,
+      message: context.tr('section_disabled'),
+    ),
+  );
 }

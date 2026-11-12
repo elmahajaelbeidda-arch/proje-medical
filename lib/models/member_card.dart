@@ -25,6 +25,9 @@ class MemberCard {
   final DateTime issuedAt;
   final bool suspended;
 
+  /// Last renewal by the association (valid one year from it).
+  final DateTime? renewedAt;
+
   const MemberCard({
     required this.number,
     required this.kind,
@@ -35,11 +38,14 @@ class MemberCard {
     required this.city,
     required this.issuedAt,
     this.suspended = false,
+    this.renewedAt,
   });
 
   /// Valid one year, renewed by the association.
-  DateTime get expiresAt =>
-      DateTime(issuedAt.year + 1, issuedAt.month, issuedAt.day);
+  DateTime get expiresAt {
+    final from = renewedAt ?? issuedAt;
+    return DateTime(from.year + 1, from.month, from.day);
+  }
 
   bool isExpired([DateTime? now]) => (now ?? DateTime.now()).isAfter(expiresAt);
 
@@ -72,6 +78,7 @@ class MemberCard {
     city: city,
     issuedAt: issuedAt,
     suspended: suspended ?? this.suspended,
+    renewedAt: renewedAt,
   );
 }
 

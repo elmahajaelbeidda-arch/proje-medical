@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
+import '../../models/admin.dart';
 import '../cards/member_card_screens.dart';
 import '../summons/summons_screens.dart';
 import '../../core/providers.dart';
@@ -99,6 +101,7 @@ class PatientHomeTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
+    final settings = ref.watch(appSettingsProvider);
     final mine = ref
         .watch(consultationsProvider)
         .where((c) => c.patientId == MockData.currentPatientId)
@@ -143,63 +146,85 @@ class PatientHomeTab extends ConsumerWidget {
               const AccountReviewBanner(),
               const SizedBox(height: 4),
 
-              // Main CTA
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.tr('request_consultation'),
-                            style: text.titleLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            context.tr('request_consultation_desc'),
-                            style: text.bodyMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          FilledButton.icon(
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: AppColors.primary,
-                              minimumSize: const Size(0, 46),
-                            ),
-                            onPressed: () => context.push('/patient/new'),
-                            icon: const Icon(Icons.add_comment_outlined),
-                            label: Text(context.tr('start')),
-                          ),
-                        ],
-                      ),
+              // Announcements published by the association.
+              for (final a in ref.watch(activeAnnouncementsProvider))
+                Card(
+                  color: AppColors.secondary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: const BorderSide(color: AppColors.primary),
+                  ),
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.campaign,
+                      color: AppColors.primary,
                     ),
-                    const SizedBox(width: 8),
-                    const CircleAvatar(
-                      radius: 44,
-                      backgroundColor: AppColors.secondary,
-                      child: Icon(
-                        Icons.health_and_safety_rounded,
-                        size: 52,
-                        color: AppColors.primary,
-                      ),
+                    title: Text(
+                      a.title,
+                      style: const TextStyle(fontWeight: FontWeight.w900),
                     ),
-                  ],
+                    subtitle: Text(a.body),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 14),
 
+              if (settings.enabled(AppSection.consultations)) ...[
+                // Main CTA
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              context.tr('request_consultation'),
+                              style: text.titleLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              context.tr('request_consultation_desc'),
+                              style: text.bodyMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            FilledButton.icon(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: AppColors.primary,
+                                minimumSize: const Size(0, 46),
+                              ),
+                              onPressed: () => context.push('/patient/new'),
+                              icon: const Icon(Icons.add_comment_outlined),
+                              label: Text(context.tr('start')),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const CircleAvatar(
+                        radius: 44,
+                        backgroundColor: AppColors.secondary,
+                        child: Icon(
+                          Icons.health_and_safety_rounded,
+                          size: 52,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+              ],
               // Emergency
               Card(
                 color: AppColors.danger,
@@ -235,114 +260,124 @@ class PatientHomeTab extends ConsumerWidget {
               ),
               const SizedBox(height: 10),
 
-              // Upcoming visit: summons card to download or print.
-              const SummonsBanner(),
-
-              // Psychological consultations (confidential, by appointment).
-              Card(
-                clipBehavior: Clip.antiAlias,
-                child: ListTile(
-                  onTap: () => context.push('/patient/psych'),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 6,
-                  ),
-                  leading: const CircleAvatar(
-                    backgroundColor: AppColors.primary,
-                    child: Icon(Icons.psychology_outlined, color: Colors.white),
-                  ),
-                  title: Text(
-                    context.tr('psych_title'),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.primary,
+              if (settings.enabled(AppSection.summons)) ...[
+                // Upcoming visit: summons card to download or print.
+                const SummonsBanner(),
+              ],
+              if (settings.enabled(AppSection.psych)) ...[
+                // Psychological consultations (confidential, by appointment).
+                Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: ListTile(
+                    onTap: () => context.push('/patient/psych'),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
                     ),
-                  ),
-                  subtitle: Text(context.tr('psych_card_desc')),
-                  trailing: const Icon(Icons.chevron_right),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // The patient's own blood requests (not in the donation tab).
-              const _BloodRequestCard(),
-              const SizedBox(height: 10),
-
-              // Aid request with location (patient map).
-              Card(
-                clipBehavior: Clip.antiAlias,
-                child: ListTile(
-                  onTap: () => context.push('/aid'),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 6,
-                  ),
-                  leading: const CircleAvatar(
-                    backgroundColor: AppColors.primary,
-                    child: Icon(Icons.add_location_alt, color: Colors.white),
-                  ),
-                  title: Text(
-                    context.tr('aid_title'),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.primary,
+                    leading: const CircleAvatar(
+                      backgroundColor: AppColors.primary,
+                      child: Icon(
+                        Icons.psychology_outlined,
+                        color: Colors.white,
+                      ),
                     ),
+                    title: Text(
+                      context.tr('psych_title'),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    subtitle: Text(context.tr('psych_card_desc')),
+                    trailing: const Icon(Icons.chevron_right),
                   ),
-                  subtitle: Text(context.tr('aid_home_desc')),
-                  trailing: const Icon(Icons.chevron_right),
                 ),
-              ),
-              const SizedBox(height: 10),
-
-              // Blood donation: register as a donor
-              _BloodBanner(onTap: onOpenBlood),
-              const SizedBox(height: 8),
-
-              // Quick services
-              SectionHeader(context.tr('quick_services')),
-              Row(
-                children: [
-                  for (final t in ConsultationType.values) ...[
-                    Expanded(
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: InkWell(
-                          onTap: () => context.push('/patient/new', extra: t),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 8,
-                            ),
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 24,
-                                  backgroundColor: AppColors.ink,
-                                  child: Icon(
-                                    typeIcon(t),
-                                    color: AppColors.mint,
-                                    size: 26,
+                const SizedBox(height: 10),
+              ],
+              if (settings.enabled(AppSection.blood)) ...[
+                // The patient's own blood requests (not in the donation tab).
+                const _BloodRequestCard(),
+                const SizedBox(height: 10),
+              ],
+              if (settings.enabled(AppSection.aid)) ...[
+                // Aid request with location (patient map).
+                Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: ListTile(
+                    onTap: () => context.push('/aid'),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
+                    leading: const CircleAvatar(
+                      backgroundColor: AppColors.primary,
+                      child: Icon(Icons.add_location_alt, color: Colors.white),
+                    ),
+                    title: Text(
+                      context.tr('aid_title'),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    subtitle: Text(context.tr('aid_home_desc')),
+                    trailing: const Icon(Icons.chevron_right),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+              if (settings.enabled(AppSection.blood)) ...[
+                // Blood donation: register as a donor
+                _BloodBanner(onTap: onOpenBlood),
+                const SizedBox(height: 8),
+              ],
+              if (settings.enabled(AppSection.consultations)) ...[
+                // Quick services
+                SectionHeader(context.tr('quick_services')),
+                Row(
+                  children: [
+                    for (final t in ConsultationType.values) ...[
+                      Expanded(
+                        child: Card(
+                          clipBehavior: Clip.antiAlias,
+                          child: InkWell(
+                            onTap: () => context.push('/patient/new', extra: t),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 8,
+                              ),
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: AppColors.ink,
+                                    child: Icon(
+                                      typeIcon(t),
+                                      color: AppColors.mint,
+                                      size: 26,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  context.tr(typeKey(t)),
-                                  textAlign: TextAlign.center,
-                                  style: text.labelLarge?.copyWith(
-                                    fontWeight: FontWeight.w700,
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    context.tr(typeKey(t)),
+                                    textAlign: TextAlign.center,
+                                    style: text.labelLarge?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    if (t != ConsultationType.values.last)
-                      const SizedBox(width: 10),
+                      if (t != ConsultationType.values.last)
+                        const SizedBox(width: 10),
+                    ],
                   ],
-                ],
-              ),
+                ),
+              ],
               const SizedBox(height: 16),
 
               // Stats

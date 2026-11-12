@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/about/about_screen.dart';
+import '../features/admin/admin_shell.dart';
 import '../features/aid/aid_screens.dart';
 import '../features/auth/auth_screens.dart';
 import '../features/cards/member_card_screens.dart';
@@ -19,6 +20,8 @@ import '../features/psych/psych_screens.dart';
 import '../features/shared/shared_screens.dart';
 import '../features/summons/summons_screens.dart';
 import '../models/models.dart';
+import '../models/admin.dart';
+import 'admin_provider.dart';
 import 'providers.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -28,6 +31,23 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final committeePage = state.matchedLocation.startsWith('/committee');
       if (committeePage && !ref.read(authProvider).isCommittee) return '/role';
+      // Sections switched off by the administration.
+      final loc = state.matchedLocation;
+      final settings = ref.read(appSettingsProvider);
+      const gates = {
+        '/patient/psych': AppSection.psych,
+        '/psych/': AppSection.psych,
+        '/blood': AppSection.blood,
+        '/patient/blood': AppSection.blood,
+        '/aid': AppSection.aid,
+        '/facility/register': AppSection.facilities,
+        '/patient/new': AppSection.consultations,
+      };
+      for (final g in gates.entries) {
+        if (loc.startsWith(g.key) && !settings.enabled(g.value)) {
+          return '/section-off';
+        }
+      }
       // Psychiatrist workspace: volunteer psychiatrists only.
       final psychDoctorPage = state.matchedLocation.startsWith('/psych/doctor');
       if (psychDoctorPage && !ref.read(authProvider).isPsychDoctor) {
@@ -174,6 +194,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/aid/members',
         builder: (_, _) => const AidMembersScreen(),
+      ),
+
+      GoRoute(
+        path: '/section-off',
+        builder: (_, _) => const SectionOffScreen(),
+      ),
+
+      // Admin dashboard (own sign-in with second factor)
+      GoRoute(path: '/admin', builder: (_, _) => const AdminGate()),
+      GoRoute(
+        path: '/admin/:section',
+        builder: (_, state) =>
+            AdminGate(section: state.pathParameters['section']),
       ),
 
       // Registration cards

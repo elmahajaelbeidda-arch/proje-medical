@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/admin_provider.dart';
 
 import '../../core/l10n.dart';
 import '../../core/theme.dart';
@@ -11,11 +14,12 @@ import '../onboarding/onboarding_screens.dart';
 const associationDonationPhone = '32203250';
 
 /// "عن الجمعية": introduction and donation number.
-class AboutAssociationScreen extends StatelessWidget {
+class AboutAssociationScreen extends ConsumerWidget {
   const AboutAssociationScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final info = ref.watch(appSettingsProvider).info;
     final text = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('about_association'))),
@@ -76,8 +80,15 @@ class AboutAssociationScreen extends StatelessWidget {
                   Text(context.tr('support_association_desc')),
                   const SizedBox(height: 12),
                   ContactButtons(
-                    phone: associationDonationPhone,
+                    phone: info.donationNumber,
                     preferred: ContactMethod.call,
+                  ),
+                  const SizedBox(height: 10),
+                  // Contact details managed from the admin dashboard.
+                  Text(
+                    '${info.name}\n${info.address}\n${info.email}\n'
+                    '${context.tr('phone')}: ${info.phone} • ${context.tr('whatsapp')}: ${info.whatsapp}',
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),

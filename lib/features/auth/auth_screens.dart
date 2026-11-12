@@ -5,15 +5,40 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
+import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../models/registration.dart';
 import '../../widgets/brand.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
 import '../onboarding/onboarding_screens.dart';
+
+/// Accounts suspended by the administration cannot sign in.
+bool _blockedIfSuspended(BuildContext context, WidgetRef ref) {
+  final auth = ref.read(authProvider);
+  if (auth.isCommittee) return false;
+  final holder =
+      auth.registrationId ??
+      MockData.demoRegistrationId(
+        doctor: auth.isDoctor,
+        psych: auth.isPsychDoctor,
+      );
+  if (!ref.read(adminProvider).suspendedAccounts.containsKey(holder)) {
+    return false;
+  }
+  ref.read(authProvider.notifier).logout();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(context.tr('account_suspended_msg')),
+      backgroundColor: AppColors.emergency,
+    ),
+  );
+  return true;
+}
 
 void _goHome(BuildContext context, WidgetRef ref) {
   final auth = ref.read(authProvider);
@@ -139,6 +164,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: () {
                       if (!_formKey.currentState!.validate()) return;
                       ref.read(authProvider.notifier).login();
+                      if (_blockedIfSuspended(context, ref)) return;
                       _goHome(context, ref);
                     },
                     child: Text(context.tr('login')),
@@ -150,6 +176,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ref
                             .read(authProvider.notifier)
                             .login(specialtyId: 'psych');
+                        if (_blockedIfSuspended(context, ref)) return;
                         _goHome(context, ref);
                       },
                       icon: const Icon(Icons.psychology_outlined),

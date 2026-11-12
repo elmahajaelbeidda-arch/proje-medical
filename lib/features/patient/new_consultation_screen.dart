@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
+import '../../models/admin.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
@@ -243,22 +245,23 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
         ),
         const SizedBox(height: 24),
         _title('choose_specialty'),
-        Card(
-          color: AppColors.secondary,
-          child: ListTile(
-            leading: const Icon(
-              Icons.psychology_outlined,
-              color: AppColors.primary,
+        if (ref.watch(appSettingsProvider).enabled(AppSection.psych))
+          Card(
+            color: AppColors.secondary,
+            child: ListTile(
+              leading: const Icon(
+                Icons.psychology_outlined,
+                color: AppColors.primary,
+              ),
+              title: Text(
+                context.tr('psych_title'),
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+              subtitle: Text(context.tr('psych_card_desc')),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.pushReplacement('/patient/psych/new'),
             ),
-            title: Text(
-              context.tr('psych_title'),
-              style: const TextStyle(fontWeight: FontWeight.w800),
-            ),
-            subtitle: Text(context.tr('psych_card_desc')),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.pushReplacement('/patient/psych/new'),
           ),
-        ),
         const SizedBox(height: 10),
         GridView.count(
           crossAxisCount: 3,

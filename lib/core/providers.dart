@@ -4,14 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/mock_data.dart';
 import '../models/models.dart';
 import '../models/registration.dart';
+import 'admin_provider.dart';
 
 // ---------------------------------------------------------------------------
 // Settings
 // ---------------------------------------------------------------------------
 
 class LocaleNotifier extends Notifier<Locale> {
+  /// Default language set by the administration (French can be switched off).
   @override
-  Locale build() => const Locale('ar');
+  Locale build() {
+    final settings = ref.watch(appSettingsProvider);
+    return Locale(settings.frenchEnabled ? settings.defaultLanguage : 'ar');
+  }
+
   void set(Locale locale) => state = locale;
 }
 

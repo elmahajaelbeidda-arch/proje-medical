@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin_provider.dart';
 import '../../core/facility_provider.dart';
 import '../../core/l10n.dart';
 import '../../core/summons_provider.dart';
@@ -11,6 +12,7 @@ import '../summons/summons_screens.dart';
 import '../../core/search.dart';
 import '../../core/theme.dart';
 import '../../models/blood.dart';
+import '../../models/admin.dart';
 import '../../models/facility.dart';
 import '../../models/models.dart';
 import '../../models/registration.dart';
@@ -778,6 +780,15 @@ class _FacilityLoginScreenState extends ConsumerState<FacilityLoginScreen> {
       );
       return;
     }
+    if (ref.read(adminProvider).suspendedAccounts.containsKey(f.id)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.tr('account_suspended_msg')),
+          backgroundColor: AppColors.emergency,
+        ),
+      );
+      return;
+    }
     ref.read(facilitySessionProvider.notifier).signIn(f.id);
     context.go('/facility/home');
   }
@@ -947,6 +958,33 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
                 : ListView(
                     padding: const EdgeInsets.all(16),
                     children: [
+                      for (final m
+                          in ref
+                              .watch(adminProvider)
+                              .messages
+                              .where(
+                                (m) =>
+                                    m.audience == MessageAudience.all ||
+                                    m.audience == MessageAudience.facilities ||
+                                    (m.audience == MessageAudience.user &&
+                                        m.targetId == f.id),
+                              ))
+                        Card(
+                          color: AppColors.secondary,
+                          child: ListTile(
+                            leading: const Icon(
+                              Icons.campaign_outlined,
+                              color: AppColors.primary,
+                            ),
+                            title: Text(
+                              m.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            subtitle: Text(m.body),
+                          ),
+                        ),
                       const Card(child: MyCardTile()),
                       const SizedBox(height: 12),
                       _FacilityProfile(facility: f),
@@ -1586,7 +1624,8 @@ class FacilityReferralScreen extends ConsumerWidget {
     }
 
     Future<void> step(ReferralStatus next) async {
-      if (next == ReferralStatus.accepted) {
+      if (next == ReferralStatus.accepted &&
+          ref.read(appSettingsProvider).enabled(AppSection.summons)) {
         return issueSummons(accepting: true);
       }
       final note = TextEditingController(text: referral.facilityNote);
@@ -1845,8 +1884,15 @@ class ReferralTimeline extends StatelessWidget {
 
 /// Association (steps 6-8): verification checklist and decision.
 class FacilityReviewPanel extends ConsumerWidget {
-  const FacilityReviewPanel({super.key, required this.facility});
+  const FacilityReviewPanel({
+    super.key,
+    required this.facility,
+    this.onDecided,
+  });
   final MedicalFacility facility;
+
+  /// Called after a decision (the admin dashboard logs it).
+  final void Function(FacilityStatus decision, String note)? onDecided;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1911,6 +1957,7 @@ class FacilityReviewPanel extends ConsumerWidget {
       }
       if (!context.mounted) return;
       notifier.review(f.id, decision, note: note);
+      onDecided?.call(decision, note);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(context.tr(messageKey))));
     }

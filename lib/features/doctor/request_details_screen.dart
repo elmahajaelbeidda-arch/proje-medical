@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
+import '../../models/admin.dart';
 import '../summons/summons_screens.dart';
 import '../../models/summons.dart';
 import '../../core/summons_provider.dart';
@@ -187,8 +189,10 @@ class RequestDetailsScreen extends ConsumerWidget {
               icon: const Icon(Icons.chat_outlined),
               label: Text(context.tr('chat')),
             ),
-            const SizedBox(height: 10),
-            _SummonsAction(consultation: c),
+            if (ref.watch(appSettingsProvider).enabled(AppSection.summons)) ...[
+              const SizedBox(height: 10),
+              _SummonsAction(consultation: c),
+            ],
           ],
         ],
       ),

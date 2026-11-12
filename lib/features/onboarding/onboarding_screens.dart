@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
+import '../../models/admin.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
@@ -388,6 +390,7 @@ class RoleSelectScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
+    final settings = ref.watch(appSettingsProvider);
 
     void choose(UserRole role) {
       ref.read(authProvider.notifier).selectRole(role);
@@ -437,24 +440,28 @@ class RoleSelectScreen extends ConsumerWidget {
                   onTap: () => choose(UserRole.doctor),
                 ),
                 const SizedBox(height: 14),
-                // Blood donation only (no blood request here).
-                _RoleCard(
-                  icon: Icons.bloodtype_outlined,
-                  title: context.tr('role_donor'),
-                  subtitle: context.tr('role_donor_desc'),
-                  color: const Color(0xFFB9E2C3),
-                  darkColor: AppColors.primary,
-                  onTap: () => context.push('/blood'),
-                ),
-                const SizedBox(height: 14),
-                _RoleCard(
-                  icon: Icons.local_hospital_outlined,
-                  title: context.tr('role_facility'),
-                  subtitle: context.tr('role_facility_desc'),
-                  color: AppColors.secondary,
-                  darkColor: AppColors.primary,
-                  onTap: () => context.push('/facility'),
-                ),
+                if (settings.enabled(AppSection.blood)) ...[
+                  // Blood donation only (no blood request here).
+                  _RoleCard(
+                    icon: Icons.bloodtype_outlined,
+                    title: context.tr('role_donor'),
+                    subtitle: context.tr('role_donor_desc'),
+                    color: const Color(0xFFB9E2C3),
+                    darkColor: AppColors.primary,
+                    onTap: () => context.push('/blood'),
+                  ),
+                ],
+                if (settings.enabled(AppSection.facilities)) ...[
+                  const SizedBox(height: 14),
+                  _RoleCard(
+                    icon: Icons.local_hospital_outlined,
+                    title: context.tr('role_facility'),
+                    subtitle: context.tr('role_facility_desc'),
+                    color: AppColors.secondary,
+                    darkColor: AppColors.primary,
+                    onTap: () => context.push('/facility'),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 TextButton.icon(
                   onPressed: () => context.push('/about'),
@@ -468,6 +475,11 @@ class RoleSelectScreen extends ConsumerWidget {
                   label: Text(context.tr('committee_login')),
                 ),
                 const SizedBox(height: 12),
+                TextButton.icon(
+                  onPressed: () => context.push('/admin'),
+                  icon: const Icon(Icons.admin_panel_settings_outlined),
+                  label: Text(context.tr('admin_entry')),
+                ),
                 TextButton.icon(
                   onPressed: () => context.push('/verify-card'),
                   icon: const Icon(Icons.qr_code_scanner),

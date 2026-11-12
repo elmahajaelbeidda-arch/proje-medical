@@ -5,6 +5,7 @@ import '../models/facility.dart';
 import '../models/member_card.dart';
 import '../models/models.dart';
 import '../models/registration.dart';
+import 'admin_provider.dart';
 import 'facility_provider.dart';
 import 'providers.dart';
 
@@ -24,7 +25,12 @@ final suspendedCardsProvider =
 
 /// Every approved patient, doctor and facility has a card.
 final memberCardsProvider = Provider<List<MemberCard>>((ref) {
-  final suspended = ref.watch(suspendedCardsProvider);
+  final suspendedCards = ref.watch(suspendedCardsProvider);
+  final admin = ref.watch(adminProvider);
+  // A card is suspended on its own, or with the whole account.
+  bool suspendedOf(String number, String holder) =>
+      suspendedCards.contains(number) ||
+      admin.suspendedAccounts.containsKey(holder);
   final cards = <MemberCard>[];
 
   for (final r in ref.watch(registrationsProvider)) {
@@ -44,7 +50,8 @@ final memberCardsProvider = Provider<List<MemberCard>>((ref) {
             : 'role_patient',
         city: _cityOf(r),
         issuedAt: issued,
-        suspended: suspended.contains(number),
+        suspended: suspendedOf(number, r.id),
+        renewedAt: admin.cardRenewals[r.id],
       ),
     );
   }
@@ -68,7 +75,8 @@ final memberCardsProvider = Provider<List<MemberCard>>((ref) {
         detailKey: 'ft_${f.type.name}',
         city: f.city,
         issuedAt: issued,
-        suspended: suspended.contains(number),
+        suspended: suspendedOf(number, f.id),
+        renewedAt: admin.cardRenewals[f.id],
       ),
     );
   }
