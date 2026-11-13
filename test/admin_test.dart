@@ -28,8 +28,7 @@ void main() {
   AdminState s() => c.read(adminProvider);
 
   void signIn(String email, String password) {
-    expect(n().login(email, password), LoginResult.needCode);
-    expect(n().verifyCode(adminDemoCode), isTrue);
+    expect(n().login(email, password), LoginResult.success);
   }
 
   test('TOTP matches the RFC 6238 test vector', () {
@@ -41,13 +40,10 @@ void main() {
     expect(Totp.verify(secret, '000000', now: t), isFalse);
   });
 
-  test('password then second factor; wrong attempts lock the login', () {
+  test('password only by default; wrong attempts lock the login', () {
     expect(n().login('admin@shifa.mr', 'nope'), LoginResult.wrong);
     expect(s().me, isNull);
-    expect(n().login('admin@shifa.mr', 'Admin@2026'), LoginResult.needCode);
-    expect(s().me, isNull); // not before the code
-    expect(n().verifyCode('999999'), isFalse);
-    expect(n().verifyCode(adminDemoCode), isTrue);
+    expect(n().login('admin@shifa.mr', 'Admin@2026'), LoginResult.success);
     expect(s().me!.email, 'admin@shifa.mr');
     n().logout();
     for (var i = 0; i < 4; i++) {
@@ -58,15 +54,19 @@ void main() {
     expect(s().audit.where((a) => a.action == 'au_login_failed').length, 6);
   });
 
-  test('authenticator app replaces the demo code', () {
+  test('optional authenticator app: code asked only once linked', () {
     signIn('admin@shifa.mr', 'Admin@2026');
     final secret = Totp.newSecret();
     expect(n().enableTotp(secret, '000000'), isFalse);
     expect(n().enableTotp(secret, Totp.code(secret, DateTime.now())), isTrue);
     n().logout();
-    n().login('admin@shifa.mr', 'Admin@2026');
-    expect(n().verifyCode(adminDemoCode), isFalse);
+    expect(n().login('admin@shifa.mr', 'Admin@2026'), LoginResult.needCode);
+    expect(s().me, isNull);
+    expect(n().verifyCode('000000'), isFalse);
     expect(n().verifyCode(Totp.code(secret, DateTime.now())), isTrue);
+    n().disableMyTotp();
+    n().logout();
+    expect(n().login('admin@shifa.mr', 'Admin@2026'), LoginResult.success);
   });
 
   test('no admin goes beyond their permissions, and refusals are logged', () {

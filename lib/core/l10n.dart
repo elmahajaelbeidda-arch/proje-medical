@@ -1122,8 +1122,8 @@ class AppStrings {
     // ---------------- Admin dashboard ----------------
     'ad_title': ['فريق المتابعة والإدارة', 'Équipe de suivi et de gestion'],
     'ad_login_hint': [
-      'دخول أعضاء فريق المتابعة والإدارة: كلمة المرور ثم رمز التحقق الثنائي',
-      'Accès de l’équipe de suivi et de gestion : mot de passe puis code de double authentification',
+      'دخول أعضاء فريق المتابعة والإدارة بالبريد الإلكتروني وكلمة المرور',
+      'Accès de l’équipe de suivi et de gestion par e-mail et mot de passe',
     ],
     'ad_code_step': [
       'أدخل رمز التحقق من تطبيق المصادقة (6 أرقام)',
@@ -1454,12 +1454,15 @@ class AppStrings {
     'ad_backup': ['النسخ الاحتياطي', 'Sauvegarde'],
     'ad_role': ['الدور', 'Rôle'],
     'ad_last_login': ['آخر دخول', 'Dernière connexion'],
-    'ad_2fa': ['المصادقة الثنائية', 'Double authentification'],
+    'ad_2fa': [
+      'المصادقة الثنائية (اختيارية)',
+      'Double authentification (facultative)',
+    ],
     'ad_2fa_app': ['مرتبطة بتطبيق', 'Application liée'],
-    'ad_2fa_demo': ['رمز تجريبي', 'Code de démo'],
+    'ad_2fa_demo': ['غير مفعّلة (اختيارية)', 'Désactivée (facultative)'],
     'ad_2fa_hint': [
-      'اربط تطبيق مصادقة (Google Authenticator أو Microsoft Authenticator): امسح الرمز ثم أدخل الرقم الظاهر. بعدها لن يُقبل الرمز التجريبي لحسابك.',
-      'Liez une application (Google ou Microsoft Authenticator) : scannez le code puis saisissez le nombre affiché. Le code de démo ne sera plus accepté.',
+      'اختيارية: يمكنك ربط تطبيق مصادقة (Google Authenticator أو Microsoft Authenticator) لحماية إضافية لحسابك؛ عندها يُطلب منك الرمز عند كل دخول.',
+      'Facultative : liez une application (Google ou Microsoft Authenticator) pour plus de sécurité ; le code sera alors demandé à chaque connexion.',
     ],
     'ad_2fa_link': ['ربط تطبيق المصادقة', 'Lier une application'],
     'ad_2fa_relink': ['إعادة ربط التطبيق', 'Relier une application'],
@@ -1624,6 +1627,10 @@ class AppStrings {
     'au_referral_sent': [
       'إحالة مريض إلى جهة طبية',
       'Patient orienté vers une structure',
+    ],
+    'ad_2fa_disable': [
+      'إيقاف المصادقة الثنائية',
+      'Désactiver la double authentification',
     ],
     'next': ['التالي', 'Suivant'],
     'back': ['رجوع', 'Retour'],

@@ -109,7 +109,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
         .login(_email.text, _password.text);
     setState(() {
       _error = switch (r) {
-        LoginResult.needCode => null,
+        LoginResult.success || LoginResult.needCode => null,
         LoginResult.wrong => 'ad_login_wrong',
         LoginResult.locked => 'ad_login_locked',
         LoginResult.disabled => 'ad_login_disabled',
@@ -234,7 +234,6 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         context.tr('ad_demo_accounts'),
                         style: const TextStyle(fontWeight: FontWeight.w900),
                       ),
-                      Text(context.tr('ad_demo_code'), style: text.bodySmall),
                       const SizedBox(height: 6),
                       for (final d in _demo)
                         InkWell(

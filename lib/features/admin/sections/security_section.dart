@@ -119,7 +119,7 @@ class _MyAccountState extends ConsumerState<_MyAccount> {
           title: context.tr('ad_2fa'),
           trailing: Pill(
             label: context.tr(linked ? 'ad_2fa_app' : 'ad_2fa_demo'),
-            color: linked ? AppColors.success : AppColors.warning,
+            color: linked ? AppColors.success : AppColors.grey,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -127,15 +127,28 @@ class _MyAccountState extends ConsumerState<_MyAccount> {
               Text(context.tr('ad_2fa_hint')),
               const SizedBox(height: 8),
               if (_secret == null)
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: FilledButton.icon(
-                    onPressed: () => setState(() => _secret = Totp.newSecret()),
-                    icon: const Icon(Icons.qr_code_2),
-                    label: Text(
-                      context.tr(linked ? 'ad_2fa_relink' : 'ad_2fa_link'),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    FilledButton.icon(
+                      onPressed: () =>
+                          setState(() => _secret = Totp.newSecret()),
+                      icon: const Icon(Icons.qr_code_2),
+                      label: Text(
+                        context.tr(linked ? 'ad_2fa_relink' : 'ad_2fa_link'),
+                      ),
                     ),
-                  ),
+                    if (linked)
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          ref.read(adminProvider.notifier).disableMyTotp();
+                          snack(context, 'ad_done');
+                        },
+                        icon: const Icon(Icons.phonelink_erase),
+                        label: Text(context.tr('ad_2fa_disable')),
+                      ),
+                  ],
                 )
               else ...[
                 Center(

@@ -5,10 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/admin/totp.dart';
 import '../models/admin.dart';
 
-/// Demo code accepted for admin accounts that have not yet linked an
-/// authenticator app.
-const adminDemoCode = '123456';
-
 class AdminState {
   final List<AdminAccount> admins;
   final List<AuditEntry> audit;
@@ -113,7 +109,9 @@ class AdminState {
   );
 }
 
-enum LoginResult { needCode, wrong, locked, disabled }
+/// `success`: signed in with the password. `needCode`: this account linked
+/// an authenticator app (optional two-factor), its code is asked next.
+enum LoginResult { success, needCode, wrong, locked, disabled }
 
 class AdminNotifier extends Notifier<AdminState> {
   int _seq = 0;
@@ -218,24 +216,28 @@ class AdminNotifier extends Notifier<AdminState> {
       failedLogins: 0,
       clearLock: true,
     );
-    return LoginResult.needCode;
+    // Two-factor is optional: only accounts that linked an app get a code.
+    if (a.totpSecret != null) return LoginResult.needCode;
+    _completeLogin(a);
+    return LoginResult.success;
   }
 
-  /// Second factor: authenticator code, or the demo code for accounts that
-  /// have not linked an app yet.
+  /// Optional second factor: code of the linked authenticator app.
   bool verifyCode(String code) {
     AdminAccount? a;
     for (final x in state.admins) {
       if (x.id == state.sessionAdminId) a = x;
     }
-    if (a == null) return false;
-    final ok = a.totpSecret == null
-        ? code.trim() == adminDemoCode
-        : Totp.verify(a.totpSecret!, code);
-    if (!ok) {
+    if (a == null || a.totpSecret == null) return false;
+    if (!Totp.verify(a.totpSecret!, code)) {
       _log('au_2fa_failed', target: a.email, as: a);
       return false;
     }
+    _completeLogin(a);
+    return true;
+  }
+
+  void _completeLogin(AdminAccount a) {
     state = state.copyWith(
       sessionVerified: true,
       admins: [
@@ -244,7 +246,6 @@ class AdminNotifier extends Notifier<AdminState> {
       ],
     );
     _log('au_login', target: a.email);
-    return true;
   }
 
   void logout() {
@@ -259,6 +260,14 @@ class AdminNotifier extends Notifier<AdminState> {
     _replaceAdmin(me.copyWith(totpSecret: secret));
     _log('au_2fa_enabled', target: me.email);
     return true;
+  }
+
+  /// Turn off the optional two-factor for my own account.
+  void disableMyTotp() {
+    final me = state.me;
+    if (me == null || me.totpSecret == null) return;
+    _replaceAdmin(me.copyWith(clearTotp: true));
+    _log('au_2fa_reset', target: me.email);
   }
 
   bool changeMyPassword(String current, String next) {
