@@ -30,12 +30,13 @@ String money(int v) {
     b.write(s[i]);
   }
   // Kept left-to-right inside Arabic text ("150 000 MRU").
-  return '\u2066${b.toString()} MRU\u2069';
+  // Left-to-right embedding: the amount reads "150 000 MRU" inside Arabic.
+  return '\u202A${b.toString()} MRU\u202C';
 }
 
 /// Removes direction marks (PDF fonts and Excel do not need them).
 String plain(Object? v) =>
-    '${v ?? ''}'.replaceAll(RegExp('[\u2066-\u2069]'), '');
+    '${v ?? ''}'.replaceAll(RegExp('[\u202A-\u202E\u2066-\u2069]'), '');
 
 String stamp() {
   final d = DateTime.now();
