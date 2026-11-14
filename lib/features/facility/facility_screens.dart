@@ -456,6 +456,9 @@ class _FacilityRegisterScreenState
             ),
             const SizedBox(width: 8),
             FilledButton(
+              // Inside a row: a fixed minimum width (the theme's buttons are
+              // full width, which a row cannot give).
+              style: FilledButton.styleFrom(minimumSize: const Size(88, 54)),
               onPressed: _addService,
               child: Text(context.tr('add')),
             ),

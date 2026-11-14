@@ -7,8 +7,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- The camera is optional: files can also be picked from the gallery -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <application
-        android:label="shifa"
+        android:label="شفاء للناس"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -48,6 +50,23 @@
         <!-- Voice search (speech recognition) -->
         <intent>
             <action android:name="android.speech.RecognitionService" />
+        </intent>
+        <!-- Contact buttons: phone call, SMS, WhatsApp and web links -->
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="sms" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
         </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>

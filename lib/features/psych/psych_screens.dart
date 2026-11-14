@@ -304,9 +304,18 @@ class _PsychBookingScreenState extends ConsumerState<PsychBookingScreen> {
   late String? _doctorId = widget.doctorId;
   DateTime? _slot;
   SessionMode _mode = SessionMode.chat;
-  late final _alias = TextEditingController(
-    text: _initials(ref.read(authProvider).displayName),
-  );
+  // Created in initState: the field is only shown at the last step, and a
+  // lazy initializer would read providers after the page is closed.
+  late final TextEditingController _alias;
+
+  @override
+  void initState() {
+    super.initState();
+    _alias = TextEditingController(
+      text: _initials(ref.read(authProvider).displayName),
+    );
+  }
+
   bool _shareName = false;
   bool _consent = false;
 
