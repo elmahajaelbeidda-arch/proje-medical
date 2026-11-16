@@ -113,7 +113,8 @@ jobs:
 
   ios:
     name: iOS (build + iPhone simulator test)
-    runs-on: macos-latest
+    # Intel Macs: the arm64 macOS pool is often saturated (jobs never start).
+    runs-on: macos-15-intel
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
