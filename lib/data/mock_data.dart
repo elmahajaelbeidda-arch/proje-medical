@@ -28,6 +28,9 @@ class MockData {
       city: 'نواكشوط',
       cityFr: 'Nouakchott',
       bio: 'أخصائية في الطب الباطني، متطوعة لمساعدة المرضى غير القادرين على الكشف.',
+      latitude: 18.095,
+      longitude: -15.976,
+      clinicAddress: 'تفرغ زينة، شارع جمال عبد الناصر',
       availability: ['السبت 18:00 - 20:00', 'الثلاثاء 20:00 - 22:00'],
     ),
     Doctor(
@@ -40,6 +43,9 @@ class MockData {
       city: 'نواذيبو',
       cityFr: 'Nouadhibou',
       bio: 'استشاري أمراض القلب وقراءة تخطيط القلب والإيكو.',
+      latitude: 20.933,
+      longitude: -17.038,
+      clinicAddress: 'نواذيبو، حي الشامي',
       availability: ['الأحد 19:00 - 21:00'],
     ),
     Doctor(
@@ -52,6 +58,9 @@ class MockData {
       city: 'روصو',
       cityFr: 'Rosso',
       bio: 'طبيبة أطفال، أهتم بتغذية الطفل والتطعيمات.',
+      latitude: 16.514,
+      longitude: -15.806,
+      clinicAddress: 'روصو، وسط المدينة',
       availability: ['يومياً 21:00 - 22:00'],
     ),
     Doctor(
@@ -65,6 +74,9 @@ class MockData {
       cityFr: 'Kiffa',
       bio: 'أخصائي أشعة: قراءة صور الأشعة السينية والرنين والسكانر.',
       available: false,
+      latitude: 16.62,
+      longitude: -11.405,
+      clinicAddress: 'كيفة، قرب المستشفى الجهوي',
       availability: ['الجمعة 10:00 - 12:00'],
     ),
     Doctor(
@@ -77,6 +89,9 @@ class MockData {
       city: 'أطار',
       cityFr: 'Atar',
       bio: 'أخصائية نساء وتوليد ومتابعة الحمل.',
+      latitude: 20.517,
+      longitude: -13.048,
+      clinicAddress: 'أطار، الحي الإداري',
       availability: ['الإثنين 20:00 - 22:00'],
     ),
     Doctor(
@@ -89,6 +104,9 @@ class MockData {
       city: 'كيهيدي',
       cityFr: 'Kaédi',
       bio: 'استشاري السكري والغدد الصماء، قراءة تحاليل السكر التراكمي والغدة الدرقية.',
+      latitude: 16.155,
+      longitude: -13.504,
+      clinicAddress: 'كيهيدي، قرب السوق',
       availability: ['الأربعاء 18:00 - 20:00'],
     ),
     Doctor(
@@ -101,6 +119,9 @@ class MockData {
       city: 'الزويرات',
       cityFr: 'Zouérate',
       bio: 'طبيبة جلدية، أستقبل الاستشارات المصورة.',
+      latitude: 22.736,
+      longitude: -12.471,
+      clinicAddress: 'الزويرات، حي المنجم',
       availability: ['الخميس 19:00 - 21:00'],
     ),
     Doctor(
@@ -113,6 +134,9 @@ class MockData {
       city: 'النعمة',
       cityFr: 'Néma',
       bio: 'طبيب عام، أساعد في توجيه المرضى إلى التخصص المناسب.',
+      latitude: 16.617,
+      longitude: -7.256,
+      clinicAddress: 'النعمة، وسط المدينة',
       availability: ['يومياً 22:00 - 23:00'],
     ),
     Doctor(
@@ -125,6 +149,9 @@ class MockData {
       city: 'نواكشوط',
       cityFr: 'Nouakchott',
       bio: 'طبيبة نفسية: القلق والاكتئاب والضغوط الأسرية، بسرية تامة.',
+      latitude: 18.086,
+      longitude: -15.965,
+      clinicAddress: 'نواكشوط، لكصر',
       availability: [
         'السبت 17:00 - 20:00',
         'الاثنين 20:00 - 22:00',
@@ -141,6 +168,9 @@ class MockData {
       city: 'نواذيبو',
       cityFr: 'Nouadhibou',
       bio: 'أخصائي نفسي إكلينيكي: اضطرابات النوم والضغوط والإدمان.',
+      latitude: 20.942,
+      longitude: -17.03,
+      clinicAddress: 'نواذيبو، حي الميناء',
       availability: [
         'الأحد 16:00 - 19:00',
         'الثلاثاء 19:00 - 22:00',

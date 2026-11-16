@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../features/about/about_screen.dart';
 import '../features/aid/aid_screens.dart';
 import '../features/auth/auth_screens.dart';
+import '../features/care_map/care_map.dart';
 import '../features/cards/member_card_screens.dart';
 import '../features/blood/blood_screens.dart';
 import '../features/doctor/doctor_shell.dart';
@@ -179,6 +180,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/section-off',
         builder: (_, _) => const SectionOffScreen(),
       ),
+
+      // Medical map: approved doctors and facilities
+      GoRoute(path: '/care-map', builder: (_, _) => const CareMapScreen()),
 
       // Registration cards
       GoRoute(path: '/my-card', builder: (_, _) => const MyMemberCardScreen()),

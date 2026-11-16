@@ -264,6 +264,32 @@ class PatientHomeTab extends ConsumerWidget {
               ),
               const SizedBox(height: 10),
 
+              // Map of approved doctors and medical facilities.
+              Card(
+                clipBehavior: Clip.antiAlias,
+                child: ListTile(
+                  onTap: () => context.push('/care-map'),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
+                  leading: const CircleAvatar(
+                    backgroundColor: AppColors.teal,
+                    child: Icon(Icons.map_outlined, color: Colors.white),
+                  ),
+                  title: Text(
+                    context.tr('cm_title'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  subtitle: Text(context.tr('cm_card_desc')),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+              ),
+              const SizedBox(height: 10),
+
               if (settings.enabled(AppSection.summons)) ...[
                 // Upcoming visit: summons card to download or print.
                 const SummonsBanner(),
@@ -567,7 +593,16 @@ class _DoctorsTabState extends State<DoctorsTab> {
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.tr('our_doctors'))),
+      appBar: AppBar(
+        title: Text(context.tr('our_doctors')),
+        actions: [
+          IconButton(
+            tooltip: context.tr('cm_title'),
+            onPressed: () => context.push('/care-map'),
+            icon: const Icon(Icons.map_outlined),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(

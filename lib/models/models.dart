@@ -55,6 +55,12 @@ class Doctor {
   final String bio;
   final List<String> availability;
 
+  /// Clinic where the doctor also receives patients (shown on the medical
+  /// map). Null for doctors who only consult remotely.
+  final double? latitude;
+  final double? longitude;
+  final String clinicAddress;
+
   const Doctor({
     required this.id,
     required this.name,
@@ -68,6 +74,9 @@ class Doctor {
     this.verified = true,
     this.available = true,
     this.availability = const [],
+    this.latitude,
+    this.longitude,
+    this.clinicAddress = '',
   });
 
   String cityFor(String languageCode) => languageCode == 'fr' ? cityFr : city;

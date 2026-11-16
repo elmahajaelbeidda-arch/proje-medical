@@ -50,6 +50,10 @@ class MedicalFacility {
   /// Discount offered when [cooperation] contains `discounted`.
   final int? discountPercent;
 
+  /// Position on the medical map (picked at registration).
+  final double? latitude;
+  final double? longitude;
+
   /// Referred patients the facility can receive per month.
   final int? monthlyCapacity;
   final String notes;
@@ -80,6 +84,8 @@ class MedicalFacility {
     this.services = const [],
     this.cooperation = const {},
     this.discountPercent,
+    this.latitude,
+    this.longitude,
     this.monthlyCapacity,
     this.notes = '',
     this.licenseDocument,
@@ -139,6 +145,8 @@ class MedicalFacility {
     services: services,
     cooperation: cooperation,
     discountPercent: discountPercent,
+    latitude: latitude,
+    longitude: longitude,
     monthlyCapacity: monthlyCapacity,
     notes: notes,
     licenseDocument: licenseDocument,

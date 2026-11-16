@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:latlong2/latlong.dart';
+
 import '../../core/admin_provider.dart';
 import '../../core/facility_provider.dart';
 import '../../core/l10n.dart';
@@ -18,6 +20,7 @@ import '../../models/models.dart';
 import '../../models/registration.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
+import '../aid/aid_screens.dart' show LocationPicker;
 import '../cards/member_card_screens.dart';
 import '../blood/blood_screens.dart';
 
@@ -244,6 +247,9 @@ class _FacilityRegisterScreenState
   final List<String> _services = [];
   final Set<CooperationType> _coop = {CooperationType.referrals};
   Attachment? _licenseDoc;
+
+  /// Position shown on the medical map once the facility is approved.
+  LatLng? _location;
   final List<Attachment> _documents = [];
   bool _consent = false;
 
@@ -350,6 +356,8 @@ class _FacilityRegisterScreenState
             notes: _notes.text,
             licenseDocument: _licenseDoc,
             documents: [..._documents],
+            latitude: _location?.latitude,
+            longitude: _location?.longitude,
           );
     } on DuplicateRegistrationException catch (e) {
       _snack('dup_${e.field}');
@@ -578,6 +586,16 @@ class _FacilityRegisterScreenState
             prefixIcon: const Icon(Icons.place_outlined),
           ),
         ),
+        gap,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Text(
+            context.tr('cm_facility_location'),
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+        ),
+        const SizedBox(height: 6),
+        LocationPicker(onChanged: (p) => _location = p),
       ],
     );
 
