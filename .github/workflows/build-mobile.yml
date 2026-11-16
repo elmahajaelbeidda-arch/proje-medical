@@ -115,7 +115,7 @@ jobs:
     name: iOS (build + iPhone simulator test)
     # Intel Macs: the arm64 macOS pool is often saturated (jobs never start).
     runs-on: macos-15-intel
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -123,7 +123,17 @@ jobs:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - run: flutter pub get
+      # A package download once stalled for an hour on these runners:
+      # give it a time limit and try once more if needed.
+      - name: flutter pub get
+        id: pub
+        timeout-minutes: 8
+        continue-on-error: true
+        run: flutter pub get
+      - name: flutter pub get (retry)
+        if: steps.pub.outcome != 'success'
+        timeout-minutes: 10
+        run: flutter pub get
       - name: Test on an iPhone simulator
         run: |
           UDID=$(xcrun simctl list devices available | grep -m1 -E "iPhone 1[5-9]" | grep -oE '[0-9A-F-]{36}')
