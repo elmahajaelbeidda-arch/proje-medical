@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/visit_counter.dart';
 import '../pulse/pulse_screens.dart' show PulseEntryCard;
 
 import '../../core/admin_provider.dart';
@@ -409,6 +410,9 @@ class RoleSelectScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Public visitor counter (no sign-in needed).
+                const Center(child: VisitorLivePill()),
+                const SizedBox(height: 14),
                 Text(
                   context.tr('who_are_you'),
                   textAlign: TextAlign.center,
@@ -467,6 +471,8 @@ class RoleSelectScreen extends ConsumerWidget {
                     onTap: () => context.push('/facility'),
                   ),
                 ],
+                const SizedBox(height: 16),
+                const VisitorStatsCard(),
                 const SizedBox(height: 8),
                 TextButton.icon(
                   onPressed: () => context.push('/about'),

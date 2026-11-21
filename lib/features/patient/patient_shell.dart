@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/visit_counter.dart';
 import '../pulse/pulse_screens.dart' show PulseEntryCard;
 
 import '../../core/admin_provider.dart';
@@ -268,6 +269,8 @@ class PatientHomeTab extends ConsumerWidget {
 
               // «نبض شفاء»: news, stories, live talks and achievements.
               const PulseEntryCard(),
+              const SizedBox(height: 10),
+              const VisitorStatsCard(),
               const SizedBox(height: 10),
 
               // Map of approved doctors and medical facilities.

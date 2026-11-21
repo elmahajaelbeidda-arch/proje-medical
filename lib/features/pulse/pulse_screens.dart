@@ -14,6 +14,7 @@ import '../../models/models.dart';
 import '../../models/pulse.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
+import '../../widgets/visit_counter.dart';
 
 // ---------------------------------------------------------------------------
 // «✦ نبض شفاء ✦» — open to everyone. Reading needs no account; liking,
@@ -202,6 +203,8 @@ class _PulseHomeScreenState extends ConsumerState<PulseHomeScreen> {
             backgroundColor: AppColors.primary,
             title: Text(context.tr('pl_title')),
             actions: [
+              const Center(child: VisitorLivePill(onDark: true)),
+              const SizedBox(width: 4),
               if (who != null)
                 IconButton(
                   tooltip: context.tr('pl_my_posts'),

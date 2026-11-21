@@ -44,6 +44,61 @@ class SettingsSection extends ConsumerWidget {
               ],
             ),
           ),
+        if (canSettings)
+          Panel(
+            title: context.tr('vc_settings_title'),
+            child: Column(
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: s.showVisitorCounter,
+                  onChanged: (v) => guarded(
+                    context,
+                    () => n.setVisitorCounter(
+                      visible: v,
+                      registered: s.showRegisteredCount,
+                      beneficiaries: s.showBeneficiariesCount,
+                    ),
+                    ok: 'ad_done',
+                  ),
+                  title: Text(context.tr('vc_settings_show')),
+                  subtitle: Text(context.tr('vc_settings_show_desc')),
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: s.showRegisteredCount,
+                  onChanged: s.showVisitorCounter
+                      ? (v) => guarded(
+                          context,
+                          () => n.setVisitorCounter(
+                            visible: true,
+                            registered: v,
+                            beneficiaries: s.showBeneficiariesCount,
+                          ),
+                          ok: 'ad_done',
+                        )
+                      : null,
+                  title: Text(context.tr('vc_settings_registered')),
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: s.showBeneficiariesCount,
+                  onChanged: s.showVisitorCounter
+                      ? (v) => guarded(
+                          context,
+                          () => n.setVisitorCounter(
+                            visible: true,
+                            registered: s.showRegisteredCount,
+                            beneficiaries: v,
+                          ),
+                          ok: 'ad_done',
+                        )
+                      : null,
+                  title: Text(context.tr('vc_settings_beneficiaries')),
+                ),
+              ],
+            ),
+          ),
         if (canContent) const _Announcements(),
         if (canSettings) _InfoForm(info: s.info),
         if (canSettings)

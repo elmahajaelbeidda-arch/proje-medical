@@ -2274,6 +2274,38 @@ class AppStrings {
     ],
     'au_live_question_hidden': ['إخفاء سؤال في البث', 'Question masquée'],
 
+    // Public visitor counter
+    'vc_title': ['انتشار التطبيق', 'Portée de l’application'],
+    'vc_online': ['متصل الآن', 'En ligne'],
+    'vc_total': ['إجمالي الزيارات منذ الإطلاق', 'Visites depuis le lancement'],
+    'vc_today': ['زوار اليوم', 'Visiteurs aujourd’hui'],
+    'vc_registered': ['المستخدمون المسجلون', 'Utilisateurs inscrits'],
+    'vc_beneficiaries': ['المستفيدون', 'Bénéficiaires'],
+    'vc_auto': [
+      'يتحدّث تلقائياً · آخر تحديث {t}',
+      'Mise à jour automatique · {t}',
+    ],
+    'vc_loading': ['جارٍ تحميل الأرقام…', 'Chargement des chiffres…'],
+    'vc_demo': ['أرقام تجريبية', 'Chiffres de démonstration'],
+    'vc_settings_title': ['عدّاد الزوار العام', 'Compteur public de visiteurs'],
+    'vc_settings_show': ['إظهار العدّاد للجميع', 'Afficher le compteur à tous'],
+    'vc_settings_show_desc': [
+      'يظهر في الواجهة الرئيسية للزوار والمستخدمين دون تسجيل الدخول',
+      'Visible sur l’accueil par les visiteurs et les utilisateurs, sans connexion',
+    ],
+    'vc_settings_registered': [
+      'إظهار عدد المستخدمين المسجلين',
+      'Afficher le nombre d’inscrits',
+    ],
+    'vc_settings_beneficiaries': [
+      'إظهار عدد المستفيدين',
+      'Afficher le nombre de bénéficiaires',
+    ],
+    'au_counter_updated': [
+      'تعديل عدّاد الزوار',
+      'Compteur de visiteurs modifié',
+    ],
+
     // Chat
     'chat': ['المحادثة', 'Discussion'],
     'type_message': ['اكتب رسالتك...', 'Écrivez votre message...'],

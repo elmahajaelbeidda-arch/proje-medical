@@ -640,6 +640,26 @@ class AdminNotifier extends Notifier<AdminState> {
     _log(enabled ? 'au_section_on' : 'au_section_off', target: s.name);
   }
 
+  void setVisitorCounter({
+    required bool visible,
+    required bool registered,
+    required bool beneficiaries,
+  }) {
+    _require(AdminPermission.manageSettings);
+    state = state.copyWith(
+      settings: state.settings.copyWith(
+        showVisitorCounter: visible,
+        showRegisteredCount: registered,
+        showBeneficiariesCount: beneficiaries,
+      ),
+    );
+    _log(
+      'au_counter_updated',
+      details:
+          'visible=$visible registered=$registered beneficiaries=$beneficiaries',
+    );
+  }
+
   void setAssociationInfo(AssociationInfo info) {
     _require(AdminPermission.manageSettings);
     state = state.copyWith(settings: state.settings.copyWith(info: info));

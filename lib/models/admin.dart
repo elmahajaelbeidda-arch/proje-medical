@@ -622,11 +622,19 @@ class AppSettings {
   /// French interface available.
   final bool frenchEnabled;
 
+  /// Public visitor counter and which figures it shows.
+  final bool showVisitorCounter;
+  final bool showRegisteredCount;
+  final bool showBeneficiariesCount;
+
   const AppSettings({
     this.sections = const {},
     this.info = const AssociationInfo(),
     this.defaultLanguage = 'ar',
     this.frenchEnabled = true,
+    this.showVisitorCounter = true,
+    this.showRegisteredCount = true,
+    this.showBeneficiariesCount = true,
   });
 
   bool enabled(AppSection s) => sections[s] ?? true;
@@ -636,11 +644,18 @@ class AppSettings {
     AssociationInfo? info,
     String? defaultLanguage,
     bool? frenchEnabled,
+    bool? showVisitorCounter,
+    bool? showRegisteredCount,
+    bool? showBeneficiariesCount,
   }) => AppSettings(
     sections: sections ?? this.sections,
     info: info ?? this.info,
     defaultLanguage: defaultLanguage ?? this.defaultLanguage,
     frenchEnabled: frenchEnabled ?? this.frenchEnabled,
+    showVisitorCounter: showVisitorCounter ?? this.showVisitorCounter,
+    showRegisteredCount: showRegisteredCount ?? this.showRegisteredCount,
+    showBeneficiariesCount:
+        showBeneficiariesCount ?? this.showBeneficiariesCount,
   );
 
   Map<String, Object?> toJson() => {
@@ -648,6 +663,9 @@ class AppSettings {
     'info': info.toJson(),
     'defaultLanguage': defaultLanguage,
     'frenchEnabled': frenchEnabled,
+    'showVisitorCounter': showVisitorCounter,
+    'showRegisteredCount': showRegisteredCount,
+    'showBeneficiariesCount': showBeneficiariesCount,
   };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -658,5 +676,8 @@ class AppSettings {
     info: AssociationInfo.fromJson(j['info'] as Map<String, dynamic>),
     defaultLanguage: j['defaultLanguage'] as String? ?? 'ar',
     frenchEnabled: j['frenchEnabled'] as bool? ?? true,
+    showVisitorCounter: j['showVisitorCounter'] as bool? ?? true,
+    showRegisteredCount: j['showRegisteredCount'] as bool? ?? true,
+    showBeneficiariesCount: j['showBeneficiariesCount'] as bool? ?? true,
   );
 }
