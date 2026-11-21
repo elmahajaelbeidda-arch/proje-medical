@@ -25,8 +25,8 @@ class AppStrings {
       'Association caritative Aoun wa Sanad',
     ],
     'about_shifa': [
-      'شِفاءٌ لِلنّاس هي منصة رقمية خيرية تابعة لجمعية عون وسند الخيرية، تهدف إلى تقديم الاستشارات الطبية الخيرية عن بُعد وتسهيل وصول الرعاية الصحية والدعم الطبي للفئات المستهدفة بسهولة وكرامة',
-      'Chifa Linnas est une plateforme numérique solidaire de l’association caritative Aoun wa Sanad. Elle propose des consultations médicales à distance et facilite l’accès aux soins et au soutien médical pour les personnes ciblées, en toute simplicité et dans la dignité.',
+      'شِفاءٌ لِلنّاس تطبيق صحي خيري تابع لجمعية عون وسند الخيرية، يهدف إلى تقديم الاستشارات الطبية الخيرية عن بُعد وتسهيل وصول الرعاية الصحية والدعم الطبي للفئات المستهدفة بسهولة وكرامة',
+      'Chifa Linnas est une application de santé solidaire de l’association caritative Aoun wa Sanad. Elle propose des consultations médicales à distance et facilite l’accès aux soins et au soutien médical pour les personnes ciblées, en toute simplicité et dans la dignité.',
     ],
     'app_tagline': ['تطبيق خيري طبي', 'Application médicale solidaire'],
     // ID card + SMS verification
@@ -395,11 +395,11 @@ class AppStrings {
     'contact_number': ['رقم التواصل', 'Numéro de contact'],
     'quantity': ['الكمية', 'Quantité'],
     'add_external_donor': [
-      'إضافة متبرع من خارج المنصة',
+      'إضافة متبرع من خارج التطبيق',
       'Ajouter un donneur externe',
     ],
     'external_donor_hint': [
-      'متبرع غير مسجّل في المنصة (من معارفه أو من بنك الدم...) يتحقق منه الفريق مباشرة.',
+      'متبرع غير مسجّل في التطبيق (من معارفه أو من بنك الدم...) يتحقق منه الفريق مباشرة.',
       'Donneur non inscrit (entourage, banque de sang...), vérifié directement par l’équipe.',
     ],
     'add_and_link': ['إضافة وربط بالطلب', 'Ajouter et lier'],
@@ -1612,7 +1612,7 @@ class AppStrings {
     ],
     'ar_followUp': ['عضو فريق المتابعة', 'Membre de l’équipe de suivi'],
     'au_external_donor': [
-      'إضافة متبرع من خارج المنصة',
+      'إضافة متبرع من خارج التطبيق',
       'Donneur externe ajouté',
     ],
     'au_team_note': ['ملاحظة متابعة على طلب دم', 'Note de suivi (sang)'],
@@ -2319,7 +2319,7 @@ class AppStrings {
       'الاستشارات المقدمة عبر تطبيق شِفاءٌ لِلنّاس إرشادية وتطوعية، ولا تغني عن الكشف الطبي الحضوري أو العلاج في المستشفى.\n\n'
           '• التطبيق ليس مخصصاً لحالات الطوارئ. في الحالات الخطيرة اتصل بالإسعاف فوراً.\n\n'
           '• لا تتوقف عن أي دواء أو تغيّر جرعته دون الرجوع إلى طبيبك المعالج.\n\n'
-          '• يتم التحقق من هوية الأطباء المتطوعين قبل قبولهم في المنصة.\n\n'
+          '• يتم التحقق من هوية الأطباء المتطوعين قبل قبولهم في التطبيق.\n\n'
           '• بياناتك وفحوصك سرية، ولا يطّلع عليها إلا الطبيب الذي يتابع حالتك.',
       'Les consultations proposées sur Chifa Linnas sont indicatives et bénévoles. Elles ne remplacent pas un examen médical en présentiel ni une prise en charge hospitalière.\n\n'
           '• L’application n’est pas destinée aux urgences. En cas de danger, appelez immédiatement les secours.\n\n'

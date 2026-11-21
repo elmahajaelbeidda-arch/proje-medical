@@ -43,7 +43,7 @@ class BrandName extends StatelessWidget {
 }
 
 /// Text in which every occurrence of the app name is emphasised (bold),
-/// e.g. the introduction "شِفاءٌ لِلنّاس هي منصة رقمية خيرية...".
+/// e.g. the introduction "شِفاءٌ لِلنّاس تطبيق صحي خيري...".
 class BrandRichText extends StatelessWidget {
   const BrandRichText(this.text, {super.key, this.style, this.textAlign});
 
