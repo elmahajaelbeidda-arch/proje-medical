@@ -16,6 +16,7 @@ import '../features/patient/health_profile_screen.dart';
 import '../features/patient/new_consultation_screen.dart';
 import '../features/patient/patient_shell.dart';
 import '../features/psych/psych_screens.dart';
+import '../features/pulse/pulse_screens.dart';
 import '../features/shared/shared_screens.dart';
 import '../features/summons/summons_screens.dart';
 import '../models/models.dart';
@@ -179,6 +180,23 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/section-off',
         builder: (_, _) => const SectionOffScreen(),
+      ),
+
+      // «نبض شفاء»: open to everyone, visitors included.
+      GoRoute(path: '/pulse', builder: (_, _) => const PulseHomeScreen()),
+      GoRoute(path: '/pulse/new', builder: (_, _) => const SubmitStoryScreen()),
+      GoRoute(
+        path: '/pulse/mine',
+        builder: (_, _) => const MySubmissionsScreen(),
+      ),
+      GoRoute(
+        path: '/pulse/post/:id',
+        builder: (_, state) =>
+            PostDetailsScreen(id: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/pulse/live/:id',
+        builder: (_, state) => LiveScreen(id: state.pathParameters['id']!),
       ),
 
       // Medical map: approved doctors and facilities

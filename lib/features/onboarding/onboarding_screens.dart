@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../pulse/pulse_screens.dart' show PulseEntryCard;
+
 import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
 import '../../models/admin.dart';
@@ -421,7 +423,10 @@ class RoleSelectScreen extends ConsumerWidget {
                   textAlign: TextAlign.center,
                   style: text.bodyLarge,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
+                // Open to visitors: no account needed to explore.
+                const PulseEntryCard(),
+                const SizedBox(height: 16),
                 _RoleCard(
                   icon: Icons.personal_injury_outlined,
                   title: context.tr('role_patient'),

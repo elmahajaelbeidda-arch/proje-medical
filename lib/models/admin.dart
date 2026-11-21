@@ -27,6 +27,9 @@ enum AdminPermission {
   exportReports,
   sendNotifications,
   manageContent,
+
+  /// «نبض شفاء»: publish, review shared stories, moderate interactions.
+  manageCommunity,
   manageSettings,
   viewAudit,
   manageBackups,
@@ -74,6 +77,7 @@ Set<AdminPermission> rolePermissions(AdminRole role) => switch (role) {
   AdminRole.communications => {
     AdminPermission.sendNotifications,
     AdminPermission.manageContent,
+    AdminPermission.manageCommunity,
   },
   AdminRole.auditor => {
     AdminPermission.viewCases,

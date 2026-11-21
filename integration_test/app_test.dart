@@ -8,6 +8,7 @@ import 'package:shifa/core/router.dart';
 import 'package:shifa/core/summons_provider.dart';
 import 'package:shifa/features/blood/blood_screens.dart';
 import 'package:shifa/features/care_map/care_map.dart';
+import 'package:shifa/features/pulse/pulse_screens.dart';
 import 'package:shifa/features/cards/member_card_screens.dart';
 import 'package:shifa/features/doctor/doctor_shell.dart';
 import 'package:shifa/features/facility/facility_screens.dart';
@@ -59,6 +60,9 @@ void main() {
     await open('/patient/psych', PsychHomeScreen);
     await open('/patient/psych/new', PsychBookingScreen);
     await open('/care-map', CareMapScreen);
+    await open('/pulse', PulseHomeScreen);
+    await open('/pulse/post/pa1', PostDetailsScreen);
+    await open('/pulse/live/lv1', LiveScreen);
     await open('/blood', BloodHomeScreen);
     await open('/patient/blood/new', NewBloodRequestScreen);
     await open('/summons/cv1001', SummonsScreen);

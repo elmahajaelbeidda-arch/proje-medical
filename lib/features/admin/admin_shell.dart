@@ -15,12 +15,13 @@ import 'sections/facilities_section.dart';
 import 'sections/finance_section.dart';
 import 'sections/messages_section.dart';
 import 'sections/overview_section.dart';
+import 'sections/pulse_section.dart';
 import 'sections/reports_section.dart';
 import 'sections/security_section.dart';
 import 'sections/settings_section.dart';
 import 'sections/users_section.dart';
 
-/// The ten areas of the dashboard and who may open them.
+/// The areas of the dashboard and who may open them.
 enum AdminSection {
   overview(Icons.dashboard_outlined, {}),
   users(Icons.manage_accounts_outlined, {
@@ -35,6 +36,7 @@ enum AdminSection {
   finance(Icons.volunteer_activism_outlined, {AdminPermission.viewFinance}),
   reports(Icons.insights_outlined, {AdminPermission.exportReports}),
   messages(Icons.campaign_outlined, {AdminPermission.sendNotifications}),
+  pulse(Icons.diversity_1_outlined, {AdminPermission.manageCommunity}),
   security(Icons.admin_panel_settings_outlined, {}),
   settings(Icons.tune, {
     AdminPermission.manageSettings,
@@ -302,6 +304,7 @@ class AdminShell extends ConsumerWidget {
             AdminSection.finance => const FinanceSection(),
             AdminSection.reports => const ReportsSection(),
             AdminSection.messages => const MessagesSection(),
+            AdminSection.pulse => const PulseSection(),
             AdminSection.security => const SecuritySection(),
             AdminSection.settings => const SettingsSection(),
           }
