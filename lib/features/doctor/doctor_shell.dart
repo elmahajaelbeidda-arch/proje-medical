@@ -527,7 +527,7 @@ class DoctorProfileTab extends ConsumerWidget {
                 const MyCardTile(),
                 MenuTile(
                   icon: Icons.diversity_1_outlined,
-                  title: '✦ ${context.tr('pl_name')} ✦',
+                  title: context.tr('pl_name'),
                   onTap: () => context.push('/pulse'),
                 ),
                 MenuTile(

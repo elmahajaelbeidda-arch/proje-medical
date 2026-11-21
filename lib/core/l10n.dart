@@ -1966,7 +1966,7 @@ class AppStrings {
       'Ce cas est suivi par un autre médecin',
     ],
 
-    // «✦ نبض شفاء ✦» — community space
+    // «نبض شفاء» — community space
     'pl_name': ['نبض شفاء', 'Pouls de Chifa'],
     'pl_title': ['نبض شفاء', 'Pouls de Chifa'],
     'pl_slogan': [

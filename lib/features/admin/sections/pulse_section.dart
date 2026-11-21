@@ -14,7 +14,7 @@ import '../../pulse/pulse_screens.dart'
 import '../admin_ui.dart';
 import 'overview_section.dart' show Pill;
 
-/// «✦ نبض شفاء ✦»: publish, review shared stories, organise live talks and
+/// «نبض شفاء»: publish, review shared stories, organise live talks and
 /// moderate interactions. Every action is permission-checked and audited.
 class PulseSection extends ConsumerStatefulWidget {
   const PulseSection({super.key});
@@ -37,7 +37,7 @@ class _PulseSectionState extends ConsumerState<PulseSection> {
     final reports = s.reportedPosts.length + s.reportedComments.length;
     final published = s.posts.where((p) => p.isPublic).toList();
     return AdminPage(
-      title: '✦ ${context.tr('pl_name')} ✦',
+      title: context.tr('pl_name'),
       subtitle: context.tr('pl_slogan'),
       children: [
         KpiWrap(

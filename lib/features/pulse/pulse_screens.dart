@@ -17,7 +17,7 @@ import '../../widgets/media.dart';
 import '../../widgets/visit_counter.dart';
 
 // ---------------------------------------------------------------------------
-// «✦ نبض شفاء ✦» — open to everyone. Reading needs no account; liking,
+// «نبض شفاء» — open to everyone. Reading needs no account; liking,
 // commenting, asking and sharing a story need to be signed in.
 // ---------------------------------------------------------------------------
 
@@ -284,7 +284,7 @@ class _PulseHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  '✦ ${context.tr('pl_name')} ✦',
+                  context.tr('pl_name'),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 32,
@@ -1957,7 +1957,7 @@ class PulseEntryCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '✦ ${context.tr('pl_name')} ✦',
+                          context.tr('pl_name'),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,

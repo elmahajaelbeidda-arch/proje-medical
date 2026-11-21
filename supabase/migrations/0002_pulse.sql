@@ -1,5 +1,5 @@
 -- =========================================================================
--- «✦ نبض شفاء ✦» — شِفاءٌ لِلنّاس / جمعية عون وسند الخيرية
+-- «نبض شفاء» — شِفاءٌ لِلنّاس / جمعية عون وسند الخيرية
 -- Community space: news, shared stories (reviewed first), photos and
 -- videos, live and recorded talks, likes, comments and reports.
 --
