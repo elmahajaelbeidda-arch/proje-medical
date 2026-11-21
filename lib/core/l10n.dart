@@ -2363,6 +2363,41 @@ class AppStrings {
     'au_place_hidden': ['إخفاء مكان تبرع', 'Lieu de don masqué'],
     'au_place_deleted': ['حذف مكان تبرع', 'Lieu de don supprimé'],
 
+    // Card check by QR code
+    'mc_scan_lead': [
+      'امسح رمز QR الموجود على البطاقة',
+      'Scannez le QR code de la carte',
+    ],
+    'mc_scan_desc': [
+      'وجّه كاميرا الهاتف نحو رمز QR المطبوع على بطاقة «شفاء للناس» ليظهر لك فوراً إن كانت صالحة.',
+      'Pointez la caméra vers le QR code imprimé sur la carte « Chifa Linnas » pour savoir aussitôt si elle est valide.',
+    ],
+    'mc_scan_btn': ['مسح رمز QR', 'Scanner le QR code'],
+    'mc_scan_title': ['مسح رمز البطاقة', 'Scanner la carte'],
+    'mc_scan_hint': [
+      'ضع رمز QR داخل الإطار',
+      'Placez le QR code dans le cadre',
+    ],
+    'mc_scan_wrong': [
+      'هذا الرمز ليس رمز بطاقة «شفاء للناس». امسح الرمز المطبوع على البطاقة.',
+      'Ce code n’est pas celui d’une carte « Chifa Linnas ».',
+    ],
+    'mc_scan_torch': ['الإضاءة', 'Lampe'],
+    'mc_scan_switch': ['تبديل الكاميرا', 'Changer de caméra'],
+    'mc_scan_denied': [
+      'لم يُسمح باستخدام الكاميرا. فعّل إذن الكاميرا للتطبيق من إعدادات الهاتف ثم أعد المحاولة.',
+      'L’accès à la caméra est refusé. Autorisez-le dans les réglages du téléphone puis réessayez.',
+    ],
+    'mc_scan_failed': [
+      'تعذّر تشغيل الكاميرا على هذا الجهاز.',
+      'Impossible de démarrer la caméra sur cet appareil.',
+    ],
+    'mc_scan_back': ['رجوع', 'Retour'],
+    'mc_manual_title': [
+      'لا تعمل الكاميرا؟ أدخل رقم البطاقة ورمز التحقق يدوياً',
+      'Pas de caméra ? Saisir le numéro et le code manuellement',
+    ],
+
     // Chat
     'chat': ['المحادثة', 'Discussion'],
     'type_message': ['اكتب رسالتك...', 'Écrivez votre message...'],

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shifa/core/facility_provider.dart';
 import 'package:shifa/core/member_card_provider.dart';
 import 'package:shifa/core/providers.dart';
+import 'package:shifa/features/cards/member_card_screens.dart' show verifyUrl;
 import 'package:shifa/models/facility.dart';
 import 'package:shifa/models/member_card.dart';
 import 'package:shifa/models/models.dart';
@@ -74,6 +75,19 @@ void main() {
       '6R4ZFM',
     ));
     expect(parseCardInput('hello'), isNull);
+  });
+
+  test('the QR code printed on every card verifies that card', () {
+    final all = cards();
+    expect(all, isNotEmpty);
+    for (final card in all) {
+      final q = parseCardInput(verifyUrl(card));
+      expect(q, (card.number, card.verificationCode));
+      expect(checkCard(all, q!.$1, q.$2).$1, CardCheck.valid);
+    }
+    // Another app's QR code is not taken for a card.
+    expect(parseCardInput('https://example.org/menu?item=12'), isNull);
+    expect(parseCardInput('WIFI:S:home;T:WPA;P:secret;;'), isNull);
   });
 
   test('the same ID number or phone cannot register twice', () {

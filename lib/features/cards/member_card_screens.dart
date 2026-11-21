@@ -14,6 +14,7 @@ import '../../models/blood.dart' show maskName;
 import '../../models/member_card.dart';
 import '../../widgets/common.dart';
 import '../summons/summons_screens.dart' show loadPdfAssets;
+import 'card_scanner.dart';
 import 'member_card_pdf.dart';
 
 /// Public address of the app, used in the QR code so any phone camera opens
@@ -440,6 +441,11 @@ class _VerifyCardScreenState extends ConsumerState<VerifyCardScreen> {
     super.dispose();
   }
 
+  Future<void> _scan() async {
+    final q = await scanCardQr(context);
+    if (q != null && mounted) setState(() => _query = q);
+  }
+
   void _verify() {
     final q = parseCardInput(_input.text);
     if (q == null) {
@@ -467,24 +473,81 @@ class _VerifyCardScreenState extends ConsumerState<VerifyCardScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(context.tr('mc_verify_hint'), style: text.bodyMedium),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _input,
-            textDirection: TextDirection.ltr,
-            onSubmitted: (_) => _verify(),
-            decoration: InputDecoration(
-              labelText: context.tr('mc_verify_input'),
-              hintText: context.tr('mc_verify_input_hint'),
-              prefixIcon: const Icon(Icons.qr_code_2),
+          // Main way: scan the QR code printed on the card.
+          Card(
+            clipBehavior: Clip.antiAlias,
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const CircleAvatar(
+                    radius: 38,
+                    backgroundColor: AppColors.secondary,
+                    child: Icon(
+                      Icons.qr_code_scanner,
+                      size: 40,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    context.tr('mc_scan_lead'),
+                    textAlign: TextAlign.center,
+                    style: text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    context.tr('mc_scan_desc'),
+                    textAlign: TextAlign.center,
+                    style: text.bodyMedium,
+                  ),
+                  const SizedBox(height: 14),
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 54),
+                    ),
+                    onPressed: _scan,
+                    icon: const Icon(Icons.qr_code_scanner),
+                    label: Text(context.tr('mc_scan_btn')),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 10),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(minimumSize: const Size(0, 50)),
-            onPressed: _verify,
-            icon: const Icon(Icons.verified_user_outlined),
-            label: Text(context.tr('mc_verify_btn')),
+          // Backup when no camera is available.
+          ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            initiallyExpanded: false,
+            title: Text(
+              context.tr('mc_manual_title'),
+              style: text.bodyMedium?.copyWith(color: AppColors.grey),
+            ),
+            children: [
+              TextField(
+                controller: _input,
+                textDirection: TextDirection.ltr,
+                onSubmitted: (_) => _verify(),
+                decoration: InputDecoration(
+                  labelText: context.tr('mc_verify_input'),
+                  hintText: context.tr('mc_verify_input_hint'),
+                  prefixIcon: const Icon(Icons.keyboard_outlined),
+                ),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                ),
+                onPressed: _verify,
+                icon: const Icon(Icons.verified_user_outlined),
+                label: Text(context.tr('mc_verify_btn')),
+              ),
+              const SizedBox(height: 8),
+            ],
           ),
           if (result != null) ...[
             const SizedBox(height: 16),
