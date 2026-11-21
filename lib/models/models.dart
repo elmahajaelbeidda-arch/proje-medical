@@ -132,16 +132,23 @@ class DoctorReply {
   });
 }
 
+/// Voice or video call between a doctor and a patient.
+enum CallKind { voice, video }
+
 class ChatMessage {
   final bool fromDoctor;
   final String text;
   final DateTime time;
   final VoiceNote? voice;
+
+  /// Set when the message announces a call the doctor started.
+  final CallKind? call;
   const ChatMessage({
     required this.fromDoctor,
     required this.text,
     required this.time,
     this.voice,
+    this.call,
   });
 }
 

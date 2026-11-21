@@ -902,8 +902,8 @@ class AppStrings {
       'La messagerie s’ouvre après confirmation du rendez-vous.',
     ],
     'psych_call_note': [
-      'سيتصل بك الطبيب في موعد الجلسة عبر التطبيق.',
-      'Le médecin vous appellera via l’application à l’heure du rendez-vous.',
+      'في موعد الجلسة، اضغط «انضم إلى الجلسة» هنا.',
+      'À l’heure du rendez-vous, touchez « Rejoindre la séance » ici.',
     ],
     'psych_follow_up': ['جلسة متابعة', 'Séance de suivi'],
     'psych_pledge_title': [
@@ -2397,6 +2397,53 @@ class AppStrings {
       'لا تعمل الكاميرا؟ أدخل رقم البطاقة ورمز التحقق يدوياً',
       'Pas de caméra ? Saisir le numéro et le code manuellement',
     ],
+
+    // Doctor–patient calls
+    'call_voice': ['مكالمة صوتية', 'appel audio'],
+    'call_video': ['مكالمة مرئية', 'appel vidéo'],
+    'call_start': ['ابدأ المكالمة', 'Lancer l’appel'],
+    'call_join': ['انضم', 'Rejoindre'],
+    'call_start_title': ['بدء {kind}', 'Lancer un {kind}'],
+    'call_join_title': ['الانضمام إلى {kind}', 'Rejoindre l’{kind}'],
+    'call_note': [
+      'ستُفتح المكالمة في غرفة خاصة بهذه الاستشارة على Jitsi Meet (تطبيق Jitsi أو المتصفح). لا يُسجَّل الصوت ولا الصورة، ويُحفظ وقت المكالمة فقط.',
+      'L’appel s’ouvre dans une salle privée propre à cette consultation sur Jitsi Meet (application ou navigateur). Ni le son ni l’image ne sont enregistrés ; seule l’heure de l’appel est conservée.',
+    ],
+    'call_failed': ['تعذّر فتح المكالمة', 'Impossible d’ouvrir l’appel'],
+    'call_wait_doctor': [
+      'يبدأ الطبيب المكالمة، وسيظهر لك هنا زر «انضم» عندها.',
+      'Le médecin lance l’appel ; un bouton « Rejoindre » apparaîtra alors ici.',
+    ],
+    'call_closed': [
+      'لا يمكن الاتصال في استشارة مغلقة',
+      'Pas d’appel pour une consultation clôturée',
+    ],
+    'call_started_msg': ['بدأ الطبيب {kind}', 'Le médecin a lancé un {kind}'],
+    'call_start_session': [
+      'بدء الجلسة ({kind})',
+      'Commencer la séance ({kind})',
+    ],
+    'call_join_session': [
+      'انضم إلى الجلسة ({kind})',
+      'Rejoindre la séance ({kind})',
+    ],
+    'call_session_open': [
+      'الجلسة متاحة الآن. يظهر المريض باسمه المستعار ما لم يختر مشاركة اسمه.',
+      'La séance est ouverte. Le patient apparaît sous son pseudonyme sauf s’il a choisi de partager son nom.',
+    ],
+    'call_session_later': [
+      'يُفعَّل الزر قبل موعد الجلسة بدقائق.',
+      'Le bouton s’active quelques minutes avant la séance.',
+    ],
+    'call_server_title': [
+      'خادم المكالمات الصوتية والمرئية',
+      'Serveur des appels audio et vidéo',
+    ],
+    'call_server_hint': [
+      'عنوان خادم Jitsi (https). اتركه فارغاً لاستخدام الخادم العام meet.jit.si، الذي يطلب من الطبيب تسجيل الدخول مرة بحساب Google أو غيره لبدء المكالمة. للخصوصية الكاملة يُنصح بخادم خاص بالجمعية.',
+      'Adresse du serveur Jitsi (https). Vide : serveur public meet.jit.si, qui demande au médecin de se connecter une fois (Google…) pour lancer l’appel. Pour une confidentialité complète, un serveur propre à l’association est conseillé.',
+    ],
+    'au_call_server': ['تعديل خادم المكالمات', 'Serveur d’appels modifié'],
 
     // Chat
     'chat': ['المحادثة', 'Discussion'],

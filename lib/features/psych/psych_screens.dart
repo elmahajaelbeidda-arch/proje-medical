@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/call_buttons.dart';
+
 import '../../core/l10n.dart';
 import '../../core/providers.dart';
 import '../../core/psych_provider.dart';
@@ -955,8 +957,12 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                   ],
                   if (session.mode != SessionMode.chat &&
                       session.status == PsychStatus.confirmed) ...[
-                    const SizedBox(height: 10),
-                    Text(context.tr('psych_call_note'), style: text.bodySmall),
+                    const SizedBox(height: 12),
+                    _SessionCall(
+                      session: session,
+                      asDoctor: widget.asDoctor,
+                      doctorName: doctor.name,
+                    ),
                   ],
                 ],
               ),
@@ -1399,6 +1405,62 @@ class _PledgeGateState extends ConsumerState<_PledgeGate> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Joining the voice or video psych session: from 15 minutes before the
+/// appointment (doctor) or 10 minutes before (patient), until 30 minutes
+/// after its end. The patient appears under their alias unless they chose
+/// to share their name.
+class _SessionCall extends ConsumerWidget {
+  const _SessionCall({
+    required this.session,
+    required this.asDoctor,
+    required this.doctorName,
+  });
+  final PsychSession session;
+  final bool asDoctor;
+  final String doctorName;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final kind = session.mode == SessionMode.video
+        ? CallKind.video
+        : CallKind.voice;
+    final now = DateTime.now();
+    final opens = session.slot.subtract(Duration(minutes: asDoctor ? 15 : 10));
+    final closes = session.slot.add(const Duration(minutes: 45 + 30));
+    final inWindow = now.isAfter(opens) && now.isBefore(closes);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        FilledButton.icon(
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
+          onPressed: inWindow
+              ? () => openCall(
+                  context,
+                  ref,
+                  contextId: 'psych-${session.id}',
+                  kind: kind,
+                  byDoctor: asDoctor,
+                  displayName: asDoctor ? doctorName : session.nameForDoctor,
+                )
+              : null,
+          icon: Icon(callIcon(kind)),
+          label: Text(
+            context.tr(
+              asDoctor ? 'call_start_session' : 'call_join_session',
+              args: {'kind': context.tr(callKey(kind))},
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          context.tr(inWindow ? 'call_session_open' : 'call_session_later'),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      ],
     );
   }
 }

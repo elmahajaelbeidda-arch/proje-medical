@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/calls.dart';
+import '../../widgets/call_buttons.dart';
+
 import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
 import '../../core/providers.dart';
@@ -105,9 +108,50 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final doctor = MockData.doctorById(c.doctorId);
     final otherName = isDoctor ? c.displayPatientName : (doctor?.name ?? '');
     final messages = c.messages.reversed.toList();
+    // Calls: the assigned doctor starts them; the patient joins a call the
+    // doctor started within the last hour.
+    final auth = ref.watch(authProvider);
+    ref.watch(callsProvider);
+    final calls = ref.read(callsProvider.notifier);
+    final open = c.status != ConsultationStatus.closed;
+    final canCall = isDoctor
+        ? open && c.doctorId == auth.doctorId
+        : open && calls.patientCanJoin(c.id);
+    Future<void> call(CallKind kind) async {
+      final opened = await openCall(
+        context,
+        ref,
+        contextId: c.id,
+        kind: kind,
+        byDoctor: isDoctor,
+        displayName: isDoctor
+            ? (doctor?.name ?? auth.displayName)
+            : c.displayPatientName,
+      );
+      if (opened && isDoctor) {
+        ref
+            .read(consultationsProvider.notifier)
+            .sendMessage(
+              c.id,
+              ChatMessage(
+                fromDoctor: true,
+                text: '',
+                time: DateTime.now(),
+                call: kind,
+              ),
+            );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          CallActions(
+            enabled: canCall,
+            disabledKey: isDoctor ? 'call_closed' : 'call_wait_doctor',
+            onCall: call,
+          ),
+        ],
         title: Column(
           children: [
             Text(otherName),
@@ -151,6 +195,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               itemCount: messages.length,
               itemBuilder: (context, i) {
                 final m = messages[i];
+                if (m.call != null) {
+                  return CallBubble(
+                    kind: m.call!,
+                    time: m.time,
+                    canJoin: !isDoctor && canCall,
+                    onJoin: () => call(m.call!),
+                  );
+                }
                 final mine = m.fromDoctor == isDoctor;
                 return Align(
                   alignment: mine

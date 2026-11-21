@@ -99,6 +99,7 @@ class SettingsSection extends ConsumerWidget {
               ],
             ),
           ),
+        if (canSettings) _CallServerForm(current: s.callServer),
         if (canContent) const _Announcements(),
         if (canSettings) _InfoForm(info: s.info),
         if (canSettings)
@@ -317,4 +318,53 @@ class _InfoFormState extends ConsumerState<_InfoForm> {
       ),
     );
   }
+}
+
+class _CallServerForm extends ConsumerStatefulWidget {
+  const _CallServerForm({required this.current});
+  final String current;
+  @override
+  ConsumerState<_CallServerForm> createState() => _CallServerFormState();
+}
+
+class _CallServerFormState extends ConsumerState<_CallServerForm> {
+  late final _c = TextEditingController(text: widget.current);
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Panel(
+    title: context.tr('call_server_title'),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          context.tr('call_server_hint'),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _c,
+          textDirection: TextDirection.ltr,
+          decoration: const InputDecoration(hintText: 'https://meet.jit.si'),
+        ),
+        const SizedBox(height: 8),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: FilledButton(
+            onPressed: () => guarded(
+              context,
+              () => ref.read(adminProvider.notifier).setCallServer(_c.text),
+              ok: 'ad_done',
+            ),
+            child: Text(context.tr('save')),
+          ),
+        ),
+      ],
+    ),
+  );
 }

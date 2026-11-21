@@ -660,6 +660,21 @@ class AdminNotifier extends Notifier<AdminState> {
     );
   }
 
+  /// Jitsi server used for calls: an https address, or empty for the
+  /// default public server.
+  void setCallServer(String url) {
+    _require(AdminPermission.manageSettings);
+    final v = url.trim();
+    if (v.isNotEmpty) {
+      final u = Uri.tryParse(v);
+      if (u == null || u.scheme != 'https' || u.host.isEmpty) {
+        throw ArgumentError('url');
+      }
+    }
+    state = state.copyWith(settings: state.settings.copyWith(callServer: v));
+    _log('au_call_server', details: v.isEmpty ? 'default' : v);
+  }
+
   void setAssociationInfo(AssociationInfo info) {
     _require(AdminPermission.manageSettings);
     state = state.copyWith(settings: state.settings.copyWith(info: info));

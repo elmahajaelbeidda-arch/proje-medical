@@ -627,6 +627,9 @@ class AppSettings {
   final bool showRegisteredCount;
   final bool showBeneficiariesCount;
 
+  /// Jitsi server for doctor–patient calls (empty: the default one).
+  final String callServer;
+
   const AppSettings({
     this.sections = const {},
     this.info = const AssociationInfo(),
@@ -636,6 +639,7 @@ class AppSettings {
     this.showVisitorCounter = false,
     this.showRegisteredCount = true,
     this.showBeneficiariesCount = true,
+    this.callServer = '',
   });
 
   bool enabled(AppSection s) => sections[s] ?? true;
@@ -648,6 +652,7 @@ class AppSettings {
     bool? showVisitorCounter,
     bool? showRegisteredCount,
     bool? showBeneficiariesCount,
+    String? callServer,
   }) => AppSettings(
     sections: sections ?? this.sections,
     info: info ?? this.info,
@@ -657,6 +662,7 @@ class AppSettings {
     showRegisteredCount: showRegisteredCount ?? this.showRegisteredCount,
     showBeneficiariesCount:
         showBeneficiariesCount ?? this.showBeneficiariesCount,
+    callServer: callServer ?? this.callServer,
   );
 
   Map<String, Object?> toJson() => {
@@ -667,6 +673,7 @@ class AppSettings {
     'showVisitorCounter': showVisitorCounter,
     'showRegisteredCount': showRegisteredCount,
     'showBeneficiariesCount': showBeneficiariesCount,
+    'callServer': callServer,
   };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -680,5 +687,6 @@ class AppSettings {
     showVisitorCounter: j['showVisitorCounter'] as bool? ?? false,
     showRegisteredCount: j['showRegisteredCount'] as bool? ?? true,
     showBeneficiariesCount: j['showBeneficiariesCount'] as bool? ?? true,
+    callServer: j['callServer'] as String? ?? '',
   );
 }
