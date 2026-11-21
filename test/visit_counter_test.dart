@@ -64,6 +64,14 @@ void main() {
     expect(a, isNot(b));
   });
 
+  test('the counter is hidden until the association turns it on', () {
+    expect(const AppSettings().showVisitorCounter, isFalse);
+    expect(
+      AppSettings.fromJson(const AppSettings().toJson()).showVisitorCounter,
+      isFalse,
+    );
+  });
+
   test('only settings managers change what the counter shows', () {
     final c = ProviderContainer(
       overrides: [adminSeedAccountsProvider.overrideWithValue(demoAdmins())],
@@ -94,6 +102,9 @@ void main() {
       overrides: [
         visitBackendProvider.overrideWithValue(backend),
         visitRefreshProvider.overrideWithValue(const Duration(seconds: 30)),
+        appSettingsProvider.overrideWithValue(
+          const AppSettings(showVisitorCounter: true),
+        ),
       ],
     );
     await t.pumpWidget(

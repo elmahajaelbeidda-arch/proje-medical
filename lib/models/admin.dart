@@ -632,7 +632,8 @@ class AppSettings {
     this.info = const AssociationInfo(),
     this.defaultLanguage = 'ar',
     this.frenchEnabled = true,
-    this.showVisitorCounter = true,
+    // Hidden until the association turns it on from the dashboard.
+    this.showVisitorCounter = false,
     this.showRegisteredCount = true,
     this.showBeneficiariesCount = true,
   });
@@ -676,7 +677,7 @@ class AppSettings {
     info: AssociationInfo.fromJson(j['info'] as Map<String, dynamic>),
     defaultLanguage: j['defaultLanguage'] as String? ?? 'ar',
     frenchEnabled: j['frenchEnabled'] as bool? ?? true,
-    showVisitorCounter: j['showVisitorCounter'] as bool? ?? true,
+    showVisitorCounter: j['showVisitorCounter'] as bool? ?? false,
     showRegisteredCount: j['showRegisteredCount'] as bool? ?? true,
     showBeneficiariesCount: j['showBeneficiariesCount'] as bool? ?? true,
   );
