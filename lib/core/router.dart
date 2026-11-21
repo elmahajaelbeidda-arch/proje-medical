@@ -128,6 +128,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Blood donation: donor registration only
       GoRoute(path: '/blood', builder: (_, _) => const BloodHomeScreen()),
       GoRoute(
+        path: '/blood/needs',
+        builder: (_, _) => const BloodNeedsScreen(),
+      ),
+      GoRoute(
         path: '/blood/donor',
         builder: (_, _) => const DonorRegisterScreen(),
       ),

@@ -13,6 +13,9 @@ import '../../models/blood.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
+import '../care_map/care_map.dart' show openDirections;
+
+import 'package:latlong2/latlong.dart' show LatLng;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -278,6 +281,12 @@ class BloodHomeScreen extends ConsumerWidget {
             )
           else
             _MyDonorCard(donor: me),
+          const SizedBox(height: 20),
+          // Cases that need blood now (no personal data).
+          const BloodNeedsSection(limit: 4),
+          const SizedBox(height: 20),
+          // Where to give blood.
+          const DonationPlacesSection(),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -1272,6 +1281,418 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// For donors and visitors: urgent needs and donation places
+// ---------------------------------------------------------------------------
+
+Widget _sectionTitle(
+  BuildContext context,
+  IconData icon,
+  String key, {
+  Widget? trailing,
+}) => Padding(
+  padding: const EdgeInsets.only(bottom: 10),
+  child: Row(
+    children: [
+      Icon(icon, color: AppColors.primary),
+      const SizedBox(width: 8),
+      Expanded(
+        child: Text(
+          context.tr(key),
+          style: Theme.of(context).textTheme.titleMedium
+              ?.copyWith(fontWeight: FontWeight.w900, color: AppColors.primary),
+        ),
+      ),
+      ?trailing,
+    ],
+  ),
+);
+
+/// Open requests that still need blood, without any personal data.
+class BloodNeedsSection extends ConsumerWidget {
+  const BloodNeedsSection({super.key, this.limit});
+  final int? limit;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final needs = ref.watch(bloodProvider).publicNeeds;
+    final shown = limit == null ? needs : needs.take(limit!).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _sectionTitle(
+          context,
+          Icons.emergency_outlined,
+          'bn_title',
+          trailing: limit != null && needs.length > limit!
+              ? TextButton(
+                  onPressed: () => context.push('/blood/needs'),
+                  child: Text(
+                    context.tr('bn_see_all', args: {'n': needs.length}),
+                  ),
+                )
+              : null,
+        ),
+        if (needs.isEmpty)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(context.tr('bn_none'), textAlign: TextAlign.center),
+            ),
+          ),
+        for (final r in shown)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: PublicNeedCard(request: r),
+          ),
+      ],
+    );
+  }
+}
+
+class BloodNeedsScreen extends ConsumerStatefulWidget {
+  const BloodNeedsScreen({super.key});
+  @override
+  ConsumerState<BloodNeedsScreen> createState() => _BloodNeedsScreenState();
+}
+
+class _BloodNeedsScreenState extends ConsumerState<BloodNeedsScreen> {
+  bool _compatibleOnly = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final blood = ref.watch(bloodProvider);
+    final me = blood.myDonor;
+    var needs = blood.publicNeeds;
+    if (_compatibleOnly && me != null) {
+      needs = needs.where((r) => canDonate(me.bloodType, r.bloodType)).toList();
+    }
+    return Scaffold(
+      appBar: AppBar(title: Text(context.tr('bn_title'))),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (me != null)
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _compatibleOnly,
+              onChanged: (v) => setState(() => _compatibleOnly = v),
+              title: Text(
+                context.tr('bn_compatible_only', args: {'t': me.bloodType}),
+              ),
+            ),
+          if (needs.isEmpty)
+            EmptyState(
+              icon: Icons.favorite_outline,
+              message: context.tr('bn_none'),
+            ),
+          for (final r in needs)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: PublicNeedCard(request: r),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class PublicNeedCard extends ConsumerWidget {
+  const PublicNeedCard({super.key, required this.request});
+  final BloodRequest request;
+
+  void _offer(BuildContext context, WidgetRef ref) {
+    final me = ref.read(bloodProvider).myDonor;
+    final messenger = ScaffoldMessenger.of(context);
+    void say(String k) =>
+        messenger.showSnackBar(SnackBar(content: Text(context.tr(k))));
+    if (me == null) {
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          icon: const Icon(
+            Icons.volunteer_activism,
+            color: AppColors.primary,
+            size: 40,
+          ),
+          title: Text(ctx.tr('bn_register_first_title')),
+          content: Text(
+            ctx.tr('bn_register_first_body'),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(ctx.tr('cancel')),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                context.push('/blood/donor');
+              },
+              child: Text(ctx.tr('register_donor')),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    try {
+      ref.read(bloodProvider.notifier).volunteer(request.id);
+      say('bn_thanks');
+    } on ArgumentError {
+      say('bn_incompatible');
+    } on StateError catch (e) {
+      say(e.message == 'donor_not_approved' ? 'bn_wait_approval' : 'bn_closed');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final blood = ref.watch(bloodProvider);
+    final r = blood.request(request.id) ?? request;
+    final me = blood.myDonor;
+    final offered = me != null && r.volunteerIds.contains(me.id);
+    final compatible = me == null || canDonate(me.bloodType, r.bloodType);
+    final missing = unitsStillNeeded(r);
+    final text = Theme.of(context).textTheme;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(
+          color: r.urgent ? AppColors.turquoise : AppColors.border,
+          width: r.urgent ? 2 : 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                BloodTypeBadge(r.bloodType, size: 54),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          if (r.urgent)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.turquoise,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.priority_high,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    context.tr('bn_urgent'),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          Text(
+                            context.tr('bn_units', args: {'n': missing}),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.local_hospital_outlined,
+                            size: 16,
+                            color: AppColors.grey,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              '${r.hospital} · ${r.city}',
+                              style: text.bodyMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '${r.code} · ${context.timeAgo(r.createdAt)}',
+                        style: text.bodySmall?.copyWith(color: AppColors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              context.tr(
+                'bn_compatible',
+                args: {
+                  'types': compatibleDonorTypes(r.bloodType)
+                      .map((t) => '\u202A$t\u202C')
+                      .join('  '),
+                },
+              ),
+              style: text.bodySmall?.copyWith(color: AppColors.grey),
+            ),
+            const SizedBox(height: 10),
+            if (offered)
+              OutlinedButton.icon(
+                onPressed: () =>
+                    ref.read(bloodProvider.notifier).withdrawVolunteer(r.id),
+                icon: const Icon(Icons.check_circle, color: AppColors.vivid),
+                label: Text(context.tr('bn_offered')),
+              )
+            else
+              FilledButton.icon(
+                onPressed: compatible ? () => _offer(context, ref) : null,
+                icon: const Icon(Icons.volunteer_activism),
+                label: Text(
+                  context.tr(compatible ? 'bn_i_can' : 'bn_not_compatible'),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DonationPlacesSection extends ConsumerWidget {
+  const DonationPlacesSection({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final places = ref.watch(bloodProvider).activePlaces;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _sectionTitle(context, Icons.place_outlined, 'dp_title'),
+        if (places.isEmpty)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(context.tr('dp_none'), textAlign: TextAlign.center),
+            ),
+          ),
+        for (final p in places)
+          Card(
+            margin: const EdgeInsets.only(bottom: 10),
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const CircleAvatar(
+                    radius: 22,
+                    backgroundColor: AppColors.secondary,
+                    child: Icon(
+                      Icons.bloodtype_outlined,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          p.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          [
+                            p.city,
+                            p.address,
+                          ].where((e) => e.isNotEmpty).join('، '),
+                          style: const TextStyle(color: AppColors.grey),
+                        ),
+                        if (p.hours.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.schedule,
+                                  size: 15,
+                                  color: AppColors.turquoise,
+                                ),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    p.hours,
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (p.note.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              p.note,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: AppColors.text,
+                              ),
+                            ),
+                          ),
+                        if (p.hasLocation)
+                          Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: TextButton.icon(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                              ),
+                              onPressed: () => openDirections(
+                                context,
+                                LatLng(p.latitude!, p.longitude!),
+                              ),
+                              icon: const Icon(Icons.directions_outlined),
+                              label: Text(context.tr('cm_directions')),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

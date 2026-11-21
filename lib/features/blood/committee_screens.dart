@@ -19,6 +19,11 @@ import '../cards/member_card_screens.dart';
 import '../facility/facility_screens.dart';
 import 'blood_screens.dart';
 
+import 'package:latlong2/latlong.dart' show LatLng;
+
+import '../../models/admin.dart' show AdminPermissionDenied;
+import '../aid/aid_screens.dart' show LocationPicker;
+
 String _date(DateTime d) => '${d.day}/${d.month}/${d.year}';
 
 /// Dashboard of the committee, responsible for every request on the
@@ -101,7 +106,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
         .where((f) => f.status == FacilityStatus.pending)
         .length;
 
-    final tabCount = widget.embedded ? 2 : 5;
+    final tabCount = widget.embedded ? 3 : 6;
     return DefaultTabController(
       length: tabCount,
       child: Scaffold(
@@ -137,6 +142,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
             tabs: [
               Tab(text: '${context.tr('donors_db')} ($pending)'),
               Tab(text: '${context.tr('my_blood_requests')} ($newRequests)'),
+              Tab(text: '${context.tr('dp_title')} (${blood.places.length})'),
               Tab(text: '${context.tr('patients')} ($pendingPatients)'),
               Tab(text: '${context.tr('doctors')} ($pendingDoctors)'),
               Tab(text: '${context.tr('facilities')} ($pendingFacilities)'),
@@ -279,6 +285,9 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                         ),
                     ],
                   ),
+
+                  // ---------------- Donation places ----------------
+                  const _DonationPlacesTab(),
 
                   // ---------------- New accounts ----------------
                   const _RegistrationsTab(role: UserRole.patient),
@@ -1237,6 +1246,174 @@ class _TeamNotesState extends ConsumerState<_TeamNotes> {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Donation places shown to donors (team)
+// ---------------------------------------------------------------------------
+
+class _DonationPlacesTab extends ConsumerStatefulWidget {
+  const _DonationPlacesTab();
+  @override
+  ConsumerState<_DonationPlacesTab> createState() => _DonationPlacesTabState();
+}
+
+class _DonationPlacesTabState extends ConsumerState<_DonationPlacesTab> {
+  final _name = TextEditingController();
+  final _city = TextEditingController();
+  final _address = TextEditingController();
+  final _hours = TextEditingController();
+  final _note = TextEditingController();
+  LatLng? _location;
+  int _formKey = 0;
+
+  @override
+  void dispose() {
+    for (final c in [_name, _city, _address, _hours, _note]) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  void _snack(String k) =>
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(context.tr(k))));
+
+  void _run(void Function() f, String ok) {
+    try {
+      f();
+      _snack(ok);
+    } on AdminPermissionDenied {
+      _snack('ad_no_access');
+    } on ArgumentError {
+      _snack('ad_invalid');
+    }
+  }
+
+  void _add() => _run(() {
+    ref
+        .read(bloodProvider.notifier)
+        .addPlace(
+          name: _name.text,
+          city: _city.text,
+          address: _address.text,
+          hours: _hours.text,
+          note: _note.text,
+          latitude: _location?.latitude,
+          longitude: _location?.longitude,
+        );
+    for (final c in [_name, _city, _address, _hours, _note]) {
+      c.clear();
+    }
+    setState(() {
+      _location = null;
+      _formKey++;
+    });
+  }, 'dp_added');
+
+  @override
+  Widget build(BuildContext context) {
+    final places = ref.watch(bloodProvider).places;
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  context.tr('dp_add'),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _name,
+                  decoration: InputDecoration(labelText: context.tr('dp_name')),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _city,
+                  decoration: InputDecoration(labelText: context.tr('city')),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _address,
+                  decoration: InputDecoration(
+                    labelText: context.tr('dp_address'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _hours,
+                  decoration: InputDecoration(
+                    labelText: context.tr('dp_hours'),
+                    hintText: 'السبت – الخميس · 8:00 – 14:00',
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _note,
+                  decoration: InputDecoration(labelText: context.tr('dp_note')),
+                ),
+                const SizedBox(height: 8),
+                Text(context.tr('cm_facility_location')),
+                const SizedBox(height: 6),
+                LocationPicker(
+                  key: ValueKey(_formKey),
+                  onChanged: (p) => _location = p,
+                ),
+                const SizedBox(height: 10),
+                FilledButton.icon(
+                  onPressed: _add,
+                  icon: const Icon(Icons.add_location_alt_outlined),
+                  label: Text(context.tr('dp_add')),
+                ),
+              ],
+            ),
+          ),
+        ),
+        for (final p in places)
+          Card(
+            child: ListTile(
+              leading: Icon(
+                p.active ? Icons.place : Icons.location_off_outlined,
+                color: p.active ? AppColors.primary : AppColors.grey,
+              ),
+              title: Text(p.name),
+              subtitle: Text(
+                [p.city, p.hours].where((e) => e.isNotEmpty).join(' · '),
+              ),
+              trailing: Wrap(
+                children: [
+                  Switch(
+                    value: p.active,
+                    onChanged: (v) => _run(
+                      () => ref
+                          .read(bloodProvider.notifier)
+                          .setPlaceActive(p.id, v),
+                      'ad_done',
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: context.tr('delete'),
+                    onPressed: () => _run(
+                      () => ref.read(bloodProvider.notifier).deletePlace(p.id),
+                      'ad_done',
+                    ),
+                    icon: const Icon(Icons.delete_outline),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

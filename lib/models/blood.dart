@@ -247,3 +247,73 @@ List<BloodDonor> matchDonors(BloodRequest request, List<BloodDonor> donors) {
   list.sort((a, b) => score(b).compareTo(score(a)));
   return list;
 }
+
+// ---------------------------------------------------------------------------
+// Shown to donors and visitors
+// ---------------------------------------------------------------------------
+
+/// A place where people can give blood (blood bank, hospital, lab...),
+/// listed by the follow-up team.
+class DonationPlace {
+  final String id;
+  final String name;
+  final String city;
+  final String address;
+
+  /// Opening hours as written by the team, e.g. "8:00 – 14:00".
+  final String hours;
+  final String note;
+  final double? latitude;
+  final double? longitude;
+  final bool active;
+
+  const DonationPlace({
+    required this.id,
+    required this.name,
+    required this.city,
+    this.address = '',
+    this.hours = '',
+    this.note = '',
+    this.latitude,
+    this.longitude,
+    this.active = true,
+  });
+
+  bool get hasLocation => latitude != null && longitude != null;
+
+  DonationPlace copyWith({bool? active}) => DonationPlace(
+    id: id,
+    name: name,
+    city: city,
+    address: address,
+    hours: hours,
+    note: note,
+    latitude: latitude,
+    longitude: longitude,
+    active: active ?? this.active,
+  );
+}
+
+/// Units still missing for a request (donors already linked count).
+int unitsStillNeeded(BloodRequest r) =>
+    (r.units - r.assignedDonorIds.length).clamp(0, r.units);
+
+/// Requests shown publicly: reviewed by the team, still open, still
+/// missing blood. Urgent first, then newest. The public view shows only the
+/// code, blood type, units, hospital and city — never the patient's name,
+/// phone, notes or documents.
+List<BloodRequest> publicBloodNeeds(List<BloodRequest> all) {
+  final l = all
+      .where(
+        (r) =>
+            r.isOpen &&
+            r.status != BloodRequestStatus.submitted &&
+            unitsStillNeeded(r) > 0,
+      )
+      .toList();
+  l.sort((a, b) {
+    if (a.urgent != b.urgent) return a.urgent ? -1 : 1;
+    return b.createdAt.compareTo(a.createdAt);
+  });
+  return l;
+}

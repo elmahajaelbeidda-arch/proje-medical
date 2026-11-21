@@ -2306,6 +2306,63 @@ class AppStrings {
       'Compteur de visiteurs modifié',
     ],
 
+    // Blood: public needs and donation places
+    'bn_title': ['حالات تحتاج إلى دم', 'Besoins en sang'],
+    'bn_see_all': ['عرض الكل ({n})', 'Tout voir ({n})'],
+    'bn_none': [
+      'لا توجد حالات مفتوحة الآن. شكراً لاستعدادك!',
+      'Aucun besoin ouvert pour le moment. Merci de votre disponibilité !',
+    ],
+    'bn_urgent': ['عاجل', 'Urgent'],
+    'bn_units': ['{n} كيس مطلوب', '{n} poche(s) nécessaire(s)'],
+    'bn_compatible': [
+      'الفصائل التي يمكنها التبرع: {types}',
+      'Groupes compatibles : {types}',
+    ],
+    'bn_i_can': ['أستطيع التبرع', 'Je peux donner'],
+    'bn_not_compatible': ['فصيلتك غير متوافقة', 'Groupe non compatible'],
+    'bn_offered': [
+      'سجّلنا استعدادك — سيتصل بك الفريق (اضغط للإلغاء)',
+      'Disponibilité enregistrée — l’équipe vous appellera (toucher pour annuler)',
+    ],
+    'bn_thanks': [
+      'شكراً لك! سيتواصل معك فريق المتابعة لتنسيق التبرع.',
+      'Merci ! L’équipe vous contactera pour organiser le don.',
+    ],
+    'bn_incompatible': [
+      'فصيلة دمك لا تناسب هذه الحالة',
+      'Votre groupe sanguin ne convient pas à ce besoin',
+    ],
+    'bn_wait_approval': [
+      'تسجيلك كمتبرع قيد المراجعة، ستتمكن من الاستجابة بعد اعتماده',
+      'Votre inscription est en cours de vérification',
+    ],
+    'bn_closed': ['هذه الحالة لم تعد مفتوحة', 'Ce besoin n’est plus ouvert'],
+    'bn_register_first_title': ['سجّل كمتبرع أولاً', 'Inscrivez-vous d’abord'],
+    'bn_register_first_body': [
+      'للاستجابة لحالة، سجّل فصيلة دمك ومدينتك ورقم هاتفك. يراجع الفريق تسجيلك ثم يتواصل معك.',
+      'Pour répondre à un besoin, enregistrez votre groupe, votre ville et votre téléphone. L’équipe vérifie puis vous contacte.',
+    ],
+    'bn_compatible_only': [
+      'الحالات المتوافقة مع فصيلتي ({t}) فقط',
+      'Seulement les besoins compatibles avec mon groupe ({t})',
+    ],
+    'dp_title': ['أماكن التبرع بالدم', 'Où donner son sang'],
+    'dp_none': ['لم تُضف أماكن تبرع بعد', 'Aucun lieu de don pour le moment'],
+    'dp_add': ['إضافة مكان تبرع', 'Ajouter un lieu de don'],
+    'dp_name': [
+      'اسم المكان (بنك دم، مستشفى...)',
+      'Nom du lieu (banque de sang, hôpital…)',
+    ],
+    'dp_address': ['العنوان', 'Adresse'],
+    'dp_hours': ['أوقات الاستقبال', 'Horaires'],
+    'dp_note': ['ملاحظة (اختياري)', 'Remarque (facultatif)'],
+    'dp_added': ['أُضيف مكان التبرع', 'Lieu de don ajouté'],
+    'au_place_added': ['إضافة مكان تبرع بالدم', 'Lieu de don ajouté'],
+    'au_place_shown': ['إظهار مكان تبرع', 'Lieu de don affiché'],
+    'au_place_hidden': ['إخفاء مكان تبرع', 'Lieu de don masqué'],
+    'au_place_deleted': ['حذف مكان تبرع', 'Lieu de don supprimé'],
+
     // Chat
     'chat': ['المحادثة', 'Discussion'],
     'type_message': ['اكتب رسالتك...', 'Écrivez votre message...'],

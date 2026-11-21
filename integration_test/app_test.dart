@@ -64,6 +64,7 @@ void main() {
     await open('/pulse/post/pa1', PostDetailsScreen);
     await open('/pulse/live/lv1', LiveScreen);
     await open('/blood', BloodHomeScreen);
+    await open('/blood/needs', BloodNeedsScreen);
     await open('/patient/blood/new', NewBloodRequestScreen);
     await open('/summons/cv1001', SummonsScreen);
     await open('/my-card', MyMemberCardScreen);

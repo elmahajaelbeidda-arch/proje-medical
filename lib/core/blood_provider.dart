@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/mock_data.dart';
+import '../models/admin.dart';
 import '../models/blood.dart';
 import '../models/models.dart';
 import 'admin_provider.dart';
@@ -9,14 +10,24 @@ class BloodState {
   final List<BloodRequest> requests;
   final List<BloodDonor> donors;
 
+  /// Where to give blood (managed by the follow-up team).
+  final List<DonationPlace> places;
+
   /// Donor profile of the current user, if they registered as a donor.
   final String? myDonorId;
 
   const BloodState({
     required this.requests,
     required this.donors,
+    this.places = const [],
     this.myDonorId,
   });
+
+  List<DonationPlace> get activePlaces =>
+      places.where((p) => p.active).toList();
+
+  /// Open, reviewed requests still missing blood (see publicBloodNeeds).
+  List<BloodRequest> get publicNeeds => publicBloodNeeds(requests);
 
   BloodDonor? get myDonor {
     for (final d in donors) {
@@ -42,10 +53,12 @@ class BloodState {
   BloodState copyWith({
     List<BloodRequest>? requests,
     List<BloodDonor>? donors,
+    List<DonationPlace>? places,
     String? myDonorId,
   }) => BloodState(
     requests: requests ?? this.requests,
     donors: donors ?? this.donors,
+    places: places ?? this.places,
     myDonorId: myDonorId ?? this.myDonorId,
   );
 }
@@ -55,7 +68,94 @@ class BloodNotifier extends Notifier<BloodState> {
   BloodState build() => BloodState(
     requests: MockData.bloodRequests(),
     donors: MockData.bloodDonors(),
+    places: MockData.donationPlaces(),
   );
+
+  // -------------------------------------------------------------------------
+  // Donor: answer a public request
+  // -------------------------------------------------------------------------
+
+  /// The signed-in donor says "I can donate" for a request. Only approved
+  /// donors with a compatible blood type; the team then calls them.
+  void volunteer(String requestId) {
+    final me = state.myDonor;
+    final r = state.request(requestId);
+    if (me == null || r == null) throw StateError('no_donor');
+    if (!me.isApproved) throw StateError('donor_not_approved');
+    if (!r.isOpen) throw StateError('closed');
+    if (!canDonate(me.bloodType, r.bloodType)) {
+      throw ArgumentError('incompatible');
+    }
+    if (r.volunteerIds.contains(me.id)) return;
+    _updateRequest(
+      requestId,
+      (x) => x.copyWith(volunteerIds: [...x.volunteerIds, me.id]),
+    );
+  }
+
+  void withdrawVolunteer(String requestId) {
+    final me = state.myDonor;
+    if (me == null) return;
+    _updateRequest(
+      requestId,
+      (x) => x.copyWith(volunteerIds: [...x.volunteerIds]..remove(me.id)),
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Team: donation places (permission checked, audited)
+  // -------------------------------------------------------------------------
+
+  void addPlace({
+    required String name,
+    required String city,
+    String address = '',
+    String hours = '',
+    String note = '',
+    double? latitude,
+    double? longitude,
+  }) {
+    ref.read(adminProvider.notifier).authorize(AdminPermission.manageBlood);
+    if (name.trim().length < 3 || city.trim().isEmpty) {
+      throw ArgumentError('place');
+    }
+    final p = DonationPlace(
+      id: 'dp${DateTime.now().microsecondsSinceEpoch}',
+      name: name.trim(),
+      city: city.trim(),
+      address: address.trim(),
+      hours: hours.trim(),
+      note: note.trim(),
+      latitude: latitude,
+      longitude: longitude,
+    );
+    state = state.copyWith(places: [...state.places, p]);
+    _audit('au_place_added', p.name, p.city);
+  }
+
+  void setPlaceActive(String id, bool active) {
+    ref.read(adminProvider.notifier).authorize(AdminPermission.manageBlood);
+    final p = state.places.firstWhere((x) => x.id == id);
+    state = state.copyWith(
+      places: [
+        for (final x in state.places)
+          x.id == id ? x.copyWith(active: active) : x,
+      ],
+    );
+    _audit(active ? 'au_place_shown' : 'au_place_hidden', p.name);
+  }
+
+  void deletePlace(String id) {
+    ref.read(adminProvider.notifier).authorize(AdminPermission.manageBlood);
+    final p = state.places.firstWhere((x) => x.id == id);
+    state = state.copyWith(
+      places: [
+        for (final x in state.places)
+          if (x.id != id) x,
+      ],
+    );
+    _audit('au_place_deleted', p.name);
+  }
 
   String addRequest({
     required String patientName,
