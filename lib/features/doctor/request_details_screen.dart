@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -28,7 +29,7 @@ class RequestDetailsScreen extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.search_off,
+          icon: LucideIcons.searchX,
           message: context.tr('no_requests'),
         ),
       );
@@ -57,7 +58,7 @@ class RequestDetailsScreen extends ConsumerWidget {
                         radius: 26,
                         backgroundColor: scheme.secondaryContainer,
                         child: Icon(
-                          c.patientMale ? Icons.man : Icons.woman,
+                          c.patientMale ? LucideIcons.user : LucideIcons.user,
                           size: 30,
                         ),
                       ),
@@ -171,7 +172,7 @@ class RequestDetailsScreen extends ConsumerWidget {
                   SnackBar(content: Text(context.tr('case_accepted'))),
                 );
               },
-              icon: const Icon(Icons.how_to_reg),
+              icon: const Icon(LucideIcons.userCheck),
               label: Text(context.tr('accept_case')),
             )
           else if (takenByOther)
@@ -180,13 +181,13 @@ class RequestDetailsScreen extends ConsumerWidget {
             if (c.status == ConsultationStatus.accepted)
               FilledButton.icon(
                 onPressed: () => context.push('/doctor/reply/${c.id}'),
-                icon: const Icon(Icons.edit_note),
+                icon: const Icon(LucideIcons.notebookPen),
                 label: Text(context.tr('write_reply')),
               ),
             const SizedBox(height: 10),
             OutlinedButton.icon(
               onPressed: () => context.push('/chat/${c.id}'),
-              icon: const Icon(Icons.chat_outlined),
+              icon: const Icon(LucideIcons.messageCircle),
               label: Text(context.tr('chat')),
             ),
             if (ref.watch(appSettingsProvider).enabled(AppSection.summons)) ...[
@@ -282,7 +283,7 @@ class _ReplyScreenState extends ConsumerState<ReplyScreen> {
             if (c != null)
               Card(
                 child: ListTile(
-                  leading: const Icon(Icons.person_outline),
+                  leading: const Icon(LucideIcons.user),
                   title: Text(
                     '${context.tr('patient_label')}: ${c.displayPatientName}',
                   ),
@@ -298,32 +299,32 @@ class _ReplyScreenState extends ConsumerState<ReplyScreen> {
               _findings,
               'findings',
               'findings_hint',
-              Icons.biotech_outlined,
+              LucideIcons.microscope,
             ),
             field(
               _diagnosis,
               'diagnosis',
               'diagnosis_hint',
-              Icons.medical_information_outlined,
+              LucideIcons.fileHeart,
             ),
             field(
               _recommendations,
               'recommendations',
               'recommendations_hint',
-              Icons.checklist_rounded,
+              LucideIcons.listChecks,
             ),
             Card(
               child: SwitchListTile(
                 value: _needsVisit,
                 onChanged: (v) => setState(() => _needsVisit = v),
-                secondary: const Icon(Icons.local_hospital_outlined),
+                secondary: const Icon(LucideIcons.hospital),
                 title: Text(context.tr('needs_visit')),
               ),
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: _submit,
-              icon: const Icon(Icons.send),
+              icon: const Icon(LucideIcons.sendHorizontal),
               label: Text(context.tr('send')),
             ),
           ],
@@ -386,7 +387,7 @@ class _SummonsAction extends ConsumerWidget {
           Expanded(
             child: FilledButton.tonalIcon(
               onPressed: () => context.push('/summons/${existing.id}'),
-              icon: const Icon(Icons.badge_outlined),
+              icon: const Icon(LucideIcons.idCard),
               label: Text(context.tr('summons_view')),
             ),
           ),
@@ -394,7 +395,7 @@ class _SummonsAction extends ConsumerWidget {
           Expanded(
             child: OutlinedButton.icon(
               onPressed: issue,
-              icon: const Icon(Icons.edit_calendar),
+              icon: const Icon(LucideIcons.calendarCog),
               label: Text(context.tr('summons_update')),
             ),
           ),
@@ -412,7 +413,7 @@ class _SummonsAction extends ConsumerWidget {
             const SizedBox(height: 8),
             FilledButton.icon(
               onPressed: issue,
-              icon: const Icon(Icons.badge_outlined),
+              icon: const Icon(LucideIcons.idCard),
               label: Text(context.tr('summons_issue')),
             ),
           ],

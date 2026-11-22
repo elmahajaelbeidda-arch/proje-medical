@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -7,7 +8,7 @@ import '../core/l10n.dart';
 import '../core/theme.dart';
 
 IconData callIcon(CallKind k) =>
-    k == CallKind.video ? Icons.videocam_outlined : Icons.call_outlined;
+    k == CallKind.video ? LucideIcons.video : LucideIcons.phone;
 String callKey(CallKind k) => 'call_${k.name}';
 
 /// Shows a short note, logs the call and opens the private room.

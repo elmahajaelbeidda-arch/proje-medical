@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,9 +33,9 @@ String contactKey(ContactMethod m) => switch (m) {
 };
 
 IconData contactIcon(ContactMethod m) => switch (m) {
-  ContactMethod.call => Icons.call,
-  ContactMethod.whatsapp => Icons.chat,
-  ContactMethod.sms => Icons.sms_outlined,
+  ContactMethod.call => LucideIcons.phone,
+  ContactMethod.whatsapp => LucideIcons.messageCircle,
+  ContactMethod.sms => LucideIcons.messageSquareText,
 };
 
 /// International format for WhatsApp (digits only, no "+"). Local numbers
@@ -189,9 +190,9 @@ class DonorStatusPill extends StatelessWidget {
     label: context.tr(donorStatusKey(status)),
     color: donorStatusColor(status),
     icon: switch (status) {
-      DonorStatus.pending => Icons.hourglass_top,
-      DonorStatus.approved => Icons.verified,
-      DonorStatus.rejected => Icons.block,
+      DonorStatus.pending => LucideIcons.hourglass,
+      DonorStatus.approved => LucideIcons.badgeCheck,
+      DonorStatus.rejected => LucideIcons.ban,
     },
   );
 }
@@ -223,7 +224,7 @@ class BloodHomeScreen extends ConsumerWidget {
                   radius: 26,
                   backgroundColor: AppColors.secondary,
                   child: Icon(
-                    Icons.bloodtype,
+                    LucideIcons.droplet,
                     color: AppColors.primary,
                     size: 30,
                   ),
@@ -251,7 +252,7 @@ class BloodHomeScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Icon(
-                      Icons.volunteer_activism,
+                      LucideIcons.handHeart,
                       size: 52,
                       color: AppColors.primary,
                     ),
@@ -272,7 +273,7 @@ class BloodHomeScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     FilledButton.icon(
                       onPressed: () => context.push('/blood/donor'),
-                      icon: const Icon(Icons.how_to_reg),
+                      icon: const Icon(LucideIcons.userCheck),
                       label: Text(context.tr('register_donor')),
                     ),
                   ],
@@ -290,7 +291,7 @@ class BloodHomeScreen extends ConsumerWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              const Icon(Icons.lock_outline, size: 16, color: AppColors.grey),
+              const Icon(LucideIcons.lock, size: 16, color: AppColors.grey),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -319,12 +320,8 @@ class _MyDonorCard extends ConsumerWidget {
       DonorStatus.rejected => 'donor_rejected_note',
     };
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-        side: const BorderSide(color: AppColors.primary, width: 2),
-      ),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -360,7 +357,7 @@ class _MyDonorCard extends ConsumerWidget {
                 IconButton(
                   tooltip: context.tr('edit'),
                   onPressed: () => context.push('/blood/donor'),
-                  icon: const Icon(Icons.edit_outlined),
+                  icon: const Icon(LucideIcons.pencil),
                 ),
               ],
             ),
@@ -406,7 +403,7 @@ class BloodStatusPill extends StatelessWidget {
   Widget build(BuildContext context) => Pill(
     label: context.tr(bloodStatusKey(status)),
     color: bloodStatusColor(status),
-    icon: status == BloodRequestStatus.fulfilled ? Icons.check : null,
+    icon: status == BloodRequestStatus.fulfilled ? LucideIcons.check : null,
   );
 }
 
@@ -470,7 +467,7 @@ class BloodRequestCard extends ConsumerWidget {
                           Pill(
                             label: context.tr('urgency_urgent'),
                             color: AppColors.emergency,
-                            icon: Icons.bolt,
+                            icon: LucideIcons.zap,
                           ),
                         BloodStatusPill(r.status),
                         Pill(
@@ -484,7 +481,7 @@ class BloodRequestCard extends ConsumerWidget {
                               args: {'n': matches},
                             ),
                             color: AppColors.info,
-                            icon: Icons.people_outline,
+                            icon: LucideIcons.users,
                           ),
                         if (forCommittee && r.assignedDonorIds.isNotEmpty)
                           Pill(
@@ -493,7 +490,7 @@ class BloodRequestCard extends ConsumerWidget {
                               args: {'n': r.assignedDonorIds.length},
                             ),
                             color: AppColors.success,
-                            icon: Icons.link,
+                            icon: LucideIcons.link,
                           ),
                       ],
                     ),
@@ -608,12 +605,12 @@ class MyBloodRequestsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.tr('my_blood_requests'))),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/patient/blood/new'),
-        icon: const Icon(Icons.add),
+        icon: const Icon(LucideIcons.plus),
         label: Text(context.tr('new_blood_request')),
       ),
       body: mine.isEmpty
           ? EmptyState(
-              icon: Icons.bloodtype_outlined,
+              icon: LucideIcons.droplet,
               message: context.tr('no_blood_requests'),
             )
           : ListView(
@@ -742,7 +739,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
               children: [
                 IconButton.filledTonal(
                   onPressed: _units > 1 ? () => setState(() => _units--) : null,
-                  icon: const Icon(Icons.remove),
+                  icon: const Icon(LucideIcons.minus),
                 ),
                 Expanded(
                   child: Text(
@@ -755,7 +752,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
                   onPressed: _units < 10
                       ? () => setState(() => _units++)
                       : null,
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(LucideIcons.plus),
                 ),
               ],
             ),
@@ -766,7 +763,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
                 value: _urgent,
                 onChanged: (v) => setState(() => _urgent = v),
                 secondary: Icon(
-                  Icons.bolt,
+                  LucideIcons.zap,
                   color: _urgent ? Colors.white : AppColors.emergency,
                 ),
                 title: Text(
@@ -800,7 +797,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
               controller: _name,
               decoration: InputDecoration(
                 labelText: context.tr('patient_name'),
-                prefixIcon: const Icon(Icons.person_outline),
+                prefixIcon: const Icon(LucideIcons.user),
               ),
               validator: required,
             ),
@@ -810,7 +807,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
                 controller: _requester,
                 decoration: InputDecoration(
                   labelText: context.tr('requester_name'),
-                  prefixIcon: const Icon(Icons.family_restroom),
+                  prefixIcon: const Icon(LucideIcons.users),
                 ),
                 validator: required,
               ),
@@ -820,7 +817,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
               controller: _hospital,
               decoration: InputDecoration(
                 labelText: context.tr('location_hospital'),
-                prefixIcon: const Icon(Icons.local_hospital_outlined),
+                prefixIcon: const Icon(LucideIcons.hospital),
               ),
               validator: required,
             ),
@@ -829,7 +826,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
               controller: _city,
               decoration: InputDecoration(
                 labelText: context.tr('city'),
-                prefixIcon: const Icon(Icons.location_city_outlined),
+                prefixIcon: const Icon(LucideIcons.building2),
               ),
               validator: required,
             ),
@@ -842,7 +839,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
               ],
               decoration: InputDecoration(
                 labelText: context.tr('contact_number'),
-                prefixIcon: const Icon(Icons.phone_outlined),
+                prefixIcon: const Icon(LucideIcons.phone),
               ),
               validator: (v) => _phoneValidator(context, v),
             ),
@@ -879,7 +876,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () => _addDocs(PickSource.camera),
-                    icon: const Icon(Icons.photo_camera_outlined),
+                    icon: const Icon(LucideIcons.camera),
                     label: Text(context.tr('camera')),
                   ),
                 ),
@@ -887,7 +884,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () => _addDocs(PickSource.files),
-                    icon: const Icon(Icons.upload_file_outlined),
+                    icon: const Icon(LucideIcons.fileUp),
                     label: Text(context.tr('pdf_file')),
                   ),
                 ),
@@ -896,7 +893,7 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: _submit,
-              icon: const Icon(Icons.send),
+              icon: const Icon(LucideIcons.sendHorizontal),
               label: Text(context.tr('submit_blood_request')),
             ),
           ],
@@ -923,7 +920,7 @@ class BloodRequestDetailsScreen extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.search_off,
+          icon: LucideIcons.searchX,
           message: context.tr('no_requests'),
         ),
       );
@@ -977,7 +974,7 @@ class BloodRequestDetailsScreen extends ConsumerWidget {
                         Pill(
                           label: context.tr('urgency_urgent'),
                           color: AppColors.emergency,
-                          icon: Icons.bolt,
+                          icon: LucideIcons.zap,
                         ),
                       BloodStatusPill(r.status),
                       Pill(
@@ -1062,7 +1059,7 @@ class BloodRequestDetailsScreen extends ConsumerWidget {
               SnackBar(content: Text(context.tr('marked_fulfilled'))),
             );
           },
-          icon: const Icon(Icons.check_circle_outline),
+          icon: const Icon(LucideIcons.circleCheck),
           label: Text(context.tr('mark_fulfilled')),
         ),
         const SizedBox(height: 8),
@@ -1070,7 +1067,7 @@ class BloodRequestDetailsScreen extends ConsumerWidget {
           onPressed: () => ref
               .read(bloodProvider.notifier)
               .setStatus(r.id, BloodRequestStatus.cancelled),
-          icon: const Icon(Icons.close),
+          icon: const Icon(LucideIcons.x),
           label: Text(context.tr('cancel_request')),
         ),
       ],
@@ -1092,10 +1089,10 @@ class BloodStatusTimeline extends StatelessWidget {
       );
     }
     const steps = [
-      (BloodRequestStatus.submitted, Icons.send_rounded),
-      (BloodRequestStatus.inProgress, Icons.manage_search),
-      (BloodRequestStatus.matched, Icons.link),
-      (BloodRequestStatus.fulfilled, Icons.check),
+      (BloodRequestStatus.submitted, LucideIcons.sendHorizontal),
+      (BloodRequestStatus.inProgress, LucideIcons.searchCheck),
+      (BloodRequestStatus.matched, LucideIcons.link),
+      (BloodRequestStatus.fulfilled, LucideIcons.check),
     ];
     final reached = steps.indexWhere((s) => s.$1 == status);
     return Row(
@@ -1218,7 +1215,7 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
               controller: _name,
               decoration: InputDecoration(
                 labelText: context.tr('full_name'),
-                prefixIcon: const Icon(Icons.person_outline),
+                prefixIcon: const Icon(LucideIcons.user),
               ),
               validator: required,
             ),
@@ -1232,7 +1229,7 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
               controller: _city,
               decoration: InputDecoration(
                 labelText: context.tr('city'),
-                prefixIcon: const Icon(Icons.location_city_outlined),
+                prefixIcon: const Icon(LucideIcons.building2),
               ),
               validator: required,
             ),
@@ -1245,7 +1242,7 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
               ],
               decoration: InputDecoration(
                 labelText: context.tr('phone'),
-                prefixIcon: const Icon(Icons.phone_outlined),
+                prefixIcon: const Icon(LucideIcons.phone),
               ),
               validator: (v) => _phoneValidator(context, v),
             ),
@@ -1261,7 +1258,7 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(Icons.info_outline, size: 16, color: AppColors.grey),
+                const Icon(LucideIcons.info, size: 16, color: AppColors.grey),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -1275,7 +1272,7 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: _save,
-              icon: const Icon(Icons.volunteer_activism),
+              icon: const Icon(LucideIcons.handHeart),
               label: Text(context.tr('save_donor')),
             ),
           ],
@@ -1326,7 +1323,7 @@ class BloodNeedsSection extends ConsumerWidget {
       children: [
         _sectionTitle(
           context,
-          Icons.emergency_outlined,
+          LucideIcons.siren,
           'bn_title',
           trailing: limit != null && needs.length > limit!
               ? TextButton(
@@ -1386,10 +1383,7 @@ class _BloodNeedsScreenState extends ConsumerState<BloodNeedsScreen> {
               ),
             ),
           if (needs.isEmpty)
-            EmptyState(
-              icon: Icons.favorite_outline,
-              message: context.tr('bn_none'),
-            ),
+            EmptyState(icon: LucideIcons.heart, message: context.tr('bn_none')),
           for (final r in needs)
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
@@ -1415,7 +1409,7 @@ class PublicNeedCard extends ConsumerWidget {
         context: context,
         builder: (ctx) => AlertDialog(
           icon: const Icon(
-            Icons.volunteer_activism,
+            LucideIcons.handHeart,
             color: AppColors.primary,
             size: 40,
           ),
@@ -1502,7 +1496,7 @@ class PublicNeedCard extends ConsumerWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   const Icon(
-                                    Icons.priority_high,
+                                    LucideIcons.circleAlert,
                                     size: 14,
                                     color: Colors.white,
                                   ),
@@ -1530,7 +1524,7 @@ class PublicNeedCard extends ConsumerWidget {
                       Row(
                         children: [
                           const Icon(
-                            Icons.local_hospital_outlined,
+                            LucideIcons.hospital,
                             size: 16,
                             color: AppColors.grey,
                           ),
@@ -1569,13 +1563,16 @@ class PublicNeedCard extends ConsumerWidget {
               OutlinedButton.icon(
                 onPressed: () =>
                     ref.read(bloodProvider.notifier).withdrawVolunteer(r.id),
-                icon: const Icon(Icons.check_circle, color: AppColors.vivid),
+                icon: const Icon(
+                  LucideIcons.circleCheck,
+                  color: AppColors.vivid,
+                ),
                 label: Text(context.tr('bn_offered')),
               )
             else
               FilledButton.icon(
                 onPressed: compatible ? () => _offer(context, ref) : null,
-                icon: const Icon(Icons.volunteer_activism),
+                icon: const Icon(LucideIcons.handHeart),
                 label: Text(
                   context.tr(compatible ? 'bn_i_can' : 'bn_not_compatible'),
                 ),
@@ -1595,7 +1592,7 @@ class DonationPlacesSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _sectionTitle(context, Icons.place_outlined, 'dp_title'),
+        _sectionTitle(context, LucideIcons.mapPin, 'dp_title'),
         if (places.isEmpty)
           Card(
             child: Padding(
@@ -1614,10 +1611,7 @@ class DonationPlacesSection extends ConsumerWidget {
                   const CircleAvatar(
                     radius: 22,
                     backgroundColor: AppColors.secondary,
-                    child: Icon(
-                      Icons.bloodtype_outlined,
-                      color: AppColors.primary,
-                    ),
+                    child: Icon(LucideIcons.droplet, color: AppColors.primary),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -1645,7 +1639,7 @@ class DonationPlacesSection extends ConsumerWidget {
                             child: Row(
                               children: [
                                 const Icon(
-                                  Icons.schedule,
+                                  LucideIcons.clock,
                                   size: 15,
                                   color: AppColors.turquoise,
                                 ),
@@ -1681,7 +1675,7 @@ class DonationPlacesSection extends ConsumerWidget {
                                 context,
                                 LatLng(p.latitude!, p.longitude!),
                               ),
-                              icon: const Icon(Icons.directions_outlined),
+                              icon: const Icon(LucideIcons.navigation),
                               label: Text(context.tr('cm_directions')),
                             ),
                           ),

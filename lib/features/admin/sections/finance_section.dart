@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -167,12 +168,12 @@ class _FinanceSectionState extends ConsumerState<FinanceSection> {
         if (canManage) ...[
           FilledButton.icon(
             onPressed: () => _addDonation(context, cases),
-            icon: const Icon(Icons.add),
+            icon: const Icon(LucideIcons.plus),
             label: Text(context.tr('ad_add_donation')),
           ),
           OutlinedButton.icon(
             onPressed: () => _addExpense(context, cases),
-            icon: const Icon(Icons.remove),
+            icon: const Icon(LucideIcons.minus),
             label: Text(context.tr('ad_add_expense')),
           ),
         ],
@@ -207,19 +208,19 @@ class _FinanceSectionState extends ConsumerState<FinanceSection> {
             Kpi(
               label: context.tr('kp_donations'),
               value: money(inSum),
-              icon: Icons.volunteer_activism_outlined,
+              icon: LucideIcons.handHeart,
               color: AppColors.success,
             ),
             Kpi(
               label: context.tr('kp_aid'),
               value: money(outSum),
-              icon: Icons.payments_outlined,
+              icon: LucideIcons.banknote,
               color: AppColors.info,
             ),
             Kpi(
               label: context.tr('ad_total_balance'),
               value: money(admin.balance),
-              icon: Icons.account_balance_wallet_outlined,
+              icon: LucideIcons.wallet,
               color: admin.balance >= 0
                   ? AppColors.primary
                   : AppColors.emergency,
@@ -227,7 +228,7 @@ class _FinanceSectionState extends ConsumerState<FinanceSection> {
             Kpi(
               label: context.tr('ad_donors_count'),
               value: '${donations.length}',
-              icon: Icons.people_outline,
+              icon: LucideIcons.users,
             ),
           ],
         ),
@@ -285,7 +286,7 @@ class _FinanceSectionState extends ConsumerState<FinanceSection> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(
-                    Icons.volunteer_activism_outlined,
+                    LucideIcons.handHeart,
                     color: AppColors.success,
                   ),
                   title: Text(
@@ -309,7 +310,7 @@ class _FinanceSectionState extends ConsumerState<FinanceSection> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(
-                    Icons.payments_outlined,
+                    LucideIcons.banknote,
                     color: AppColors.info,
                   ),
                   title: Text(

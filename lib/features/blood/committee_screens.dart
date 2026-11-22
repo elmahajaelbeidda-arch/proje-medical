@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -120,12 +121,12 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                   IconButton(
                     tooltip: context.tr('mc_verify_title'),
                     onPressed: () => context.push('/verify-card'),
-                    icon: const Icon(Icons.qr_code_scanner),
+                    icon: const Icon(LucideIcons.scanQrCode),
                   ),
                   IconButton(
                     tooltip: context.tr('aid_map'),
                     onPressed: () => context.push('/aid/map'),
-                    icon: const Icon(Icons.map_outlined),
+                    icon: const Icon(LucideIcons.map),
                   ),
                   IconButton(
                     tooltip: context.tr('logout'),
@@ -133,7 +134,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                       ref.read(authProvider.notifier).logout();
                       context.go('/role');
                     },
-                    icon: const Icon(Icons.logout),
+                    icon: const Icon(LucideIcons.logOut),
                   ),
                 ],
           bottom: TabBar(
@@ -187,7 +188,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                     children: [
                       OutlinedButton.icon(
                         onPressed: () => showExternalDonorSheet(context, ref),
-                        icon: const Icon(Icons.person_add_alt_1),
+                        icon: const Icon(LucideIcons.userPlus),
                         label: Text(context.tr('add_external_donor')),
                       ),
                       const SizedBox(height: 10),
@@ -195,7 +196,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                         onChanged: (v) => setState(() => _donorQuery = v),
                         decoration: InputDecoration(
                           hintText: context.tr('search_donors_hint'),
-                          prefixIcon: const Icon(Icons.search),
+                          prefixIcon: const Icon(LucideIcons.search),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -241,7 +242,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                       const SizedBox(height: 8),
                       if (donors.isEmpty)
                         EmptyState(
-                          icon: Icons.person_search_outlined,
+                          icon: LucideIcons.userSearch,
                           message: context.tr('none'),
                         ),
                       for (final d in donors)
@@ -272,7 +273,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                       const SizedBox(height: 8),
                       if (requests.isEmpty)
                         EmptyState(
-                          icon: Icons.inbox_outlined,
+                          icon: LucideIcons.inbox,
                           message: context.tr('no_requests'),
                         ),
                       for (final r in requests)
@@ -442,7 +443,7 @@ class CommitteeDonorCard extends ConsumerWidget {
                         ),
                         onPressed: () =>
                             review(DonorStatus.approved, 'donor_approved_msg'),
-                        icon: const Icon(Icons.check),
+                        icon: const Icon(LucideIcons.check),
                         label: Text(context.tr('approve')),
                       ),
                     ),
@@ -456,7 +457,7 @@ class CommitteeDonorCard extends ConsumerWidget {
                         ),
                         onPressed: () =>
                             review(DonorStatus.rejected, 'donor_rejected_msg'),
-                        icon: const Icon(Icons.close),
+                        icon: const Icon(LucideIcons.x),
                         label: Text(context.tr('reject')),
                       ),
                     ),
@@ -484,7 +485,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.search_off,
+          icon: LucideIcons.searchX,
           message: context.tr('no_requests'),
         ),
       );
@@ -544,7 +545,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
                         Pill(
                           label: context.tr('urgency_urgent'),
                           color: AppColors.emergency,
-                          icon: Icons.bolt,
+                          icon: LucideIcons.zap,
                         ),
                       Pill(
                         label: context.tr('units_n', args: {'n': r.units}),
@@ -624,7 +625,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
                     Pill(
                       label: context.tr('linked_n', args: {'n': 1}),
                       color: AppColors.primary,
-                      icon: Icons.link,
+                      icon: LucideIcons.link,
                     ),
                   ],
                   trailing: TextButton(
@@ -656,7 +657,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
                         Pill(
                           label: context.tr('same_city'),
                           color: AppColors.primary,
-                          icon: Icons.place_outlined,
+                          icon: LucideIcons.mapPin,
                         ),
                       Pill(
                         label: context.tr(
@@ -665,7 +666,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
                               : 'compatible',
                         ),
                         color: AppColors.info,
-                        icon: Icons.check,
+                        icon: LucideIcons.check,
                       ),
                     ],
                     trailing: FilledButton.icon(
@@ -679,7 +680,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
                           SnackBar(content: Text(context.tr('donor_linked'))),
                         );
                       },
-                      icon: const Icon(Icons.link, size: 18),
+                      icon: const Icon(LucideIcons.link, size: 18),
                       label: Text(context.tr('link')),
                     ),
                   ),
@@ -688,7 +689,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: () =>
                   showExternalDonorSheet(context, ref, linkToRequest: r),
-              icon: const Icon(Icons.person_add_alt_1),
+              icon: const Icon(LucideIcons.userPlus),
               label: Text(context.tr('add_external_donor')),
             ),
           ],
@@ -699,7 +700,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Icons.lock_outline, size: 16, color: AppColors.grey),
+              const Icon(LucideIcons.lock, size: 16, color: AppColors.grey),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -775,7 +776,7 @@ class _RegistrationsTabState extends ConsumerState<_RegistrationsTab> {
           onChanged: (v) => setState(() => _query = v),
           decoration: InputDecoration(
             hintText: context.tr('search_people_hint'),
-            prefixIcon: const Icon(Icons.search),
+            prefixIcon: const Icon(LucideIcons.search),
           ),
         ),
         const SizedBox(height: 8),
@@ -800,10 +801,7 @@ class _RegistrationsTabState extends ConsumerState<_RegistrationsTab> {
         ),
         const SizedBox(height: 8),
         if (list.isEmpty)
-          EmptyState(
-            icon: Icons.person_search_outlined,
-            message: context.tr('none'),
-          ),
+          EmptyState(icon: LucideIcons.userSearch, message: context.tr('none')),
         for (final r in list)
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
@@ -842,12 +840,12 @@ class RegistrationCard extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: AppColors.turquoise,
+                  backgroundColor: AppColors.secondary,
                   child: Icon(
                     r.isDoctor
-                        ? Icons.medical_services_outlined
-                        : Icons.person_outline,
-                    color: Colors.white,
+                        ? LucideIcons.briefcaseMedical
+                        : LucideIcons.user,
+                    color: AppColors.turquoise,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -876,14 +874,14 @@ class RegistrationCard extends ConsumerWidget {
             const SizedBox(height: 10),
             _line(
               context,
-              Icons.badge_outlined,
+              LucideIcons.idCard,
               context.tr('id_number'),
               r.idNumber,
             ),
             if (r.isDoctor) ...[
               _line(
                 context,
-                Icons.local_hospital_outlined,
+                LucideIcons.hospital,
                 context.tr('specialty'),
                 r.specialtyId == null
                     ? '—'
@@ -891,7 +889,7 @@ class RegistrationCard extends ConsumerWidget {
               ),
               _line(
                 context,
-                Icons.numbers,
+                LucideIcons.hash,
                 context.tr('license_number'),
                 r.licenseNumber ?? '—',
               ),
@@ -914,7 +912,7 @@ class RegistrationCard extends ConsumerWidget {
                   Pill(
                     label: context.tr('dup_warning'),
                     color: AppColors.emergency,
-                    icon: Icons.content_copy,
+                    icon: LucideIcons.copy,
                   ),
               ],
             ),
@@ -970,7 +968,7 @@ class RegistrationCard extends ConsumerWidget {
                       ),
                       onPressed: () =>
                           review(ReviewStatus.approved, 'account_approved_msg'),
-                      icon: const Icon(Icons.check),
+                      icon: const Icon(LucideIcons.check),
                       label: Text(context.tr('approve')),
                     ),
                   ),
@@ -984,7 +982,7 @@ class RegistrationCard extends ConsumerWidget {
                       ),
                       onPressed: () =>
                           review(ReviewStatus.rejected, 'account_rejected_msg'),
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(LucideIcons.x),
                       label: Text(context.tr('reject')),
                     ),
                   ),
@@ -1076,7 +1074,7 @@ Future<void> showExternalDonorSheet(
                     controller: name,
                     decoration: InputDecoration(
                       labelText: ctx.tr('full_name'),
-                      prefixIcon: const Icon(Icons.person_outline),
+                      prefixIcon: const Icon(LucideIcons.user),
                     ),
                     validator: required,
                   ),
@@ -1113,7 +1111,7 @@ Future<void> showExternalDonorSheet(
                     controller: city,
                     decoration: InputDecoration(
                       labelText: ctx.tr('city'),
-                      prefixIcon: const Icon(Icons.location_city_outlined),
+                      prefixIcon: const Icon(LucideIcons.building2),
                     ),
                     validator: required,
                   ),
@@ -1126,7 +1124,7 @@ Future<void> showExternalDonorSheet(
                     ],
                     decoration: InputDecoration(
                       labelText: ctx.tr('phone'),
-                      prefixIcon: const Icon(Icons.phone_outlined),
+                      prefixIcon: const Icon(LucideIcons.phone),
                     ),
                     validator: (v) {
                       final digits = (v ?? '').replaceAll(RegExp(r'\D'), '');
@@ -1158,7 +1156,7 @@ Future<void> showExternalDonorSheet(
                         ),
                       );
                     },
-                    icon: const Icon(Icons.person_add_alt_1),
+                    icon: const Icon(LucideIcons.userPlus),
                     label: Text(
                       ctx.tr(
                         linkToRequest != null ? 'add_and_link' : 'add_donor',
@@ -1215,7 +1213,7 @@ class _TeamNotesState extends ConsumerState<_TeamNotes> {
                   dense: true,
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(
-                    Icons.sticky_note_2_outlined,
+                    LucideIcons.stickyNote,
                     color: AppColors.primary,
                   ),
                   title: Text(n.text),
@@ -1239,7 +1237,7 @@ class _TeamNotesState extends ConsumerState<_TeamNotes> {
                 IconButton.filled(
                   tooltip: context.tr('add_note'),
                   onPressed: _add,
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(LucideIcons.plus),
                 ),
               ],
             ),
@@ -1372,7 +1370,7 @@ class _DonationPlacesTabState extends ConsumerState<_DonationPlacesTab> {
                 const SizedBox(height: 10),
                 FilledButton.icon(
                   onPressed: _add,
-                  icon: const Icon(Icons.add_location_alt_outlined),
+                  icon: const Icon(LucideIcons.mapPinPlus),
                   label: Text(context.tr('dp_add')),
                 ),
               ],
@@ -1383,7 +1381,7 @@ class _DonationPlacesTabState extends ConsumerState<_DonationPlacesTab> {
           Card(
             child: ListTile(
               leading: Icon(
-                p.active ? Icons.place : Icons.location_off_outlined,
+                p.active ? LucideIcons.mapPin : LucideIcons.mapPinOff,
                 color: p.active ? AppColors.primary : AppColors.grey,
               ),
               title: Text(p.name),
@@ -1407,7 +1405,7 @@ class _DonationPlacesTabState extends ConsumerState<_DonationPlacesTab> {
                       () => ref.read(bloodProvider.notifier).deletePlace(p.id),
                       'ad_done',
                     ),
-                    icon: const Icon(Icons.delete_outline),
+                    icon: const Icon(LucideIcons.trash2),
                   ),
                 ],
               ),

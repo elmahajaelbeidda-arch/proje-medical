@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/admin_provider.dart';
@@ -203,7 +204,7 @@ class _AnnouncementsState extends ConsumerState<_Announcements> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Icon(
-                a.active ? Icons.campaign : Icons.campaign_outlined,
+                a.active ? LucideIcons.megaphone : LucideIcons.megaphone,
                 color: a.active ? AppColors.primary : AppColors.grey,
               ),
               title: Text(a.title),
@@ -219,7 +220,7 @@ class _AnnouncementsState extends ConsumerState<_Announcements> {
                     tooltip: context.tr('ad_delete'),
                     onPressed: () =>
                         guarded(context, () => n.deleteAnnouncement(a.id)),
-                    icon: const Icon(Icons.delete_outline),
+                    icon: const Icon(LucideIcons.trash2),
                   ),
                 ],
               ),
@@ -253,7 +254,7 @@ class _AnnouncementsState extends ConsumerState<_Announcements> {
                   _body.clear();
                 }
               },
-              icon: const Icon(Icons.add),
+              icon: const Icon(LucideIcons.plus),
               label: Text(context.tr('ad_publish')),
             ),
           ),

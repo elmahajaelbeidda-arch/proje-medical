@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 enum UserRole { patient, doctor, committee }
 
@@ -23,16 +24,16 @@ class Specialty {
   String get key => 'sp_$id';
 
   static const all = <Specialty>[
-    Specialty('general', Icons.medical_services_outlined),
-    Specialty('internal', Icons.monitor_heart_outlined),
-    Specialty('pediatrics', Icons.child_care_outlined),
-    Specialty('gyneco', Icons.pregnant_woman_outlined),
-    Specialty('cardio', Icons.favorite_outline),
-    Specialty('derma', Icons.face_retouching_natural_outlined),
-    Specialty('ortho', Icons.accessibility_new_outlined),
-    Specialty('endo', Icons.bloodtype_outlined),
-    Specialty('radiology', Icons.document_scanner_outlined),
-    Specialty('psych', Icons.psychology_outlined),
+    Specialty('general', LucideIcons.briefcaseMedical),
+    Specialty('internal', LucideIcons.heartPulse),
+    Specialty('pediatrics', LucideIcons.baby),
+    Specialty('gyneco', LucideIcons.baby),
+    Specialty('cardio', LucideIcons.heart),
+    Specialty('derma', LucideIcons.sparkles),
+    Specialty('ortho', LucideIcons.personStanding),
+    Specialty('endo', LucideIcons.droplet),
+    Specialty('radiology', LucideIcons.scanText),
+    Specialty('psych', LucideIcons.brain),
   ];
 
   static Specialty byId(String id) =>

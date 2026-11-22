@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,7 +81,7 @@ class _DemoBanner extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.science_outlined, color: AppColors.primary),
+          const Icon(LucideIcons.flaskConical, color: AppColors.primary),
           const SizedBox(width: 8),
           Expanded(child: Text(context.tr('aid_demo_mode'))),
         ],
@@ -135,11 +136,7 @@ class _AidSignInState extends ConsumerState<AidSignIn> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        const Icon(
-          Icons.lock_person_outlined,
-          size: 56,
-          color: AppColors.primary,
-        ),
+        const Icon(LucideIcons.lockKeyhole, size: 56, color: AppColors.primary),
         const SizedBox(height: 12),
         Text(
           context.tr('aid_sign_in_title'),
@@ -152,7 +149,7 @@ class _AidSignInState extends ConsumerState<AidSignIn> {
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             labelText: context.tr('email'),
-            prefixIcon: const Icon(Icons.alternate_email),
+            prefixIcon: const Icon(LucideIcons.atSign),
           ),
         ),
         const SizedBox(height: 12),
@@ -161,7 +158,7 @@ class _AidSignInState extends ConsumerState<AidSignIn> {
           obscureText: true,
           decoration: InputDecoration(
             labelText: context.tr('password'),
-            prefixIcon: const Icon(Icons.lock_outline),
+            prefixIcon: const Icon(LucideIcons.lock),
           ),
         ),
         const SizedBox(height: 20),
@@ -201,7 +198,7 @@ class MyAidRequestsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.tr('aid_my_requests'))),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/aid/new'),
-        icon: const Icon(Icons.add_location_alt_outlined),
+        icon: const Icon(LucideIcons.mapPinPlus),
         label: Text(context.tr('aid_new')),
       ),
       body: ListView(
@@ -214,7 +211,7 @@ class MyAidRequestsScreen extends ConsumerWidget {
             data: (list) => list.isEmpty
                 ? [
                     EmptyState(
-                      icon: Icons.location_off_outlined,
+                      icon: LucideIcons.mapPinOff,
                       message: context.tr('aid_none'),
                     ),
                   ]
@@ -300,7 +297,9 @@ class _MyRequestCard extends StatelessWidget {
                                 ? AppColors.primary
                                 : AppColors.border,
                             child: Icon(
-                              i < reached ? Icons.check : Icons.circle,
+                              i < reached
+                                  ? LucideIcons.check
+                                  : LucideIcons.circle,
                               size: i < reached ? 14 : 8,
                               color: Colors.white,
                             ),
@@ -412,7 +411,7 @@ class _AidRequestFormScreenState extends ConsumerState<AidRequestFormScreen> {
               controller: _name,
               decoration: InputDecoration(
                 labelText: context.tr('patient_name'),
-                prefixIcon: const Icon(Icons.person_outline),
+                prefixIcon: const Icon(LucideIcons.user),
               ),
               validator: required,
             ),
@@ -426,7 +425,7 @@ class _AidRequestFormScreenState extends ConsumerState<AidRequestFormScreen> {
               decoration: InputDecoration(
                 labelText: context.tr('phone'),
                 hintText: 'XX XX XX XX',
-                prefixIcon: const Icon(Icons.phone_outlined),
+                prefixIcon: const Icon(LucideIcons.phone),
               ),
               validator: (v) {
                 final digits = (v ?? '').replaceAll(RegExp(r'\D'), '');
@@ -462,7 +461,7 @@ class _AidRequestFormScreenState extends ConsumerState<AidRequestFormScreen> {
                     value: u,
                     label: Text(context.tr(urgencyLabelKey(u))),
                     icon: Icon(
-                      Icons.circle,
+                      LucideIcons.circle,
                       size: 12,
                       color: urgencyColorOf(u),
                     ),
@@ -477,7 +476,7 @@ class _AidRequestFormScreenState extends ConsumerState<AidRequestFormScreen> {
               controller: _address,
               decoration: InputDecoration(
                 labelText: context.tr('aid_address_note'),
-                prefixIcon: const Icon(Icons.signpost_outlined),
+                prefixIcon: const Icon(LucideIcons.signpost),
               ),
             ),
             const SizedBox(height: 16),
@@ -515,7 +514,7 @@ class _AidRequestFormScreenState extends ConsumerState<AidRequestFormScreen> {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.send),
+                  : const Icon(LucideIcons.sendHorizontal),
               label: Text(context.tr('aid_submit')),
             ),
           ],
@@ -607,7 +606,7 @@ class _LocationPickerState extends State<LocationPicker> {
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 44),
                       child: Icon(
-                        Icons.location_pin,
+                        LucideIcons.mapPin,
                         size: 48,
                         color: AppColors.emergency,
                       ),
@@ -628,7 +627,7 @@ class _LocationPickerState extends State<LocationPicker> {
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Icon(Icons.my_location),
+              : const Icon(LucideIcons.locateFixed),
           label: Text(context.tr(_locating ? 'aid_locating' : 'aid_locate_me')),
         ),
         const SizedBox(height: 6),
@@ -689,7 +688,7 @@ class _AidMapScreenState extends ConsumerState<AidMapScreen> {
           ? Scaffold(
               appBar: AppBar(title: Text(context.tr('aid_map'))),
               body: EmptyState(
-                icon: Icons.lock_outline,
+                icon: LucideIcons.lock,
                 message: context.tr('aid_committee_only'),
               ),
             )
@@ -718,7 +717,9 @@ class _AidMapScreenState extends ConsumerState<AidMapScreen> {
     }) => Padding(
       padding: const EdgeInsetsDirectional.only(end: 6),
       child: FilterChip(
-        avatar: dot == null ? null : Icon(Icons.circle, size: 12, color: dot),
+        avatar: dot == null
+            ? null
+            : Icon(LucideIcons.circle, size: 12, color: dot),
         label: Text(label),
         selected: selected,
         onSelected: (_) => onTap(),
@@ -732,13 +733,13 @@ class _AidMapScreenState extends ConsumerState<AidMapScreen> {
           IconButton(
             tooltip: context.tr('aid_list'),
             onPressed: () => setState(() => _listView = !_listView),
-            icon: Icon(_listView ? Icons.map_outlined : Icons.list_alt),
+            icon: Icon(_listView ? LucideIcons.map : LucideIcons.list),
           ),
           if (role == CommitteeRole.supervisor)
             IconButton(
               tooltip: context.tr('aid_members'),
               onPressed: () => context.push('/aid/members'),
-              icon: const Icon(Icons.manage_accounts_outlined),
+              icon: const Icon(LucideIcons.userCog),
             ),
           if (!ref.read(aidRepositoryProvider).isDemo)
             IconButton(
@@ -747,7 +748,7 @@ class _AidMapScreenState extends ConsumerState<AidMapScreen> {
                 await ref.read(aidRepositoryProvider).signOut();
                 ref.read(aidSessionProvider.notifier).changed();
               },
-              icon: const Icon(Icons.logout),
+              icon: const Icon(LucideIcons.logOut),
             ),
         ],
       ),
@@ -794,7 +795,7 @@ class _AidMapScreenState extends ConsumerState<AidMapScreen> {
                               leading: CircleAvatar(
                                 backgroundColor: urgencyColorOf(r.urgency),
                                 child: const Icon(
-                                  Icons.person_pin_circle,
+                                  LucideIcons.mapPinned,
                                   color: Colors.white,
                                 ),
                               ),
@@ -899,7 +900,7 @@ class _AidPin extends StatelessWidget {
         request.status == AidStatus.helped ||
         request.status == AidStatus.closed;
     return Icon(
-      done ? Icons.check_circle : Icons.location_pin,
+      done ? LucideIcons.circleCheck : LucideIcons.mapPin,
       size: 44,
       color: done ? AppColors.grey : urgencyColorOf(request.urgency),
       shadows: const [Shadow(blurRadius: 4, color: Color(0x61263B36))],
@@ -957,10 +958,7 @@ class AidRequestSheet extends ConsumerWidget {
                 CircleAvatar(
                   radius: 24,
                   backgroundColor: urgencyColorOf(r.urgency),
-                  child: const Icon(
-                    Icons.person_pin_circle,
-                    color: Colors.white,
-                  ),
+                  child: const Icon(LucideIcons.mapPinned, color: Colors.white),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -999,7 +997,7 @@ class AidRequestSheet extends ConsumerWidget {
                       args: {'date': _date(r.verifiedAt!)},
                     ),
                     color: AppColors.primary,
-                    icon: Icons.verified,
+                    icon: LucideIcons.badgeCheck,
                   ),
               ],
             ),
@@ -1010,7 +1008,7 @@ class AidRequestSheet extends ConsumerWidget {
               Row(
                 children: [
                   const Icon(
-                    Icons.signpost_outlined,
+                    LucideIcons.signpost,
                     size: 18,
                     color: AppColors.primary,
                   ),
@@ -1035,7 +1033,7 @@ class AidRequestSheet extends ConsumerWidget {
                 ),
                 mode: LaunchMode.externalApplication,
               ),
-              icon: const Icon(Icons.directions),
+              icon: const Icon(LucideIcons.navigation),
               label: Text(context.tr('aid_directions')),
             ),
             const SizedBox(height: 16),
@@ -1099,7 +1097,7 @@ class AidRequestSheet extends ConsumerWidget {
                   await run(() => repo.delete(r.id), 'aid_deleted');
                   if (context.mounted) Navigator.pop(context);
                 },
-                icon: const Icon(Icons.delete_outline),
+                icon: const Icon(LucideIcons.trash2),
                 label: Text(context.tr('aid_delete')),
               ),
             ] else ...[
@@ -1160,7 +1158,7 @@ class _AidMembersScreenState extends ConsumerState<AidMembersScreen> {
         children: [
           Card(
             child: ListTile(
-              leading: const Icon(Icons.badge_outlined),
+              leading: const Icon(LucideIcons.idCard),
               title: Text(context.tr('aid_my_user_id')),
               subtitle: SelectableText(repo.currentUserId ?? '—'),
             ),
@@ -1175,8 +1173,8 @@ class _AidMembersScreenState extends ConsumerState<AidMembersScreen> {
                       : AppColors.secondary,
                   child: Icon(
                     m.role == CommitteeRole.supervisor
-                        ? Icons.admin_panel_settings
-                        : Icons.person,
+                        ? LucideIcons.shieldUser
+                        : LucideIcons.user,
                     color: m.role == CommitteeRole.supervisor
                         ? Colors.white
                         : AppColors.primary,
@@ -1206,7 +1204,7 @@ class _AidMembersScreenState extends ConsumerState<AidMembersScreen> {
               controller: _userId,
               decoration: InputDecoration(
                 labelText: context.tr('aid_member_user_id'),
-                prefixIcon: const Icon(Icons.key_outlined),
+                prefixIcon: const Icon(LucideIcons.keyRound),
               ),
             ),
             const SizedBox(height: 10),
@@ -1214,7 +1212,7 @@ class _AidMembersScreenState extends ConsumerState<AidMembersScreen> {
               controller: _name,
               decoration: InputDecoration(
                 labelText: context.tr('full_name'),
-                prefixIcon: const Icon(Icons.person_outline),
+                prefixIcon: const Icon(LucideIcons.user),
               ),
             ),
             const SizedBox(height: 10),
@@ -1243,7 +1241,7 @@ class _AidMembersScreenState extends ConsumerState<AidMembersScreen> {
                   _name.clear();
                 });
               },
-              icon: const Icon(Icons.person_add_alt_1),
+              icon: const Icon(LucideIcons.userPlus),
               label: Text(context.tr('aid_add_member')),
             ),
           ],

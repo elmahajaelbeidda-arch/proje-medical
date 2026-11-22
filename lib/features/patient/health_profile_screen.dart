@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -73,7 +74,7 @@ class _HealthProfileScreenState extends ConsumerState<HealthProfileScreen> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: context.tr('age'),
-                    prefixIcon: const Icon(Icons.cake_outlined),
+                    prefixIcon: const Icon(LucideIcons.cake),
                   ),
                 ),
               ),
@@ -83,7 +84,7 @@ class _HealthProfileScreenState extends ConsumerState<HealthProfileScreen> {
                   initialValue: _blood,
                   decoration: InputDecoration(
                     labelText: context.tr('blood_type'),
-                    prefixIcon: const Icon(Icons.bloodtype_outlined),
+                    prefixIcon: const Icon(LucideIcons.droplet),
                   ),
                   items: [
                     for (final b in _bloodTypes)
@@ -99,12 +100,12 @@ class _HealthProfileScreenState extends ConsumerState<HealthProfileScreen> {
             segments: [
               ButtonSegment(
                 value: true,
-                icon: const Icon(Icons.male),
+                icon: const Icon(LucideIcons.mars),
                 label: Text(context.tr('male')),
               ),
               ButtonSegment(
                 value: false,
-                icon: const Icon(Icons.female),
+                icon: const Icon(LucideIcons.venus),
                 label: Text(context.tr('female')),
               ),
             ],
@@ -131,7 +132,7 @@ class _HealthProfileScreenState extends ConsumerState<HealthProfileScreen> {
             decoration: InputDecoration(
               labelText: context.tr('allergies'),
               hintText: context.tr('none'),
-              prefixIcon: const Icon(Icons.no_food_outlined),
+              prefixIcon: const Icon(LucideIcons.utensilsCrossed),
             ),
           ),
           const SizedBox(height: 16),
@@ -141,7 +142,7 @@ class _HealthProfileScreenState extends ConsumerState<HealthProfileScreen> {
             decoration: InputDecoration(
               labelText: context.tr('current_medications'),
               hintText: context.tr('none'),
-              prefixIcon: const Icon(Icons.medication_outlined),
+              prefixIcon: const Icon(LucideIcons.pill),
             ),
           ),
           const SizedBox(height: 28),

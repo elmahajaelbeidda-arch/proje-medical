@@ -187,7 +187,10 @@ class SummonsCardView extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.event, color: AppColors.primary),
+                      const Icon(
+                        LucideIcons.calendar,
+                        color: AppColors.primary,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Column(
@@ -253,7 +256,7 @@ class SummonsCardView extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    const Icon(Icons.qr_code_2, color: AppColors.primary),
+                    const Icon(LucideIcons.qrCode, color: AppColors.primary),
                     const SizedBox(width: 6),
                     Text(
                       '${context.tr('summons_verification')}: ',
@@ -306,7 +309,7 @@ class SummonsScreen extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.lock_outline,
+          icon: LucideIcons.lock,
           message: context.tr('summons_none'),
         ),
       );
@@ -325,7 +328,7 @@ class SummonsScreen extends ConsumerWidget {
                 child: FilledButton.icon(
                   style: FilledButton.styleFrom(minimumSize: const Size(0, 50)),
                   onPressed: () => downloadSummons(context, summons),
-                  icon: const Icon(Icons.download),
+                  icon: const Icon(LucideIcons.download),
                   label: Text(context.tr('summons_download')),
                 ),
               ),
@@ -336,7 +339,7 @@ class SummonsScreen extends ConsumerWidget {
                     minimumSize: const Size(0, 50),
                   ),
                   onPressed: () => printSummons(context, summons),
-                  icon: const Icon(Icons.print_outlined),
+                  icon: const Icon(LucideIcons.printer),
                   label: Text(context.tr('summons_print')),
                 ),
               ),
@@ -370,12 +373,12 @@ class SummonsTile extends StatelessWidget {
       child: ListTile(
         onTap: () => context.push('/summons/${s.id}'),
         leading: CircleAvatar(
-          backgroundColor: AppColors.turquoise,
+          backgroundColor: AppColors.secondary,
           child: Icon(
             s.issuer == SummonsIssuer.doctor
-                ? Icons.medical_services_outlined
-                : Icons.local_hospital_outlined,
-            color: Colors.white,
+                ? LucideIcons.briefcaseMedical
+                : LucideIcons.hospital,
+            color: AppColors.turquoise,
           ),
         ),
         title: Text(
@@ -387,7 +390,7 @@ class SummonsTile extends StatelessWidget {
           '\u2066${summonsTime(s.appointment)}\u2069\n${s.place}',
         ),
         isThreeLine: true,
-        trailing: const Icon(Icons.chevron_right),
+        trailing: const Icon(LucideIcons.chevronRightDir),
       ),
     );
   }
@@ -415,7 +418,7 @@ class SummonsListScreen extends ConsumerWidget {
           ),
           if (all.isEmpty)
             EmptyState(
-              icon: Icons.badge_outlined,
+              icon: LucideIcons.idCard,
               message: context.tr('summons_none'),
             ),
           if (upcoming.isNotEmpty) ...[
@@ -609,7 +612,7 @@ class _SummonsFormState extends State<_SummonsForm> {
                         minimumSize: const Size(0, 50),
                       ),
                       onPressed: _pickDate,
-                      icon: const Icon(Icons.calendar_month),
+                      icon: const Icon(LucideIcons.calendarDays),
                       label: Text(
                         _date == null
                             ? context.tr('summons_date')
@@ -624,7 +627,7 @@ class _SummonsFormState extends State<_SummonsForm> {
                         minimumSize: const Size(0, 50),
                       ),
                       onPressed: _pickTime,
-                      icon: const Icon(Icons.schedule),
+                      icon: const Icon(LucideIcons.clock),
                       label: Text(
                         _time == null
                             ? context.tr('summons_time')
@@ -642,7 +645,7 @@ class _SummonsFormState extends State<_SummonsForm> {
                 decoration: InputDecoration(
                   labelText: context.tr('summons_place'),
                   hintText: context.tr('summons_place_hint'),
-                  prefixIcon: const Icon(Icons.place_outlined),
+                  prefixIcon: const Icon(LucideIcons.mapPin),
                 ),
               ),
               gap,
@@ -651,7 +654,7 @@ class _SummonsFormState extends State<_SummonsForm> {
                 validator: _required,
                 decoration: InputDecoration(
                   labelText: context.tr('city'),
-                  prefixIcon: const Icon(Icons.location_city_outlined),
+                  prefixIcon: const Icon(LucideIcons.building2),
                 ),
               ),
               gap,
@@ -668,7 +671,7 @@ class _SummonsFormState extends State<_SummonsForm> {
               FilledButton.icon(
                 style: FilledButton.styleFrom(minimumSize: const Size(0, 50)),
                 onPressed: _submit,
-                icon: const Icon(Icons.badge_outlined),
+                icon: const Icon(LucideIcons.idCard),
                 label: Text(context.tr('summons_issue')),
               ),
             ],

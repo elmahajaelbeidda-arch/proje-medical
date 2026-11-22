@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,22 +24,22 @@ import 'sections/users_section.dart';
 
 /// The areas of the dashboard and who may open them.
 enum AdminSection {
-  overview(Icons.dashboard_outlined, {}),
-  users(Icons.manage_accounts_outlined, {
+  overview(LucideIcons.layoutDashboard, {}),
+  users(LucideIcons.userCog, {
     AdminPermission.manageRegistrations,
     AdminPermission.suspendAccounts,
     AdminPermission.manageCards,
   }),
-  cases(Icons.medical_information_outlined, {AdminPermission.viewCases}),
-  blood(Icons.bloodtype_outlined, {AdminPermission.manageBlood}),
-  doctors(Icons.medical_services_outlined, {AdminPermission.manageDoctors}),
-  facilities(Icons.local_hospital_outlined, {AdminPermission.manageFacilities}),
-  finance(Icons.volunteer_activism_outlined, {AdminPermission.viewFinance}),
-  reports(Icons.insights_outlined, {AdminPermission.exportReports}),
-  messages(Icons.campaign_outlined, {AdminPermission.sendNotifications}),
-  pulse(Icons.diversity_1_outlined, {AdminPermission.manageCommunity}),
-  security(Icons.admin_panel_settings_outlined, {}),
-  settings(Icons.tune, {
+  cases(LucideIcons.fileHeart, {AdminPermission.viewCases}),
+  blood(LucideIcons.droplet, {AdminPermission.manageBlood}),
+  doctors(LucideIcons.briefcaseMedical, {AdminPermission.manageDoctors}),
+  facilities(LucideIcons.hospital, {AdminPermission.manageFacilities}),
+  finance(LucideIcons.handHeart, {AdminPermission.viewFinance}),
+  reports(LucideIcons.chartLine, {AdminPermission.exportReports}),
+  messages(LucideIcons.megaphone, {AdminPermission.sendNotifications}),
+  pulse(LucideIcons.heartHandshake, {AdminPermission.manageCommunity}),
+  security(LucideIcons.shieldUser, {}),
+  settings(LucideIcons.slidersHorizontal, {
     AdminPermission.manageSettings,
     AdminPermission.manageContent,
   });
@@ -160,7 +161,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                   textDirection: TextDirection.ltr,
                   decoration: InputDecoration(
                     labelText: context.tr('email'),
-                    prefixIcon: const Icon(Icons.alternate_email),
+                    prefixIcon: const Icon(LucideIcons.atSign),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -171,13 +172,11 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                   onSubmitted: (_) => _login(),
                   decoration: InputDecoration(
                     labelText: context.tr('password'),
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    prefixIcon: const Icon(LucideIcons.lock),
                     suffixIcon: IconButton(
                       onPressed: () => setState(() => _obscure = !_obscure),
                       icon: Icon(
-                        _obscure
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                        _obscure ? LucideIcons.eye : LucideIcons.eyeOff,
                       ),
                     ),
                   ),
@@ -194,7 +193,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                   onSubmitted: (_) => _verify(),
                   decoration: InputDecoration(
                     labelText: context.tr('ad_code'),
-                    prefixIcon: const Icon(Icons.verified_user_outlined),
+                    prefixIcon: const Icon(LucideIcons.shieldCheck),
                   ),
                 ),
               if (_error != null) ...[
@@ -318,7 +317,7 @@ class AdminShell extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 6),
           child: Center(
             child: Chip(
-              avatar: const Icon(Icons.person, size: 18),
+              avatar: const Icon(LucideIcons.user, size: 18),
               label: Text(
                 wide
                     ? '${me.name} — ${context.tr('ar_${me.role.name}')}'
@@ -333,7 +332,7 @@ class AdminShell extends ConsumerWidget {
             ref.read(adminProvider.notifier).logout();
             context.go('/admin');
           },
-          icon: const Icon(Icons.logout),
+          icon: const Icon(LucideIcons.logOut),
         ),
       ],
     );

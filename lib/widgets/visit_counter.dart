@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
@@ -201,21 +202,16 @@ class VisitorStatsCard extends ConsumerWidget {
     String two(int n) => n.toString().padLeft(2, '0');
 
     final tiles = <Widget>[
+      _Tile(LucideIcons.eye, 'vc_total', s?.totalVisits, AppColors.primary),
       _Tile(
-        Icons.visibility_outlined,
-        'vc_total',
-        s?.totalVisits,
-        AppColors.primary,
-      ),
-      _Tile(
-        Icons.today_outlined,
+        LucideIcons.calendarDays,
         'vc_today',
         s?.todayVisitors,
         AppColors.turquoise,
       ),
       if (settings.showRegisteredCount && (s == null || s.registered != null))
         _Tile(
-          Icons.how_to_reg_outlined,
+          LucideIcons.userCheck,
           'vc_registered',
           s?.registered,
           AppColors.vivid,
@@ -223,7 +219,7 @@ class VisitorStatsCard extends ConsumerWidget {
       if (settings.showBeneficiariesCount &&
           (s == null || s.beneficiaries != null))
         _Tile(
-          Icons.volunteer_activism_outlined,
+          LucideIcons.handHeart,
           'vc_beneficiaries',
           s?.beneficiaries,
           AppColors.turquoise,
@@ -235,7 +231,7 @@ class VisitorStatsCard extends ConsumerWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.insights_outlined, color: AppColors.primary),
+            const Icon(LucideIcons.chartLine, color: AppColors.primary),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -265,7 +261,7 @@ class VisitorStatsCard extends ConsumerWidget {
         const SizedBox(height: 10),
         Row(
           children: [
-            const Icon(Icons.autorenew, size: 15, color: AppColors.grey),
+            const Icon(LucideIcons.refreshCw, size: 15, color: AppColors.grey),
             const SizedBox(width: 4),
             Expanded(
               child: Text(

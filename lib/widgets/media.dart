@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -35,10 +36,10 @@ String formatDuration(Duration d) {
 String categoryKey(AttachmentCategory c) => 'cat_${c.name}';
 
 IconData categoryIcon(AttachmentCategory c) => switch (c) {
-  AttachmentCategory.exam => Icons.monitor_heart_outlined,
-  AttachmentCategory.lab => Icons.biotech_outlined,
-  AttachmentCategory.prescription => Icons.receipt_long_outlined,
-  AttachmentCategory.other => Icons.description_outlined,
+  AttachmentCategory.exam => LucideIcons.heartPulse,
+  AttachmentCategory.lab => LucideIcons.microscope,
+  AttachmentCategory.prescription => LucideIcons.receiptText,
+  AttachmentCategory.other => LucideIcons.fileText,
 };
 
 Color categoryColor(AttachmentCategory c) => switch (c) {
@@ -130,12 +131,12 @@ Future<PickSource?> askImageSource(BuildContext context) {
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: const Icon(Icons.photo_camera_outlined),
+            leading: const Icon(LucideIcons.camera),
             title: Text(ctx.tr('camera')),
             onTap: () => Navigator.pop(ctx, PickSource.camera),
           ),
           ListTile(
-            leading: const Icon(Icons.photo_library_outlined),
+            leading: const Icon(LucideIcons.images),
             title: Text(ctx.tr('gallery')),
             onTap: () => Navigator.pop(ctx, PickSource.gallery),
           ),
@@ -179,7 +180,7 @@ class AttachmentThumb extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
-        isPdf ? Icons.picture_as_pdf_outlined : Icons.image_outlined,
+        isPdf ? LucideIcons.fileText : LucideIcons.image,
         color: Colors.white,
       ),
     );
@@ -205,7 +206,7 @@ void showAttachmentPreview(BuildContext context, Attachment a) {
               ].where((e) => e.isNotEmpty).join(' • '),
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.close),
+              icon: const Icon(LucideIcons.x),
               onPressed: () => Navigator.pop(ctx),
             ),
           ),
@@ -345,7 +346,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.mic, color: AppColors.primary),
+              child: const Icon(LucideIcons.mic, color: AppColors.primary),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -377,7 +378,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
                 minimumSize: const Size(0, 44),
               ),
               onPressed: _stop,
-              icon: const Icon(Icons.stop_rounded),
+              icon: const Icon(LucideIcons.square),
               label: Text(context.tr('stop')),
             ),
           ],
@@ -395,14 +396,14 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
             children: [
               TextButton.icon(
                 onPressed: _start,
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(LucideIcons.refreshCw),
                 label: Text(context.tr('record_again')),
               ),
               const Spacer(),
               TextButton.icon(
                 style: TextButton.styleFrom(foregroundColor: AppColors.grey),
                 onPressed: _delete,
-                icon: const Icon(Icons.delete_outline),
+                icon: const Icon(LucideIcons.trash2),
                 label: Text(context.tr('delete')),
               ),
             ],
@@ -424,7 +425,11 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
               const CircleAvatar(
                 radius: 24,
                 backgroundColor: Colors.white,
-                child: Icon(Icons.mic, color: AppColors.turquoise, size: 28),
+                child: Icon(
+                  LucideIcons.mic,
+                  color: AppColors.turquoise,
+                  size: 28,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -538,9 +543,7 @@ class _VoiceNotePlayerState extends State<VoiceNotePlayer> {
               disabledBackgroundColor: AppColors.grey,
             ),
             onPressed: playable ? _toggle : null,
-            icon: Icon(
-              _playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
-            ),
+            icon: Icon(_playing ? LucideIcons.pause : LucideIcons.play),
           ),
           const SizedBox(width: 10),
           Flexible(
@@ -553,7 +556,7 @@ class _VoiceNotePlayerState extends State<VoiceNotePlayer> {
                   if (!widget.compact)
                     Row(
                       children: [
-                        Icon(Icons.graphic_eq, color: fg, size: 18),
+                        Icon(LucideIcons.audioLines, color: fg, size: 18),
                         const SizedBox(width: 6),
                         Text(
                           context.tr('voice_note'),

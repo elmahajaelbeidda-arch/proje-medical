@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../core/l10n.dart';
@@ -73,12 +74,12 @@ class _CardScannerScreenState extends State<CardScannerScreen> {
           IconButton(
             tooltip: context.tr('mc_scan_torch'),
             onPressed: () => _controller.toggleTorch(),
-            icon: const Icon(Icons.flashlight_on_outlined),
+            icon: const Icon(LucideIcons.flashlight),
           ),
           IconButton(
             tooltip: context.tr('mc_scan_switch'),
             onPressed: () => _controller.switchCamera(),
-            icon: const Icon(Icons.cameraswitch_outlined),
+            icon: const Icon(LucideIcons.switchCamera),
           ),
         ],
       ),
@@ -175,11 +176,7 @@ class _CameraError extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.no_photography_outlined,
-                color: Colors.white,
-                size: 56,
-              ),
+              const Icon(LucideIcons.cameraOff, color: Colors.white, size: 56),
               const SizedBox(height: 12),
               Text(
                 context.tr(denied ? 'mc_scan_denied' : 'mc_scan_failed'),

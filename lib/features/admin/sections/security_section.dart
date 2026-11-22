@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -134,7 +135,7 @@ class _MyAccountState extends ConsumerState<_MyAccount> {
                     FilledButton.icon(
                       onPressed: () =>
                           setState(() => _secret = Totp.newSecret()),
-                      icon: const Icon(Icons.qr_code_2),
+                      icon: const Icon(LucideIcons.qrCode),
                       label: Text(
                         context.tr(linked ? 'ad_2fa_relink' : 'ad_2fa_link'),
                       ),
@@ -145,7 +146,7 @@ class _MyAccountState extends ConsumerState<_MyAccount> {
                           ref.read(adminProvider.notifier).disableMyTotp();
                           snack(context, 'ad_done');
                         },
-                        icon: const Icon(Icons.phonelink_erase),
+                        icon: const Icon(LucideIcons.smartphone),
                         label: Text(context.tr('ad_2fa_disable')),
                       ),
                   ],
@@ -263,7 +264,7 @@ class _Admins extends ConsumerWidget {
           alignment: AlignmentDirectional.centerStart,
           child: FilledButton.icon(
             onPressed: () => _editAdmin(context, ref, null),
-            icon: const Icon(Icons.person_add_alt),
+            icon: const Icon(LucideIcons.userPlus),
             label: Text(context.tr('ad_new_admin')),
           ),
         ),
@@ -280,7 +281,7 @@ class _Admins extends ConsumerWidget {
                           ? AppColors.primary
                           : AppColors.grey,
                       child: const Icon(
-                        Icons.admin_panel_settings,
+                        LucideIcons.shieldUser,
                         color: Colors.white,
                       ),
                     ),
@@ -311,7 +312,7 @@ class _Admins extends ConsumerWidget {
                   children: [
                     TextButton.icon(
                       onPressed: () => _editAdmin(context, ref, a),
-                      icon: const Icon(Icons.tune),
+                      icon: const Icon(LucideIcons.slidersHorizontal),
                       label: Text(context.tr('ad_edit_permissions')),
                     ),
                     if (a.id != state.me!.id)
@@ -322,7 +323,7 @@ class _Admins extends ConsumerWidget {
                           ok: 'ad_done',
                         ),
                         icon: Icon(
-                          a.active ? Icons.block : Icons.check_circle_outline,
+                          a.active ? LucideIcons.ban : LucideIcons.circleCheck,
                         ),
                         label: Text(
                           context.tr(a.active ? 'ad_disable' : 'ad_enable'),
@@ -335,7 +336,7 @@ class _Admins extends ConsumerWidget {
                           () => notifier.resetTwoFactor(a.id),
                           ok: 'ad_done',
                         ),
-                        icon: const Icon(Icons.phonelink_erase),
+                        icon: const Icon(LucideIcons.smartphone),
                         label: Text(context.tr('ad_2fa_reset')),
                       ),
                   ],
@@ -483,7 +484,10 @@ class _Matrix extends StatelessWidget {
                   for (final r in roles)
                     DataCell(
                       rolePermissions(r).contains(p)
-                          ? const Icon(Icons.check, color: AppColors.success)
+                          ? const Icon(
+                              LucideIcons.check,
+                              color: AppColors.success,
+                            )
                           : const Text('—'),
                     ),
                 ],
@@ -680,12 +684,12 @@ class _Backup extends ConsumerWidget {
                     );
                   }
                 },
-                icon: const Icon(Icons.cloud_download_outlined),
+                icon: const Icon(LucideIcons.cloudDownload),
                 label: Text(context.tr('ad_backup_download')),
               ),
               OutlinedButton.icon(
                 onPressed: restore,
-                icon: const Icon(Icons.restore),
+                icon: const Icon(LucideIcons.archiveRestore),
                 label: Text(context.tr('ad_restore')),
               ),
             ],

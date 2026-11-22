@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -138,7 +139,7 @@ bool _matches(CarePlace p, PlaceFilter f) => switch (f) {
 };
 
 IconData placeIcon(CarePlace p) => p.kind == PlaceKind.doctor
-    ? Icons.medical_services
+    ? LucideIcons.briefcaseMedical
     : facilityTypeIcon(p.facilityType!);
 
 Color placeColor(CarePlace p) =>
@@ -253,7 +254,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                   ),
                   subtitle: Text('${ctx.tr(p.detailKey)} • ${p.city}'),
                   trailing: km == null
-                      ? const Icon(Icons.chevron_left)
+                      ? const Icon(LucideIcons.chevronLeftDir)
                       : Text(
                           formatKm(km),
                           textDirection: TextDirection.ltr,
@@ -314,21 +315,21 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                       ],
                     ),
                   ),
-                  const Icon(Icons.verified, color: AppColors.vivid),
+                  const Icon(LucideIcons.badgeCheck, color: AppColors.vivid),
                 ],
               ),
               const SizedBox(height: 12),
-              _line(Icons.place_outlined, '${p.city} — ${p.address}'),
+              _line(LucideIcons.mapPin, '${p.city} — ${p.address}'),
               if (km != null)
                 _line(
-                  Icons.near_me_outlined,
+                  LucideIcons.navigation,
                   '${ctx.tr('cm_distance')}: ${formatKm(km)}',
                 ),
-              if (p.extra.isNotEmpty) _line(Icons.list_alt, p.extra),
+              if (p.extra.isNotEmpty) _line(LucideIcons.list, p.extra),
               const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: () => openDirections(ctx, p.point),
-                icon: const Icon(Icons.directions),
+                icon: const Icon(LucideIcons.navigation),
                 label: Text(ctx.tr('cm_directions')),
               ),
               const SizedBox(height: 8),
@@ -341,7 +342,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                     Navigator.pop(ctx);
                     context.push('/patient/new');
                   },
-                  icon: const Icon(Icons.add_comment_outlined),
+                  icon: const Icon(LucideIcons.messageSquarePlus),
                   label: Text(ctx.tr('request_consultation')),
                 ),
             ],
@@ -377,7 +378,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                   ? [for (final p in places) (p, null)]
                   : nearest(places, _me!),
             ),
-            icon: const Icon(Icons.format_list_bulleted),
+            icon: const Icon(LucideIcons.list),
           ),
         ],
       ),
@@ -388,7 +389,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
             child: TextField(
               onChanged: (v) => setState(() => _q = v),
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(LucideIcons.search),
                 hintText: context.tr('cm_search'),
                 isDense: true,
               ),
@@ -539,7 +540,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                 height: 20,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : const Icon(Icons.my_location),
+            : const Icon(LucideIcons.locateFixed),
         label: Text(context.tr('cm_nearest_btn')),
       ),
     );

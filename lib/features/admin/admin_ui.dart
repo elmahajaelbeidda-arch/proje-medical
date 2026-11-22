@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -221,7 +222,7 @@ class SearchBox extends StatelessWidget {
     child: TextField(
       onChanged: onChanged,
       decoration: InputDecoration(
-        prefixIcon: const Icon(Icons.search),
+        prefixIcon: const Icon(LucideIcons.search),
         hintText: hint ?? context.tr('ad_search'),
         isDense: true,
       ),
@@ -272,7 +273,7 @@ class NoAccess extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.lock_outline, size: 56, color: AppColors.grey),
+          const Icon(LucideIcons.lock, size: 56, color: AppColors.grey),
           const SizedBox(height: 10),
           Text(context.tr('ad_section_no_access'), textAlign: TextAlign.center),
         ],
@@ -567,7 +568,7 @@ class ExportButtons extends StatelessWidget {
             tables: tables(),
           );
         },
-        icon: const Icon(Icons.picture_as_pdf_outlined),
+        icon: const Icon(LucideIcons.fileText),
         label: const Text('PDF'),
       ),
       OutlinedButton.icon(
@@ -575,7 +576,7 @@ class ExportButtons extends StatelessWidget {
           if (onExport != null && !onExport!()) return;
           exportXlsx(context, fileName: fileName, tables: tables());
         },
-        icon: const Icon(Icons.table_view_outlined),
+        icon: const Icon(LucideIcons.table),
         label: const Text('Excel'),
       ),
     ],

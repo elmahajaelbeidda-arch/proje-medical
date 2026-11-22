@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,9 +27,9 @@ String modeKey(SessionMode m) => 'sm_${m.name}';
 String psychStatusKey(PsychStatus s) => 'ps_${s.name}';
 
 IconData modeIcon(SessionMode m) => switch (m) {
-  SessionMode.chat => Icons.chat_bubble_outline,
-  SessionMode.voice => Icons.call_outlined,
-  SessionMode.video => Icons.videocam_outlined,
+  SessionMode.chat => LucideIcons.messageCircle,
+  SessionMode.voice => LucideIcons.phone,
+  SessionMode.video => LucideIcons.video,
 };
 
 Color psychStatusColor(PsychStatus s) => switch (s) {
@@ -72,7 +73,7 @@ class CrisisCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.health_and_safety, color: Colors.white),
+          const Icon(LucideIcons.shieldPlus, color: Colors.white),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -111,7 +112,7 @@ class _PrivacyCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lock_outline, color: AppColors.primary),
+          const Icon(LucideIcons.lock, color: AppColors.primary),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -199,13 +200,13 @@ class PsychSessionCard extends StatelessWidget {
                     Pill(
                       label: context.tr('psych_risk_badge'),
                       color: AppColors.emergency,
-                      icon: Icons.priority_high,
+                      icon: LucideIcons.circleAlert,
                     ),
                   if (s.followUpOf != null)
                     Pill(
                       label: context.tr('psych_follow_up'),
                       color: AppColors.info,
-                      icon: Icons.repeat,
+                      icon: LucideIcons.repeat,
                     ),
                   for (final t in s.topics)
                     Pill(label: context.tr(topicKey(t)), color: AppColors.mint),
@@ -239,7 +240,7 @@ class PsychHomeScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.tr('psych_title'))),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/patient/psych/new'),
-        icon: const Icon(Icons.event_available),
+        icon: const Icon(LucideIcons.calendarCheck),
         label: Text(context.tr('psych_book')),
       ),
       body: ListView(
@@ -250,7 +251,7 @@ class PsychHomeScreen extends ConsumerWidget {
               radius: 40,
               backgroundColor: AppColors.secondary,
               child: Icon(
-                Icons.psychology_outlined,
+                LucideIcons.brain,
                 size: 46,
                 color: AppColors.primary,
               ),
@@ -269,7 +270,7 @@ class PsychHomeScreen extends ConsumerWidget {
           SectionHeader(context.tr('psych_my_sessions')),
           if (mine.isEmpty)
             EmptyState(
-              icon: Icons.event_note_outlined,
+              icon: LucideIcons.calendarRange,
               message: context.tr('psych_no_sessions'),
             ),
           for (final s in mine)
@@ -586,8 +587,8 @@ class _PsychBookingScreenState extends ConsumerState<PsychBookingScreen> {
                   ),
                   Icon(
                     _doctorId == d.id
-                        ? Icons.check_circle
-                        : Icons.radio_button_unchecked,
+                        ? LucideIcons.circleCheck
+                        : LucideIcons.circle,
                     color: AppColors.primary,
                   ),
                 ],
@@ -626,7 +627,7 @@ class _PsychBookingScreenState extends ConsumerState<PsychBookingScreen> {
         _title('psych_choose_slot'),
         if (slots.isEmpty)
           EmptyState(
-            icon: Icons.event_busy,
+            icon: LucideIcons.calendarX,
             message: context.tr('psych_no_slots'),
           ),
         for (final e in days.entries) ...[
@@ -663,7 +664,7 @@ class _PsychBookingScreenState extends ConsumerState<PsychBookingScreen> {
       children: [
         InfoCard(
           title: context.tr('psych_appointment'),
-          icon: Icons.event_available,
+          icon: LucideIcons.calendarCheck,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -693,7 +694,7 @@ class _PsychBookingScreenState extends ConsumerState<PsychBookingScreen> {
           enabled: !_shareName,
           decoration: InputDecoration(
             labelText: context.tr('psych_alias'),
-            prefixIcon: const Icon(Icons.badge_outlined),
+            prefixIcon: const Icon(LucideIcons.idCard),
           ),
         ),
         SwitchListTile(
@@ -767,7 +768,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.lock_outline,
+          icon: LucideIcons.lock,
           message: context.tr('psych_no_items'),
         ),
       );
@@ -867,7 +868,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                 ListTile(title: Text(ctx.tr('psych_no_slots'))),
               for (final x in slots.take(12))
                 ListTile(
-                  leading: const Icon(Icons.event),
+                  leading: const Icon(LucideIcons.calendar),
                   title: Text(formatSlot(ctx, x)),
                   onTap: () => Navigator.pop(ctx, x),
                 ),
@@ -920,7 +921,10 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(Icons.event, color: AppColors.primary),
+                      const Icon(
+                        LucideIcons.calendar,
+                        color: AppColors.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(formatSlot(context, session.slot)),
                     ],
@@ -942,7 +946,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                         Pill(
                           label: context.tr('psych_follow_up'),
                           color: AppColors.info,
-                          icon: Icons.repeat,
+                          icon: LucideIcons.repeat,
                         ),
                       for (final t in session.topics)
                         Pill(
@@ -1004,7 +1008,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                       notifier.confirm(session.id);
                       _snack('psych_confirmed_msg');
                     },
-                    icon: const Icon(Icons.check),
+                    icon: const Icon(LucideIcons.check),
                     label: Text(context.tr('psych_confirm')),
                   ),
                 ),
@@ -1019,7 +1023,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                       notifier.decline(session.id);
                       _snack('psych_declined_msg');
                     },
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(LucideIcons.x),
                     label: Text(context.tr('psych_decline')),
                   ),
                 ),
@@ -1029,14 +1033,14 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
             FilledButton.icon(
               style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
               onPressed: complete,
-              icon: const Icon(Icons.task_alt),
+              icon: const Icon(LucideIcons.circleCheckBig),
               label: Text(context.tr('psych_complete')),
             ),
           if (widget.asDoctor && session.status == PsychStatus.completed)
             OutlinedButton.icon(
               style: OutlinedButton.styleFrom(minimumSize: const Size(0, 48)),
               onPressed: followUp,
-              icon: const Icon(Icons.event_repeat),
+              icon: const Icon(LucideIcons.calendarSync),
               label: Text(context.tr('psych_schedule_follow_up')),
             ),
           if (!widget.asDoctor && session.isUpcoming)
@@ -1046,7 +1050,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                 foregroundColor: AppColors.grey,
               ),
               onPressed: cancel,
-              icon: const Icon(Icons.event_busy),
+              icon: const Icon(LucideIcons.calendarX),
               label: Text(context.tr('psych_cancel')),
             ),
           if (!widget.asDoctor &&
@@ -1060,7 +1064,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
             FilledButton.icon(
               style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
               onPressed: () => context.pushReplacement('/patient/psych/new'),
-              icon: const Icon(Icons.event_available),
+              icon: const Icon(LucideIcons.calendarCheck),
               label: Text(context.tr('psych_book_again')),
             ),
           ],
@@ -1069,7 +1073,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
             const SizedBox(height: 12),
             InfoCard(
               title: context.tr('psych_recommendations'),
-              icon: Icons.tips_and_updates_outlined,
+              icon: LucideIcons.lightbulb,
               child: Text(
                 session.recommendations,
                 style: const TextStyle(height: 1.6),
@@ -1088,7 +1092,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.lock, color: AppColors.primary),
+                        const Icon(LucideIcons.lock, color: AppColors.primary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -1187,7 +1191,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                       );
                       _message.clear();
                     },
-                    icon: const Icon(Icons.send),
+                    icon: const Icon(LucideIcons.sendHorizontal),
                   ),
                 ],
               ),
@@ -1252,7 +1256,7 @@ class _PsychDoctorShellState extends ConsumerState<PsychDoctorShell> {
       children: [
         if (items.isEmpty)
           EmptyState(
-            icon: Icons.event_note_outlined,
+            icon: LucideIcons.calendarRange,
             message: context.tr('psych_no_items'),
           ),
         for (final s in items)
@@ -1295,13 +1299,13 @@ class _PsychDoctorShellState extends ConsumerState<PsychDoctorShell> {
         const SizedBox(height: 10),
         InfoCard(
           title: context.tr('psych_hours'),
-          icon: Icons.schedule,
+          icon: LucideIcons.clock,
           child: Text(me.availability.join('\n')),
         ),
         const SizedBox(height: 10),
         InfoCard(
           title: context.tr('psych_pledge_title'),
-          icon: Icons.verified_user_outlined,
+          icon: LucideIcons.shieldCheck,
           child: Text(
             context.tr('psych_pledge'),
             style: const TextStyle(height: 1.6),
@@ -1313,7 +1317,7 @@ class _PsychDoctorShellState extends ConsumerState<PsychDoctorShell> {
             ref.read(authProvider.notifier).logout();
             context.go('/role');
           },
-          icon: const Icon(Icons.logout),
+          icon: const Icon(LucideIcons.logOut),
           label: Text(context.tr('logout')),
         ),
       ],
@@ -1330,20 +1334,20 @@ class _PsychDoctorShellState extends ConsumerState<PsychDoctorShell> {
             icon: Badge(
               isLabelVisible: requests.isNotEmpty,
               label: Text('${requests.length}'),
-              child: const Icon(Icons.inbox_outlined),
+              child: const Icon(LucideIcons.inbox),
             ),
             label: context.tr('psych_tab_requests'),
           ),
           NavigationDestination(
-            icon: const Icon(Icons.event_available_outlined),
+            icon: const Icon(LucideIcons.calendarCheck),
             label: context.tr('psych_tab_upcoming'),
           ),
           NavigationDestination(
-            icon: const Icon(Icons.history),
+            icon: const Icon(LucideIcons.history),
             label: context.tr('psych_tab_followup'),
           ),
           NavigationDestination(
-            icon: const Icon(Icons.person_outline),
+            icon: const Icon(LucideIcons.user),
             label: context.tr('psych_tab_profile'),
           ),
         ],
@@ -1372,7 +1376,7 @@ class _PledgeGateState extends ConsumerState<_PledgeGate> {
               radius: 40,
               backgroundColor: AppColors.secondary,
               child: Icon(
-                Icons.verified_user_outlined,
+                LucideIcons.shieldCheck,
                 size: 44,
                 color: AppColors.primary,
               ),

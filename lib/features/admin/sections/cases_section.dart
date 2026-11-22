@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,9 +15,9 @@ import '../admin_ui.dart';
 import 'overview_section.dart' show Pill, StageBars, stageColor;
 
 IconData caseIcon(CaseKind k) => switch (k) {
-  CaseKind.consultation => Icons.forum_outlined,
-  CaseKind.blood => Icons.bloodtype_outlined,
-  CaseKind.referral => Icons.assignment_ind_outlined,
+  CaseKind.consultation => LucideIcons.messagesSquare,
+  CaseKind.blood => LucideIcons.droplet,
+  CaseKind.referral => LucideIcons.squareUser,
 };
 
 /// "sp_cardio|type_lab" → "قلب • تحاليل".
@@ -93,7 +94,7 @@ class _CasesSectionState extends ConsumerState<CasesSection> {
         // Map of aid requests with location (patients' consent).
         OutlinedButton.icon(
           onPressed: () => context.push('/aid/map'),
-          icon: const Icon(Icons.map_outlined),
+          icon: const Icon(LucideIcons.map),
           label: Text(context.tr('aid_map')),
         ),
         if (admin.can(AdminPermission.exportReports))
@@ -172,7 +173,7 @@ class _CasesSectionState extends ConsumerState<CasesSection> {
                   ),
                   if (c.urgent)
                     const Icon(
-                      Icons.priority_high,
+                      LucideIcons.circleAlert,
                       color: AppColors.emergency,
                       size: 18,
                     ),
@@ -310,7 +311,7 @@ class _AdminCasePageState extends ConsumerState<AdminCasePage> {
                         if (medical)
                           FilledButton.icon(
                             onPressed: open,
-                            icon: const Icon(Icons.lock_open),
+                            icon: const Icon(LucideIcons.lockOpen),
                             label: Text(context.tr('ad_open_file')),
                           )
                         else
@@ -348,7 +349,7 @@ class _AdminCasePageState extends ConsumerState<AdminCasePage> {
                           () => notifier.clearCaseDecision(c.id, c.code),
                           ok: 'ad_done',
                         ),
-                        icon: const Icon(Icons.undo),
+                        icon: const Icon(LucideIcons.undo2),
                         label: Text(context.tr('ad_clear_decision')),
                       ),
                   ],
@@ -362,7 +363,7 @@ class _AdminCasePageState extends ConsumerState<AdminCasePage> {
                     for (final s in summons)
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.event),
+                        leading: const Icon(LucideIcons.calendar),
                         title: Text(s.issuerName),
                         subtitle: Text(
                           '${fmtDateTime(s.appointment)} • ${s.place}',

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 import '../core/l10n.dart';
@@ -131,7 +132,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
             hintText: context.tr(
               _listening ? 'voice_search_listening' : widget.hintKey,
             ),
-            prefixIcon: const Icon(Icons.search, color: AppColors.grey),
+            prefixIcon: const Icon(LucideIcons.search, color: AppColors.grey),
             filled: true,
             fillColor: AppColors.fieldFill,
             contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -153,7 +154,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                 if (_controller.text.isNotEmpty && !_listening)
                   IconButton(
                     tooltip: context.tr('clear'),
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(LucideIcons.x),
                     onPressed: () => _setText(''),
                   ),
                 Padding(
@@ -168,7 +169,9 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                       foregroundColor: Colors.white,
                     ),
                     onPressed: _toggle,
-                    icon: Icon(_listening ? Icons.stop_rounded : Icons.mic),
+                    icon: Icon(
+                      _listening ? LucideIcons.square : LucideIcons.mic,
+                    ),
                   ),
                 ),
               ],
@@ -200,7 +203,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
-                          Icons.mic,
+                          LucideIcons.mic,
                           color: AppColors.primaryDark,
                           size: 18,
                         ),

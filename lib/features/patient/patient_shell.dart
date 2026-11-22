@@ -106,7 +106,7 @@ class MyConsultationsTab extends ConsumerWidget {
     Widget list(List<Consultation> items) {
       if (items.isEmpty) {
         return EmptyState(
-          icon: Icons.assignment_outlined,
+          icon: LucideIcons.clipboardList,
           message: context.tr('no_consultations'),
         );
       }
@@ -178,7 +178,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
           IconButton(
             tooltip: context.tr('cm_title'),
             onPressed: () => context.push('/care-map'),
-            icon: const Icon(Icons.map_outlined),
+            icon: const Icon(LucideIcons.map),
           ),
         ],
       ),
@@ -220,7 +220,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
           Expanded(
             child: doctors.isEmpty
                 ? EmptyState(
-                    icon: Icons.person_search_outlined,
+                    icon: LucideIcons.userSearch,
                     message: _query.isEmpty
                         ? context.tr('none')
                         : context.tr('no_results', args: {'q': _query}),
@@ -279,7 +279,7 @@ class _JoinBanner extends StatelessWidget {
       child: ListTile(
         textColor: Colors.white,
         contentPadding: const EdgeInsets.all(14),
-        leading: const Icon(Icons.volunteer_activism, color: Colors.white),
+        leading: const Icon(LucideIcons.handHeart, color: Colors.white),
         title: Text(
           context.tr('join_as_doctor'),
           style: const TextStyle(fontWeight: FontWeight.w700),
@@ -324,10 +324,7 @@ class PatientProfileTab extends ConsumerWidget {
             IconButton(
               tooltip: context.tr('notifications'),
               onPressed: () => context.push('/notifications'),
-              icon: const Icon(
-                Icons.notifications_outlined,
-                color: Colors.white,
-              ),
+              icon: const Icon(LucideIcons.bell, color: Colors.white),
             ),
           ],
           below: Column(
@@ -353,7 +350,7 @@ class PatientProfileTab extends ConsumerWidget {
                   Pill(
                     label: '\u202A${profile.bloodType}\u202C',
                     color: AppColors.primary,
-                    icon: Icons.bloodtype,
+                    icon: LucideIcons.droplet,
                   ),
                 ],
               ),
@@ -373,13 +370,13 @@ class PatientProfileTab extends ConsumerWidget {
                 title: context.tr('pr_my_health'),
                 children: [
                   MenuRow(
-                    icon: Icons.folder_shared_outlined,
+                    icon: LucideIcons.folderHeart,
                     title: context.tr('health_profile'),
                     onTap: () => context.push('/patient/health-profile'),
                   ),
                   const MyCardRow(),
                   MenuRow(
-                    icon: Icons.event_note_outlined,
+                    icon: LucideIcons.calendarRange,
                     title: context.tr('summons_cards'),
                     onTap: () => context.push('/patient/summons'),
                   ),
@@ -389,13 +386,13 @@ class PatientProfileTab extends ConsumerWidget {
                 title: context.tr('blood_donation'),
                 children: [
                   MenuRow(
-                    icon: Icons.volunteer_activism_outlined,
+                    icon: LucideIcons.handHeart,
                     title: context.tr('pr_donate_blood'),
                     onTap: () => context.push('/blood'),
                   ),
                   // Blood requests live only in the patient's profile.
                   MenuRow(
-                    icon: Icons.bloodtype_outlined,
+                    icon: LucideIcons.droplet,
                     title: context.tr('my_blood_requests'),
                     onTap: () => context.push('/patient/blood'),
                   ),
@@ -405,27 +402,27 @@ class PatientProfileTab extends ConsumerWidget {
                 title: context.tr('settings'),
                 children: [
                   MenuRow(
-                    icon: Icons.notifications_outlined,
+                    icon: LucideIcons.bell,
                     title: context.tr('notifications'),
                     onTap: () => context.push('/notifications'),
                   ),
                   MenuRow(
-                    icon: Icons.tune,
+                    icon: LucideIcons.slidersHorizontal,
                     title: context.tr('settings'),
                     onTap: () => context.push('/settings'),
                   ),
                   MenuRow(
-                    icon: Icons.groups_outlined,
+                    icon: LucideIcons.users,
                     title: context.tr('about_association'),
                     onTap: () => context.push('/about'),
                   ),
                   MenuRow(
-                    icon: Icons.gavel_outlined,
+                    icon: LucideIcons.gavel,
                     title: context.tr('disclaimer'),
                     onTap: () => context.push('/disclaimer'),
                   ),
                   MenuRow(
-                    icon: Icons.support_agent_outlined,
+                    icon: LucideIcons.headset,
                     title: context.tr('contact_us'),
                     onTap: () => context.push('/about'),
                   ),

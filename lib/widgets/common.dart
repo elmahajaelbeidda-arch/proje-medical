@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -33,9 +34,9 @@ Color urgencyColor(Urgency u) => switch (u) {
 };
 
 IconData typeIcon(ConsultationType t) => switch (t) {
-  ConsultationType.lab => Icons.biotech_outlined,
-  ConsultationType.imaging => Icons.document_scanner_outlined,
-  ConsultationType.general => Icons.chat_outlined,
+  ConsultationType.lab => LucideIcons.microscope,
+  ConsultationType.imaging => LucideIcons.scanText,
+  ConsultationType.general => LucideIcons.messageCircle,
 };
 
 // ---------------------------------------------------------------------------
@@ -91,7 +92,7 @@ class UrgencyPill extends StatelessWidget {
   Widget build(BuildContext context) => Pill(
     label: context.tr(urgencyKey(urgency)),
     color: urgencyColor(urgency),
-    icon: urgency == Urgency.urgent ? Icons.bolt : null,
+    icon: urgency == Urgency.urgent ? LucideIcons.zap : null,
   );
 }
 
@@ -231,7 +232,7 @@ class DoctorAvatar extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(1.5),
               child: Icon(
-                Icons.verified,
+                LucideIcons.badgeCheck,
                 size: radius * .55,
                 color: AppColors.info,
               ),
@@ -314,7 +315,7 @@ class AttachmentTile extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 categoryPill,
-                                Icon(Icons.arrow_drop_down, color: catColor),
+                                Icon(LucideIcons.chevronDown, color: catColor),
                               ],
                             ),
                           ),
@@ -330,11 +331,11 @@ class AttachmentTile extends StatelessWidget {
                 ),
               ),
               if (onRemove != null)
-                IconButton(icon: const Icon(Icons.close), onPressed: onRemove)
+                IconButton(icon: const Icon(LucideIcons.x), onPressed: onRemove)
               else
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Icon(Icons.zoom_in),
+                  child: Icon(LucideIcons.zoomIn),
                 ),
             ],
           ),
@@ -438,20 +439,20 @@ class ConsultationCard extends StatelessWidget {
                     Pill(
                       label: context.tr('voice_note'),
                       color: AppColors.turquoise,
-                      icon: Icons.mic,
+                      icon: LucideIcons.mic,
                     ),
                   if (c.attachments.isNotEmpty)
                     Pill(
                       label:
                           '${c.attachments.length} ${context.tr('files_count')}',
                       color: AppColors.ink,
-                      icon: Icons.attach_file,
+                      icon: LucideIcons.paperclip,
                     ),
                   if (!showPatient && doctor != null)
                     Pill(
                       label: doctor.name,
                       color: AppColors.info,
-                      icon: Icons.person_outline,
+                      icon: LucideIcons.user,
                     ),
                 ],
               ),
@@ -523,13 +524,13 @@ class DoctorCard extends StatelessWidget {
                     Row(
                       children: [
                         const Icon(
-                          Icons.star_rounded,
+                          LucideIcons.star,
                           size: 18,
                           color: AppColors.accent,
                         ),
                         Text(' ${doctor.rating}  ', style: text.labelMedium),
                         const Icon(
-                          Icons.forum_outlined,
+                          LucideIcons.messagesSquare,
                           size: 16,
                           color: AppColors.grey,
                         ),
@@ -549,7 +550,7 @@ class DoctorCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.grey),
+              const Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
             ],
           ),
         ),
@@ -639,7 +640,7 @@ void showDoctorSheet(BuildContext context, Doctor doctor) {
               Pill(
                 label: ctx.tr('verified_doctor'),
                 color: AppColors.info,
-                icon: Icons.verified,
+                icon: LucideIcons.badgeCheck,
               ),
             ],
             const SizedBox(height: 16),
@@ -666,7 +667,7 @@ void showDoctorSheet(BuildContext context, Doctor doctor) {
               children: [
                 for (final a in doctor.availability)
                   Chip(
-                    avatar: const Icon(Icons.schedule, size: 18),
+                    avatar: const Icon(LucideIcons.clock, size: 18),
                     label: Text(a),
                   ),
               ],
@@ -677,7 +678,7 @@ void showDoctorSheet(BuildContext context, Doctor doctor) {
                 Navigator.pop(ctx);
                 context.push('/patient/new');
               },
-              icon: const Icon(Icons.add_comment_outlined),
+              icon: const Icon(LucideIcons.messageSquarePlus),
               label: Text(ctx.tr('request_consultation')),
             ),
           ],
@@ -767,18 +768,25 @@ class MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = color ?? Theme.of(context).colorScheme.primary;
+    // Icon in a 44 mint square, as on the home screen.
+    final c = color ?? AppColors.primary;
     return ListTile(
       onTap: onTap,
-      leading: CircleAvatar(
-        backgroundColor: c,
-        child: Icon(icon, color: AppColors.on(c), size: 22),
+      minTileHeight: 56,
+      leading: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: AppColors.secondary,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: c, size: 22),
       ),
       title: Text(
         title,
         style: TextStyle(fontWeight: FontWeight.w600, color: color),
       ),
-      trailing: const Icon(Icons.chevron_right),
+      trailing: const Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
     );
   }
 }
@@ -799,7 +807,7 @@ class IdVerifiedBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.badge_outlined, color: Colors.white, size: 18),
+          const Icon(LucideIcons.idCard, color: Colors.white, size: 18),
           const SizedBox(width: 8),
           Text(
             '${context.tr('id_card')}  ',
@@ -818,7 +826,7 @@ class IdVerifiedBadge extends StatelessWidget {
           ),
           if (auth.phoneVerified) ...[
             const SizedBox(width: 8),
-            const Icon(Icons.verified, color: Colors.white, size: 18),
+            const Icon(LucideIcons.badgeCheck, color: Colors.white, size: 18),
             const SizedBox(width: 2),
             Text(
               context.tr('verified'),
@@ -846,7 +854,7 @@ class AccountReviewBanner extends ConsumerWidget {
       color: pending ? AppColors.warning : AppColors.grey,
       child: ListTile(
         leading: Icon(
-          pending ? Icons.hourglass_top : Icons.block,
+          pending ? LucideIcons.hourglass : LucideIcons.ban,
           color: pending ? AppColors.ink : Colors.white,
         ),
         title: Text(

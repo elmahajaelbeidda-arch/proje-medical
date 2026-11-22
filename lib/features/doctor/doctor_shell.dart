@@ -147,7 +147,7 @@ class DoctorHomeTab extends ConsumerWidget {
                 icon: const Badge(
                   smallSize: 8,
                   backgroundColor: AppColors.accent,
-                  child: Icon(Icons.notifications_outlined),
+                  child: Icon(LucideIcons.bell),
                 ),
               ),
             ],
@@ -160,7 +160,7 @@ class DoctorHomeTab extends ConsumerWidget {
               onChanged: (v) =>
                   ref.read(doctorAvailableProvider.notifier).set(v),
               secondary: Icon(
-                Icons.circle,
+                LucideIcons.circle,
                 size: 14,
                 color: available ? AppColors.success : AppColors.grey,
               ),
@@ -180,7 +180,7 @@ class DoctorHomeTab extends ConsumerWidget {
             child: Row(
               children: [
                 const Icon(
-                  Icons.volunteer_activism,
+                  LucideIcons.handHeart,
                   color: Colors.white,
                   size: 44,
                 ),
@@ -202,7 +202,7 @@ class DoctorHomeTab extends ConsumerWidget {
             children: [
               Expanded(
                 child: StatCard(
-                  icon: Icons.favorite_outline,
+                  icon: LucideIcons.heart,
                   value: '${_me.consultationsCount + helped}',
                   label: context.tr('helped_patients'),
                   color: AppColors.primary,
@@ -211,7 +211,7 @@ class DoctorHomeTab extends ConsumerWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: StatCard(
-                  icon: Icons.star_outline,
+                  icon: LucideIcons.star,
                   value: '${_me.rating}',
                   label: context.tr('rating'),
                   color: AppColors.accent,
@@ -220,7 +220,7 @@ class DoctorHomeTab extends ConsumerWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: StatCard(
-                  icon: Icons.inbox_outlined,
+                  icon: LucideIcons.inbox,
                   value: '${pendingMine.length}',
                   label: context.tr('waiting_in_specialty'),
                   color: AppColors.info,
@@ -233,8 +233,8 @@ class DoctorHomeTab extends ConsumerWidget {
             child: ListTile(
               onTap: () => context.push('/blood'),
               leading: const CircleAvatar(
-                backgroundColor: AppColors.turquoise,
-                child: Icon(Icons.bloodtype, color: Colors.white),
+                backgroundColor: AppColors.secondary,
+                child: Icon(LucideIcons.droplet, color: AppColors.turquoise),
               ),
               title: Text(
                 context.tr('blood_donation'),
@@ -244,7 +244,7 @@ class DoctorHomeTab extends ConsumerWidget {
                 ),
               ),
               subtitle: Text(context.tr('donor_section_intro'), maxLines: 2),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const Icon(LucideIcons.chevronRightDir),
             ),
           ),
           const SizedBox(height: 8),
@@ -255,7 +255,7 @@ class DoctorHomeTab extends ConsumerWidget {
           ),
           if (urgent.isEmpty)
             EmptyState(
-              icon: Icons.inbox_outlined,
+              icon: LucideIcons.inbox,
               message: context.tr('no_requests'),
             )
           else
@@ -348,7 +348,7 @@ class _OpenRequestsTabState extends ConsumerState<OpenRequestsTab> {
                 Padding(
                   padding: const EdgeInsetsDirectional.only(end: 8),
                   child: FilterChip(
-                    avatar: const Icon(Icons.bolt, size: 18),
+                    avatar: const Icon(LucideIcons.zap, size: 18),
                     label: Text(context.tr('urgency_urgent')),
                     selected: _urgentOnly,
                     onSelected: (v) => setState(() => _urgentOnly = v),
@@ -377,7 +377,7 @@ class _OpenRequestsTabState extends ConsumerState<OpenRequestsTab> {
           Expanded(
             child: items.isEmpty
                 ? EmptyState(
-                    icon: Icons.inbox_outlined,
+                    icon: LucideIcons.inbox,
                     message: _query.isEmpty
                         ? context.tr('no_requests')
                         : context.tr('no_results', args: {'q': _query}),
@@ -423,7 +423,7 @@ class MyCasesTab extends ConsumerWidget {
     Widget list(List<Consultation> items) {
       if (items.isEmpty) {
         return EmptyState(
-          icon: Icons.folder_open_outlined,
+          icon: LucideIcons.folderOpen,
           message: context.tr('no_requests'),
         );
       }
@@ -508,7 +508,7 @@ class DoctorProfileTab extends ConsumerWidget {
               Pill(
                 label: context.tr('verified_doctor'),
                 color: AppColors.info,
-                icon: Icons.verified,
+                icon: LucideIcons.badgeCheck,
               ),
               if (auth.idNumber.isNotEmpty) ...[
                 const SizedBox(height: 8),
@@ -568,27 +568,27 @@ class DoctorProfileTab extends ConsumerWidget {
                 children: [
                   const MyCardRow(),
                   MenuRow(
-                    icon: Icons.notifications_outlined,
+                    icon: LucideIcons.bell,
                     title: context.tr('notifications'),
                     onTap: () => context.push('/notifications'),
                   ),
                   MenuRow(
-                    icon: Icons.tune,
+                    icon: LucideIcons.slidersHorizontal,
                     title: context.tr('settings'),
                     onTap: () => context.push('/settings'),
                   ),
                   MenuRow(
-                    icon: Icons.diversity_1_outlined,
+                    icon: LucideIcons.heartHandshake,
                     title: context.tr('pl_name'),
                     onTap: () => context.push('/pulse'),
                   ),
                   MenuRow(
-                    icon: Icons.groups_outlined,
+                    icon: LucideIcons.users,
                     title: context.tr('about_association'),
                     onTap: () => context.push('/about'),
                   ),
                   MenuRow(
-                    icon: Icons.gavel_outlined,
+                    icon: LucideIcons.gavel,
                     title: context.tr('disclaimer'),
                     onTap: () => context.push('/disclaimer'),
                   ),

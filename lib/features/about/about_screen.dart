@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin_provider.dart';
@@ -54,10 +55,10 @@ class AboutAssociationScreen extends ConsumerWidget {
                   Row(
                     children: [
                       const CircleAvatar(
-                        backgroundColor: AppColors.turquoise,
+                        backgroundColor: AppColors.secondary,
                         child: Icon(
-                          Icons.volunteer_activism,
-                          color: Colors.white,
+                          LucideIcons.handHeart,
+                          color: AppColors.turquoise,
                         ),
                       ),
                       const SizedBox(width: 12),

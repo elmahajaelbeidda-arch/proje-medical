@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/admin_provider.dart';
@@ -128,7 +129,7 @@ class _MessagesSectionState extends ConsumerState<MessagesSection> {
                 alignment: AlignmentDirectional.centerEnd,
                 child: FilledButton.icon(
                   onPressed: _send,
-                  icon: const Icon(Icons.send),
+                  icon: const Icon(LucideIcons.sendHorizontal),
                   label: Text(context.tr('ad_send')),
                 ),
               ),
@@ -161,7 +162,7 @@ class _MessagesSectionState extends ConsumerState<MessagesSection> {
                 ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.assignment_ind_outlined),
+                  leading: const Icon(LucideIcons.squareUser),
                   title: Text(
                     '${r.code} • ${facilities.facility(r.facilityId)?.name ?? ''}',
                   ),
@@ -174,7 +175,10 @@ class _MessagesSectionState extends ConsumerState<MessagesSection> {
                 ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.event, color: AppColors.primary),
+                  leading: const Icon(
+                    LucideIcons.calendar,
+                    color: AppColors.primary,
+                  ),
                   title: Text('${s.code} • ${s.issuerName}'),
                   subtitle: Text(fmtDateTime(s.appointment)),
                 ),
@@ -188,7 +192,7 @@ class _MessagesSectionState extends ConsumerState<MessagesSection> {
               for (final m in admin.messages)
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.campaign_outlined),
+                  leading: const Icon(LucideIcons.megaphone),
                   title: Text(m.title),
                   subtitle: Text(
                     '${m.audience == MessageAudience.user ? m.targetName : context.tr('ma_${m.audience.name}')}'

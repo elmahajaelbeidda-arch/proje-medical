@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -132,30 +133,30 @@ class _FacilitiesSectionState extends ConsumerState<FacilitiesSection> {
             Kpi(
               label: context.tr('kp_facilities'),
               value: '${approved.length}',
-              icon: Icons.local_hospital_outlined,
+              icon: LucideIcons.hospital,
             ),
             Kpi(
               label: context.tr('kp_referrals'),
               value: '${state.referrals.length}',
-              icon: Icons.assignment_ind_outlined,
+              icon: LucideIcons.squareUser,
             ),
             Kpi(
               label: context.tr('ad_beneficiaries'),
               value:
                   '${state.referrals.where((r) => r.status == ReferralStatus.completed).length}',
-              icon: Icons.favorite_outline,
+              icon: LucideIcons.heart,
               color: AppColors.success,
             ),
             Kpi(
               label: context.tr('ad_saved_free'),
               value: money(savedFree),
-              icon: Icons.volunteer_activism_outlined,
+              icon: LucideIcons.handHeart,
               color: AppColors.success,
             ),
             Kpi(
               label: context.tr('ad_saved_discount'),
               value: money(savedDiscount),
-              icon: Icons.percent,
+              icon: LucideIcons.percent,
               color: AppColors.info,
             ),
           ],
@@ -209,7 +210,7 @@ class _FacilitiesSectionState extends ConsumerState<FacilitiesSection> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: Icon(
-                    s.free ? Icons.volunteer_activism_outlined : Icons.percent,
+                    s.free ? LucideIcons.handHeart : LucideIcons.percent,
                     color: AppColors.primary,
                   ),
                   title: Text(
@@ -254,10 +255,7 @@ class _FacilityPanel extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.local_hospital_outlined,
-                  color: AppColors.primary,
-                ),
+                const Icon(LucideIcons.hospital, color: AppColors.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -265,7 +263,7 @@ class _FacilityPanel extends ConsumerWidget {
                     style: const TextStyle(fontWeight: FontWeight.w900),
                   ),
                 ),
-                const Icon(Icons.chevron_right),
+                const Icon(LucideIcons.chevronRightDir),
               ],
             ),
           ),
@@ -288,7 +286,7 @@ class _FacilityPanel extends ConsumerWidget {
           Row(
             children: [
               Icon(
-                Icons.handshake_outlined,
+                LucideIcons.handshake,
                 color: agreement == null
                     ? AppColors.grey
                     : agreement.isActive(now)
@@ -312,17 +310,17 @@ class _FacilityPanel extends ConsumerWidget {
               children: [
                 TextButton.icon(
                   onPressed: () => _editAgreement(context, ref, f, agreement),
-                  icon: const Icon(Icons.edit_calendar),
+                  icon: const Icon(LucideIcons.calendarCog),
                   label: Text(context.tr('ad_agreement_edit')),
                 ),
                 TextButton.icon(
                   onPressed: () => showReferPatientSheet(context, ref, f),
-                  icon: const Icon(Icons.assignment_ind_outlined),
+                  icon: const Icon(LucideIcons.squareUser),
                   label: Text(context.tr('refer_patient')),
                 ),
                 TextButton.icon(
                   onPressed: () => _addService(context, ref, f),
-                  icon: const Icon(Icons.add_task),
+                  icon: const Icon(LucideIcons.listPlus),
                   label: Text(context.tr('ad_service_add')),
                 ),
               ],
@@ -353,7 +351,7 @@ class _FacilityPanel extends ConsumerWidget {
               for (final isStart in [true, false])
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.calendar_month),
+                  leading: const Icon(LucideIcons.calendarDays),
                   title: Text(ctx.tr(isStart ? 'ad_start' : 'ad_end')),
                   subtitle: Text(fmtDate(isStart ? start : end)),
                   onTap: () async {

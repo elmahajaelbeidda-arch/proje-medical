@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,7 +24,7 @@ class ConsultationDetailsScreen extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.search_off,
+          icon: LucideIcons.searchX,
           message: context.tr('no_consultations'),
         ),
       );
@@ -84,14 +85,10 @@ class ConsultationDetailsScreen extends ConsumerWidget {
           if (c.status == ConsultationStatus.pending)
             // Light notice with a gold accent (gold used sparingly).
             Card(
-              color: AppColors.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-                side: const BorderSide(color: AppColors.turquoise, width: 1.5),
-              ),
+              color: AppColors.reviewingSoft,
               child: ListTile(
                 leading: const Icon(
-                  Icons.hourglass_top_rounded,
+                  LucideIcons.hourglass,
                   color: AppColors.turquoise,
                 ),
                 title: Text(
@@ -160,7 +157,7 @@ class ConsultationDetailsScreen extends ConsumerWidget {
               c.status == ConsultationStatus.answered)
             FilledButton.icon(
               onPressed: () => context.push('/chat/${c.id}'),
-              icon: const Icon(Icons.chat_outlined),
+              icon: const Icon(LucideIcons.messageCircle),
               label: Text(context.tr('open_chat')),
             ),
           if (c.status == ConsultationStatus.answered) ...[
@@ -168,7 +165,7 @@ class ConsultationDetailsScreen extends ConsumerWidget {
             if (c.rating == null)
               OutlinedButton.icon(
                 onPressed: () => _rate(context, ref, c.id),
-                icon: const Icon(Icons.star_outline),
+                icon: const Icon(LucideIcons.star),
                 label: Text(context.tr('rate_doctor')),
               )
             else
@@ -179,9 +176,7 @@ class ConsultationDetailsScreen extends ConsumerWidget {
                     Text('${context.tr('your_rating')}: '),
                     for (var i = 0; i < 5; i++)
                       Icon(
-                        i < c.rating!
-                            ? Icons.star_rounded
-                            : Icons.star_outline_rounded,
+                        i < c.rating! ? LucideIcons.star : LucideIcons.star,
                         color: AppColors.accent,
                       ),
                   ],
@@ -207,9 +202,7 @@ class ConsultationDetailsScreen extends ConsumerWidget {
                 IconButton(
                   onPressed: () => setState(() => stars = i),
                   icon: Icon(
-                    i <= stars
-                        ? Icons.star_rounded
-                        : Icons.star_outline_rounded,
+                    i <= stars ? LucideIcons.star : LucideIcons.star,
                     color: AppColors.accent,
                     size: 36,
                   ),
@@ -246,9 +239,9 @@ class StatusTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final steps = [
-      (Icons.send_rounded, 'tl_sent'),
-      (Icons.how_to_reg_rounded, 'tl_accepted'),
-      (Icons.task_alt_rounded, 'tl_answered'),
+      (LucideIcons.sendHorizontal, 'tl_sent'),
+      (LucideIcons.userCheck, 'tl_accepted'),
+      (LucideIcons.circleCheckBig, 'tl_answered'),
     ];
     final reached = switch (status) {
       ConsultationStatus.pending => 0,
@@ -306,41 +299,44 @@ class ReplyView extends StatelessWidget {
       children: [
         InfoCard(
           title: context.tr('findings'),
-          icon: Icons.biotech_outlined,
+          icon: LucideIcons.microscope,
           child: Text(reply.findings),
         ),
         const SizedBox(height: 10),
         InfoCard(
           title: context.tr('diagnosis'),
-          icon: Icons.medical_information_outlined,
+          icon: LucideIcons.fileHeart,
           color: AppColors.info,
           child: Text(reply.diagnosis),
         ),
         const SizedBox(height: 10),
         InfoCard(
           title: context.tr('recommendations'),
-          icon: Icons.checklist_rounded,
+          icon: LucideIcons.listChecks,
           color: AppColors.success,
           child: Text(reply.recommendations),
         ),
         if (reply.needsVisit) ...[
           const SizedBox(height: 10),
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.warning,
-              borderRadius: BorderRadius.circular(14),
+              color: AppColors.reviewingSoft,
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
-                const Icon(Icons.local_hospital_outlined, color: AppColors.ink),
+                const Icon(
+                  LucideIcons.hospital,
+                  color: AppColors.reviewingText,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     context.tr('needs_visit'),
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: AppColors.ink,
+                      color: AppColors.reviewingText,
                     ),
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -93,7 +94,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         icon: const Icon(
-          Icons.check_circle,
+          LucideIcons.circleCheck,
           color: AppColors.success,
           size: 64,
         ),
@@ -249,16 +250,13 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           Card(
             color: AppColors.secondary,
             child: ListTile(
-              leading: const Icon(
-                Icons.psychology_outlined,
-                color: AppColors.primary,
-              ),
+              leading: const Icon(LucideIcons.brain, color: AppColors.primary),
               title: Text(
                 context.tr('psych_title'),
                 style: const TextStyle(fontWeight: FontWeight.w800),
               ),
               subtitle: Text(context.tr('psych_card_desc')),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const Icon(LucideIcons.chevronRightDir),
               onTap: () => context.pushReplacement('/patient/psych/new'),
             ),
           ),
@@ -373,7 +371,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.warning_amber_rounded, color: Colors.white),
+                const Icon(LucideIcons.triangleAlert, color: Colors.white),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -428,7 +426,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           children: [
             Expanded(
               child: _UploadButton(
-                icon: Icons.photo_camera_outlined,
+                icon: LucideIcons.camera,
                 label: context.tr('camera'),
                 onTap: () => _addFiles(PickSource.camera),
               ),
@@ -436,7 +434,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
             const SizedBox(width: 10),
             Expanded(
               child: _UploadButton(
-                icon: Icons.photo_library_outlined,
+                icon: LucideIcons.images,
                 label: context.tr('gallery'),
                 onTap: () => _addFiles(PickSource.gallery),
               ),
@@ -444,7 +442,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
             const SizedBox(width: 10),
             Expanded(
               child: _UploadButton(
-                icon: Icons.upload_file_outlined,
+                icon: LucideIcons.fileUp,
                 label: context.tr('pdf_file'),
                 onTap: () => _addFiles(PickSource.files),
               ),
@@ -505,7 +503,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
         const SizedBox(height: 12),
         InfoCard(
           title: context.tr('symptoms'),
-          icon: Icons.notes,
+          icon: LucideIcons.notepadText,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -525,7 +523,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
         const SizedBox(height: 12),
         InfoCard(
           title: context.tr('attachments'),
-          icon: Icons.attach_file,
+          icon: LucideIcons.paperclip,
           child: _files.isEmpty
               ? Text(context.tr('no_files'))
               : Wrap(
@@ -549,7 +547,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           child: SwitchListTile(
             value: _hideName,
             onChanged: (v) => setState(() => _hideName = v),
-            secondary: const Icon(Icons.visibility_off_outlined),
+            secondary: const Icon(LucideIcons.eyeOff),
             title: Text(context.tr('hide_name')),
             subtitle: Text(context.tr('hide_name_desc')),
           ),
@@ -599,7 +597,7 @@ class _UrgencyOption extends StatelessWidget {
           child: Column(
             children: [
               Icon(
-                selected ? Icons.check_circle : Icons.circle,
+                selected ? LucideIcons.circleCheck : LucideIcons.circle,
                 color: selected ? AppColors.on(color) : color,
                 size: selected ? 18 : 14,
               ),

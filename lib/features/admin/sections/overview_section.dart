@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -42,21 +43,21 @@ final adminAlertsProvider = Provider<List<AdminAlert>>((ref) {
   final now = DateTime.now();
   final alerts = <AdminAlert>[
     AdminAlert(
-      Icons.person_add_alt,
+      LucideIcons.userPlus,
       'al_pending_patients',
       regs.where((r) => !r.isDoctor && r.status == ReviewStatus.pending).length,
       AppColors.warning,
       'users',
     ),
     AdminAlert(
-      Icons.medical_services_outlined,
+      LucideIcons.briefcaseMedical,
       'al_pending_doctors',
       regs.where((r) => r.isDoctor && r.status == ReviewStatus.pending).length,
       AppColors.warning,
       'users',
     ),
     AdminAlert(
-      Icons.local_hospital_outlined,
+      LucideIcons.hospital,
       'al_pending_facilities',
       facilities.facilities
           .where((f) => f.status == FacilityStatus.pending)
@@ -65,7 +66,7 @@ final adminAlertsProvider = Provider<List<AdminAlert>>((ref) {
       'users',
     ),
     AdminAlert(
-      Icons.bloodtype_outlined,
+      LucideIcons.droplet,
       'al_blood_new',
       blood.requests
           .where((r) => r.status == BloodRequestStatus.submitted)
@@ -74,7 +75,7 @@ final adminAlertsProvider = Provider<List<AdminAlert>>((ref) {
       'cases',
     ),
     AdminAlert(
-      Icons.hourglass_top,
+      LucideIcons.hourglass,
       'al_consult_waiting',
       consultations
           .where(
@@ -87,7 +88,7 @@ final adminAlertsProvider = Provider<List<AdminAlert>>((ref) {
       'cases',
     ),
     AdminAlert(
-      Icons.assignment_late_outlined,
+      LucideIcons.clipboardX,
       'al_referrals_new',
       facilities.referrals.where((r) => r.status == ReferralStatus.sent).length,
       AppColors.info,
@@ -95,14 +96,14 @@ final adminAlertsProvider = Provider<List<AdminAlert>>((ref) {
     ),
     // Counts only: the content of psychological sessions stays private.
     AdminAlert(
-      Icons.health_and_safety_outlined,
+      LucideIcons.shieldPlus,
       'al_psych_risk',
       psych.where((s) => s.riskFlag && s.isUpcoming).length,
       AppColors.emergency,
       'doctors',
     ),
     AdminAlert(
-      Icons.event_available,
+      LucideIcons.calendarCheck,
       'al_visits_week',
       summons
           .where(
@@ -115,7 +116,7 @@ final adminAlertsProvider = Provider<List<AdminAlert>>((ref) {
       'doctors',
     ),
     AdminAlert(
-      Icons.badge_outlined,
+      LucideIcons.idCard,
       'al_cards_expiring',
       cards
           .where(
@@ -127,7 +128,7 @@ final adminAlertsProvider = Provider<List<AdminAlert>>((ref) {
       'users',
     ),
     AdminAlert(
-      Icons.handshake_outlined,
+      LucideIcons.handshake,
       'al_agreements_ending',
       admin.agreements.values
           .where((a) => a.isActive(now) && a.end.difference(now).inDays <= 30)
@@ -170,52 +171,52 @@ class OverviewSection extends ConsumerWidget {
             Kpi(
               label: context.tr('kp_patients'),
               value: '${count((r) => !r.isDoctor)}',
-              icon: Icons.people_outline,
+              icon: LucideIcons.users,
             ),
             Kpi(
               label: context.tr('kp_beneficiaries'),
               value:
                   '${cases.where((c) => c.stage == CaseStage.completed).map((c) => c.patientName).toSet().length}',
-              icon: Icons.favorite_outline,
+              icon: LucideIcons.heart,
               color: AppColors.success,
             ),
             Kpi(
               label: context.tr('kp_doctors'),
               value: '${ref.watch(approvedDoctorsCountProvider)}',
-              icon: Icons.medical_services_outlined,
+              icon: LucideIcons.briefcaseMedical,
             ),
             Kpi(
               label: context.tr('kp_facilities'),
               value: '${facilities.where((f) => f.isApproved).length}',
-              icon: Icons.local_hospital_outlined,
+              icon: LucideIcons.hospital,
             ),
             Kpi(
               label: context.tr('kp_cases_done'),
               value: '${stages[CaseStage.completed]}',
-              icon: Icons.task_alt,
+              icon: LucideIcons.circleCheckBig,
               color: AppColors.success,
             ),
             Kpi(
               label: context.tr('kp_consultations'),
               value: '${consultations.length}',
-              icon: Icons.forum_outlined,
+              icon: LucideIcons.messagesSquare,
             ),
             Kpi(
               label: context.tr('kp_referrals'),
               value: '${referrals.length}',
-              icon: Icons.assignment_ind_outlined,
+              icon: LucideIcons.squareUser,
             ),
             if (admin.can(AdminPermission.viewFinance)) ...[
               Kpi(
                 label: context.tr('kp_donations'),
                 value: money(admin.totalDonations),
-                icon: Icons.volunteer_activism_outlined,
+                icon: LucideIcons.handHeart,
                 color: AppColors.success,
               ),
               Kpi(
                 label: context.tr('kp_aid'),
                 value: money(admin.totalExpenses),
-                icon: Icons.payments_outlined,
+                icon: LucideIcons.banknote,
                 color: AppColors.info,
               ),
             ],
@@ -239,7 +240,7 @@ class OverviewSection extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Pill(label: '${a.count}', color: a.color),
-                            const Icon(Icons.chevron_right),
+                            const Icon(LucideIcons.chevronRightDir),
                           ],
                         ),
                         onTap: () => context.go('/admin/${a.section}'),
@@ -344,10 +345,10 @@ class AuditTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: Icon(
         denied
-            ? Icons.gpp_bad_outlined
+            ? LucideIcons.shieldAlert
             : e.sensitive
-            ? Icons.lock_outline
-            : Icons.history,
+            ? LucideIcons.lock
+            : LucideIcons.history,
         color: denied
             ? AppColors.emergency
             : e.sensitive

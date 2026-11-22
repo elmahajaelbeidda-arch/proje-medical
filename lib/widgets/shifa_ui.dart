@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/theme.dart';
 
@@ -394,7 +395,7 @@ class MenuRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.grey),
+              const Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
             ],
           ),
         ),
@@ -422,7 +423,7 @@ class LogoutTab extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.logout, color: Colors.white, size: 20),
+              const Icon(LucideIcons.logOut, color: Colors.white, size: 20),
               const SizedBox(width: 8),
               Text(
                 label,

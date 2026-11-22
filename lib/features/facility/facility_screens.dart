@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -31,11 +32,11 @@ import '../blood/blood_screens.dart';
 String facilityTypeKey(FacilityType t) => 'ft_${t.name}';
 
 IconData facilityTypeIcon(FacilityType t) => switch (t) {
-  FacilityType.hospital => Icons.local_hospital_outlined,
-  FacilityType.clinic => Icons.medical_services_outlined,
-  FacilityType.lab => Icons.biotech_outlined,
-  FacilityType.pharmacy => Icons.local_pharmacy_outlined,
-  FacilityType.radiology => Icons.monitor_heart_outlined,
+  FacilityType.hospital => LucideIcons.hospital,
+  FacilityType.clinic => LucideIcons.briefcaseMedical,
+  FacilityType.lab => LucideIcons.microscope,
+  FacilityType.pharmacy => LucideIcons.pill,
+  FacilityType.radiology => LucideIcons.heartPulse,
 };
 
 String referralStatusKey(ReferralStatus s) => 'rs_${s.name}';
@@ -60,9 +61,9 @@ Color facilityStatusColor(FacilityStatus s) => switch (s) {
 String coopKey(CooperationType c) => 'coop_${c.name}';
 
 IconData coopIcon(CooperationType c) => switch (c) {
-  CooperationType.free => Icons.volunteer_activism_outlined,
-  CooperationType.discounted => Icons.percent,
-  CooperationType.referrals => Icons.assignment_ind_outlined,
+  CooperationType.free => LucideIcons.handHeart,
+  CooperationType.discounted => LucideIcons.percent,
+  CooperationType.referrals => LucideIcons.squareUser,
 };
 
 String _date(DateTime d) => '${d.day}/${d.month}/${d.year}';
@@ -143,7 +144,7 @@ class FacilityEntryScreen extends ConsumerWidget {
               radius: 44,
               backgroundColor: AppColors.secondary,
               child: const Icon(
-                Icons.local_hospital_outlined,
+                LucideIcons.hospital,
                 size: 46,
                 color: AppColors.primary,
               ),
@@ -197,14 +198,14 @@ class FacilityEntryScreen extends ConsumerWidget {
           FilledButton.icon(
             style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
             onPressed: () => context.push('/facility/register'),
-            icon: const Icon(Icons.app_registration),
+            icon: const Icon(LucideIcons.clipboardPen),
             label: Text(context.tr('facility_register')),
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(minimumSize: const Size(0, 52)),
             onPressed: () => context.push('/facility/login'),
-            icon: const Icon(Icons.login),
+            icon: const Icon(LucideIcons.logIn),
             label: Text(context.tr('facility_login')),
           ),
         ],
@@ -400,7 +401,7 @@ class _FacilityRegisterScreenState
           textDirection: TextDirection.ltr,
           decoration: InputDecoration(
             labelText: context.tr('facility_license'),
-            prefixIcon: const Icon(Icons.verified_outlined),
+            prefixIcon: const Icon(LucideIcons.badgeCheck),
           ),
         ),
         gap,
@@ -409,7 +410,7 @@ class _FacilityRegisterScreenState
           validator: _required,
           decoration: InputDecoration(
             labelText: context.tr('city'),
-            prefixIcon: const Icon(Icons.location_city_outlined),
+            prefixIcon: const Icon(LucideIcons.building2),
           ),
         ),
       ],
@@ -517,7 +518,7 @@ class _FacilityRegisterScreenState
                 },
                 decoration: InputDecoration(
                   labelText: context.tr('discount_percent'),
-                  prefixIcon: const Icon(Icons.percent),
+                  prefixIcon: const Icon(LucideIcons.percent),
                 ),
               ),
             ),
@@ -530,7 +531,7 @@ class _FacilityRegisterScreenState
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 decoration: InputDecoration(
                   labelText: context.tr('monthly_capacity'),
-                  prefixIcon: const Icon(Icons.groups_outlined),
+                  prefixIcon: const Icon(LucideIcons.users),
                 ),
               ),
             ),
@@ -546,7 +547,7 @@ class _FacilityRegisterScreenState
           validator: _required,
           decoration: InputDecoration(
             labelText: context.tr('facility_manager'),
-            prefixIcon: const Icon(Icons.person_outline),
+            prefixIcon: const Icon(LucideIcons.user),
           ),
         ),
         gap,
@@ -563,7 +564,7 @@ class _FacilityRegisterScreenState
           },
           decoration: InputDecoration(
             labelText: context.tr('phone'),
-            prefixIcon: const Icon(Icons.phone_outlined),
+            prefixIcon: const Icon(LucideIcons.phone),
             prefixText: '+222 ',
           ),
         ),
@@ -574,7 +575,7 @@ class _FacilityRegisterScreenState
           textDirection: TextDirection.ltr,
           decoration: InputDecoration(
             labelText: context.tr('email'),
-            prefixIcon: const Icon(Icons.alternate_email),
+            prefixIcon: const Icon(LucideIcons.atSign),
           ),
         ),
         gap,
@@ -583,7 +584,7 @@ class _FacilityRegisterScreenState
           validator: _required,
           decoration: InputDecoration(
             labelText: context.tr('address'),
-            prefixIcon: const Icon(Icons.place_outlined),
+            prefixIcon: const Icon(LucideIcons.mapPin),
           ),
         ),
         gap,
@@ -607,7 +608,7 @@ class _FacilityRegisterScreenState
         if (_licenseDoc == null)
           OutlinedButton.icon(
             onPressed: _pickLicense,
-            icon: const Icon(Icons.upload_file),
+            icon: const Icon(LucideIcons.fileUp),
             label: Text(context.tr('facility_license_doc')),
           )
         else
@@ -629,7 +630,7 @@ class _FacilityRegisterScreenState
           ),
         OutlinedButton.icon(
           onPressed: _pickDocuments,
-          icon: const Icon(Icons.note_add_outlined),
+          icon: const Icon(LucideIcons.filePlus),
           label: Text(context.tr('add_document')),
         ),
       ],
@@ -647,26 +648,26 @@ class _FacilityRegisterScreenState
         ),
         _line(
           context,
-          Icons.verified_outlined,
+          LucideIcons.badgeCheck,
           context.tr('facility_license'),
           _license.text,
         ),
         _line(
           context,
-          Icons.person_outline,
+          LucideIcons.user,
           context.tr('facility_manager'),
           _manager.text,
         ),
-        _line(context, Icons.phone_outlined, context.tr('phone'), _phone.text),
+        _line(context, LucideIcons.phone, context.tr('phone'), _phone.text),
         _line(
           context,
-          Icons.place_outlined,
+          LucideIcons.mapPin,
           context.tr('address'),
           '${_city.text} — ${_address.text}',
         ),
         _line(
           context,
-          Icons.handshake_outlined,
+          LucideIcons.handshake,
           context.tr('facility_section_coop'),
           [
             for (final c in CooperationType.values)
@@ -675,7 +676,7 @@ class _FacilityRegisterScreenState
         ),
         _line(
           context,
-          Icons.folder_outlined,
+          LucideIcons.folder,
           context.tr('documents'),
           '${(_licenseDoc == null ? 0 : 1) + _documents.length}',
         ),
@@ -734,7 +735,11 @@ class _FacilityRegisterScreenState
                   onPressed: _step == 4 && !_consent
                       ? null
                       : details.onStepContinue,
-                  icon: Icon(_step == 4 ? Icons.send : Icons.arrow_forward),
+                  icon: Icon(
+                    _step == 4
+                        ? LucideIcons.sendHorizontal
+                        : LucideIcons.arrowRightDir,
+                  ),
                   label: Text(
                     context.tr(_step == 4 ? 'facility_submit' : 'next'),
                   ),
@@ -831,7 +836,7 @@ class _FacilityLoginScreenState extends ConsumerState<FacilityLoginScreen> {
             textDirection: TextDirection.ltr,
             decoration: InputDecoration(
               labelText: context.tr('phone'),
-              prefixIcon: const Icon(Icons.phone_outlined),
+              prefixIcon: const Icon(LucideIcons.phone),
               prefixText: '+222 ',
             ),
           ),
@@ -842,14 +847,14 @@ class _FacilityLoginScreenState extends ConsumerState<FacilityLoginScreen> {
             onSubmitted: (_) => _login(),
             decoration: InputDecoration(
               labelText: context.tr('facility_license'),
-              prefixIcon: const Icon(Icons.verified_outlined),
+              prefixIcon: const Icon(LucideIcons.badgeCheck),
             ),
           ),
           const SizedBox(height: 20),
           FilledButton.icon(
             style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
             onPressed: _login,
-            icon: const Icon(Icons.login),
+            icon: const Icon(LucideIcons.logIn),
             label: Text(context.tr('facility_login')),
           ),
           const SizedBox(height: 16),
@@ -859,7 +864,7 @@ class _FacilityLoginScreenState extends ConsumerState<FacilityLoginScreen> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, color: AppColors.primary),
+                  const Icon(LucideIcons.info, color: AppColors.primary),
                   const SizedBox(width: 8),
                   Expanded(child: Text(context.tr('facility_demo_hint'))),
                 ],
@@ -911,7 +916,7 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
         IconButton(
           tooltip: context.tr('logout'),
           onPressed: logout,
-          icon: const Icon(Icons.logout),
+          icon: const Icon(LucideIcons.logOut),
         ),
       ],
     );
@@ -946,7 +951,7 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
             MaterialBanner(
               backgroundColor: AppColors.secondary,
               leading: const Icon(
-                Icons.verified,
+                LucideIcons.badgeCheck,
                 color: AppColors.success,
                 size: 32,
               ),
@@ -994,7 +999,7 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
                           color: AppColors.secondary,
                           child: ListTile(
                             leading: const Icon(
-                              Icons.campaign_outlined,
+                              LucideIcons.megaphone,
                               color: AppColors.primary,
                             ),
                             title: Text(
@@ -1025,7 +1030,7 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
               isLabelVisible: referrals.any(
                 (r) => r.status == ReferralStatus.sent,
               ),
-              child: const Icon(Icons.assignment_ind_outlined),
+              child: const Icon(LucideIcons.squareUser),
             ),
             label: context.tr('facility_tab_referrals'),
           ),
@@ -1050,17 +1055,17 @@ class _RegistrationStatusCard extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final (icon, title, body) = switch (f.status) {
       FacilityStatus.needsInfo => (
-        Icons.upload_file,
+        LucideIcons.fileUp,
         'fs_needsInfo',
         'needs_info_body',
       ),
       FacilityStatus.rejected => (
-        Icons.block,
+        LucideIcons.ban,
         'facility_rejected_title',
         'facility_rejected_body',
       ),
       _ => (
-        Icons.hourglass_top,
+        LucideIcons.hourglass,
         'facility_pending_title',
         'facility_pending_body',
       ),
@@ -1177,7 +1182,7 @@ class _CompleteDocumentsCardState
               ),
             OutlinedButton.icon(
               onPressed: _pick,
-              icon: const Icon(Icons.note_add_outlined),
+              icon: const Icon(LucideIcons.filePlus),
               label: Text(context.tr('add_document')),
             ),
             const SizedBox(height: 10),
@@ -1190,7 +1195,7 @@ class _CompleteDocumentsCardState
             FilledButton.icon(
               style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
               onPressed: _files.isEmpty ? null : _send,
-              icon: const Icon(Icons.send),
+              icon: const Icon(LucideIcons.sendHorizontal),
               label: Text(context.tr('complete_and_resend')),
             ),
           ],
@@ -1235,7 +1240,7 @@ class FacilityHistory extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
-                      Icons.circle,
+                      LucideIcons.circle,
                       size: 14,
                       color: facilityStatusColor(h[i].status),
                     ),
@@ -1305,9 +1310,9 @@ class _ReferralsTabState extends State<_ReferralsTab> {
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: StatCard(
                     icon: [
-                      Icons.fiber_new_outlined,
-                      Icons.pending_actions_outlined,
-                      Icons.task_alt,
+                      LucideIcons.badgePlus,
+                      LucideIcons.clipboardClock,
+                      LucideIcons.circleCheckBig,
                     ][i],
                     value: '${groups[i].length}',
                     label: context.tr(labels[i]),
@@ -1330,7 +1335,7 @@ class _ReferralsTabState extends State<_ReferralsTab> {
         const SizedBox(height: 12),
         if (list.isEmpty)
           EmptyState(
-            icon: Icons.inbox_outlined,
+            icon: LucideIcons.inbox,
             message: context.tr('no_referrals'),
           ),
         for (final r in list)
@@ -1384,7 +1389,7 @@ class ReferralCard extends StatelessWidget {
                     Pill(
                       label: context.tr('referral_urgent'),
                       color: AppColors.emergency,
-                      icon: Icons.priority_high,
+                      icon: LucideIcons.circleAlert,
                     ),
                 ],
               ),
@@ -1392,7 +1397,7 @@ class ReferralCard extends StatelessWidget {
               Row(
                 children: [
                   const Icon(
-                    Icons.medical_information_outlined,
+                    LucideIcons.fileHeart,
                     size: 18,
                     color: AppColors.primary,
                   ),
@@ -1470,41 +1475,36 @@ class _FacilityProfile extends StatelessWidget {
                       ? context.tr('facility_approved_badge')
                       : context.tr(facilityStatusKey(f.status)),
                   color: facilityStatusColor(f.status),
-                  icon: f.isApproved ? Icons.verified : null,
+                  icon: f.isApproved ? LucideIcons.badgeCheck : null,
                 ),
               ],
             ),
             const SizedBox(height: 12),
             _line(
               context,
-              Icons.person_outline,
+              LucideIcons.user,
               context.tr('facility_manager'),
               f.managerName,
             ),
             _line(
               context,
-              Icons.verified_outlined,
+              LucideIcons.badgeCheck,
               context.tr('facility_license'),
               f.licenseNumber,
             ),
             _line(
               context,
-              Icons.place_outlined,
+              LucideIcons.mapPin,
               context.tr('address'),
               '${f.city} — ${f.address}',
             ),
-            _line(context, Icons.phone_outlined, context.tr('phone'), f.phone),
+            _line(context, LucideIcons.phone, context.tr('phone'), f.phone),
             if (f.email.isNotEmpty)
-              _line(
-                context,
-                Icons.alternate_email,
-                context.tr('email'),
-                f.email,
-              ),
+              _line(context, LucideIcons.atSign, context.tr('email'), f.email),
             if (f.specialtyIds.isNotEmpty)
               _line(
                 context,
-                Icons.local_hospital_outlined,
+                LucideIcons.hospital,
                 context.tr('facility_specialties'),
                 f.specialtyIds
                     .map((s) => context.tr(Specialty.byId(s).key))
@@ -1513,21 +1513,21 @@ class _FacilityProfile extends StatelessWidget {
             if (f.services.isNotEmpty)
               _line(
                 context,
-                Icons.list_alt,
+                LucideIcons.list,
                 context.tr('facility_services'),
                 f.services.join('، '),
               ),
             if (f.monthlyCapacity != null)
               _line(
                 context,
-                Icons.groups_outlined,
+                LucideIcons.users,
                 context.tr('monthly_capacity'),
                 context.tr('capacity_value', args: {'n': f.monthlyCapacity!}),
               ),
             if (f.notes.isNotEmpty)
               _line(
                 context,
-                Icons.notes,
+                LucideIcons.notepadText,
                 context.tr('facility_notes'),
                 f.notes,
               ),
@@ -1585,7 +1585,7 @@ class FacilityReferralScreen extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.inbox_outlined,
+          icon: LucideIcons.inbox,
           message: context.tr('no_referrals'),
         ),
       );
@@ -1701,7 +1701,7 @@ class FacilityReferralScreen extends ConsumerWidget {
                 Expanded(
                   child: FilledButton.tonalIcon(
                     onPressed: () => context.push('/summons/${summons.id}'),
-                    icon: const Icon(Icons.badge_outlined),
+                    icon: const Icon(LucideIcons.idCard),
                     label: Text(context.tr('summons_view')),
                   ),
                 ),
@@ -1710,7 +1710,7 @@ class FacilityReferralScreen extends ConsumerWidget {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () => issueSummons(accepting: false),
-                      icon: const Icon(Icons.edit_calendar),
+                      icon: const Icon(LucideIcons.calendarCog),
                       label: Text(context.tr('summons_update')),
                     ),
                   ),
@@ -1729,7 +1729,7 @@ class FacilityReferralScreen extends ConsumerWidget {
                         foregroundColor: AppColors.grey,
                       ),
                       onPressed: () => step(s),
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(LucideIcons.x),
                       label: Text(context.tr('ra_${s.name}')),
                     )
                   : FilledButton.icon(
@@ -1737,7 +1737,7 @@ class FacilityReferralScreen extends ConsumerWidget {
                         minimumSize: const Size(0, 50),
                       ),
                       onPressed: () => step(s),
-                      icon: const Icon(Icons.check),
+                      icon: const Icon(LucideIcons.check),
                       label: Text(context.tr('ra_${s.name}')),
                     ),
             ),
@@ -1798,40 +1798,40 @@ class ReferralDetailsCard extends StatelessWidget {
                 child: Pill(
                   label: context.tr('referral_urgent'),
                   color: AppColors.emergency,
-                  icon: Icons.priority_high,
+                  icon: LucideIcons.circleAlert,
                 ),
               ),
             ],
             const SizedBox(height: 12),
             _line(
               context,
-              Icons.person_outline,
+              LucideIcons.user,
               context.tr('referral_patient_name'),
               r.patientName,
             ),
             _line(
               context,
-              Icons.folder_shared_outlined,
+              LucideIcons.folderHeart,
               context.tr('referral_patient_ref'),
               r.patientRef,
             ),
             _line(
               context,
-              Icons.medical_information_outlined,
+              LucideIcons.fileHeart,
               context.tr('referral_service'),
               r.service,
             ),
             if (r.notes.isNotEmpty)
               _line(
                 context,
-                Icons.notes,
+                LucideIcons.notepadText,
                 context.tr('referral_notes'),
                 r.notes,
               ),
             if (r.facilityNote.isNotEmpty)
               _line(
                 context,
-                Icons.comment_outlined,
+                LucideIcons.messageSquare,
                 context.tr('facility_note'),
                 r.facilityNote,
               ),
@@ -1859,7 +1859,7 @@ class ReferralTimeline extends StatelessWidget {
       return Pill(
         label: context.tr('rs_declined'),
         color: AppColors.grey,
-        icon: Icons.close,
+        icon: LucideIcons.x,
       );
     }
     const order = [
@@ -1878,9 +1878,7 @@ class ReferralTimeline extends StatelessWidget {
               ListTile(
                 dense: true,
                 leading: Icon(
-                  i <= reached
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
+                  i <= reached ? LucideIcons.circleCheck : LucideIcons.circle,
                   color: i <= reached ? AppColors.success : AppColors.grey,
                 ),
                 title: Text(
@@ -2022,7 +2020,7 @@ class FacilityReviewPanel extends ConsumerWidget {
                         'facility_approved_msg',
                       )
                     : null,
-                icon: const Icon(Icons.verified),
+                icon: const Icon(LucideIcons.badgeCheck),
                 label: Text(context.tr('approve')),
               ),
               if (!f.isVerified)
@@ -2047,7 +2045,7 @@ class FacilityReviewPanel extends ConsumerWidget {
                         'missing_documents',
                         'completion_requested_msg',
                       ),
-                      icon: const Icon(Icons.upload_file),
+                      icon: const Icon(LucideIcons.fileUp),
                       label: Text(context.tr('request_completion')),
                     ),
                   ),
@@ -2063,7 +2061,7 @@ class FacilityReviewPanel extends ConsumerWidget {
                         'reject_reason',
                         'facility_rejected_msg',
                       ),
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(LucideIcons.x),
                       label: Text(context.tr('reject')),
                     ),
                   ),
@@ -2129,7 +2127,7 @@ class _CommitteeFacilitiesTabState
         TextField(
           onChanged: (v) => setState(() => _query = v),
           decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.search),
+            prefixIcon: const Icon(LucideIcons.search),
             hintText: context.tr('facilities'),
           ),
         ),
@@ -2175,7 +2173,7 @@ class _CommitteeFacilitiesTabState
         const SizedBox(height: 8),
         if (list.isEmpty)
           EmptyState(
-            icon: Icons.local_hospital_outlined,
+            icon: LucideIcons.hospital,
             message: context.tr('no_facilities'),
           ),
         for (final f in list)
@@ -2257,14 +2255,14 @@ class CommitteeFacilityCard extends ConsumerWidget {
                 FilledButton.icon(
                   style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
                   onPressed: () => context.push('/committee/facility/${f.id}'),
-                  icon: const Icon(Icons.fact_check_outlined),
+                  icon: const Icon(LucideIcons.clipboardCheck),
                   label: Text(context.tr('review_request')),
                 )
               else if (f.isApproved)
                 FilledButton.tonalIcon(
                   style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
                   onPressed: () => showReferPatientSheet(context, ref, f),
-                  icon: const Icon(Icons.assignment_ind_outlined),
+                  icon: const Icon(LucideIcons.squareUser),
                   label: Text(context.tr('refer_patient')),
                 ),
             ],
@@ -2375,7 +2373,7 @@ class _ReferPatientFormState extends ConsumerState<_ReferPatientForm> {
                 validator: _required,
                 decoration: InputDecoration(
                   labelText: context.tr('referral_patient_name'),
-                  prefixIcon: const Icon(Icons.person_outline),
+                  prefixIcon: const Icon(LucideIcons.user),
                 ),
               ),
               gap,
@@ -2385,7 +2383,7 @@ class _ReferPatientFormState extends ConsumerState<_ReferPatientForm> {
                 textDirection: TextDirection.ltr,
                 decoration: InputDecoration(
                   labelText: context.tr('referral_patient_ref'),
-                  prefixIcon: const Icon(Icons.folder_shared_outlined),
+                  prefixIcon: const Icon(LucideIcons.folderHeart),
                   hintText: 'P-021',
                 ),
               ),
@@ -2395,7 +2393,7 @@ class _ReferPatientFormState extends ConsumerState<_ReferPatientForm> {
                 validator: _required,
                 decoration: InputDecoration(
                   labelText: context.tr('referral_service'),
-                  prefixIcon: const Icon(Icons.medical_information_outlined),
+                  prefixIcon: const Icon(LucideIcons.fileHeart),
                 ),
               ),
               gap,
@@ -2415,7 +2413,7 @@ class _ReferPatientFormState extends ConsumerState<_ReferPatientForm> {
               FilledButton.icon(
                 style: FilledButton.styleFrom(minimumSize: const Size(0, 50)),
                 onPressed: _send,
-                icon: const Icon(Icons.send),
+                icon: const Icon(LucideIcons.sendHorizontal),
                 label: Text(context.tr('referral_send')),
               ),
             ],
@@ -2439,7 +2437,7 @@ class CommitteeFacilityScreen extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.local_hospital_outlined,
+          icon: LucideIcons.hospital,
           message: context.tr('no_facilities'),
         ),
       );
@@ -2450,7 +2448,7 @@ class CommitteeFacilityScreen extends ConsumerWidget {
       floatingActionButton: f.isApproved
           ? FloatingActionButton.extended(
               onPressed: () => showReferPatientSheet(context, ref, f),
-              icon: const Icon(Icons.assignment_ind_outlined),
+              icon: const Icon(LucideIcons.squareUser),
               label: Text(context.tr('refer_patient')),
             )
           : null,
@@ -2469,7 +2467,7 @@ class CommitteeFacilityScreen extends ConsumerWidget {
             SectionHeader(context.tr('referrals_of_facility')),
             if (referrals.isEmpty)
               EmptyState(
-                icon: Icons.inbox_outlined,
+                icon: LucideIcons.inbox,
                 message: context.tr('no_referrals'),
               ),
             for (final r in referrals)

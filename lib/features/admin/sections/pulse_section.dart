@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/admin_provider.dart';
@@ -45,38 +46,38 @@ class _PulseSectionState extends ConsumerState<PulseSection> {
             Kpi(
               label: context.tr('pla_published'),
               value: '${published.length}',
-              icon: Icons.dynamic_feed_outlined,
+              icon: LucideIcons.layers,
             ),
             Kpi(
               label: context.tr('pla_pending'),
               value: '${s.pending.length}',
-              icon: Icons.hourglass_top,
+              icon: LucideIcons.hourglass,
               color: AppColors.turquoise,
               onTap: () => setState(() => _tab = _Tab.review),
             ),
             Kpi(
               label: context.tr('pla_reports'),
               value: '$reports',
-              icon: Icons.flag_outlined,
+              icon: LucideIcons.flag,
               color: AppColors.turquoise,
               onTap: () => setState(() => _tab = _Tab.review),
             ),
             Kpi(
               label: context.tr('pla_likes'),
               value: '${published.fold<int>(0, (n, p) => n + p.likes.length)}',
-              icon: Icons.favorite_border,
+              icon: LucideIcons.heart,
               color: AppColors.vivid,
             ),
             Kpi(
               label: context.tr('pl_comments'),
               value: '${s.comments.where((c) => !c.hidden).length}',
-              icon: Icons.forum_outlined,
+              icon: LucideIcons.messagesSquare,
             ),
             Kpi(
               label: context.tr('pla_upcoming_lives'),
               value:
                   '${s.lives.where((l) => l.status != LiveStatus.ended).length}',
-              icon: Icons.sensors,
+              icon: LucideIcons.radio,
               onTap: () => setState(() => _tab = _Tab.live),
             ),
           ],
@@ -283,7 +284,7 @@ class _ReviewTab extends ConsumerWidget {
                                 Row(
                                   children: [
                                     const Icon(
-                                      Icons.privacy_tip_outlined,
+                                      LucideIcons.shieldAlert,
                                       color: AppColors.turquoise,
                                       size: 18,
                                     ),
@@ -321,12 +322,12 @@ class _ReviewTab extends ConsumerWidget {
                                 children: [
                                   FilledButton.icon(
                                     onPressed: () => _approve(context, ref, p),
-                                    icon: const Icon(Icons.check),
+                                    icon: const Icon(LucideIcons.check),
                                     label: Text(context.tr('pla_approve')),
                                   ),
                                   OutlinedButton.icon(
                                     onPressed: () => _reject(context, ref, p),
-                                    icon: const Icon(Icons.close),
+                                    icon: const Icon(LucideIcons.x),
                                     label: Text(context.tr('pla_reject')),
                                   ),
                                 ],
@@ -347,7 +348,7 @@ class _ReviewTab extends ConsumerWidget {
                     for (final p in s.reportedPosts)
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.article_outlined),
+                        leading: const Icon(LucideIcons.newspaper),
                         title: Text(p.title),
                         subtitle: Text(
                           context.tr(
@@ -380,7 +381,7 @@ class _ReviewTab extends ConsumerWidget {
                     for (final c in s.reportedComments)
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.comment_outlined),
+                        leading: const Icon(LucideIcons.messageSquare),
                         title: Text(c.text),
                         subtitle: Text(
                           '${c.authorName} · ${context.tr('pla_reports_n', args: {'n': c.reports.length})}',
@@ -615,7 +616,7 @@ class _PostsTabState extends ConsumerState<_PostsTab> {
                   for (final a in _photos) AttachmentThumb(a, size: 64),
                   OutlinedButton.icon(
                     onPressed: _addPhotos,
-                    icon: const Icon(Icons.add_photo_alternate_outlined),
+                    icon: const Icon(LucideIcons.imagePlus),
                     label: Text(context.tr('pl_add_photos')),
                   ),
                   if (_photos.isNotEmpty)
@@ -632,7 +633,7 @@ class _PostsTabState extends ConsumerState<_PostsTab> {
                 decoration: InputDecoration(
                   labelText: context.tr('pla_video_link'),
                   hintText: 'https://youtube.com/…',
-                  prefixIcon: const Icon(Icons.smart_display_outlined),
+                  prefixIcon: const Icon(LucideIcons.monitorPlay),
                 ),
               ),
               if (_kind == PulseKind.achievement) ...[
@@ -677,7 +678,7 @@ class _PostsTabState extends ConsumerState<_PostsTab> {
                         TextEditingController(),
                       )),
                     ),
-                    icon: const Icon(Icons.add),
+                    icon: const Icon(LucideIcons.plus),
                     label: Text(context.tr('pla_add_figure')),
                   ),
                 ),
@@ -697,7 +698,7 @@ class _PostsTabState extends ConsumerState<_PostsTab> {
                 alignment: AlignmentDirectional.centerEnd,
                 child: FilledButton.icon(
                   onPressed: _publish,
-                  icon: const Icon(Icons.publish),
+                  icon: const Icon(LucideIcons.upload),
                   label: Text(context.tr('pla_publish_now')),
                 ),
               ),
@@ -722,9 +723,9 @@ class _PostsTabState extends ConsumerState<_PostsTab> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: p.pinned
-                      ? const Icon(Icons.push_pin, color: AppColors.turquoise)
+                      ? const Icon(LucideIcons.pin, color: AppColors.turquoise)
                       : const Icon(
-                          Icons.article_outlined,
+                          LucideIcons.newspaper,
                           color: AppColors.grey,
                         ),
                   title: Text(
@@ -980,7 +981,7 @@ class _LiveTabState extends ConsumerState<_LiveTab> {
                 decoration: InputDecoration(
                   labelText: context.tr('pla_stream_link'),
                   helperText: context.tr('pla_stream_help'),
-                  prefixIcon: const Icon(Icons.link),
+                  prefixIcon: const Icon(LucideIcons.link),
                 ),
               ),
               const SizedBox(height: 8),
@@ -991,7 +992,7 @@ class _LiveTabState extends ConsumerState<_LiveTab> {
                 children: [
                   OutlinedButton.icon(
                     onPressed: _pickWhen,
-                    icon: const Icon(Icons.event),
+                    icon: const Icon(LucideIcons.calendar),
                     label: Text(liveWhen(context, _when)),
                   ),
                   DropdownButton<int>(
@@ -1007,7 +1008,7 @@ class _LiveTabState extends ConsumerState<_LiveTab> {
                   ),
                   FilledButton.icon(
                     onPressed: _schedule,
-                    icon: const Icon(Icons.add_alarm),
+                    icon: const Icon(LucideIcons.alarmClockPlus),
                     label: Text(context.tr('pla_schedule')),
                   ),
                 ],
@@ -1046,19 +1047,19 @@ class _LiveTabState extends ConsumerState<_LiveTab> {
                     if (l.status == LiveStatus.scheduled)
                       FilledButton.icon(
                         onPressed: () => _start(l),
-                        icon: const Icon(Icons.sensors),
+                        icon: const Icon(LucideIcons.radio),
                         label: Text(context.tr('pla_start_live')),
                       ),
                     if (l.status == LiveStatus.live)
                       FilledButton.icon(
                         onPressed: () => _end(l),
-                        icon: const Icon(Icons.stop_circle_outlined),
+                        icon: const Icon(LucideIcons.circleStop),
                         label: Text(context.tr('pla_end_live')),
                       ),
                     if (l.status == LiveStatus.ended)
                       OutlinedButton.icon(
                         onPressed: () => _recording(l),
-                        icon: const Icon(Icons.video_library_outlined),
+                        icon: const Icon(LucideIcons.clapperboard),
                         label: Text(context.tr('pla_recording')),
                       ),
                     FilterChip(
@@ -1088,7 +1089,7 @@ class _LiveTabState extends ConsumerState<_LiveTab> {
                           );
                         }
                       },
-                      icon: const Icon(Icons.delete_outline),
+                      icon: const Icon(LucideIcons.trash2),
                       label: Text(context.tr('pla_delete')),
                     ),
                   ],
@@ -1117,8 +1118,8 @@ class _LiveTabState extends ConsumerState<_LiveTab> {
                             ),
                             icon: Icon(
                               q.answered
-                                  ? Icons.check_circle
-                                  : Icons.check_circle_outline,
+                                  ? LucideIcons.circleCheck
+                                  : LucideIcons.circleCheck,
                               color: AppColors.vivid,
                             ),
                           ),
@@ -1128,7 +1129,7 @@ class _LiveTabState extends ConsumerState<_LiveTab> {
                               context,
                               () => _n(ref).hideQuestion(l.id, q.id),
                             ),
-                            icon: const Icon(Icons.visibility_off_outlined),
+                            icon: const Icon(LucideIcons.eyeOff),
                           ),
                         ],
                       ),
@@ -1192,7 +1193,7 @@ class _InteractionsTab extends ConsumerWidget {
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.public, color: AppColors.vivid),
+                leading: const Icon(LucideIcons.globe, color: AppColors.vivid),
                 title: Text(context.tr('pla_public_note')),
               ),
             ],
@@ -1209,8 +1210,8 @@ class _InteractionsTab extends ConsumerWidget {
                         contentPadding: EdgeInsets.zero,
                         leading: Icon(
                           c.hidden
-                              ? Icons.visibility_off_outlined
-                              : Icons.comment_outlined,
+                              ? LucideIcons.eyeOff
+                              : LucideIcons.messageSquare,
                           color: c.hidden
                               ? AppColors.grey
                               : AppColors.turquoise,

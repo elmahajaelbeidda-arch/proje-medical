@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -76,7 +77,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   onPressed: note == null
                       ? null
                       : () => Navigator.pop(ctx, true),
-                  icon: const Icon(Icons.send),
+                  icon: const Icon(LucideIcons.sendHorizontal),
                   label: Text(ctx.tr('send_voice')),
                 ),
               ],
@@ -213,7 +214,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           Row(
                             children: [
                               const Icon(
-                                Icons.medical_services_outlined,
+                                LucideIcons.briefcaseMedical,
                                 size: 14,
                                 color: AppColors.secondary,
                               ),
@@ -261,7 +262,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, size: 18, color: AppColors.ink),
+                const Icon(LucideIcons.info, size: 18, color: AppColors.ink),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -386,7 +387,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       fixedSize: const Size(50, 50),
                     ),
                     onPressed: () => _recordVoice(isDoctor),
-                    icon: const Icon(Icons.mic_none),
+                    icon: const Icon(LucideIcons.mic),
                   ),
                   const SizedBox(width: 6),
                   IconButton.filled(
@@ -396,7 +397,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       fixedSize: const Size(50, 50),
                     ),
                     onPressed: () => _send(isDoctor),
-                    icon: const Icon(Icons.send_rounded),
+                    icon: const Icon(LucideIcons.sendHorizontal),
                   ),
                 ],
               ),
@@ -432,7 +433,7 @@ class NotificationsScreen extends ConsumerWidget {
             (m.audience == MessageAudience.doctors && auth.isDoctor) ||
             (m.audience == MessageAudience.user && m.targetId == me))
           AppNotification(
-            icon: Icons.campaign_outlined,
+            icon: LucideIcons.megaphone,
             title: m.title,
             body: m.body,
             time: m.at,
@@ -518,17 +519,17 @@ class SettingsScreen extends ConsumerWidget {
             segments: [
               ButtonSegment(
                 value: ThemeMode.light,
-                icon: const Icon(Icons.light_mode_outlined),
+                icon: const Icon(LucideIcons.sun),
                 label: Text(context.tr('theme_light')),
               ),
               ButtonSegment(
                 value: ThemeMode.dark,
-                icon: const Icon(Icons.dark_mode_outlined),
+                icon: const Icon(LucideIcons.moon),
                 label: Text(context.tr('theme_dark')),
               ),
               ButtonSegment(
                 value: ThemeMode.system,
-                icon: const Icon(Icons.brightness_auto_outlined),
+                icon: const Icon(LucideIcons.sunMoon),
                 label: Text(context.tr('theme_system')),
               ),
             ],
@@ -539,16 +540,16 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.groups_outlined),
+              leading: const Icon(LucideIcons.users),
               title: Text(context.tr('about_association')),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const Icon(LucideIcons.chevronRightDir),
               onTap: () => context.push('/about'),
             ),
           ),
           const SizedBox(height: 8),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.info_outline),
+              leading: const Icon(LucideIcons.info),
               title: Text(context.tr('about')),
               subtitle: BrandRichText(
                 '${context.tr('app_name')} — ${context.tr('app_slogan')}\n${context.tr('association')} • ${context.tr('version')} 1.0.0',
@@ -602,7 +603,7 @@ class SectionOffScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(),
     body: EmptyState(
-      icon: Icons.pause_circle_outline,
+      icon: LucideIcons.circlePause,
       message: context.tr('section_disabled'),
     ),
   );

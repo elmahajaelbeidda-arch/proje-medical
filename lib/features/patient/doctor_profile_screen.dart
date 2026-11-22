@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart' show LatLng;
 
@@ -24,7 +25,7 @@ class DoctorProfileScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.person_search_outlined,
+          icon: LucideIcons.userSearch,
           message: context.tr('none'),
         ),
       );
@@ -54,14 +55,14 @@ class DoctorProfileScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         _RoundIcon(
-                          icon: Icons.arrow_back,
+                          icon: LucideIcons.arrowLeftDir,
                           tooltip: MaterialLocalizations.of(context)
                               .backButtonTooltip,
                           onTap: () => context.pop(),
                         ),
                         const Spacer(),
                         _RoundIcon(
-                          icon: Icons.map_outlined,
+                          icon: LucideIcons.map,
                           tooltip: context.tr('cm_title'),
                           onTap: () => context.push('/care-map'),
                         ),
@@ -94,7 +95,7 @@ class DoctorProfileScreen extends StatelessWidget {
                             _AvailabilityPill(on: d.available),
                             const Spacer(),
                             const Icon(
-                              Icons.star_rounded,
+                              LucideIcons.star,
                               color: AppColors.secondary,
                               size: 20,
                             ),
@@ -130,7 +131,7 @@ class DoctorProfileScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(
-                              Icons.place_outlined,
+                              LucideIcons.mapPin,
                               size: 16,
                               color: AppColors.secondary,
                             ),
@@ -154,7 +155,7 @@ class DoctorProfileScreen extends StatelessWidget {
                           children: [
                             Expanded(
                               child: _GlassButton(
-                                icon: Icons.add_comment_outlined,
+                                icon: LucideIcons.messageSquarePlus,
                                 label: context.tr('dp_ask'),
                                 onTap: () => context.push('/patient/new'),
                               ),
@@ -162,7 +163,7 @@ class DoctorProfileScreen extends StatelessWidget {
                             const SizedBox(width: 10),
                             Expanded(
                               child: _GlassButton(
-                                icon: Icons.directions_outlined,
+                                icon: LucideIcons.navigation,
                                 label: context.tr('dp_location'),
                                 onTap: d.latitude == null
                                     ? () => context.push('/care-map')
@@ -276,7 +277,7 @@ class DoctorProfileScreen extends StatelessWidget {
                             for (final a in d.availability)
                               Chip(
                                 avatar: const Icon(
-                                  Icons.schedule,
+                                  LucideIcons.clock,
                                   size: 16,
                                   color: AppColors.primary,
                                 ),
@@ -293,7 +294,7 @@ class DoctorProfileScreen extends StatelessWidget {
                   Row(
                     children: [
                       const Icon(
-                        Icons.verified,
+                        LucideIcons.badgeCheck,
                         color: AppColors.info,
                         size: 18,
                       ),
@@ -324,7 +325,7 @@ class DoctorProfileScreen extends StatelessWidget {
               backgroundColor: AppColors.primary,
             ),
             onPressed: () => context.push('/patient/new'),
-            icon: const Icon(Icons.chat_bubble_outline),
+            icon: const Icon(LucideIcons.messageCircle),
             label: Text(context.tr('dp_ask_this', args: {'name': d.name})),
           ),
         ),

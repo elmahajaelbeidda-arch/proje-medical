@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:printing/printing.dart';
@@ -271,7 +272,7 @@ class _CardPage extends StatelessWidget {
             child: FilledButton.icon(
               style: FilledButton.styleFrom(minimumSize: const Size(0, 50)),
               onPressed: () => downloadMemberCard(context, card),
-              icon: const Icon(Icons.download),
+              icon: const Icon(LucideIcons.download),
               label: Text(context.tr('summons_download')),
             ),
           ),
@@ -280,7 +281,7 @@ class _CardPage extends StatelessWidget {
             child: OutlinedButton.icon(
               style: OutlinedButton.styleFrom(minimumSize: const Size(0, 50)),
               onPressed: () => printMemberCard(context, card),
-              icon: const Icon(Icons.print_outlined),
+              icon: const Icon(LucideIcons.printer),
               label: Text(context.tr('summons_print')),
             ),
           ),
@@ -311,7 +312,7 @@ class MyMemberCardScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.tr('mc_title'))),
       body: card == null
           ? EmptyState(
-              icon: Icons.hourglass_top,
+              icon: LucideIcons.hourglass,
               message: context.tr('mc_pending'),
             )
           : _CardPage(card: card),
@@ -326,7 +327,7 @@ class MyCardRow extends StatelessWidget {
   const MyCardRow({super.key});
   @override
   Widget build(BuildContext context) => MenuRow(
-    icon: Icons.badge_outlined,
+    icon: LucideIcons.idCard,
     title: context.tr('mc_title'),
     onTap: () => context.push('/my-card'),
   );
@@ -336,7 +337,7 @@ class MyCardTile extends StatelessWidget {
   const MyCardTile({super.key});
   @override
   Widget build(BuildContext context) => MenuTile(
-    icon: Icons.badge_outlined,
+    icon: LucideIcons.idCard,
     title: context.tr('mc_title'),
     onTap: () => context.push('/my-card'),
   );
@@ -362,7 +363,7 @@ class _SuspendButton extends ConsumerWidget {
                   SnackBar(content: Text(context.tr('mc_reactivated_msg'))),
                 );
               },
-              icon: const Icon(Icons.verified),
+              icon: const Icon(LucideIcons.badgeCheck),
               label: Text(context.tr('mc_reactivate')),
             )
           : OutlinedButton.icon(
@@ -375,7 +376,7 @@ class _SuspendButton extends ConsumerWidget {
                   SnackBar(content: Text(context.tr('mc_suspended_msg'))),
                 );
               },
-              icon: const Icon(Icons.block),
+              icon: const Icon(LucideIcons.ban),
               label: Text(context.tr('mc_suspend')),
             ),
     );
@@ -396,7 +397,7 @@ class CommitteeMemberCardScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.tr('mc_title'))),
       body: card == null
           ? EmptyState(
-              icon: Icons.badge_outlined,
+              icon: LucideIcons.idCard,
               message: context.tr('mc_pending'),
             )
           : _CardPage(
@@ -414,7 +415,7 @@ class ViewMemberCardButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => TextButton.icon(
     onPressed: () => context.push('/committee/card/$holderId'),
-    icon: const Icon(Icons.badge_outlined),
+    icon: const Icon(LucideIcons.idCard),
     label: Text(context.tr('mc_view')),
   );
 }
@@ -497,7 +498,7 @@ class _VerifyCardScreenState extends ConsumerState<VerifyCardScreen> {
                     radius: 38,
                     backgroundColor: AppColors.secondary,
                     child: Icon(
-                      Icons.qr_code_scanner,
+                      LucideIcons.scanQrCode,
                       size: 40,
                       color: AppColors.primary,
                     ),
@@ -523,7 +524,7 @@ class _VerifyCardScreenState extends ConsumerState<VerifyCardScreen> {
                       minimumSize: const Size(0, 54),
                     ),
                     onPressed: _scan,
-                    icon: const Icon(Icons.qr_code_scanner),
+                    icon: const Icon(LucideIcons.scanQrCode),
                     label: Text(context.tr('mc_scan_btn')),
                   ),
                 ],
@@ -546,7 +547,7 @@ class _VerifyCardScreenState extends ConsumerState<VerifyCardScreen> {
                 decoration: InputDecoration(
                   labelText: context.tr('mc_verify_input'),
                   hintText: context.tr('mc_verify_input_hint'),
-                  prefixIcon: const Icon(Icons.keyboard_outlined),
+                  prefixIcon: const Icon(LucideIcons.keyboard),
                 ),
               ),
               const SizedBox(height: 10),
@@ -555,7 +556,7 @@ class _VerifyCardScreenState extends ConsumerState<VerifyCardScreen> {
                   minimumSize: const Size.fromHeight(48),
                 ),
                 onPressed: _verify,
-                icon: const Icon(Icons.verified_user_outlined),
+                icon: const Icon(LucideIcons.shieldCheck),
                 label: Text(context.tr('mc_verify_btn')),
               ),
               const SizedBox(height: 8),
@@ -590,11 +591,13 @@ class _Result extends StatelessWidget {
       _ => AppColors.emergency,
     };
     final c = card;
+    // Result on a light tint of its colour (no thick border).
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: color, width: 2),
-      ),
+      color: switch (check) {
+        CardCheck.valid => AppColors.answeredSoft,
+        CardCheck.expired => AppColors.reviewingSoft,
+        _ => AppColors.emergencySoft,
+      },
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -603,7 +606,7 @@ class _Result extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  ok ? Icons.verified : Icons.gpp_bad_outlined,
+                  ok ? LucideIcons.badgeCheck : LucideIcons.shieldAlert,
                   color: color,
                   size: 36,
                 ),
@@ -645,7 +648,7 @@ class _Result extends StatelessWidget {
                 TextButton.icon(
                   onPressed: () =>
                       context.push('/committee/card/${c.holderId}'),
-                  icon: const Icon(Icons.badge_outlined),
+                  icon: const Icon(LucideIcons.idCard),
                   label: Text(context.tr('mc_view')),
                 ),
             ],

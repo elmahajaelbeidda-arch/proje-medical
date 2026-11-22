@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../models/blood.dart';
 import '../models/models.dart';
@@ -371,19 +371,19 @@ class MockData {
     if (forDoctor) {
       return [
         AppNotification(
-          icon: Icons.priority_high_rounded,
+          icon: LucideIcons.circleAlert,
           title: 'طلب مستعجل جديد',
           body: 'حالة فقر دم في تخصص الباطنية تنتظر طبيباً.',
           time: now.subtract(const Duration(minutes: 40)),
         ),
         AppNotification(
-          icon: Icons.chat_bubble_outline,
+          icon: LucideIcons.messageCircle,
           title: 'رسالة جديدة',
           body: 'رشيد بن عمار: شكراً دكتورة على قبول حالتي.',
           time: now.subtract(const Duration(hours: 20)),
         ),
         AppNotification(
-          icon: Icons.star_outline,
+          icon: LucideIcons.star,
           title: 'تقييم جديد ⭐⭐⭐⭐⭐',
           body: 'سعاد مزياني: جزاك الله خيراً على وقتك.',
           time: now.subtract(const Duration(days: 4)),
@@ -393,20 +393,20 @@ class MockData {
     }
     return [
       AppNotification(
-        icon: Icons.how_to_reg_outlined,
+        icon: LucideIcons.userCheck,
         title: 'تم قبول طلبك',
         body: 'د. يوسف المنصوري يراجع استشارتك الآن.',
         time: now.subtract(const Duration(hours: 8)),
       ),
       AppNotification(
-        icon: Icons.mark_email_read_outlined,
+        icon: LucideIcons.mailCheck,
         title: 'وصلك رد الطبيب',
         body: 'رد د. أحمد بلقاسم على استشارة تحليل السكر.',
         time: now.subtract(const Duration(days: 2)),
         read: true,
       ),
       AppNotification(
-        icon: Icons.volunteer_activism_outlined,
+        icon: LucideIcons.handHeart,
         title: 'مرحباً بك في شِفاءٌ لِلنّاس',
         body: 'أكمل ملفك الصحي لتساعد الأطباء على فهم حالتك.',
         time: now.subtract(const Duration(days: 4)),

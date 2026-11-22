@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/admin_provider.dart';
@@ -184,12 +185,10 @@ class _PersonCard extends ConsumerWidget {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: AppColors.turquoise,
+                backgroundColor: AppColors.secondary,
                 child: Icon(
-                  r.isDoctor
-                      ? Icons.medical_services_outlined
-                      : Icons.person_outline,
-                  color: Colors.white,
+                  r.isDoctor ? LucideIcons.briefcaseMedical : LucideIcons.user,
+                  color: AppColors.turquoise,
                 ),
               ),
               const SizedBox(width: 10),
@@ -283,13 +282,13 @@ class _PersonCard extends ConsumerWidget {
               if (canReview && r.status != ReviewStatus.approved)
                 FilledButton.icon(
                   onPressed: () => review(ReviewStatus.approved),
-                  icon: const Icon(Icons.check),
+                  icon: const Icon(LucideIcons.check),
                   label: Text(context.tr('approve')),
                 ),
               if (canReview && r.status == ReviewStatus.pending)
                 OutlinedButton.icon(
                   onPressed: () => review(ReviewStatus.rejected),
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(LucideIcons.x),
                   label: Text(context.tr('reject')),
                 ),
               if (canSuspend && r.status == ReviewStatus.approved)
@@ -299,7 +298,7 @@ class _PersonCard extends ConsumerWidget {
                           foregroundColor: AppColors.emergency,
                         ),
                         onPressed: suspend,
-                        icon: const Icon(Icons.block),
+                        icon: const Icon(LucideIcons.ban),
                         label: Text(context.tr('ad_suspend_account')),
                       )
                     : FilledButton.tonalIcon(
@@ -311,7 +310,7 @@ class _PersonCard extends ConsumerWidget {
                           ),
                           ok: 'ad_done',
                         ),
-                        icon: const Icon(Icons.lock_open),
+                        icon: const Icon(LucideIcons.lockOpen),
                         label: Text(context.tr('ad_reactivate_account')),
                       ),
             ],
@@ -364,8 +363,8 @@ class _FacilityListState extends ConsumerState<_FacilityList> {
             child: ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const CircleAvatar(
-                backgroundColor: AppColors.turquoise,
-                child: Icon(Icons.local_hospital_outlined, color: Colors.white),
+                backgroundColor: AppColors.secondary,
+                child: Icon(LucideIcons.hospital, color: AppColors.turquoise),
               ),
               title: Text(
                 '${f.code} • ${f.name}',
@@ -399,7 +398,7 @@ class _FacilityListState extends ConsumerState<_FacilityList> {
                   ),
                 ],
               ),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const Icon(LucideIcons.chevronRightDir),
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (_) => AdminFacilityPage(facilityId: f.id),
@@ -510,7 +509,7 @@ class AdminFacilityPage extends ConsumerWidget {
                           ok: 'ad_done',
                         );
                       },
-                      icon: const Icon(Icons.block),
+                      icon: const Icon(LucideIcons.ban),
                       label: Text(context.tr('ad_suspend_account')),
                     )
                   : FilledButton.tonalIcon(
@@ -522,7 +521,7 @@ class AdminFacilityPage extends ConsumerWidget {
                         ),
                         ok: 'ad_done',
                       ),
-                      icon: const Icon(Icons.lock_open),
+                      icon: const Icon(LucideIcons.lockOpen),
                       label: Text(
                         '${context.tr('ad_reactivate_account')} ($suspended)',
                       ),
@@ -597,7 +596,7 @@ class _CardsListState extends ConsumerState<_CardsList> {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.badge_outlined, color: AppColors.primary),
+                    const Icon(LucideIcons.idCard, color: AppColors.primary),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -636,7 +635,7 @@ class _CardsListState extends ConsumerState<_CardsList> {
                           builder: (_) => _AdminCardPage(holderId: c.holderId),
                         ),
                       ),
-                      icon: const Icon(Icons.visibility_outlined),
+                      icon: const Icon(LucideIcons.eye),
                       label: Text(context.tr('mc_view')),
                     ),
                     if (canManage)
@@ -648,7 +647,7 @@ class _CardsListState extends ConsumerState<_CardsList> {
                               .renewCard(c.holderId, c.number),
                           ok: 'ad_card_renewed',
                         ),
-                        icon: const Icon(Icons.autorenew),
+                        icon: const Icon(LucideIcons.refreshCw),
                         label: Text(context.tr('ad_renew')),
                       ),
                     if (canManage)
@@ -667,7 +666,7 @@ class _CardsListState extends ConsumerState<_CardsList> {
                             n.record('au_card_suspended', target: c.number);
                           }
                         }, ok: 'ad_done'),
-                        icon: const Icon(Icons.block),
+                        icon: const Icon(LucideIcons.ban),
                         label: Text(
                           context.tr(
                             ref.watch(suspendedCardsProvider).contains(c.number)
@@ -714,12 +713,12 @@ class _AdminCardPage extends ConsumerWidget {
                     children: [
                       FilledButton.icon(
                         onPressed: () => downloadMemberCard(context, card),
-                        icon: const Icon(Icons.download),
+                        icon: const Icon(LucideIcons.download),
                         label: Text(context.tr('summons_download')),
                       ),
                       OutlinedButton.icon(
                         onPressed: () => printMemberCard(context, card),
-                        icon: const Icon(Icons.print_outlined),
+                        icon: const Icon(LucideIcons.printer),
                         label: Text(context.tr('summons_print')),
                       ),
                     ],

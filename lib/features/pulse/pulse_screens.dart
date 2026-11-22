@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -51,7 +52,7 @@ void asMember(
               radius: 32,
               backgroundColor: AppColors.mint,
               child: Icon(
-                Icons.favorite_outline,
+                LucideIcons.heart,
                 color: AppColors.primary,
                 size: 32,
               ),
@@ -76,7 +77,7 @@ void asMember(
                 Navigator.pop(ctx);
                 context.push('/role');
               },
-              icon: const Icon(Icons.login),
+              icon: const Icon(LucideIcons.logIn),
               label: Text(ctx.tr('pl_join_btn')),
             ),
           ],
@@ -120,15 +121,15 @@ Future<void> openPulseLink(BuildContext context, String url) async {
 }
 
 IconData pulseIcon(String key) => switch (key) {
-  'campaign' => Icons.campaign_outlined,
-  'group' => Icons.groups_2_outlined,
-  'medication' => Icons.medication_outlined,
-  'video' => Icons.smart_display_outlined,
-  'school' => Icons.school_outlined,
-  'map' => Icons.map_outlined,
-  'heart' => Icons.volunteer_activism_outlined,
-  'event' => Icons.event_outlined,
-  _ => Icons.photo_outlined,
+  'campaign' => LucideIcons.megaphone,
+  'group' => LucideIcons.users,
+  'medication' => LucideIcons.pill,
+  'video' => LucideIcons.monitorPlay,
+  'school' => LucideIcons.graduationCap,
+  'map' => LucideIcons.map,
+  'heart' => LucideIcons.handHeart,
+  'event' => LucideIcons.calendar,
+  _ => LucideIcons.image,
 };
 
 const _tones = [
@@ -142,10 +143,10 @@ String kindKey(PulseKind k) => 'pl_kind_${k.name}';
 String topicKey(NewsTopic t) => 'pl_topic_${t.name}';
 
 IconData kindIcon(PulseKind k) => switch (k) {
-  PulseKind.news => Icons.newspaper_outlined,
-  PulseKind.story => Icons.auto_stories_outlined,
-  PulseKind.media => Icons.photo_library_outlined,
-  PulseKind.achievement => Icons.emoji_events_outlined,
+  PulseKind.news => LucideIcons.newspaper,
+  PulseKind.story => LucideIcons.bookOpen,
+  PulseKind.media => LucideIcons.images,
+  PulseKind.achievement => LucideIcons.trophy,
 };
 
 // ---------------------------------------------------------------------------
@@ -190,7 +191,7 @@ class _PulseHomeScreenState extends ConsumerState<PulseHomeScreen> {
           ? FloatingActionButton.extended(
               onPressed: () =>
                   asMember(context, ref, (_) => context.push('/pulse/new')),
-              icon: const Icon(Icons.edit_outlined),
+              icon: const Icon(LucideIcons.pencil),
               label: Text(context.tr('pl_share_story')),
             )
           : null,
@@ -209,7 +210,7 @@ class _PulseHomeScreenState extends ConsumerState<PulseHomeScreen> {
                 IconButton(
                   tooltip: context.tr('pl_my_posts'),
                   onPressed: () => context.push('/pulse/mine'),
-                  icon: const Icon(Icons.inventory_2_outlined),
+                  icon: const Icon(LucideIcons.archive),
                 ),
             ],
             flexibleSpace: const FlexibleSpaceBar(
@@ -244,7 +245,7 @@ class _PulseHomeScreenState extends ConsumerState<PulseHomeScreen> {
           else if (feed.isEmpty)
             SliverToBoxAdapter(
               child: EmptyState(
-                icon: Icons.forum_outlined,
+                icon: LucideIcons.messagesSquare,
                 message: context.tr('pl_empty'),
               ),
             )
@@ -345,7 +346,7 @@ class _GuestBanner extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
       child: Row(
         children: [
-          const Icon(Icons.visibility_outlined, color: AppColors.primary),
+          const Icon(LucideIcons.eye, color: AppColors.primary),
           const SizedBox(width: 10),
           Expanded(child: Text(context.tr('pl_guest_note'))),
           TextButton(
@@ -381,7 +382,7 @@ class _LiveBanner extends ConsumerWidget {
                 radius: 26,
                 backgroundColor: isLive ? Colors.white : AppColors.turquoise,
                 child: Icon(
-                  isLive ? Icons.sensors : Icons.event_available_outlined,
+                  isLive ? LucideIcons.radio : LucideIcons.calendarCheck,
                   color: isLive ? AppColors.turquoise : Colors.white,
                 ),
               ),
@@ -412,7 +413,7 @@ class _LiveBanner extends ConsumerWidget {
                 ),
               ),
               Icon(
-                Icons.chevron_right,
+                LucideIcons.chevronRightDir,
                 color: isLive ? Colors.white : AppColors.grey,
               ),
             ],
@@ -450,10 +451,10 @@ class LiveBadge extends StatelessWidget {
         children: [
           Icon(
             onLive
-                ? Icons.circle
+                ? LucideIcons.circle
                 : (live.status == LiveStatus.ended
-                      ? Icons.play_circle_outline
-                      : Icons.schedule),
+                      ? LucideIcons.circlePlay
+                      : LucideIcons.clock),
             size: 12,
             color: color,
           ),
@@ -484,7 +485,7 @@ class _ImpactStrip extends StatelessWidget {
         Row(
           children: [
             const Icon(
-              Icons.emoji_events_outlined,
+              LucideIcons.trophy,
               color: AppColors.turquoise,
               size: 20,
             ),
@@ -566,12 +567,12 @@ class _TabsHeader extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     IconData icon(PulseTab t) => switch (t) {
-      PulseTab.all => Icons.dynamic_feed_outlined,
-      PulseTab.news => Icons.newspaper_outlined,
-      PulseTab.stories => Icons.auto_stories_outlined,
-      PulseTab.media => Icons.photo_library_outlined,
-      PulseTab.live => Icons.sensors,
-      PulseTab.achievements => Icons.emoji_events_outlined,
+      PulseTab.all => LucideIcons.layers,
+      PulseTab.news => LucideIcons.newspaper,
+      PulseTab.stories => LucideIcons.bookOpen,
+      PulseTab.media => LucideIcons.images,
+      PulseTab.live => LucideIcons.radio,
+      PulseTab.achievements => LucideIcons.trophy,
     };
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
@@ -665,7 +666,7 @@ class PostCard extends ConsumerWidget {
                 children: [
                   if (s.settings.likesEnabled)
                     _Action(
-                      icon: liked ? Icons.favorite : Icons.favorite_border,
+                      icon: liked ? LucideIcons.heart : LucideIcons.heart,
                       color: liked ? AppColors.vivid : null,
                       label: '${p.likes.length}',
                       tooltip: context.tr('pl_like'),
@@ -678,7 +679,7 @@ class PostCard extends ConsumerWidget {
                       ),
                     ),
                   _Action(
-                    icon: Icons.mode_comment_outlined,
+                    icon: LucideIcons.messageSquare,
                     label: '$comments',
                     tooltip: context.tr('pl_comments'),
                     onTap: full
@@ -686,7 +687,7 @@ class PostCard extends ConsumerWidget {
                         : () => context.push('/pulse/post/${p.id}'),
                   ),
                   _Action(
-                    icon: Icons.share_outlined,
+                    icon: LucideIcons.share2,
                     label: '${p.shares}',
                     tooltip: context.tr('pl_share'),
                     onTap: () => sharePost(context, ref, p),
@@ -701,10 +702,7 @@ class PostCard extends ConsumerWidget {
                           SnackBar(content: Text(context.tr('pl_reported'))),
                         );
                       }),
-                      icon: const Icon(
-                        Icons.flag_outlined,
-                        color: AppColors.grey,
-                      ),
+                      icon: const Icon(LucideIcons.flag, color: AppColors.grey),
                     ),
                 ],
               ),
@@ -740,9 +738,7 @@ class _PostHeader extends StatelessWidget {
                   child: Image.asset('assets/images/logo_icon.png'),
                 )
               : Icon(
-                  p.anonymous
-                      ? Icons.person_off_outlined
-                      : Icons.person_outline,
+                  p.anonymous ? LucideIcons.userX : LucideIcons.user,
                   color: AppColors.turquoise,
                 ),
         ),
@@ -762,7 +758,7 @@ class _PostHeader extends StatelessWidget {
         if (p.pinned)
           const Padding(
             padding: EdgeInsetsDirectional.only(end: 6),
-            child: Icon(Icons.push_pin, size: 18, color: AppColors.turquoise),
+            child: Icon(LucideIcons.pin, size: 18, color: AppColors.turquoise),
           ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -888,7 +884,7 @@ class MediaTile extends StatelessWidget {
                     radius: 26,
                     backgroundColor: Colors.white,
                     child: Icon(
-                      Icons.play_arrow_rounded,
+                      LucideIcons.play,
                       color: AppColors.primary,
                       size: 34,
                     ),
@@ -951,7 +947,7 @@ void showMediaViewer(BuildContext context, PulseMedia m) {
           ListTile(
             title: Text(m.caption.isEmpty ? ctx.tr('pl_photo') : m.caption),
             trailing: IconButton(
-              icon: const Icon(Icons.close),
+              icon: const Icon(LucideIcons.x),
               onPressed: () => Navigator.pop(ctx),
             ),
           ),
@@ -1006,7 +1002,7 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
       return Scaffold(
         appBar: AppBar(title: Text(context.tr('pl_name'))),
         body: EmptyState(
-          icon: Icons.search_off,
+          icon: LucideIcons.searchX,
           message: context.tr('pl_not_found'),
         ),
       );
@@ -1118,7 +1114,7 @@ class CommentTile extends ConsumerWidget {
                       child: Padding(
                         padding: const EdgeInsetsDirectional.only(start: 6),
                         child: Icon(
-                          Icons.flag_outlined,
+                          LucideIcons.flag,
                           size: 16,
                           semanticLabel: context.tr('pl_report'),
                           color: AppColors.grey,
@@ -1179,7 +1175,7 @@ class _Composer extends StatelessWidget {
           IconButton.filled(
             tooltip: context.tr('send'),
             onPressed: onSend,
-            icon: const Icon(Icons.send_rounded),
+            icon: const Icon(LucideIcons.sendHorizontal),
           ),
         ],
       ),
@@ -1254,7 +1250,7 @@ class _RecordingTile extends StatelessWidget {
             height: 84,
             decoration: const BoxDecoration(color: AppColors.primary),
             child: const Icon(
-              Icons.play_circle_fill,
+              LucideIcons.circlePlay,
               color: Colors.white,
               size: 40,
             ),
@@ -1329,7 +1325,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
       return Scaffold(
         appBar: AppBar(),
         body: EmptyState(
-          icon: Icons.search_off,
+          icon: LucideIcons.searchX,
           message: context.tr('pl_not_found'),
         ),
       );
@@ -1394,7 +1390,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           const Icon(
-                                            Icons.schedule,
+                                            LucideIcons.clock,
                                             color: Colors.white,
                                             size: 42,
                                           ),
@@ -1412,7 +1408,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                                         radius: 34,
                                         backgroundColor: Colors.white,
                                         child: Icon(
-                                          Icons.play_arrow_rounded,
+                                          LucideIcons.play,
                                           color: AppColors.primary,
                                           size: 46,
                                         ),
@@ -1437,7 +1433,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                 Row(
                   children: [
                     const Icon(
-                      Icons.record_voice_over_outlined,
+                      LucideIcons.speech,
                       size: 18,
                       color: AppColors.turquoise,
                     ),
@@ -1460,9 +1456,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                           .toggleReminder(l.id, w),
                     ),
                     icon: Icon(
-                      reminded
-                          ? Icons.notifications_active
-                          : Icons.notifications_none,
+                      reminded ? LucideIcons.bellRing : LucideIcons.bell,
                     ),
                     label: Text(
                       context.tr(reminded ? 'pl_reminder_on' : 'pl_remind_me'),
@@ -1474,7 +1468,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                       minimumSize: const Size.fromHeight(50),
                     ),
                     onPressed: () => _watch(l),
-                    icon: const Icon(Icons.play_arrow_rounded),
+                    icon: const Icon(LucideIcons.play),
                     label: Text(
                       context.tr(
                         l.status == LiveStatus.live
@@ -1488,14 +1482,14 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                   segments: [
                     ButtonSegment(
                       value: 0,
-                      icon: const Icon(Icons.forum_outlined),
+                      icon: const Icon(LucideIcons.messagesSquare),
                       label: Text(
                         '${context.tr('pl_comments')} (${chat.length})',
                       ),
                     ),
                     ButtonSegment(
                       value: 1,
-                      icon: const Icon(Icons.help_outline),
+                      icon: const Icon(LucideIcons.circleHelp),
                       label: Text(
                         '${context.tr('pl_questions')} (${questions.length})',
                       ),
@@ -1588,8 +1582,8 @@ class _QuestionTile extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: q.answered
-            ? const Icon(Icons.check_circle, color: AppColors.vivid)
-            : const Icon(Icons.help_outline, color: AppColors.turquoise),
+            ? const Icon(LucideIcons.circleCheck, color: AppColors.vivid)
+            : const Icon(LucideIcons.circleHelp, color: AppColors.turquoise),
         title: Text(q.text),
         subtitle: Text(
           q.answered
@@ -1604,7 +1598,7 @@ class _QuestionTile extends ConsumerWidget {
                 ref.read(pulseProvider.notifier).voteQuestion(liveId, q.id, w),
           ),
           icon: Icon(
-            voted ? Icons.thumb_up : Icons.thumb_up_outlined,
+            voted ? LucideIcons.thumbsUp : LucideIcons.thumbsUp,
             size: 18,
           ),
           label: Text('${q.votes.length}'),
@@ -1674,7 +1668,7 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         icon: const Icon(
-          Icons.hourglass_top,
+          LucideIcons.hourglass,
           color: AppColors.turquoise,
           size: 40,
         ),
@@ -1703,7 +1697,7 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
       return Scaffold(
         appBar: AppBar(title: Text(context.tr('pl_share_story'))),
         body: EmptyState(
-          icon: Icons.lock_outline,
+          icon: LucideIcons.lock,
           message: context.tr(
             who == null ? 'pl_join_body' : 'pl_submissions_off',
           ),
@@ -1719,7 +1713,7 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
           children: [
             InfoCard(
               title: context.tr('pl_rules_title'),
-              icon: Icons.shield_outlined,
+              icon: LucideIcons.shield,
               child: Text(
                 context.tr('pl_rules_body'),
                 style: const TextStyle(height: 1.7),
@@ -1768,7 +1762,7 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
                             radius: 12,
                             backgroundColor: Color(0x99263B36),
                             child: Icon(
-                              Icons.close,
+                              LucideIcons.x,
                               size: 14,
                               color: Colors.white,
                             ),
@@ -1780,7 +1774,7 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
                 if (_photos.length < 4)
                   OutlinedButton.icon(
                     onPressed: _addPhotos,
-                    icon: const Icon(Icons.add_photo_alternate_outlined),
+                    icon: const Icon(LucideIcons.imagePlus),
                     label: Text(context.tr('pl_add_photos')),
                   ),
               ],
@@ -1814,7 +1808,7 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
                 minimumSize: const Size.fromHeight(52),
               ),
               onPressed: () => _submit(who),
-              icon: const Icon(Icons.send_rounded),
+              icon: const Icon(LucideIcons.sendHorizontal),
               label: Text(context.tr('pl_send_review')),
             ),
           ],
@@ -1837,7 +1831,7 @@ class MySubmissionsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(context.tr('pl_my_posts'))),
       body: mine.isEmpty
           ? EmptyState(
-              icon: Icons.auto_stories_outlined,
+              icon: LucideIcons.bookOpen,
               message: context.tr('pl_no_posts'),
             )
           : ListView.separated(
@@ -1850,22 +1844,22 @@ class MySubmissionsScreen extends ConsumerWidget {
                   PulseStatus.pending => (
                     'pl_st_pending',
                     AppColors.turquoise,
-                    Icons.hourglass_top,
+                    LucideIcons.hourglass,
                   ),
                   PulseStatus.published => (
                     'pl_st_published',
                     AppColors.vivid,
-                    Icons.check_circle_outline,
+                    LucideIcons.circleCheck,
                   ),
                   PulseStatus.rejected => (
                     'pl_st_rejected',
                     AppColors.error,
-                    Icons.info_outline,
+                    LucideIcons.info,
                   ),
                   PulseStatus.hidden => (
                     'pl_st_hidden',
                     AppColors.grey,
-                    Icons.visibility_off_outlined,
+                    LucideIcons.eyeOff,
                   ),
                 };
                 return Card(
@@ -1914,7 +1908,7 @@ class PulseEntryCard extends StatelessWidget {
                     radius: 26,
                     backgroundColor: Colors.white,
                     child: Icon(
-                      Icons.diversity_1_outlined,
+                      LucideIcons.heartHandshake,
                       color: AppColors.primary,
                       size: 28,
                     ),
@@ -1944,7 +1938,7 @@ class PulseEntryCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Icon(Icons.chevron_right, color: Colors.white),
+                  const Icon(LucideIcons.chevronRightDir, color: Colors.white),
                 ],
               ),
             ),

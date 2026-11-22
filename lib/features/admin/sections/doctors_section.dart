@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -117,12 +118,12 @@ class _DoctorsSectionState extends ConsumerState<DoctorsSection> {
             Kpi(
               label: context.tr('kp_doctors'),
               value: '${activity.length}',
-              icon: Icons.medical_services_outlined,
+              icon: LucideIcons.briefcaseMedical,
             ),
             Kpi(
               label: context.tr('al_pending_doctors'),
               value: '$pendingDoctors',
-              icon: Icons.person_add_alt,
+              icon: LucideIcons.userPlus,
               color: AppColors.warning,
               onTap: () => context.go('/admin/users'),
             ),
@@ -130,7 +131,7 @@ class _DoctorsSectionState extends ConsumerState<DoctorsSection> {
               label: context.tr('ad_unassigned'),
               value:
                   '${consultations.where((c) => c.status == ConsultationStatus.pending).length}',
-              icon: Icons.inbox_outlined,
+              icon: LucideIcons.inbox,
               color: AppColors.info,
               onTap: () => context.go('/admin/cases'),
             ),
@@ -138,13 +139,13 @@ class _DoctorsSectionState extends ConsumerState<DoctorsSection> {
               label: context.tr('ad_psych_sessions'),
               value:
                   '${psych.where((s) => s.status == PsychStatus.completed).length}',
-              icon: Icons.psychology_outlined,
+              icon: LucideIcons.brain,
             ),
             Kpi(
               label: context.tr('al_visits_week'),
               value:
                   '${ref.watch(summonsProvider).where((s) => s.appointment.isAfter(now) && s.appointment.difference(now).inDays < 7).length}',
-              icon: Icons.event_available,
+              icon: LucideIcons.calendarCheck,
             ),
           ],
         ),
@@ -185,8 +186,8 @@ class _DoctorsSectionState extends ConsumerState<DoctorsSection> {
                   contentPadding: EdgeInsets.zero,
                   leading: Icon(
                     s.issuer == SummonsIssuer.doctor
-                        ? Icons.medical_services_outlined
-                        : Icons.local_hospital_outlined,
+                        ? LucideIcons.briefcaseMedical
+                        : LucideIcons.hospital,
                     color: AppColors.primary,
                   ),
                   title: Text('${s.code} • ${s.issuerName}'),
@@ -237,7 +238,7 @@ class _DoctorRow extends ConsumerWidget {
                       IconButton(
                         onPressed: () => setState(() => score = i),
                         icon: Icon(
-                          i <= score ? Icons.star : Icons.star_border,
+                          i <= score ? LucideIcons.star : LucideIcons.star,
                           color: AppColors.accent,
                         ),
                       ),
@@ -339,7 +340,7 @@ class _DoctorRow extends ConsumerWidget {
                 alignment: AlignmentDirectional.centerEnd,
                 child: TextButton.icon(
                   onPressed: evaluate,
-                  icon: const Icon(Icons.star_half),
+                  icon: const Icon(LucideIcons.starHalf),
                   label: Text(context.tr('ad_evaluate')),
                 ),
               ),

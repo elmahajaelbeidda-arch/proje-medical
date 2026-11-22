@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -108,10 +109,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       side: BorderSide.none,
                       avatar: Icon(
                         auth.isCommittee
-                            ? Icons.groups_outlined
+                            ? LucideIcons.users
                             : auth.isDoctor
-                            ? Icons.medical_services_outlined
-                            : Icons.personal_injury_outlined,
+                            ? LucideIcons.briefcaseMedical
+                            : LucideIcons.userRound,
                         color: AppColors.ink,
                         size: 18,
                       ),
@@ -131,7 +132,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: context.tr('phone_or_email'),
-                      prefixIcon: const Icon(Icons.person_outline),
+                      prefixIcon: const Icon(LucideIcons.user),
                     ),
                     validator: required,
                   ),
@@ -140,12 +141,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     obscureText: _obscure,
                     decoration: InputDecoration(
                       labelText: context.tr('password'),
-                      prefixIcon: const Icon(Icons.lock_outline),
+                      prefixIcon: const Icon(LucideIcons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscure
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                          _obscure ? LucideIcons.eye : LucideIcons.eyeOff,
                         ),
                         onPressed: () => setState(() => _obscure = !_obscure),
                       ),
@@ -179,7 +178,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         if (_blockedIfSuspended(context, ref)) return;
                         _goHome(context, ref);
                       },
-                      icon: const Icon(Icons.psychology_outlined),
+                      icon: const Icon(LucideIcons.brain),
                       label: Text(context.tr('psych_demo_login')),
                     ),
                   const SizedBox(height: 16),
@@ -349,8 +348,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       children: [
                         Icon(
                           isDoctor
-                              ? Icons.medical_services_outlined
-                              : Icons.personal_injury_outlined,
+                              ? LucideIcons.briefcaseMedical
+                              : LucideIcons.userRound,
                           color: AppColors.ink,
                         ),
                         const SizedBox(width: 10),
@@ -369,7 +368,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     controller: _name,
                     decoration: InputDecoration(
                       labelText: context.tr('full_name'),
-                      prefixIcon: const Icon(Icons.badge_outlined),
+                      prefixIcon: const Icon(LucideIcons.idCard),
                     ),
                     validator: required,
                   ),
@@ -383,7 +382,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     decoration: InputDecoration(
                       labelText: context.tr('phone'),
                       hintText: 'XX XX XX XX',
-                      prefixIcon: const Icon(Icons.phone_outlined),
+                      prefixIcon: const Icon(LucideIcons.phone),
                     ),
                     validator: (v) {
                       final digits = (v ?? '').replaceAll(RegExp(r'\D'), '');
@@ -397,7 +396,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: context.tr('password'),
-                      prefixIcon: const Icon(Icons.lock_outline),
+                      prefixIcon: const Icon(LucideIcons.lock),
                     ),
                     validator: required,
                   ),
@@ -407,7 +406,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   Row(
                     children: [
                       const Icon(
-                        Icons.badge_outlined,
+                        LucideIcons.idCard,
                         color: AppColors.turquoise,
                       ),
                       const SizedBox(width: 8),
@@ -426,7 +425,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
                       labelText: context.tr('id_number'),
-                      prefixIcon: const Icon(Icons.pin_outlined),
+                      prefixIcon: const Icon(LucideIcons.pin),
                     ),
                     validator: (v) {
                       final value = v?.trim() ?? '';
@@ -470,7 +469,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.lock_outline, size: 16),
+                      const Icon(LucideIcons.lock, size: 16),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
@@ -486,7 +485,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       initialValue: _specialty,
                       decoration: InputDecoration(
                         labelText: context.tr('specialty'),
-                        prefixIcon: const Icon(Icons.local_hospital_outlined),
+                        prefixIcon: const Icon(LucideIcons.hospital),
                       ),
                       items: [
                         for (final s in Specialty.all)
@@ -521,7 +520,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       controller: _license,
                       decoration: InputDecoration(
                         labelText: context.tr('license_number'),
-                        prefixIcon: const Icon(Icons.numbers),
+                        prefixIcon: const Icon(LucideIcons.hash),
                       ),
                       validator: required,
                     ),
@@ -529,7 +528,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     if (_certificate == null)
                       OutlinedButton.icon(
                         onPressed: _pickCertificate,
-                        icon: const Icon(Icons.upload_file_outlined),
+                        icon: const Icon(LucideIcons.fileUp),
                         label: Text(context.tr('upload_certificate')),
                       )
                     else
@@ -618,7 +617,7 @@ class _IdPhotoTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(
-                      Icons.add_a_photo_outlined,
+                      LucideIcons.imagePlus,
                       color: AppColors.ink,
                       size: 30,
                     ),
@@ -655,7 +654,11 @@ class _IdPhotoTile extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.check, color: Colors.white, size: 14),
+                        const Icon(
+                          LucideIcons.check,
+                          color: Colors.white,
+                          size: 14,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           label,
@@ -758,8 +761,12 @@ class _VerifyPhoneScreenState extends ConsumerState<VerifyPhoneScreen> {
             children: [
               const CircleAvatar(
                 radius: 44,
-                backgroundColor: AppColors.turquoise,
-                child: Icon(Icons.sms_outlined, color: Colors.white, size: 44),
+                backgroundColor: AppColors.secondary,
+                child: Icon(
+                  LucideIcons.messageSquareText,
+                  color: AppColors.turquoise,
+                  size: 44,
+                ),
               ),
               const SizedBox(height: 20),
               Text(

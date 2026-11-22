@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -113,9 +114,6 @@ class ShifaHero extends StatelessWidget {
         color: scheme.surface,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
         boxShadow: AppColors.shadow,
-        border: const Border(
-          bottom: BorderSide(color: AppColors.turquoise, width: 3),
-        ),
       ),
       child: Column(
         children: [
@@ -183,7 +181,7 @@ class AboutShifaCard extends StatelessWidget {
             boxShadow: AppColors.shadow,
           ),
           child: const Icon(
-            Icons.favorite_rounded,
+            LucideIcons.heart,
             color: AppColors.turquoise,
             size: 20,
           ),
@@ -284,9 +282,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   /// Page 0 is the platform introduction; the others follow.
   static const _pages = [
-    (Icons.volunteer_activism_rounded, 'onb1_title', 'onb1_body'),
-    (Icons.document_scanner_rounded, 'onb2_title', 'onb2_body'),
-    (Icons.health_and_safety_rounded, 'onb3_title', 'onb3_body'),
+    (LucideIcons.handHeart, 'onb1_title', 'onb1_body'),
+    (LucideIcons.scanText, 'onb2_title', 'onb2_body'),
+    (LucideIcons.shieldPlus, 'onb3_title', 'onb3_body'),
   ];
 
   @override
@@ -345,7 +343,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(
-                            Icons.language,
+                            LucideIcons.globe,
                             color: AppColors.turquoise,
                           ),
                           const SizedBox(width: 6),
@@ -358,7 +356,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             ),
                           ),
                           const Icon(
-                            Icons.arrow_drop_down,
+                            LucideIcons.chevronDown,
                             color: AppColors.turquoise,
                           ),
                         ],
@@ -524,7 +522,7 @@ class RoleSelectScreen extends ConsumerWidget {
                 const PulseEntryCard(),
                 const SizedBox(height: 16),
                 _RoleCard(
-                  icon: Icons.personal_injury_outlined,
+                  icon: LucideIcons.userRound,
                   title: context.tr('role_patient'),
                   subtitle: context.tr('role_patient_desc'),
                   color: AppColors.patient,
@@ -533,7 +531,7 @@ class RoleSelectScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 14),
                 _RoleCard(
-                  icon: Icons.medical_services_outlined,
+                  icon: LucideIcons.briefcaseMedical,
                   title: context.tr('role_doctor'),
                   subtitle: context.tr('role_doctor_desc'),
                   color: AppColors.doctor,
@@ -544,7 +542,7 @@ class RoleSelectScreen extends ConsumerWidget {
                 if (settings.enabled(AppSection.blood)) ...[
                   // Blood donation only (no blood request here).
                   _RoleCard(
-                    icon: Icons.bloodtype_outlined,
+                    icon: LucideIcons.droplet,
                     title: context.tr('role_donor'),
                     subtitle: context.tr('role_donor_desc'),
                     color: AppColors.secondary,
@@ -555,7 +553,7 @@ class RoleSelectScreen extends ConsumerWidget {
                 if (settings.enabled(AppSection.facilities)) ...[
                   const SizedBox(height: 14),
                   _RoleCard(
-                    icon: Icons.local_hospital_outlined,
+                    icon: LucideIcons.hospital,
                     title: context.tr('role_facility'),
                     subtitle: context.tr('role_facility_desc'),
                     color: AppColors.secondary,
@@ -568,18 +566,18 @@ class RoleSelectScreen extends ConsumerWidget {
                 const SizedBox(height: 8),
                 TextButton.icon(
                   onPressed: () => context.push('/about'),
-                  icon: const Icon(Icons.groups_outlined),
+                  icon: const Icon(LucideIcons.users),
                   label: Text(context.tr('about_association')),
                 ),
                 const SizedBox(height: 8),
                 TextButton.icon(
                   onPressed: () => context.push('/verify-card'),
-                  icon: const Icon(Icons.qr_code_scanner),
+                  icon: const Icon(LucideIcons.scanQrCode),
                   label: Text(context.tr('mc_verify_link')),
                 ),
                 TextButton.icon(
                   onPressed: () => context.push('/disclaimer'),
-                  icon: const Icon(Icons.info_outline),
+                  icon: const Icon(LucideIcons.info),
                   label: Text(context.tr('disclaimer')),
                 ),
               ],
@@ -610,26 +608,23 @@ class _RoleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    // Same card shape as the home screen: white, 16 corners, light shadow.
     return Card(
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-        side: BorderSide(color: darkColor, width: 2),
-      ),
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Container(
-                width: 64,
-                height: 64,
+                width: 52,
+                height: 52,
                 decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(18),
+                  color: AppColors.secondary,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, size: 34, color: AppColors.ink),
+                child: Icon(icon, size: 26, color: darkColor),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -647,7 +642,7 @@ class _RoleCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: darkColor),
+              const Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
             ],
           ),
         ),
