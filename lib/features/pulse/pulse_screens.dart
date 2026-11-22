@@ -495,7 +495,7 @@ class _ImpactStrip extends StatelessWidget {
           children: [
             const Icon(
               Icons.emoji_events_outlined,
-              color: AppColors.gold,
+              color: AppColors.turquoise,
               size: 20,
             ),
             const SizedBox(width: 6),
@@ -772,7 +772,7 @@ class _PostHeader extends StatelessWidget {
         if (p.pinned)
           const Padding(
             padding: EdgeInsetsDirectional.only(end: 6),
-            child: Icon(Icons.push_pin, size: 18, color: AppColors.gold),
+            child: Icon(Icons.push_pin, size: 18, color: AppColors.turquoise),
           ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -1707,7 +1707,11 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        icon: const Icon(Icons.hourglass_top, color: AppColors.gold, size: 40),
+        icon: const Icon(
+          Icons.hourglass_top,
+          color: AppColors.turquoise,
+          size: 40,
+        ),
         title: Text(ctx.tr('pl_sent_title')),
         content: Text(ctx.tr('pl_sent_body'), textAlign: TextAlign.center),
         actions: [
@@ -1879,7 +1883,7 @@ class MySubmissionsScreen extends ConsumerWidget {
                 final (key, color, icon) = switch (p.status) {
                   PulseStatus.pending => (
                     'pl_st_pending',
-                    AppColors.gold,
+                    AppColors.turquoise,
                     Icons.hourglass_top,
                   ),
                   PulseStatus.published => (

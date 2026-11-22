@@ -99,7 +99,7 @@ class DoctorProfileScreen extends StatelessWidget {
                             const Spacer(),
                             const Icon(
                               Icons.star_rounded,
-                              color: AppColors.gold,
+                              color: AppColors.secondary,
                               size: 20,
                             ),
                             Text(

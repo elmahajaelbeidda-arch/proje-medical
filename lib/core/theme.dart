@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 /// Visual identity of "شِفاءٌ لِلنّاس".
 ///
-/// Six colours only. Every other shade below is a mix of these six (and
-/// white), noted next to it, so the whole app stays within the palette.
+/// Five colours only (gold was dropped). Every other shade below is a mix
+/// of these (and white), noted next to it, so the app stays in the palette.
 class AppColors {
   AppColors._();
 
@@ -15,7 +15,6 @@ class AppColors {
     0xFF258C91,
   ); // turquoise: icons, highlights, life
   static const secondary = Color(0xFFE4F1EB); // mint: cards and light areas
-  static const gold = Color(0xFFD9A441); // calm gold: a few touches only
   static const background = Color(0xFFF7F9F8); // white-grey: app background
   static const text = Color(0xFF263B36); // dark grey: text and secondary titles
   static const surface = Color(0xFFFFFFFF); // white cards
@@ -31,8 +30,6 @@ class AppColors {
   static const border = Color(0xFFD5E2DD); // mint 92% + dark grey
   static const fieldFill = Color(0xFFEEF5F2); // white-grey 55% + mint
   static const turquoiseSoft = Color(0xFFE5F1F2); // turquoise 12% on white
-  static const goldSoft = Color(0xFFF9F1E2); // gold 15% on white
-  static const goldDeep = Color(0xFF9A7F3D); // gold 65% + dark grey
   static const emeraldTeal = Color(0xFF1C7C70); // emerald 50% + turquoise
   static const offline = Color(0xFFABBAB5); // mint 70% + dark grey
 
@@ -63,13 +60,13 @@ class AppColors {
   static const patientDark = turquoise;
   static const doctorDark = primary;
 
-  static const accent = gold; // stars
+  static const accent = turquoise; // stars
   static const info = turquoise;
 
   // Status (no red anywhere)
   static const danger = emergency;
   static const success = primary;
-  static const warning = gold; // pending
+  static const warning = offline; // pending: calm grey-green
   static const error = Color(0xFF256868); // turquoise 55% + dark grey
 
   /// Soft shadow in the brand colour.
@@ -118,8 +115,8 @@ class AppTheme {
           onSecondary: Colors.white,
           secondaryContainer: AppColors.turquoiseSoft,
           onSecondaryContainer: AppColors.turquoiseText,
-          tertiary: AppColors.gold,
-          onTertiary: AppColors.text,
+          tertiary: AppColors.turquoise,
+          onTertiary: Colors.white,
           onSurface: isLight ? AppColors.text : Colors.white,
           onSurfaceVariant: isLight ? AppColors.grey : AppColors.offline,
           error: AppColors.error,
@@ -326,7 +323,7 @@ class AppTheme {
           color: Colors.white,
           fontFamily: 'ElMessiri',
         ),
-        actionTextColor: AppColors.gold,
+        actionTextColor: AppColors.secondary,
         shape: RoundedRectangleBorder(borderRadius: radius16),
       ),
       dialogTheme: DialogThemeData(

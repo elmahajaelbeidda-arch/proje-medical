@@ -226,7 +226,7 @@ class VisitorStatsCard extends ConsumerWidget {
           Icons.volunteer_activism_outlined,
           'vc_beneficiaries',
           s?.beneficiaries,
-          AppColors.gold,
+          AppColors.turquoise,
         ),
     ];
 
@@ -285,7 +285,7 @@ class VisitorStatsCard extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.gold.withValues(alpha: 0.15),
+                  color: AppColors.turquoise.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(

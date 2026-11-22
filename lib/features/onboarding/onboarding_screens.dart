@@ -114,7 +114,7 @@ class ShifaHero extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
         boxShadow: AppColors.shadow,
         border: const Border(
-          bottom: BorderSide(color: AppColors.gold, width: 3),
+          bottom: BorderSide(color: AppColors.turquoise, width: 3),
         ),
       ),
       child: Column(
@@ -179,12 +179,12 @@ class AboutShifaCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.surface,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.gold, width: 2),
+            border: Border.all(color: AppColors.turquoise, width: 2),
             boxShadow: AppColors.shadow,
           ),
           child: const Icon(
             Icons.favorite_rounded,
-            color: AppColors.gold,
+            color: AppColors.turquoise,
             size: 20,
           ),
         ),
@@ -436,7 +436,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       decoration: BoxDecoration(
                         color: i == _page
                             ? AppColors.primary
-                            : (i < _page ? AppColors.gold : AppColors.mint),
+                            : (i < _page
+                                  ? AppColors.turquoise
+                                  : AppColors.mint),
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),

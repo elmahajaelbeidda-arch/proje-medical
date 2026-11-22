@@ -87,12 +87,12 @@ class ConsultationDetailsScreen extends ConsumerWidget {
               color: AppColors.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
-                side: const BorderSide(color: AppColors.gold, width: 1.5),
+                side: const BorderSide(color: AppColors.turquoise, width: 1.5),
               ),
               child: ListTile(
                 leading: const Icon(
                   Icons.hourglass_top_rounded,
-                  color: AppColors.gold,
+                  color: AppColors.turquoise,
                 ),
                 title: Text(
                   context.tr('waiting_doctor'),

@@ -51,7 +51,7 @@ class _PulseSectionState extends ConsumerState<PulseSection> {
               label: context.tr('pla_pending'),
               value: '${s.pending.length}',
               icon: Icons.hourglass_top,
-              color: AppColors.gold,
+              color: AppColors.turquoise,
               onTap: () => setState(() => _tab = _Tab.review),
             ),
             Kpi(
@@ -167,7 +167,7 @@ Future<String?> _askText(
 
 String _statusKey(PulseStatus s) => 'pl_st_${s.name}';
 Color _statusColor(PulseStatus s) => switch (s) {
-  PulseStatus.pending => AppColors.gold,
+  PulseStatus.pending => AppColors.turquoise,
   PulseStatus.published => AppColors.vivid,
   PulseStatus.rejected => AppColors.error,
   PulseStatus.hidden => AppColors.grey,
@@ -284,7 +284,7 @@ class _ReviewTab extends ConsumerWidget {
                                   children: [
                                     const Icon(
                                       Icons.privacy_tip_outlined,
-                                      color: AppColors.gold,
+                                      color: AppColors.turquoise,
                                       size: 18,
                                     ),
                                     const SizedBox(width: 6),
@@ -722,7 +722,7 @@ class _PostsTabState extends ConsumerState<_PostsTab> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: p.pinned
-                      ? const Icon(Icons.push_pin, color: AppColors.gold)
+                      ? const Icon(Icons.push_pin, color: AppColors.turquoise)
                       : const Icon(
                           Icons.article_outlined,
                           color: AppColors.grey,
@@ -1026,7 +1026,7 @@ class _LiveTabState extends ConsumerState<_LiveTab> {
               }),
               color: switch (l.status) {
                 LiveStatus.live => AppColors.turquoise,
-                LiveStatus.scheduled => AppColors.gold,
+                LiveStatus.scheduled => AppColors.turquoise,
                 LiveStatus.ended => AppColors.secondary,
               },
             ),
