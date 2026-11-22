@@ -29,8 +29,8 @@ final localeProvider = NotifierProvider<LocaleNotifier, Locale>(
 
 class ThemeModeNotifier extends Notifier<ThemeMode> {
   @override
-  /// Follows the phone's light / dark setting by default.
-  ThemeMode build() => ThemeMode.system;
+  /// Light by default; dark or automatic (phone setting) from the settings.
+  ThemeMode build() => ThemeMode.light;
   void set(ThemeMode mode) => state = mode;
 }
 
