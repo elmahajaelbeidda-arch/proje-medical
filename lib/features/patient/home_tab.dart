@@ -31,6 +31,39 @@ const _gap = 20.0; // between sections
 /// The Quranic verse shown on the about card, with full diacritics.
 const shifaVerse = '﴿وَمَنْ أَحْيَاهَا فَكَأَنَّمَا أَحْيَا النَّاسَ جَمِيعًا﴾';
 
+/// The verse, with the ornate Quran brackets ﴿ ﴾ drawn from Amiri (El
+/// Messiri draws them as plain parentheses).
+class VerseText extends StatelessWidget {
+  const VerseText({
+    super.key,
+    required this.style,
+    this.textAlign = TextAlign.center,
+  });
+  final TextStyle style;
+  final TextAlign textAlign;
+
+  @override
+  Widget build(BuildContext context) {
+    final inner = shifaVerse.substring(1, shifaVerse.length - 1);
+    final bracket = style.copyWith(fontFamily: 'AmiriBrackets', height: 1);
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: '﴿', style: bracket),
+          TextSpan(
+            text: inner,
+            style: style.copyWith(fontFamily: 'ElMessiri'),
+          ),
+          TextSpan(text: '﴾', style: bracket),
+        ],
+      ),
+      style: style,
+      textAlign: textAlign,
+      textDirection: TextDirection.rtl,
+    );
+  }
+}
+
 /// "Forward" chevron / arrow for the reading direction.
 IconData forwardChevron(BuildContext context) =>
     Directionality.of(context) == TextDirection.rtl
@@ -343,9 +376,8 @@ class AboutAppCard extends StatelessWidget {
                               height: 1.5,
                             ),
                           ),
-                          Text(
-                            shifaVerse,
-                            textDirection: TextDirection.rtl,
+                          VerseText(
+                            textAlign: TextAlign.start,
                             style: TextStyle(
                               fontSize: 14,
                               color: AppColors.turquoiseText,

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../widgets/visit_counter.dart';
+import '../patient/home_tab.dart' show VerseText;
 import '../pulse/pulse_screens.dart' show PulseEntryCard;
 
 import '../../core/admin_provider.dart';
@@ -13,6 +14,7 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
 import '../../widgets/brand.dart';
+import '../../widgets/ui_kit.dart' show FadeSlideIn;
 
 /// The heart + cross icon of "شِفاءٌ لِلنّاس".
 class AppLogo extends StatelessWidget {
@@ -306,8 +308,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final locale = ref.watch(localeProvider);
 
     return Scaffold(
-      // Pure white welcome screen.
-      backgroundColor: AppColors.surface,
+      // Same background as the home screen.
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -446,22 +448,122 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 }
 
-/// First onboarding page: logo, name and the introduction of the app.
+/// First onboarding page: logo, name, the verse, a short pulse line and
+/// one sentence (the full introduction is on the «about the app» page).
 class _IntroPage extends StatelessWidget {
   const _IntroPage();
 
   @override
-  Widget build(BuildContext context) => const Center(
-    child: SingleChildScrollView(
-      child: Column(
-        children: [
-          ShifaLockup(iconSize: 128, vertical: true),
-          SizedBox(height: 18),
-          AboutShifaCard(),
-        ],
+  Widget build(BuildContext context) {
+    Widget step(int i, Widget child) => FadeSlideIn(
+      index: i,
+      step: const Duration(milliseconds: 80),
+      rise: 12,
+      child: child,
+    );
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            step(
+              0,
+              Container(
+                width: 200,
+                height: 200,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.secondary,
+                  shape: BoxShape.circle,
+                ),
+                child: const AppLogo(size: 120),
+              ),
+            ),
+            const SizedBox(height: 24),
+            step(
+              1,
+              BrandName(
+                fontSize: 34,
+                color: AppColors.primary,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 12),
+            step(
+              2,
+              VerseText(
+                style: TextStyle(
+                  fontSize: 17,
+                  height: 1.7,
+                  color: AppColors.turquoiseText,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            step(
+              3,
+              Column(
+                children: [
+                  SizedBox(
+                    width: 80,
+                    height: 16,
+                    child: CustomPaint(
+                      painter: _ShortPulsePainter(
+                        AppColors.turquoise.withValues(alpha: .4),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 360),
+                    child: Text(
+                      context.tr('about_short'),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.6,
+                        color: AppColors.grey,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
+}
+
+class _ShortPulsePainter extends CustomPainter {
+  const _ShortPulsePainter(this.color);
+  final Color color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height, y = h / 2;
+    final p = Path()
+      ..moveTo(0, y)
+      ..lineTo(w * .32, y)
+      ..lineTo(w * .42, y - h * .42)
+      ..lineTo(w * .54, y + h * .45)
+      ..lineTo(w * .63, y)
+      ..lineTo(w, y);
+    canvas.drawPath(
+      p,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _ShortPulsePainter o) => o.color != color;
 }
 
 // ---------------------------------------------------------------------------

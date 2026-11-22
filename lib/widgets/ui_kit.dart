@@ -89,9 +89,21 @@ class _PressableState extends State<Pressable> {
 
 /// Fades and slides an element in, [index] steps after the screen opens.
 class FadeSlideIn extends StatefulWidget {
-  const FadeSlideIn({super.key, required this.index, required this.child});
+  const FadeSlideIn({
+    super.key,
+    required this.index,
+    required this.child,
+    this.step = Motion.stagger,
+    this.rise,
+  });
   final int index;
   final Widget child;
+
+  /// Delay between two consecutive elements.
+  final Duration step;
+
+  /// Rise in pixels (default: a small fraction of the element's height).
+  final double? rise;
   @override
   State<FadeSlideIn> createState() => _FadeSlideInState();
 }
@@ -104,7 +116,7 @@ class _FadeSlideInState extends State<FadeSlideIn>
   @override
   void initState() {
     super.initState();
-    final delay = Motion.stagger * math.min(widget.index, 8);
+    final delay = widget.step * math.min(widget.index, 8);
     if (delay == Duration.zero) {
       _c.forward();
     } else {
@@ -126,6 +138,20 @@ class _FadeSlideInState extends State<FadeSlideIn>
     // Respect "reduce motion".
     if (MediaQuery.disableAnimationsOf(context)) return widget.child;
     final a = CurvedAnimation(parent: _c, curve: Motion.curve);
+    final rise = widget.rise;
+    if (rise != null) {
+      return FadeTransition(
+        opacity: a,
+        child: AnimatedBuilder(
+          animation: a,
+          builder: (_, child) => Transform.translate(
+            offset: Offset(0, rise * (1 - a.value)),
+            child: child,
+          ),
+          child: widget.child,
+        ),
+      );
+    }
     return FadeTransition(
       opacity: a,
       child: SlideTransition(

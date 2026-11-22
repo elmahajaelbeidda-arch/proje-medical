@@ -583,6 +583,11 @@ class DoctorProfileTab extends ConsumerWidget {
                     onTap: () => context.push('/pulse'),
                   ),
                   MenuRow(
+                    icon: LucideIcons.info,
+                    title: context.tr('about_app_title'),
+                    onTap: () => context.push('/about-app'),
+                  ),
+                  MenuRow(
                     icon: LucideIcons.users,
                     title: context.tr('about_association'),
                     onTap: () => context.push('/about'),

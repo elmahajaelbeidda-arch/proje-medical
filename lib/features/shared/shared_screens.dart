@@ -8,6 +8,7 @@ import '../../widgets/call_buttons.dart';
 import '../../widgets/shifa_ui.dart' show StatusDot;
 
 import '../../core/admin_provider.dart';
+import '../../core/app_info.dart';
 import '../../core/l10n.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
@@ -552,11 +553,10 @@ class SettingsScreen extends ConsumerWidget {
           Card(
             child: ListTile(
               leading: const Icon(LucideIcons.info),
-              title: Text(context.tr('about')),
-              subtitle: BrandRichText(
-                '${context.tr('app_name')} — ${context.tr('app_slogan')}\n${context.tr('association')} • ${context.tr('version')} 1.0.0',
-              ),
-              isThreeLine: true,
+              title: Text(context.tr('about_app_title')),
+              subtitle: Text('${context.tr('version')} $appVersion'),
+              trailing: const Icon(LucideIcons.chevronRightDir),
+              onTap: () => context.push('/about-app'),
             ),
           ),
         ],

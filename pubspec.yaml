@@ -97,6 +97,10 @@ flutter:
           weight: 600
         - asset: assets/fonts/ElMessiri-Bold.ttf
           weight: 700
+    # Only the two ornate brackets ﴿ ﴾ from Amiri (SIL OFL 1.1).
+    - family: AmiriBrackets
+      fonts:
+        - asset: assets/fonts/AmiriBrackets.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -41,7 +41,7 @@ class AppStrings {
       'Association caritative Aoun wa Sanad',
     ],
     'about_shifa': [
-      'شِفاءٌ لِلنّاس تطبيق صحي خيري تابع لجمعية عون وسند الخيرية، يهدف إلى تقديم الاستشارات الطبية الخيرية عن بُعد وتسهيل وصول الرعاية الصحية والدعم الطبي للفئات المستهدفة بسهولة وكرامة',
+      'شِفاءٌ لِلنّاس تطبيق صحي خيري تابع لجمعية عون وسند الخيرية، يهدف إلى تقديم الاستشارات الطبية الخيرية عن بُعد وتسهيل وصول الرعاية الصحية والدعم الطبي للفئات المستهدفة بسهولة وكرامة.',
       'Chifa Linnas est une application de santé solidaire de l’association caritative Aoun wa Sanad. Elle propose des consultations médicales à distance et facilite l’accès aux soins et au soutien médical pour les personnes ciblées, en toute simplicité et dans la dignité.',
     ],
     'app_tagline': ['تطبيق خيري طبي', 'Application médicale solidaire'],
