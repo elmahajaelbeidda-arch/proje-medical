@@ -616,11 +616,14 @@ class AppSettings {
   final Map<AppSection, bool> sections;
   final AssociationInfo info;
 
-  /// 'ar' or 'fr' for new users.
+  /// 'ar', 'fr' or 'en' for new users.
   final String defaultLanguage;
 
   /// French interface available.
   final bool frenchEnabled;
+
+  /// English interface available.
+  final bool englishEnabled;
 
   /// Public visitor counter and which figures it shows.
   final bool showVisitorCounter;
@@ -635,6 +638,7 @@ class AppSettings {
     this.info = const AssociationInfo(),
     this.defaultLanguage = 'ar',
     this.frenchEnabled = true,
+    this.englishEnabled = true,
     // Hidden until the association turns it on from the dashboard.
     this.showVisitorCounter = false,
     this.showRegisteredCount = true,
@@ -644,11 +648,19 @@ class AppSettings {
 
   bool enabled(AppSection s) => sections[s] ?? true;
 
+  /// Languages offered to users (Arabic always).
+  List<String> get languages => [
+    'ar',
+    if (frenchEnabled) 'fr',
+    if (englishEnabled) 'en',
+  ];
+
   AppSettings copyWith({
     Map<AppSection, bool>? sections,
     AssociationInfo? info,
     String? defaultLanguage,
     bool? frenchEnabled,
+    bool? englishEnabled,
     bool? showVisitorCounter,
     bool? showRegisteredCount,
     bool? showBeneficiariesCount,
@@ -658,6 +670,7 @@ class AppSettings {
     info: info ?? this.info,
     defaultLanguage: defaultLanguage ?? this.defaultLanguage,
     frenchEnabled: frenchEnabled ?? this.frenchEnabled,
+    englishEnabled: englishEnabled ?? this.englishEnabled,
     showVisitorCounter: showVisitorCounter ?? this.showVisitorCounter,
     showRegisteredCount: showRegisteredCount ?? this.showRegisteredCount,
     showBeneficiariesCount:
@@ -670,6 +683,7 @@ class AppSettings {
     'info': info.toJson(),
     'defaultLanguage': defaultLanguage,
     'frenchEnabled': frenchEnabled,
+    'englishEnabled': englishEnabled,
     'showVisitorCounter': showVisitorCounter,
     'showRegisteredCount': showRegisteredCount,
     'showBeneficiariesCount': showBeneficiariesCount,
@@ -684,6 +698,7 @@ class AppSettings {
     info: AssociationInfo.fromJson(j['info'] as Map<String, dynamic>),
     defaultLanguage: j['defaultLanguage'] as String? ?? 'ar',
     frenchEnabled: j['frenchEnabled'] as bool? ?? true,
+    englishEnabled: j['englishEnabled'] as bool? ?? true,
     showVisitorCounter: j['showVisitorCounter'] as bool? ?? false,
     showRegisteredCount: j['showRegisteredCount'] as bool? ?? true,
     showBeneficiariesCount: j['showBeneficiariesCount'] as bool? ?? true,

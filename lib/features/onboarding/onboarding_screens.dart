@@ -252,13 +252,40 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             children: [
               Row(
                 children: [
-                  TextButton.icon(
-                    onPressed: () => ref
-                        .read(localeProvider.notifier)
-                        .set(Locale(locale.languageCode == 'ar' ? 'fr' : 'ar')),
-                    icon: const Icon(Icons.language),
-                    label: Text(
-                      locale.languageCode == 'ar' ? 'Français' : 'العربية',
+                  // Choose among the languages offered by the association.
+                  PopupMenuButton<String>(
+                    tooltip: context.tr('language'),
+                    initialValue: locale.languageCode,
+                    onSelected: (l) =>
+                        ref.read(localeProvider.notifier).set(Locale(l)),
+                    itemBuilder: (_) => [
+                      for (final l in ref.read(appSettingsProvider).languages)
+                        PopupMenuItem(
+                          value: l,
+                          child: Text(AppStrings.languageNames[l]!),
+                        ),
+                    ],
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.language, color: scheme.primary),
+                          const SizedBox(width: 6),
+                          Text(
+                            AppStrings.languageNames[locale.languageCode] ??
+                                'العربية',
+                            style: TextStyle(
+                              color: scheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Icon(Icons.arrow_drop_down, color: scheme.primary),
+                        ],
+                      ),
                     ),
                   ),
                   const Spacer(),

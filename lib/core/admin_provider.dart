@@ -681,15 +681,25 @@ class AdminNotifier extends Notifier<AdminState> {
     _log('au_info_updated', target: info.name);
   }
 
-  void setLanguages({required String defaultLanguage, required bool french}) {
+  void setLanguages({
+    required String defaultLanguage,
+    required bool french,
+    bool? english,
+  }) {
     _require(AdminPermission.manageSettings);
+    final en = english ?? state.settings.englishEnabled;
+    final ok =
+        defaultLanguage == 'ar' ||
+        (defaultLanguage == 'fr' && french) ||
+        (defaultLanguage == 'en' && en);
     state = state.copyWith(
       settings: state.settings.copyWith(
-        defaultLanguage: french ? defaultLanguage : 'ar',
+        defaultLanguage: ok ? defaultLanguage : 'ar',
         frenchEnabled: french,
+        englishEnabled: en,
       ),
     );
-    _log('au_languages_updated', details: '$defaultLanguage fr=$french');
+    _log('au_languages_updated', details: '$defaultLanguage fr=$french en=$en');
   }
 
   // -------------------------------------------------------------------------

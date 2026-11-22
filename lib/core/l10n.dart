@@ -1,16 +1,32 @@
 import 'package:flutter/widgets.dart';
 
+import 'l10n_en.dart';
+
 /// Simple in-app translations (Arabic / French).
-/// Each key maps to `[arabic, french]`.
+/// Each key maps to `[arabic, french]`; English texts are in l10n_en.dart.
 class AppStrings {
   AppStrings._();
 
-  static const supportedLocales = [Locale('ar'), Locale('fr')];
+  static const supportedLocales = [Locale('ar'), Locale('fr'), Locale('en')];
+
+  /// Language names, each written in its own language.
+  static const languageNames = {
+    'ar': 'العربية',
+    'fr': 'Français',
+    'en': 'English',
+  };
+
+  /// Every translation key (used by the completeness test).
+  static Iterable<String> get keys => _t.keys;
 
   static String of(String languageCode, String key) {
     final entry = _t[key];
     if (entry == null) return key;
-    return languageCode == 'fr' ? entry[1] : entry[0];
+    return switch (languageCode) {
+      'fr' => entry[1],
+      'en' => enStrings[key] ?? entry[1],
+      _ => entry[0],
+    };
   }
 
   static const Map<String, List<String>> _t = {
@@ -1537,6 +1553,10 @@ class AppStrings {
     'ad_french_enabled': [
       'تفعيل الواجهة الفرنسية',
       'Activer l’interface française',
+    ],
+    'ad_english_enabled': [
+      'تفعيل الواجهة الإنجليزية',
+      'Activer l’interface anglaise',
     ],
     'ad_default_language': ['اللغة الافتراضية', 'Langue par défaut'],
     'au_login': ['دخول إلى لوحة التحكم', 'Connexion'],

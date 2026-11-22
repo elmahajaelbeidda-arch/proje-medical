@@ -295,10 +295,13 @@ class _OpenRequestsTabState extends ConsumerState<OpenRequestsTab> {
       c.displayPatientName,
       AppStrings.of('ar', sp),
       AppStrings.of('fr', sp),
+      AppStrings.of('en', sp),
       AppStrings.of('ar', typeKey(c.type)),
       AppStrings.of('fr', typeKey(c.type)),
+      AppStrings.of('en', typeKey(c.type)),
       AppStrings.of('ar', urgencyKey(c.urgency)),
       AppStrings.of('fr', urgencyKey(c.urgency)),
+      AppStrings.of('en', urgencyKey(c.urgency)),
     ]);
   }
 

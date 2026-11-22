@@ -103,7 +103,11 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
         if (mounted) setState(() => _level = ((level + 2) / 12).clamp(0, 1));
       },
       listenOptions: SpeechListenOptions(
-        localeId: lang == 'fr' ? 'fr-FR' : 'ar-SA',
+        localeId: switch (lang) {
+          'fr' => 'fr-FR',
+          'en' => 'en-US',
+          _ => 'ar-SA',
+        },
         listenMode: ListenMode.search,
         partialResults: true,
         cancelOnError: true,

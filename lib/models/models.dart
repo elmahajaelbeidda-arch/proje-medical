@@ -79,7 +79,8 @@ class Doctor {
     this.clinicAddress = '',
   });
 
-  String cityFor(String languageCode) => languageCode == 'fr' ? cityFr : city;
+  /// Arabic name in Arabic, Latin spelling in French and English.
+  String cityFor(String languageCode) => languageCode == 'ar' ? city : cityFr;
 
   String get initials => name.replaceAll('د. ', '').trim().characters.first;
 }

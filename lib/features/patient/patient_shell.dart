@@ -590,6 +590,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
         d.name,
         AppStrings.of('ar', sp),
         AppStrings.of('fr', sp),
+        AppStrings.of('en', sp),
         d.city,
         d.cityFr,
         d.bio,

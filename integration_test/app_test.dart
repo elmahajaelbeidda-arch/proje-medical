@@ -97,5 +97,17 @@ void main() {
     container.read(localeProvider.notifier).set(const Locale('fr'));
     await open('/role', RoleSelectScreen);
     expect(find.text(AppStrings.of('fr', 'role_patient')), findsOneWidget);
+
+    // English interface (left to right)
+    container.read(localeProvider.notifier).set(const Locale('en'));
+    await open('/role', RoleSelectScreen);
+    expect(find.text('Patient'), findsWidgets);
+    expect(
+      Directionality.of(tester.element(find.byType(RoleSelectScreen))),
+      TextDirection.ltr,
+    );
+    await open('/patient', PatientShell);
+    await open('/doctors/d1', DoctorProfileScreen);
+    await open('/blood', BloodHomeScreen);
   });
 }

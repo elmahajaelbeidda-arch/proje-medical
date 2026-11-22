@@ -11,11 +11,13 @@ import 'admin_provider.dart';
 // ---------------------------------------------------------------------------
 
 class LocaleNotifier extends Notifier<Locale> {
-  /// Default language set by the administration (French can be switched off).
+  /// Default language set by the administration (French and English can
+  /// be switched off; Arabic is always offered).
   @override
   Locale build() {
     final settings = ref.watch(appSettingsProvider);
-    return Locale(settings.frenchEnabled ? settings.defaultLanguage : 'ar');
+    final lang = settings.defaultLanguage;
+    return Locale(settings.languages.contains(lang) ? lang : 'ar');
   }
 
   void set(Locale locale) => state = locale;

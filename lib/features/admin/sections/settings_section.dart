@@ -120,20 +120,37 @@ class SettingsSection extends ConsumerWidget {
                   ),
                   title: Text(context.tr('ad_french_enabled')),
                 ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: s.englishEnabled,
+                  onChanged: (v) => guarded(
+                    context,
+                    () => n.setLanguages(
+                      defaultLanguage: s.defaultLanguage,
+                      french: s.frenchEnabled,
+                      english: v,
+                    ),
+                    ok: 'ad_done',
+                  ),
+                  title: Text(context.tr('ad_english_enabled')),
+                ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(context.tr('ad_default_language')),
                   trailing: SegmentedButton<String>(
                     showSelectedIcon: false,
                     segments: [
-                      const ButtonSegment(value: 'ar', label: Text('العربية')),
-                      if (s.frenchEnabled)
-                        const ButtonSegment(
-                          value: 'fr',
-                          label: Text('Français'),
+                      for (final l in s.languages)
+                        ButtonSegment(
+                          value: l,
+                          label: Text(AppStrings.languageNames[l]!),
                         ),
                     ],
-                    selected: {s.frenchEnabled ? s.defaultLanguage : 'ar'},
+                    selected: {
+                      s.languages.contains(s.defaultLanguage)
+                          ? s.defaultLanguage
+                          : 'ar',
+                    },
                     onSelectionChanged: (v) => guarded(
                       context,
                       () => n.setLanguages(

@@ -506,9 +506,11 @@ class SettingsScreen extends ConsumerWidget {
           SectionHeader(context.tr('language')),
           SegmentedButton<String>(
             segments: [
-              const ButtonSegment(value: 'ar', label: Text('العربية')),
-              if (ref.watch(appSettingsProvider).frenchEnabled)
-                const ButtonSegment(value: 'fr', label: Text('Français')),
+              for (final l in ref.watch(appSettingsProvider).languages)
+                ButtonSegment(
+                  value: l,
+                  label: Text(AppStrings.languageNames[l]!),
+                ),
             ],
             selected: {locale.languageCode},
             onSelectionChanged: (s) =>
