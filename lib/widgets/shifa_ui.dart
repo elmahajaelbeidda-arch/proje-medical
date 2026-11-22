@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/theme.dart';
@@ -36,7 +37,7 @@ class ShifaBottomBar extends StatelessWidget {
   final VoidCallback onCenter;
 
   /// Inactive tabs: secondary text colour (readable, AA).
-  static const _inactive = AppColors.grey;
+  static final _inactive = AppColors.grey;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +95,7 @@ class ShifaBottomBar extends StatelessWidget {
     }
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surface,
         boxShadow: [
           BoxShadow(
@@ -155,18 +156,21 @@ class CircleActionButton extends StatelessWidget {
       label: label,
       child: Material(
         color: AppColors.primary,
-        shape: const CircleBorder(
+        shape: CircleBorder(
           side: BorderSide(color: AppColors.surface, width: 4),
         ),
         elevation: 3,
         shadowColor: const Color(0x33000000),
         child: InkWell(
           customBorder: const CircleBorder(),
-          onTap: onTap,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
           child: SizedBox(
             width: 64,
             height: 64,
-            child: Icon(icon, color: Colors.white, size: 28),
+            child: Icon(icon, color: AppColors.onPrimary, size: 28),
           ),
         ),
       ),
@@ -259,8 +263,8 @@ class ProfileHero extends StatelessWidget {
                       child: Text(
                         title,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: AppColors.onPrimary,
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
                         ),
@@ -283,8 +287,8 @@ class ProfileHero extends StatelessWidget {
                 width: _avatarSize,
                 height: _avatarSize,
                 padding: const EdgeInsets.all(5),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -328,7 +332,7 @@ class MenuPanel extends StatelessWidget {
             padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 10),
             child: Text(
               title!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w900,
                 color: AppColors.primary,
               ),
@@ -357,7 +361,7 @@ class MenuRow extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 8),
     child: Material(
-      color: Colors.white,
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
@@ -387,15 +391,12 @@ class MenuRow extends StatelessWidget {
                     if (subtitle != null)
                       Text(
                         subtitle!,
-                        style: const TextStyle(
-                          color: AppColors.grey,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: AppColors.grey, fontSize: 12),
                       ),
                   ],
                 ),
               ),
-              const Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
+              Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
             ],
           ),
         ),
@@ -423,12 +424,12 @@ class LogoutTab extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(LucideIcons.logOut, color: Colors.white, size: 20),
+              Icon(LucideIcons.logOut, color: AppColors.onPrimary, size: 20),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppColors.onPrimary,
                   fontWeight: FontWeight.w800,
                 ),
               ),

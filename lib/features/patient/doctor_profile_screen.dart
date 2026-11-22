@@ -92,17 +92,17 @@ class DoctorProfileScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            _AvailabilityPill(on: d.available),
+                            Flexible(child: _AvailabilityPill(on: d.available)),
                             const Spacer(),
-                            const Icon(
+                            Icon(
                               LucideIcons.star,
                               color: AppColors.secondary,
                               size: 20,
                             ),
                             Text(
                               ' ${d.rating}',
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: AppColors.onPrimary,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -112,8 +112,8 @@ class DoctorProfileScreen extends StatelessWidget {
                         Text(
                           d.name,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: AppColors.onPrimary,
                             fontSize: 21,
                             fontWeight: FontWeight.w900,
                           ),
@@ -121,7 +121,7 @@ class DoctorProfileScreen extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           specialty,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.secondary,
                             fontWeight: FontWeight.w600,
                           ),
@@ -130,7 +130,7 @@ class DoctorProfileScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               LucideIcons.mapPin,
                               size: 16,
                               color: AppColors.secondary,
@@ -142,7 +142,7 @@ class DoctorProfileScreen extends StatelessWidget {
                                   d.cityFor(lang),
                                   d.clinicAddress,
                                 ].where((e) => e.isNotEmpty).join(' / '),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppColors.secondary,
                                   fontSize: 13,
                                 ),
@@ -191,8 +191,8 @@ class DoctorProfileScreen extends StatelessWidget {
                         Container(
                           width: 96,
                           height: 96,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
@@ -206,7 +206,7 @@ class DoctorProfileScreen extends StatelessWidget {
                             backgroundColor: AppColors.secondary,
                             child: Text(
                               d.initials,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.w900,
                                 color: AppColors.primary,
@@ -257,7 +257,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 8),
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.surface,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(d.bio, style: const TextStyle(height: 1.7)),
@@ -276,13 +276,13 @@ class DoctorProfileScreen extends StatelessWidget {
                           children: [
                             for (final a in d.availability)
                               Chip(
-                                avatar: const Icon(
+                                avatar: Icon(
                                   LucideIcons.clock,
                                   size: 16,
                                   color: AppColors.primary,
                                 ),
                                 label: Text(a),
-                                backgroundColor: Colors.white,
+                                backgroundColor: AppColors.surface,
                                 side: BorderSide.none,
                               ),
                           ],
@@ -293,7 +293,7 @@ class DoctorProfileScreen extends StatelessWidget {
                 if (d.verified)
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         LucideIcons.badgeCheck,
                         color: AppColors.info,
                         size: 18,
@@ -302,7 +302,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           context.tr('dp_verified_note'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.grey,
                             fontSize: 12.5,
                           ),
@@ -361,7 +361,7 @@ class _RoundIcon extends StatelessWidget {
       child: IconButton(
         tooltip: tooltip,
         onPressed: onTap,
-        icon: Icon(icon, color: Colors.white),
+        icon: Icon(icon, color: AppColors.onPrimary),
       ),
     ),
   );
@@ -383,12 +383,15 @@ class _AvailabilityPill extends StatelessWidget {
       children: [
         StatusDot(on: on, size: 10),
         const SizedBox(width: 6),
-        Text(
-          context.tr(on ? 'available_now' : 'unavailable'),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
+        Flexible(
+          child: Text(
+            context.tr(on ? 'available_now' : 'unavailable'),
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: AppColors.onPrimary,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ],
@@ -420,14 +423,14 @@ class _GlassButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 20),
+            Icon(icon, color: AppColors.onPrimary, size: 20),
             const SizedBox(width: 6),
             Flexible(
               child: Text(
                 label,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppColors.onPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -448,7 +451,7 @@ class _Figure extends StatelessWidget {
     child: Container(
       padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.border),
       ),
@@ -457,16 +460,13 @@ class _Figure extends StatelessWidget {
           Text(
             value,
             textDirection: TextDirection.ltr,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w900,
               color: AppColors.vivid,
             ),
           ),
-          Text(
-            label,
-            style: const TextStyle(color: AppColors.grey, fontSize: 12),
-          ),
+          Text(label, style: TextStyle(color: AppColors.grey, fontSize: 12)),
         ],
       ),
     ),

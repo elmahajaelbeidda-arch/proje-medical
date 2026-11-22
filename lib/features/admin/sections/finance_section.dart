@@ -285,7 +285,7 @@ class _FinanceSectionState extends ConsumerState<FinanceSection> {
               for (final d in donations)
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
+                  leading: Icon(
                     LucideIcons.handHeart,
                     color: AppColors.success,
                   ),
@@ -309,10 +309,7 @@ class _FinanceSectionState extends ConsumerState<FinanceSection> {
               for (final e in expenses)
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
-                    LucideIcons.banknote,
-                    color: AppColors.info,
-                  ),
+                  leading: Icon(LucideIcons.banknote, color: AppColors.info),
                   title: Text(
                     '${context.tr('ec_${e.category.name}')} — ${money(e.amount)}',
                   ),

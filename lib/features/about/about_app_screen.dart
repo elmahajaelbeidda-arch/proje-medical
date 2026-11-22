@@ -27,13 +27,13 @@ class AboutAppScreen extends StatelessWidget {
                 semanticLabel: context.tr('app_name'),
               ),
               const SizedBox(height: 8),
-              const BrandName(fontSize: 26, color: AppColors.primary),
+              BrandName(fontSize: 26, color: AppColors.primary),
               Text(
                 context.tr('association'),
-                style: const TextStyle(fontSize: 13, color: AppColors.grey),
+                style: TextStyle(fontSize: 13, color: AppColors.grey),
               ),
               const SizedBox(height: 14),
-              const Text(
+              Text(
                 shifaVerse,
                 textAlign: TextAlign.center,
                 textDirection: TextDirection.rtl,
@@ -44,7 +44,7 @@ class AboutAppScreen extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const Text(
+              Text(
                 'سورة المائدة · 32',
                 textDirection: TextDirection.rtl,
                 style: TextStyle(fontSize: 13, color: AppColors.grey),
@@ -56,11 +56,7 @@ class AboutAppScreen extends StatelessWidget {
         HomeCard(
           child: BrandRichText(
             context.tr('about_shifa'),
-            style: const TextStyle(
-              fontSize: 15,
-              height: 1.8,
-              color: AppColors.text,
-            ),
+            style: TextStyle(fontSize: 15, height: 1.8, color: AppColors.text),
           ),
         ),
         const SizedBox(height: 16),

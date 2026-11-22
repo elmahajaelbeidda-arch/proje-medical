@@ -73,7 +73,7 @@ class CrisisCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(LucideIcons.shieldPlus, color: Colors.white),
+          Icon(LucideIcons.shieldPlus, color: AppColors.onPrimary),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -81,17 +81,17 @@ class CrisisCard extends StatelessWidget {
               children: [
                 Text(
                   context.tr('psych_crisis_title'),
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: AppColors.onPrimary,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
                 const SizedBox(height: 4),
                 if (lead != null)
-                  Text(lead!, style: const TextStyle(color: Colors.white)),
+                  Text(lead!, style: TextStyle(color: AppColors.onPrimary)),
                 Text(
                   context.tr('psych_crisis_body'),
-                  style: const TextStyle(color: Colors.white, height: 1.5),
+                  style: TextStyle(color: AppColors.onPrimary, height: 1.5),
                 ),
               ],
             ),
@@ -112,7 +112,7 @@ class _PrivacyCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(LucideIcons.lock, color: AppColors.primary),
+          Icon(LucideIcons.lock, color: AppColors.primary),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -120,7 +120,7 @@ class _PrivacyCard extends StatelessWidget {
               children: [
                 Text(
                   context.tr('psych_privacy_title'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w900,
                     color: AppColors.primary,
                   ),
@@ -246,7 +246,7 @@ class PsychHomeScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
-          const Center(
+          Center(
             child: CircleAvatar(
               radius: 40,
               backgroundColor: AppColors.secondary,
@@ -921,10 +921,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(
-                        LucideIcons.calendar,
-                        color: AppColors.primary,
-                      ),
+                      Icon(LucideIcons.calendar, color: AppColors.primary),
                       const SizedBox(width: 8),
                       Text(formatSlot(context, session.slot)),
                     ],
@@ -982,8 +979,8 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
               ),
               child: Text(
                 context.tr('psych_risk_doctor_hint'),
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppColors.onPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -1092,7 +1089,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(LucideIcons.lock, color: AppColors.primary),
+                        Icon(LucideIcons.lock, color: AppColors.primary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -1164,7 +1161,7 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
                     m.text,
                     style: TextStyle(
                       color: m.fromDoctor == widget.asDoctor
-                          ? Colors.white
+                          ? AppColors.onPrimary
                           : AppColors.text,
                     ),
                   ),
@@ -1371,7 +1368,7 @@ class _PledgeGateState extends ConsumerState<_PledgeGate> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Center(
+          Center(
             child: CircleAvatar(
               radius: 40,
               backgroundColor: AppColors.secondary,

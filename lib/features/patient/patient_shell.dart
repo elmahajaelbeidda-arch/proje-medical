@@ -107,7 +107,9 @@ class MyConsultationsTab extends ConsumerWidget {
       if (items.isEmpty) {
         return EmptyState(
           icon: LucideIcons.clipboardList,
-          message: context.tr('no_consultations'),
+          message: context.tr('empty_consults'),
+          actionLabel: context.tr('new_consultation'),
+          onAction: () => context.push('/patient/new'),
         );
       }
       return ListView.separated(
@@ -231,7 +233,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
                       if (available.isNotEmpty) ...[
                         Text(
                           context.tr('available_now'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w900,
                             color: AppColors.primary,
                           ),
@@ -277,9 +279,9 @@ class _JoinBanner extends StatelessWidget {
     return Card(
       color: AppColors.doctorDark,
       child: ListTile(
-        textColor: Colors.white,
+        textColor: AppColors.onPrimary,
         contentPadding: const EdgeInsets.all(14),
-        leading: const Icon(LucideIcons.handHeart, color: Colors.white),
+        leading: Icon(LucideIcons.handHeart, color: AppColors.onPrimary),
         title: Text(
           context.tr('join_as_doctor'),
           style: const TextStyle(fontWeight: FontWeight.w700),
@@ -313,7 +315,7 @@ class PatientProfileTab extends ConsumerWidget {
             alignment: Alignment.center,
             child: Text(
               auth.displayName.characters.first,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 44,
                 fontWeight: FontWeight.w900,
                 color: AppColors.primary,
@@ -324,7 +326,7 @@ class PatientProfileTab extends ConsumerWidget {
             IconButton(
               tooltip: context.tr('notifications'),
               onPressed: () => context.push('/notifications'),
-              icon: const Icon(LucideIcons.bell, color: Colors.white),
+              icon: Icon(LucideIcons.bell, color: AppColors.onPrimary),
             ),
           ],
           below: Column(

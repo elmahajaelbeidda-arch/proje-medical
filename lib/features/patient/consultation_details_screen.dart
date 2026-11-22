@@ -87,13 +87,13 @@ class ConsultationDetailsScreen extends ConsumerWidget {
             Card(
               color: AppColors.reviewingSoft,
               child: ListTile(
-                leading: const Icon(
+                leading: Icon(
                   LucideIcons.hourglass,
                   color: AppColors.turquoise,
                 ),
                 title: Text(
                   context.tr('waiting_doctor'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.ink,
                     fontWeight: FontWeight.w600,
                   ),
@@ -267,10 +267,17 @@ class StatusTimeline extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              Text(
-                context.tr(steps[i].$2),
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontWeight: i == reached ? FontWeight.w800 : null,
+              SizedBox(
+                width: 72,
+                child: Text(
+                  context.tr(steps[i].$2),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    height: 1.3,
+                    fontWeight: i == reached ? FontWeight.w800 : null,
+                  ),
                 ),
               ),
             ],
@@ -326,15 +333,12 @@ class ReplyView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(
-                  LucideIcons.hospital,
-                  color: AppColors.reviewingText,
-                ),
+                Icon(LucideIcons.hospital, color: AppColors.reviewingText),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     context.tr('needs_visit'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w700,
                       color: AppColors.reviewingText,
                     ),

@@ -7,6 +7,7 @@ import '../core/l10n.dart';
 import '../core/providers.dart';
 import '../core/theme.dart';
 import 'shifa_ui.dart' show StatusDot;
+import 'ui_kit.dart' show EmptyView;
 import '../data/mock_data.dart';
 import '../models/models.dart';
 import '../models/registration.dart';
@@ -123,35 +124,27 @@ class SectionHeader extends StatelessWidget {
   }
 }
 
+/// Empty state of any list: illustration + friendly sentence (+ action).
 class EmptyState extends StatelessWidget {
-  const EmptyState({super.key, required this.icon, required this.message});
+  const EmptyState({
+    super.key,
+    required this.icon,
+    required this.message,
+    this.actionLabel,
+    this.onAction,
+  });
   final IconData icon;
   final String message;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 44,
-              backgroundColor: AppColors.mint,
-              child: Icon(icon, size: 44, color: AppColors.ink),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => EmptyView(
+    icon: icon,
+    message: message,
+    actionLabel: actionLabel,
+    onAction: onAction,
+  );
 }
 
 class InfoCard extends StatelessWidget {
@@ -182,10 +175,12 @@ class InfoCard extends StatelessWidget {
                   Icon(icon, color: c, size: 20),
                   const SizedBox(width: 8),
                 ],
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleSmall
-                      ?.copyWith(fontWeight: FontWeight.w800, color: c),
+                Flexible(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleSmall
+                        ?.copyWith(fontWeight: FontWeight.w800, color: c),
+                  ),
                 ),
               ],
             ),
@@ -489,8 +484,8 @@ class DoctorCard extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(3),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(color: Color(0x1A126B50), blurRadius: 10),
@@ -521,15 +516,17 @@ class DoctorCard extends StatelessWidget {
                       style: text.bodySmall?.copyWith(color: AppColors.grey),
                     ),
                     const SizedBox(height: 6),
-                    Row(
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      runSpacing: 2,
                       children: [
-                        const Icon(
+                        Icon(
                           LucideIcons.star,
                           size: 18,
                           color: AppColors.accent,
                         ),
                         Text(' ${doctor.rating}  ', style: text.labelMedium),
-                        const Icon(
+                        Icon(
                           LucideIcons.messagesSquare,
                           size: 16,
                           color: AppColors.grey,
@@ -550,7 +547,7 @@ class DoctorCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
+              Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
             ],
           ),
         ),
@@ -586,7 +583,7 @@ class DoctorBubble extends StatelessWidget {
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white,
+                  color: AppColors.surface,
                   border: Border.all(
                     color: selected ? AppColors.primary : AppColors.border,
                     width: selected ? 2.5 : 1.5,
@@ -786,7 +783,7 @@ class MenuTile extends StatelessWidget {
         title,
         style: TextStyle(fontWeight: FontWeight.w600, color: color),
       ),
-      trailing: const Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
+      trailing: Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
     );
   }
 }
@@ -807,30 +804,30 @@ class IdVerifiedBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(LucideIcons.idCard, color: Colors.white, size: 18),
+          Icon(LucideIcons.idCard, color: AppColors.onPrimary, size: 18),
           const SizedBox(width: 8),
           Text(
             '${context.tr('id_card')}  ',
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: AppColors.onPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
           Text(
             auth.maskedId,
             textDirection: TextDirection.ltr,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: AppColors.onPrimary,
               fontWeight: FontWeight.w800,
             ),
           ),
           if (auth.phoneVerified) ...[
             const SizedBox(width: 8),
-            const Icon(LucideIcons.badgeCheck, color: Colors.white, size: 18),
+            Icon(LucideIcons.badgeCheck, color: AppColors.onPrimary, size: 18),
             const SizedBox(width: 2),
             Text(
               context.tr('verified'),
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: AppColors.onPrimary),
             ),
           ],
         ],
@@ -855,7 +852,7 @@ class AccountReviewBanner extends ConsumerWidget {
       child: ListTile(
         leading: Icon(
           pending ? LucideIcons.hourglass : LucideIcons.ban,
-          color: pending ? AppColors.ink : Colors.white,
+          color: pending ? AppColors.ink : AppColors.onPrimary,
         ),
         title: Text(
           context.tr(
@@ -863,7 +860,7 @@ class AccountReviewBanner extends ConsumerWidget {
           ),
           style: TextStyle(
             fontWeight: FontWeight.w800,
-            color: pending ? AppColors.ink : Colors.white,
+            color: pending ? AppColors.ink : AppColors.onPrimary,
           ),
         ),
         subtitle: Text(
@@ -874,7 +871,9 @@ class AccountReviewBanner extends ConsumerWidget {
                 ? 'account_pending_doctor'
                 : 'account_pending_patient',
           ),
-          style: TextStyle(color: pending ? AppColors.ink : Colors.white),
+          style: TextStyle(
+            color: pending ? AppColors.ink : AppColors.onPrimary,
+          ),
         ),
       ),
     );

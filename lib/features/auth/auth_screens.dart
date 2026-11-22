@@ -405,10 +405,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      const Icon(
-                        LucideIcons.idCard,
-                        color: AppColors.turquoise,
-                      ),
+                      Icon(LucideIcons.idCard, color: AppColors.turquoise),
                       const SizedBox(width: 8),
                       Text(
                         context.tr('id_card'),
@@ -616,25 +613,18 @@ class _IdPhotoTile extends StatelessWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      LucideIcons.imagePlus,
-                      color: AppColors.ink,
-                      size: 30,
-                    ),
+                    Icon(LucideIcons.imagePlus, color: AppColors.ink, size: 30),
                     const SizedBox(height: 6),
                     Text(
                       label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.ink,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     Text(
                       context.tr('tap_to_add'),
-                      style: const TextStyle(
-                        color: AppColors.ink,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: AppColors.ink, fontSize: 12),
                     ),
                   ],
                 )
@@ -654,16 +644,16 @@ class _IdPhotoTile extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           LucideIcons.check,
-                          color: Colors.white,
+                          color: AppColors.onPrimary,
                           size: 14,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           label,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: AppColors.onPrimary,
                             fontWeight: FontWeight.w700,
                             fontSize: 12,
                           ),
@@ -759,7 +749,7 @@ class _VerifyPhoneScreenState extends ConsumerState<VerifyPhoneScreen> {
           child: ListView(
             padding: const EdgeInsets.all(24),
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 44,
                 backgroundColor: AppColors.secondary,
                 child: Icon(
@@ -816,7 +806,7 @@ class _VerifyPhoneScreenState extends ConsumerState<VerifyPhoneScreen> {
                 child: Text(
                   context.tr('demo_code'),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.ink,
                     fontWeight: FontWeight.w700,
                   ),

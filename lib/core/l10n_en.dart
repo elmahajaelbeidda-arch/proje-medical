@@ -1413,4 +1413,12 @@ const Map<String, String> enStrings = {
   'st_reviewing': 'Under review',
   'emergency_no_number': 'The association has not set an emergency number yet. Call emergency services or go to the nearest hospital.',
   'ad_emergency_number': 'Emergency number (“Emergency” button)',
+  'state_loading': 'Loading',
+  'state_offline_title': 'No internet connection',
+  'state_offline_body': 'Check your network and try again. Your data is safe.',
+  'state_error_title': 'Something went wrong',
+  'state_error_body':
+      'We couldn’t load the data right now. Please try again shortly.',
+  'state_retry': 'Try again',
+  'empty_consults': 'No consultations yet — start your first one now',
 };

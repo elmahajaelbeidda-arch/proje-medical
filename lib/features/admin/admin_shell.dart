@@ -200,7 +200,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                 const SizedBox(height: 8),
                 Text(
                   context.tr(_error!),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.emergency,
                     fontWeight: FontWeight.w700,
                   ),

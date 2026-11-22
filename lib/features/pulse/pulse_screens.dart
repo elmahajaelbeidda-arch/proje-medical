@@ -22,7 +22,7 @@ import '../../widgets/visit_counter.dart';
 // commenting, asking and sharing a story need to be signed in.
 // ---------------------------------------------------------------------------
 
-const _publicSite = 'https://elmahajaelbeidda-arch.github.io/proje-medical/';
+final _publicSite = 'https://elmahajaelbeidda-arch.github.io/proje-medical/';
 
 /// The signed-in member, or null for a visitor.
 final pulseActorProvider = Provider<PulseActor?>((ref) {
@@ -44,11 +44,11 @@ void asMember(
     showDragHandle: true,
     builder: (ctx) => SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+        padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 32,
               backgroundColor: AppColors.mint,
               child: Icon(
@@ -57,7 +57,7 @@ void asMember(
                 size: 32,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               ctx.tr('pl_join_title'),
               textAlign: TextAlign.center,
@@ -66,18 +66,16 @@ void asMember(
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             Text(ctx.tr('pl_join_body'), textAlign: TextAlign.center),
-            const SizedBox(height: 18),
+            SizedBox(height: 18),
             FilledButton.icon(
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-              ),
+              style: FilledButton.styleFrom(minimumSize: Size.fromHeight(50)),
               onPressed: () {
                 Navigator.pop(ctx);
                 context.push('/role');
               },
-              icon: const Icon(LucideIcons.logIn),
+              icon: Icon(LucideIcons.logIn),
               label: Text(ctx.tr('pl_join_btn')),
             ),
           ],
@@ -132,7 +130,7 @@ IconData pulseIcon(String key) => switch (key) {
   _ => LucideIcons.image,
 };
 
-const _tones = [
+final _tones = [
   [AppColors.primary, AppColors.vivid],
   [AppColors.turquoise, AppColors.emeraldTeal],
   [AppColors.emeraldTeal, AppColors.primary],
@@ -199,8 +197,8 @@ class _PulseHomeScreenState extends ConsumerState<PulseHomeScreen> {
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: 228,
-            foregroundColor: Colors.white,
+            expandedHeight: 252,
+            foregroundColor: AppColors.onPrimary,
             backgroundColor: AppColors.primary,
             title: Text(context.tr('pl_title')),
             actions: [
@@ -268,7 +266,7 @@ class _PulseHeader extends StatelessWidget {
   const _PulseHeader();
   @override
   Widget build(BuildContext context) => Container(
-    decoration: const BoxDecoration(color: AppColors.primary),
+    decoration: BoxDecoration(color: AppColors.primary),
     child: Stack(
       children: [
         Positioned.fill(child: CustomPaint(painter: _PulseLinePainter())),
@@ -280,9 +278,11 @@ class _PulseHeader extends StatelessWidget {
               children: [
                 Text(
                   context.tr('pl_name'),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: AppColors.onPrimary,
+                    fontSize: 28,
+                    height: 1.3,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -290,10 +290,12 @@ class _PulseHeader extends StatelessWidget {
                 Text(
                   context.tr('pl_slogan'),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    height: 1.5,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.onPrimary,
+                    fontSize: 14,
+                    height: 1.4,
                   ),
                 ),
               ],
@@ -346,7 +348,7 @@ class _GuestBanner extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
       child: Row(
         children: [
-          const Icon(LucideIcons.eye, color: AppColors.primary),
+          Icon(LucideIcons.eye, color: AppColors.primary),
           const SizedBox(width: 10),
           Expanded(child: Text(context.tr('pl_guest_note'))),
           TextButton(
@@ -383,7 +385,7 @@ class _LiveBanner extends ConsumerWidget {
                 backgroundColor: isLive ? Colors.white : AppColors.turquoise,
                 child: Icon(
                   isLive ? LucideIcons.radio : LucideIcons.calendarCheck,
-                  color: isLive ? AppColors.turquoise : Colors.white,
+                  color: isLive ? AppColors.turquoise : AppColors.onPrimary,
                 ),
               ),
               const SizedBox(width: 12),
@@ -399,13 +401,13 @@ class _LiveBanner extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontWeight: FontWeight.w900,
-                        color: isLive ? Colors.white : AppColors.primary,
+                        color: isLive ? AppColors.onPrimary : AppColors.primary,
                       ),
                     ),
                     Text(
                       isLive ? live.speaker : liveWhen(context, live.startsAt),
                       style: TextStyle(
-                        color: isLive ? Colors.white : AppColors.grey,
+                        color: isLive ? AppColors.onPrimary : AppColors.grey,
                         fontSize: 13,
                       ),
                     ),
@@ -414,7 +416,7 @@ class _LiveBanner extends ConsumerWidget {
               ),
               Icon(
                 LucideIcons.chevronRightDir,
-                color: isLive ? Colors.white : AppColors.grey,
+                color: isLive ? AppColors.onPrimary : AppColors.grey,
               ),
             ],
           ),
@@ -484,24 +486,22 @@ class _ImpactStrip extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(
-              LucideIcons.trophy,
-              color: AppColors.turquoise,
-              size: 20,
-            ),
+            Icon(LucideIcons.trophy, color: AppColors.turquoise, size: 20),
             const SizedBox(width: 6),
-            Text(
-              context.tr('pl_impact'),
-              style: const TextStyle(
-                fontWeight: FontWeight.w900,
-                color: AppColors.primary,
+            Flexible(
+              child: Text(
+                context.tr('pl_impact'),
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.primary,
+                ),
               ),
             ),
           ],
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 86,
+          height: 92,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: post.stats.length,
@@ -523,29 +523,36 @@ class _StatTile extends StatelessWidget {
     width: width,
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(18),
       border: Border.all(color: AppColors.border),
     ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          stat.value,
-          textDirection: TextDirection.ltr,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w900,
-            color: AppColors.vivid,
+    child: FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            stat.value,
+            textDirection: TextDirection.ltr,
+            style: TextStyle(
+              fontSize: 24,
+              height: 1.2,
+              fontWeight: FontWeight.w900,
+              color: AppColors.vivid,
+            ),
           ),
-        ),
-        Text(
-          stat.label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12.5, color: AppColors.grey),
-        ),
-      ],
+          Text(
+            stat.label,
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 12.5,
+              height: 1.3,
+              color: AppColors.grey,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
@@ -702,7 +709,7 @@ class PostCard extends ConsumerWidget {
                           SnackBar(content: Text(context.tr('pl_reported'))),
                         );
                       }),
-                      icon: const Icon(LucideIcons.flag, color: AppColors.grey),
+                      icon: Icon(LucideIcons.flag, color: AppColors.grey),
                     ),
                 ],
               ),
@@ -750,13 +757,13 @@ class _PostHeader extends StatelessWidget {
               Text(name, style: const TextStyle(fontWeight: FontWeight.w800)),
               Text(
                 context.timeAgo(p.date),
-                style: const TextStyle(color: AppColors.grey, fontSize: 12),
+                style: TextStyle(color: AppColors.grey, fontSize: 12),
               ),
             ],
           ),
         ),
         if (p.pinned)
-          const Padding(
+          Padding(
             padding: EdgeInsetsDirectional.only(end: 6),
             child: Icon(LucideIcons.pin, size: 18, color: AppColors.turquoise),
           ),
@@ -773,7 +780,7 @@ class _PostHeader extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: AppColors.primary,
@@ -879,10 +886,10 @@ class MediaTile extends StatelessWidget {
             children: [
               base,
               if (m.type == PulseMediaType.video)
-                const Center(
+                Center(
                   child: CircleAvatar(
                     radius: 26,
-                    backgroundColor: Colors.white,
+                    backgroundColor: AppColors.surface,
                     child: Icon(
                       LucideIcons.play,
                       color: AppColors.primary,
@@ -902,6 +909,7 @@ class MediaTile extends StatelessWidget {
                       m.caption,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      // On a dark scrim over the photo: always white.
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12.5,
@@ -1021,7 +1029,7 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                 const SizedBox(height: 16),
                 Text(
                   '${context.tr('pl_comments')} (${comments.length})',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w900,
                     color: AppColors.primary,
                   ),
@@ -1034,7 +1042,7 @@ class _PostDetailsScreenState extends ConsumerState<PostDetailsScreen> {
                       context.tr(
                         open ? 'pl_first_comment' : 'pl_comments_closed',
                       ),
-                      style: const TextStyle(color: AppColors.grey),
+                      style: TextStyle(color: AppColors.grey),
                     ),
                   ),
                 for (final c in comments) CommentTile(c),
@@ -1068,7 +1076,7 @@ class CommentTile extends ConsumerWidget {
           backgroundColor: AppColors.secondary,
           child: Text(
             c.authorName.isEmpty ? '؟' : c.authorName.characters.first,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.primary,
               fontWeight: FontWeight.w800,
             ),
@@ -1079,7 +1087,7 @@ class CommentTile extends ConsumerWidget {
           child: Container(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: AppColors.border),
             ),
@@ -1099,10 +1107,7 @@ class CommentTile extends ConsumerWidget {
                     ),
                     Text(
                       context.timeAgo(c.at),
-                      style: const TextStyle(
-                        color: AppColors.grey,
-                        fontSize: 11,
-                      ),
+                      style: TextStyle(color: AppColors.grey, fontSize: 11),
                     ),
                     InkWell(
                       onTap: () => asMember(context, ref, (w) {
@@ -1151,8 +1156,8 @@ class _Composer extends StatelessWidget {
     top: false,
     child: Container(
       padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
         border: Border(top: BorderSide(color: AppColors.border)),
       ),
       child: Row(
@@ -1203,10 +1208,7 @@ class _LiveList extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
       child: Text(
         context.tr(k),
-        style: const TextStyle(
-          fontWeight: FontWeight.w900,
-          color: AppColors.primary,
-        ),
+        style: TextStyle(fontWeight: FontWeight.w900, color: AppColors.primary),
       ),
     );
     return Padding(
@@ -1218,14 +1220,14 @@ class _LiveList extends ConsumerWidget {
           if (current.isEmpty)
             Text(
               context.tr('pl_no_live'),
-              style: const TextStyle(color: AppColors.grey),
+              style: TextStyle(color: AppColors.grey),
             ),
           for (final l in current) _LiveBanner(l),
           title('pl_recordings'),
           if (recorded.isEmpty)
             Text(
               context.tr('pl_no_recording'),
-              style: const TextStyle(color: AppColors.grey),
+              style: TextStyle(color: AppColors.grey),
             ),
           for (final l in recorded) _RecordingTile(l),
         ],
@@ -1248,10 +1250,10 @@ class _RecordingTile extends StatelessWidget {
           Container(
             width: 108,
             height: 84,
-            decoration: const BoxDecoration(color: AppColors.primary),
-            child: const Icon(
+            decoration: BoxDecoration(color: AppColors.primary),
+            child: Icon(
               LucideIcons.circlePlay,
-              color: Colors.white,
+              color: AppColors.onPrimary,
               size: 40,
             ),
           ),
@@ -1272,7 +1274,7 @@ class _RecordingTile extends StatelessWidget {
                   Text(
                     '${live.speaker}\n${context.tr('pl_views', args: {'n': live.views})} · ${context.tr('pl_minutes', args: {'n': live.durationMinutes})}',
                     maxLines: 2,
-                    style: const TextStyle(color: AppColors.grey, fontSize: 12),
+                    style: TextStyle(color: AppColors.grey, fontSize: 12),
                   ),
                 ],
               ),
@@ -1361,9 +1363,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                             ? null
                             : () => _watch(l),
                         child: Ink(
-                          decoration: const BoxDecoration(
-                            color: AppColors.primary,
-                          ),
+                          decoration: BoxDecoration(color: AppColors.primary),
                           child: Stack(
                             children: [
                               Positioned.fill(
@@ -1389,24 +1389,24 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                                     ? Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Icon(
+                                          Icon(
                                             LucideIcons.clock,
-                                            color: Colors.white,
+                                            color: AppColors.onPrimary,
                                             size: 42,
                                           ),
                                           const SizedBox(height: 6),
                                           Text(
                                             liveWhen(context, l.startsAt),
-                                            style: const TextStyle(
-                                              color: Colors.white,
+                                            style: TextStyle(
+                                              color: AppColors.onPrimary,
                                               fontWeight: FontWeight.w800,
                                             ),
                                           ),
                                         ],
                                       )
-                                    : const CircleAvatar(
+                                    : CircleAvatar(
                                         radius: 34,
-                                        backgroundColor: Colors.white,
+                                        backgroundColor: AppColors.surface,
                                         child: Icon(
                                           LucideIcons.play,
                                           color: AppColors.primary,
@@ -1432,7 +1432,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       LucideIcons.speech,
                       size: 18,
                       color: AppColors.turquoise,
@@ -1507,14 +1507,14 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                             ? 'pl_chat_when_live'
                             : 'pl_first_comment',
                       ),
-                      style: const TextStyle(color: AppColors.grey),
+                      style: TextStyle(color: AppColors.grey),
                     ),
                   for (final c in chat) CommentTile(c),
                 ] else ...[
                   if (questions.isEmpty)
                     Text(
                       context.tr('pl_no_questions'),
-                      style: const TextStyle(color: AppColors.grey),
+                      style: TextStyle(color: AppColors.grey),
                     ),
                   for (final q in questions)
                     _QuestionTile(liveId: l.id, q: q, mine: who),
@@ -1582,8 +1582,8 @@ class _QuestionTile extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: q.answered
-            ? const Icon(LucideIcons.circleCheck, color: AppColors.vivid)
-            : const Icon(LucideIcons.circleHelp, color: AppColors.turquoise),
+            ? Icon(LucideIcons.circleCheck, color: AppColors.vivid)
+            : Icon(LucideIcons.circleHelp, color: AppColors.turquoise),
         title: Text(q.text),
         subtitle: Text(
           q.answered
@@ -1667,11 +1667,7 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        icon: const Icon(
-          LucideIcons.hourglass,
-          color: AppColors.turquoise,
-          size: 40,
-        ),
+        icon: Icon(LucideIcons.hourglass, color: AppColors.turquoise, size: 40),
         title: Text(ctx.tr('pl_sent_title')),
         content: Text(ctx.tr('pl_sent_body'), textAlign: TextAlign.center),
         actions: [
@@ -1758,7 +1754,7 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
                         end: 0,
                         child: InkWell(
                           onTap: () => setState(() => _photos.remove(a)),
-                          child: const CircleAvatar(
+                          child: CircleAvatar(
                             radius: 12,
                             backgroundColor: Color(0x99263B36),
                             child: Icon(
@@ -1896,7 +1892,7 @@ class PulseEntryCard extends StatelessWidget {
     child: InkWell(
       onTap: () => context.push('/pulse'),
       child: Ink(
-        decoration: const BoxDecoration(color: AppColors.primary),
+        decoration: BoxDecoration(color: AppColors.primary),
         child: Stack(
           children: [
             Positioned.fill(child: CustomPaint(painter: _PulseLinePainter())),
@@ -1904,9 +1900,9 @@ class PulseEntryCard extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 26,
-                    backgroundColor: Colors.white,
+                    backgroundColor: AppColors.surface,
                     child: Icon(
                       LucideIcons.heartHandshake,
                       color: AppColors.primary,
@@ -1920,8 +1916,8 @@ class PulseEntryCard extends StatelessWidget {
                       children: [
                         Text(
                           context.tr('pl_name'),
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: AppColors.onPrimary,
                             fontSize: 18,
                             fontWeight: FontWeight.w900,
                           ),
@@ -1929,8 +1925,8 @@ class PulseEntryCard extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           context.tr('pl_slogan'),
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: AppColors.onPrimary,
                             fontSize: 13,
                             height: 1.4,
                           ),
@@ -1938,7 +1934,7 @@ class PulseEntryCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Icon(LucideIcons.chevronRightDir, color: Colors.white),
+                  Icon(LucideIcons.chevronRightDir, color: AppColors.onPrimary),
                 ],
               ),
             ),

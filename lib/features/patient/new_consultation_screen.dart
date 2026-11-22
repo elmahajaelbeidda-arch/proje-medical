@@ -10,6 +10,7 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
+import '../../widgets/ui_kit.dart' show showSuccess;
 import '../../widgets/media.dart';
 
 class NewConsultationScreen extends ConsumerStatefulWidget {
@@ -89,27 +90,12 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           profile: ref.read(healthProfileProvider),
         );
 
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        icon: const Icon(
-          LucideIcons.circleCheck,
-          color: AppColors.success,
-          size: 64,
-        ),
-        title: Text(ctx.tr('request_sent')),
-        content: Text(ctx.tr('request_sent_body'), textAlign: TextAlign.center),
-        actions: [
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.pushReplacement('/patient/consultation/$id');
-            },
-            child: Text(ctx.tr('view_request')),
-          ),
-        ],
-      ),
+    showSuccess(
+      context,
+      title: context.tr('request_sent'),
+      message: context.tr('request_sent_body'),
+      actionLabel: context.tr('view_request'),
+      onAction: () => context.pushReplacement('/patient/consultation/$id'),
     );
   }
 
@@ -250,7 +236,7 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
           Card(
             color: AppColors.secondary,
             child: ListTile(
-              leading: const Icon(LucideIcons.brain, color: AppColors.primary),
+              leading: Icon(LucideIcons.brain, color: AppColors.primary),
               title: Text(
                 context.tr('psych_title'),
                 style: const TextStyle(fontWeight: FontWeight.w800),
@@ -289,18 +275,24 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
                   onTap: () => setState(() => _specialty = s.id),
                   child: Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(s.icon, size: 32, color: scheme.primary),
-                        const SizedBox(height: 8),
-                        Text(
-                          context.tr(s.key),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ],
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(s.icon, size: 32, color: scheme.primary),
+                          const SizedBox(height: 8),
+                          Text(
+                            context.tr(s.key),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              height: 1.3,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -371,13 +363,13 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
             ),
             child: Row(
               children: [
-                const Icon(LucideIcons.triangleAlert, color: Colors.white),
+                Icon(LucideIcons.triangleAlert, color: AppColors.onPrimary),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     context.tr('urgent_warning'),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.onPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -407,14 +399,16 @@ class _NewConsultationScreenState extends ConsumerState<NewConsultationScreen> {
                 avatar: Icon(
                   categoryIcon(c),
                   size: 18,
-                  color: _category == c ? Colors.white : categoryColor(c),
+                  color: _category == c
+                      ? AppColors.onPrimary
+                      : categoryColor(c),
                 ),
                 label: Text(context.tr(categoryKey(c))),
                 selected: _category == c,
                 showCheckmark: false,
                 selectedColor: categoryColor(c),
                 labelStyle: TextStyle(
-                  color: _category == c ? Colors.white : null,
+                  color: _category == c ? AppColors.onPrimary : null,
                   fontWeight: FontWeight.w700,
                 ),
                 onSelected: (_) => setState(() => _category = c),

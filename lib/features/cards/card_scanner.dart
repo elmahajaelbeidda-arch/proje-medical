@@ -62,11 +62,11 @@ class _CardScannerScreenState extends State<CardScannerScreen> {
       backgroundColor: AppColors.text,
       appBar: AppBar(
         backgroundColor: AppColors.text,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.onPrimary,
         title: Text(
           context.tr('mc_scan_title'),
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: AppColors.onPrimary,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -118,7 +118,7 @@ class _CardScannerScreenState extends State<CardScannerScreen> {
                               style: TextStyle(
                                 color: _wrongCode
                                     ? AppColors.secondary
-                                    : Colors.white,
+                                    : AppColors.onPrimary,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 height: 1.5,
@@ -176,20 +176,22 @@ class _CameraError extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(LucideIcons.cameraOff, color: Colors.white, size: 56),
+              Icon(LucideIcons.cameraOff, color: AppColors.onPrimary, size: 56),
               const SizedBox(height: 12),
               Text(
                 context.tr(denied ? 'mc_scan_denied' : 'mc_scan_failed'),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppColors.onPrimary,
                   fontSize: 16,
                   height: 1.6,
                 ),
               ),
               const SizedBox(height: 16),
               OutlinedButton(
-                style: OutlinedButton.styleFrom(foregroundColor: Colors.white),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.onPrimary,
+                ),
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(context.tr('mc_scan_back')),
               ),

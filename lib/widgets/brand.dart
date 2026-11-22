@@ -11,13 +11,12 @@ TextStyle brandNameStyle(
   required double fontSize,
   Color? color,
 }) {
-  final dark = Theme.of(context).brightness == Brightness.dark;
   final base = Theme.of(context).textTheme.headlineLarge ?? const TextStyle();
   return base.copyWith(
     fontWeight: FontWeight.w800,
     fontSize: fontSize,
     height: 1.7,
-    color: color ?? (dark ? Colors.white : AppColors.ink),
+    color: color ?? AppColors.primary,
     letterSpacing: 0,
   );
 }
@@ -55,10 +54,9 @@ class BrandRichText extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = context.tr('app_name');
     final base = style ?? DefaultTextStyle.of(context).style;
-    final dark = Theme.of(context).brightness == Brightness.dark;
     final nameStyle = base.copyWith(
       fontWeight: FontWeight.w800,
-      color: dark ? Colors.white : AppColors.primary,
+      color: AppColors.primary,
     );
 
     final parts = text.split(name);

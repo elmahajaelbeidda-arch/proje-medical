@@ -132,7 +132,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
             hintText: context.tr(
               _listening ? 'voice_search_listening' : widget.hintKey,
             ),
-            prefixIcon: const Icon(LucideIcons.search, color: AppColors.grey),
+            prefixIcon: Icon(LucideIcons.search, color: AppColors.grey),
             filled: true,
             fillColor: AppColors.fieldFill,
             contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -146,7 +146,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
-              borderSide: const BorderSide(color: AppColors.vivid, width: 1.5),
+              borderSide: BorderSide(color: AppColors.vivid, width: 1.5),
             ),
             suffixIcon: Row(
               mainAxisSize: MainAxisSize.min,
@@ -166,7 +166,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                           ? AppColors.primaryDark
                           : AppColors.primary,
                       fixedSize: const Size(46, 46),
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.onPrimary,
                     ),
                     onPressed: _toggle,
                     icon: Icon(
@@ -198,11 +198,11 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                         duration: const Duration(milliseconds: 120),
                         width: 26 + 10 * _level,
                         height: 26 + 10 * _level,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           LucideIcons.mic,
                           color: AppColors.primaryDark,
                           size: 18,
@@ -216,14 +216,14 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                             Text(
                               context.tr('voice_search_listening'),
                               style: text.titleSmall?.copyWith(
-                                color: Colors.white,
+                                color: AppColors.onPrimary,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
                             Text(
                               context.tr(widget.exampleKey),
                               style: text.bodySmall?.copyWith(
-                                color: Colors.white,
+                                color: AppColors.onPrimary,
                               ),
                             ),
                           ],

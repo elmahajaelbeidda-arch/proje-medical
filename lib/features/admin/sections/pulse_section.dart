@@ -268,7 +268,7 @@ class _ReviewTab extends ConsumerWidget {
                                   ),
                                   Text(
                                     fmtDateTime(p.createdAt),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: AppColors.grey,
                                       fontSize: 12,
                                     ),
@@ -283,7 +283,7 @@ class _ReviewTab extends ConsumerWidget {
                                 const SizedBox(height: 8),
                                 Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       LucideIcons.shieldAlert,
                                       color: AppColors.turquoise,
                                       size: 18,
@@ -292,7 +292,7 @@ class _ReviewTab extends ConsumerWidget {
                                     Expanded(
                                       child: Text(
                                         context.tr('pla_numbers_found'),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: AppColors.text,
                                           fontWeight: FontWeight.w700,
                                         ),
@@ -310,7 +310,7 @@ class _ReviewTab extends ConsumerWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   context.tr('pla_check_photos'),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: AppColors.grey,
                                     fontSize: 12,
                                   ),
@@ -691,7 +691,7 @@ class _PostsTabState extends ConsumerState<_PostsTab> {
               ),
               Text(
                 context.tr('pla_privacy_note'),
-                style: const TextStyle(color: AppColors.grey, fontSize: 12.5),
+                style: TextStyle(color: AppColors.grey, fontSize: 12.5),
               ),
               const SizedBox(height: 10),
               Align(
@@ -723,11 +723,8 @@ class _PostsTabState extends ConsumerState<_PostsTab> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: p.pinned
-                      ? const Icon(LucideIcons.pin, color: AppColors.turquoise)
-                      : const Icon(
-                          LucideIcons.newspaper,
-                          color: AppColors.grey,
-                        ),
+                      ? Icon(LucideIcons.pin, color: AppColors.turquoise)
+                      : Icon(LucideIcons.newspaper, color: AppColors.grey),
                   title: Text(
                     p.title,
                     maxLines: 1,
@@ -1037,7 +1034,7 @@ class _LiveTabState extends ConsumerState<_LiveTab> {
                 Text('${l.speaker} · ${liveWhen(context, l.startsAt)}'),
                 Text(
                   '${context.tr('pla_reminders_n', args: {'n': l.reminders.length})} · ${context.tr('pl_views', args: {'n': l.views})}',
-                  style: const TextStyle(color: AppColors.grey, fontSize: 12.5),
+                  style: TextStyle(color: AppColors.grey, fontSize: 12.5),
                 ),
                 const SizedBox(height: 8),
                 Wrap(
@@ -1193,7 +1190,7 @@ class _InteractionsTab extends ConsumerWidget {
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(LucideIcons.globe, color: AppColors.vivid),
+                leading: Icon(LucideIcons.globe, color: AppColors.vivid),
                 title: Text(context.tr('pla_public_note')),
               ),
             ],

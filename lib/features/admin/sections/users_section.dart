@@ -251,7 +251,7 @@ class _PersonCard extends ConsumerWidget {
             const SizedBox(height: 6),
             Text(
               '${context.tr('ad_reason')}: $suspended',
-              style: const TextStyle(color: AppColors.emergency),
+              style: TextStyle(color: AppColors.emergency),
             ),
           ],
           if (canReview && files.isNotEmpty) ...[
@@ -362,7 +362,7 @@ class _FacilityListState extends ConsumerState<_FacilityList> {
           Panel(
             child: ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const CircleAvatar(
+              leading: CircleAvatar(
                 backgroundColor: AppColors.secondary,
                 child: Icon(LucideIcons.hospital, color: AppColors.turquoise),
               ),
@@ -596,7 +596,7 @@ class _CardsListState extends ConsumerState<_CardsList> {
               children: [
                 Row(
                   children: [
-                    const Icon(LucideIcons.idCard, color: AppColors.primary),
+                    Icon(LucideIcons.idCard, color: AppColors.primary),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(

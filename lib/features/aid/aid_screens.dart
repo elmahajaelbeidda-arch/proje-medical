@@ -12,6 +12,7 @@ import '../../core/l10n.dart';
 import '../../core/theme.dart';
 import '../../models/blood.dart' show ContactMethod;
 import '../../widgets/common.dart';
+import '../../widgets/ui_kit.dart';
 import '../blood/blood_screens.dart' show ContactButtons;
 import 'aid_models.dart';
 import 'aid_providers.dart';
@@ -54,10 +55,10 @@ Widget _osmCredit(BuildContext context) => Positioned(
   bottom: 4,
   child: Container(
     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-    color: Colors.white,
+    color: AppColors.surface,
     child: Text(
       context.tr('aid_osm_credit'),
-      style: const TextStyle(fontSize: 10, color: AppColors.text),
+      style: TextStyle(fontSize: 10, color: AppColors.text),
     ),
   ),
 );
@@ -81,7 +82,7 @@ class _DemoBanner extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          const Icon(LucideIcons.flaskConical, color: AppColors.primary),
+          Icon(LucideIcons.flaskConical, color: AppColors.primary),
           const SizedBox(width: 8),
           Expanded(child: Text(context.tr('aid_demo_mode'))),
         ],
@@ -136,7 +137,7 @@ class _AidSignInState extends ConsumerState<AidSignIn> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        const Icon(LucideIcons.lockKeyhole, size: 56, color: AppColors.primary),
+        Icon(LucideIcons.lockKeyhole, size: 56, color: AppColors.primary),
         const SizedBox(height: 12),
         Text(
           context.tr('aid_sign_in_title'),
@@ -222,9 +223,12 @@ class MyAidRequestsScreen extends ConsumerWidget {
                         child: _MyRequestCard(request: r),
                       ),
                   ],
-            loading: () => [const Center(child: CircularProgressIndicator())],
+            loading: () => [const SkeletonList()],
             error: (e, _) => [
-              Text(context.tr('aid_error', args: {'e': e})),
+              ErrorView(
+                error: e,
+                onRetry: () => ref.invalidate(aidMineProvider),
+              ),
             ],
           ),
         ],
@@ -301,7 +305,7 @@ class _MyRequestCard extends StatelessWidget {
                                   ? LucideIcons.check
                                   : LucideIcons.circle,
                               size: i < reached ? 14 : 8,
-                              color: Colors.white,
+                              color: AppColors.onPrimary,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -601,7 +605,7 @@ class _LocationPickerState extends State<LocationPicker> {
                   children: [_osmTiles()],
                 ),
                 // Pin fixed in the centre; its tip marks the location.
-                const IgnorePointer(
+                IgnorePointer(
                   child: Center(
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 44),
@@ -678,11 +682,19 @@ class _AidMapScreenState extends ConsumerState<AidMapScreen> {
     }
     final role = ref.watch(aidRoleProvider);
     return role.when(
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () => Scaffold(
+        appBar: AppBar(title: Text(context.tr('aid_map'))),
+        body: const Padding(
+          padding: EdgeInsets.all(Space.m),
+          child: SkeletonList(count: 4),
+        ),
+      ),
       error: (e, _) => Scaffold(
         appBar: AppBar(),
-        body: Center(child: Text(context.tr('aid_error', args: {'e': e}))),
+        body: ErrorView(
+          error: e,
+          onRetry: () => ref.invalidate(aidRoleProvider),
+        ),
       ),
       data: (role) => role == null
           ? Scaffold(
@@ -794,9 +806,9 @@ class _AidMapScreenState extends ConsumerState<AidMapScreen> {
                               onTap: () => _openSheet(context, r, role),
                               leading: CircleAvatar(
                                 backgroundColor: urgencyColorOf(r.urgency),
-                                child: const Icon(
+                                child: Icon(
                                   LucideIcons.mapPinned,
-                                  color: Colors.white,
+                                  color: AppColors.onPrimary,
                                 ),
                               ),
                               title: Text(
@@ -863,8 +875,8 @@ class _AidMapScreenState extends ConsumerState<AidMapScreen> {
                               'aid_n_requests',
                               args: {'n': items.length},
                             ),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppColors.onPrimary,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
@@ -958,7 +970,10 @@ class AidRequestSheet extends ConsumerWidget {
                 CircleAvatar(
                   radius: 24,
                   backgroundColor: urgencyColorOf(r.urgency),
-                  child: const Icon(LucideIcons.mapPinned, color: Colors.white),
+                  child: Icon(
+                    LucideIcons.mapPinned,
+                    color: AppColors.onPrimary,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1007,7 +1022,7 @@ class AidRequestSheet extends ConsumerWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     LucideIcons.signpost,
                     size: 18,
                     color: AppColors.primary,

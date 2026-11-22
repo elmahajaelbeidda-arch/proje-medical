@@ -144,7 +144,7 @@ class DoctorHomeTab extends ConsumerWidget {
               ),
               IconButton.filledTonal(
                 onPressed: () => context.push('/notifications'),
-                icon: const Badge(
+                icon: Badge(
                   smallSize: 8,
                   backgroundColor: AppColors.accent,
                   child: Icon(LucideIcons.bell),
@@ -179,9 +179,9 @@ class DoctorHomeTab extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   LucideIcons.handHeart,
-                  color: Colors.white,
+                  color: AppColors.onPrimary,
                   size: 44,
                 ),
                 const SizedBox(width: 14),
@@ -189,7 +189,7 @@ class DoctorHomeTab extends ConsumerWidget {
                   child: Text(
                     context.tr('thank_you_doctor', args: {'n': 23 + helped}),
                     style: text.titleMedium?.copyWith(
-                      color: Colors.white,
+                      color: AppColors.onPrimary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -232,13 +232,13 @@ class DoctorHomeTab extends ConsumerWidget {
           Card(
             child: ListTile(
               onTap: () => context.push('/blood'),
-              leading: const CircleAvatar(
+              leading: CircleAvatar(
                 backgroundColor: AppColors.secondary,
                 child: Icon(LucideIcons.droplet, color: AppColors.turquoise),
               ),
               title: Text(
                 context.tr('blood_donation'),
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: AppColors.primary,
                 ),
@@ -479,7 +479,7 @@ class DoctorProfileTab extends ConsumerWidget {
             alignment: Alignment.center,
             child: Text(
               _me.initials,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 38,
                 fontWeight: FontWeight.w900,
                 color: AppColors.primary,
@@ -499,7 +499,7 @@ class DoctorProfileTab extends ConsumerWidget {
               Text(
                 '${context.tr(Specialty.byId(_me.specialtyId).key)} • ${_me.cityFor(Localizations.localeOf(context).languageCode)}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.turquoise,
                   fontWeight: FontWeight.w600,
                 ),
@@ -529,7 +529,7 @@ class DoctorProfileTab extends ConsumerWidget {
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
@@ -544,7 +544,7 @@ class DoctorProfileTab extends ConsumerWidget {
                         const SizedBox(height: 10),
                         Text(
                           context.tr('availability_hours'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w800,
                             color: AppColors.primary,
                           ),

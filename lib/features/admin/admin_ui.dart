@@ -137,14 +137,14 @@ class Panel extends StatelessWidget {
 }
 
 class Kpi extends StatelessWidget {
-  const Kpi({
+  Kpi({
     super.key,
     required this.label,
     required this.value,
     required this.icon,
-    this.color = AppColors.turquoise,
+    Color? color,
     this.onTap,
-  });
+  }) : color = color ?? AppColors.turquoise;
   final String label;
   final String value;
   final IconData icon;
@@ -273,7 +273,7 @@ class NoAccess extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(LucideIcons.lock, size: 56, color: AppColors.grey),
+          Icon(LucideIcons.lock, size: 56, color: AppColors.grey),
           const SizedBox(height: 10),
           Text(context.tr('ad_section_no_access'), textAlign: TextAlign.center),
         ],

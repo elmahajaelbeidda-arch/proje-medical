@@ -154,7 +154,7 @@ class _MyAccountState extends ConsumerState<_MyAccount> {
               else ...[
                 Center(
                   child: Container(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     padding: const EdgeInsets.all(8),
                     child: QrImageView(
                       data: Totp.uri(_secret!, me.email),
@@ -280,9 +280,9 @@ class _Admins extends ConsumerWidget {
                       backgroundColor: a.active
                           ? AppColors.primary
                           : AppColors.grey,
-                      child: const Icon(
+                      child: Icon(
                         LucideIcons.shieldUser,
-                        color: Colors.white,
+                        color: AppColors.onPrimary,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -484,10 +484,7 @@ class _Matrix extends StatelessWidget {
                   for (final r in roles)
                     DataCell(
                       rolePermissions(r).contains(p)
-                          ? const Icon(
-                              LucideIcons.check,
-                              color: AppColors.success,
-                            )
+                          ? Icon(LucideIcons.check, color: AppColors.success)
                           : const Text('—'),
                     ),
                 ],

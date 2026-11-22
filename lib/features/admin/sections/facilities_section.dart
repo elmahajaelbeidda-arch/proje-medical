@@ -255,7 +255,7 @@ class _FacilityPanel extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                const Icon(LucideIcons.hospital, color: AppColors.primary),
+                Icon(LucideIcons.hospital, color: AppColors.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(

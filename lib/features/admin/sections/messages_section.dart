@@ -175,10 +175,7 @@ class _MessagesSectionState extends ConsumerState<MessagesSection> {
                 ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
-                    LucideIcons.calendar,
-                    color: AppColors.primary,
-                  ),
+                  leading: Icon(LucideIcons.calendar, color: AppColors.primary),
                   title: Text('${s.code} • ${s.issuerName}'),
                   subtitle: Text(fmtDateTime(s.appointment)),
                 ),

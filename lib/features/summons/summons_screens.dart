@@ -116,7 +116,7 @@ class SummonsCardView extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w900,
               color: AppColors.primary,
             ),
@@ -129,7 +129,7 @@ class SummonsCardView extends StatelessWidget {
 
     return Card(
       clipBehavior: Clip.antiAlias,
-      color: Colors.white,
+      color: AppColors.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -143,7 +143,7 @@ class SummonsCardView extends StatelessWidget {
                   height: 40,
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Image.asset('assets/images/logo_icon.png'),
@@ -155,16 +155,16 @@ class SummonsCardView extends StatelessWidget {
                     children: [
                       Text(
                         context.tr('summons_title'),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: AppColors.onPrimary,
                           fontWeight: FontWeight.w900,
                           fontSize: 17,
                         ),
                       ),
                       Text(
                         '${context.tr('summons_number')}: ${s.code}',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: AppColors.onPrimary,
                           fontSize: 12,
                         ),
                       ),
@@ -187,10 +187,7 @@ class SummonsCardView extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(
-                        LucideIcons.calendar,
-                        color: AppColors.primary,
-                      ),
+                      Icon(LucideIcons.calendar, color: AppColors.primary),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Column(
@@ -212,7 +209,7 @@ class SummonsCardView extends StatelessWidget {
                       Text(
                         summonsTime(s.appointment),
                         textDirection: TextDirection.ltr,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w900,
                           color: AppColors.primary,
@@ -256,7 +253,7 @@ class SummonsCardView extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    const Icon(LucideIcons.qrCode, color: AppColors.primary),
+                    Icon(LucideIcons.qrCode, color: AppColors.primary),
                     const SizedBox(width: 6),
                     Text(
                       '${context.tr('summons_verification')}: ',

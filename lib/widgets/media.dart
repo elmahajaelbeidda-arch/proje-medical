@@ -181,7 +181,7 @@ class AttachmentThumb extends StatelessWidget {
       ),
       child: Icon(
         isPdf ? LucideIcons.fileText : LucideIcons.image,
-        color: Colors.white,
+        color: AppColors.onPrimary,
       ),
     );
   }
@@ -342,11 +342,11 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
               duration: const Duration(milliseconds: 120),
               width: 44 + 16 * _level,
               height: 44 + 16 * _level,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: AppColors.surface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.mic, color: AppColors.primary),
+              child: Icon(LucideIcons.mic, color: AppColors.primary),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -356,15 +356,15 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
                   Text(
                     context.tr('recording'),
                     style: text.titleSmall?.copyWith(
-                      color: Colors.white,
+                      color: AppColors.onPrimary,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                   Text(
                     '${formatDuration(_elapsed)} / ${formatDuration(maxVoiceDuration)}',
                     textDirection: TextDirection.ltr,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.onPrimary,
                       fontFeatures: [FontFeature.tabularFigures()],
                     ),
                   ),
@@ -373,7 +373,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
             ),
             FilledButton.icon(
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.white,
+                backgroundColor: AppColors.surface,
                 foregroundColor: AppColors.primary,
                 minimumSize: const Size(0, 44),
               ),
@@ -422,9 +422,9 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 24,
-                backgroundColor: Colors.white,
+                backgroundColor: AppColors.surface,
                 child: Icon(
                   LucideIcons.mic,
                   color: AppColors.turquoise,
@@ -439,7 +439,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
                     Text(
                       context.tr('tap_to_record'),
                       style: text.titleSmall?.copyWith(
-                        color: Colors.white,
+                        color: AppColors.onPrimary,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -539,7 +539,9 @@ class _VoiceNotePlayerState extends State<VoiceNotePlayer> {
           IconButton.filled(
             style: IconButton.styleFrom(
               backgroundColor: widget.compact ? AppColors.ink : AppColors.mint,
-              foregroundColor: widget.compact ? Colors.white : AppColors.ink,
+              foregroundColor: widget.compact
+                  ? AppColors.onPrimary
+                  : AppColors.ink,
               disabledBackgroundColor: AppColors.grey,
             ),
             onPressed: playable ? _toggle : null,

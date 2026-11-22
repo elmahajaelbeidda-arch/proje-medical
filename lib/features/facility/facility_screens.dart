@@ -120,7 +120,11 @@ class FacilityAvatar extends StatelessWidget {
   Widget build(BuildContext context) => CircleAvatar(
     radius: radius,
     backgroundColor: AppColors.turquoise,
-    child: Icon(facilityTypeIcon(type), color: Colors.white, size: radius),
+    child: Icon(
+      facilityTypeIcon(type),
+      color: AppColors.onPrimary,
+      size: radius,
+    ),
   );
 }
 
@@ -143,7 +147,7 @@ class FacilityEntryScreen extends ConsumerWidget {
             child: CircleAvatar(
               radius: 44,
               backgroundColor: AppColors.secondary,
-              child: const Icon(
+              child: Icon(
                 LucideIcons.hospital,
                 size: 46,
                 color: AppColors.primary,
@@ -864,7 +868,7 @@ class _FacilityLoginScreenState extends ConsumerState<FacilityLoginScreen> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  const Icon(LucideIcons.info, color: AppColors.primary),
+                  Icon(LucideIcons.info, color: AppColors.primary),
                   const SizedBox(width: 8),
                   Expanded(child: Text(context.tr('facility_demo_hint'))),
                 ],
@@ -950,7 +954,7 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
           if (!f.approvalSeen)
             MaterialBanner(
               backgroundColor: AppColors.secondary,
-              leading: const Icon(
+              leading: Icon(
                 LucideIcons.badgeCheck,
                 color: AppColors.success,
                 size: 32,
@@ -960,7 +964,7 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
                 children: [
                   Text(
                     context.tr('approval_notice_title'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w900,
                       color: AppColors.primary,
                     ),
@@ -998,7 +1002,7 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
                         Card(
                           color: AppColors.secondary,
                           child: ListTile(
-                            leading: const Icon(
+                            leading: Icon(
                               LucideIcons.megaphone,
                               color: AppColors.primary,
                             ),
@@ -1396,7 +1400,7 @@ class ReferralCard extends StatelessWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     LucideIcons.fileHeart,
                     size: 18,
                     color: AppColors.primary,

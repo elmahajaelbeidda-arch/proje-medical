@@ -573,7 +573,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
                   const Divider(height: 28),
                   Text(
                     context.tr('requester'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w800,
                       color: AppColors.primary,
                     ),
@@ -700,7 +700,7 @@ class CommitteeRequestScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(LucideIcons.lock, size: 16, color: AppColors.grey),
+              Icon(LucideIcons.lock, size: 16, color: AppColors.grey),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -930,7 +930,7 @@ class RegistrationCard extends ConsumerWidget {
                         .join('، '),
                   },
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.emergency,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1090,7 +1090,9 @@ Future<void> showExternalDonorSheet(
                           showCheckmark: false,
                           selectedColor: AppColors.primary,
                           labelStyle: TextStyle(
-                            color: type == t ? Colors.white : AppColors.primary,
+                            color: type == t
+                                ? AppColors.onPrimary
+                                : AppColors.primary,
                             fontWeight: FontWeight.w800,
                           ),
                           onSelected: (_) => setSheet(() => type = t),
@@ -1103,7 +1105,7 @@ Future<void> showExternalDonorSheet(
                     const SizedBox(height: 6),
                     Text(
                       ctx.tr('not_compatible_type'),
-                      style: const TextStyle(color: AppColors.warning),
+                      style: TextStyle(color: AppColors.warning),
                     ),
                   ],
                   const SizedBox(height: 12),
@@ -1212,7 +1214,7 @@ class _TeamNotesState extends ConsumerState<_TeamNotes> {
                 ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
+                  leading: Icon(
                     LucideIcons.stickyNote,
                     color: AppColors.primary,
                   ),
@@ -1325,7 +1327,7 @@ class _DonationPlacesTabState extends ConsumerState<_DonationPlacesTab> {
               children: [
                 Text(
                   context.tr('dp_add'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w900,
                     color: AppColors.primary,
                   ),

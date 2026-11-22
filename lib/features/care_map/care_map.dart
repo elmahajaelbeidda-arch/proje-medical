@@ -246,7 +246,11 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                 child: ListTile(
                   leading: CircleAvatar(
                     backgroundColor: placeColor(p),
-                    child: Icon(placeIcon(p), color: Colors.white, size: 20),
+                    child: Icon(
+                      placeIcon(p),
+                      color: AppColors.onPrimary,
+                      size: 20,
+                    ),
                   ),
                   title: Text(
                     p.name,
@@ -258,7 +262,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                       : Text(
                           formatKm(km),
                           textDirection: TextDirection.ltr,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w800,
                             color: AppColors.vivid,
                           ),
@@ -293,7 +297,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                   CircleAvatar(
                     radius: 26,
                     backgroundColor: placeColor(p),
-                    child: Icon(placeIcon(p), color: Colors.white),
+                    child: Icon(placeIcon(p), color: AppColors.onPrimary),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -307,7 +311,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                         ),
                         Text(
                           ctx.tr(p.detailKey),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.turquoise,
                             fontWeight: FontWeight.w700,
                           ),
@@ -315,7 +319,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                       ],
                     ),
                   ),
-                  const Icon(LucideIcons.badgeCheck, color: AppColors.vivid),
+                  Icon(LucideIcons.badgeCheck, color: AppColors.vivid),
                 ],
               ),
               const SizedBox(height: 12),
@@ -452,7 +456,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                                   color: placeColor(p),
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: Colors.white,
+                                    color: AppColors.onPrimary,
                                     width: 3,
                                   ),
                                   boxShadow: const [
@@ -464,7 +468,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                                 ),
                                 child: Icon(
                                   placeIcon(p),
-                                  color: Colors.white,
+                                  color: AppColors.onPrimary,
                                   size: 22,
                                 ),
                               ),
@@ -480,7 +484,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                                 color: AppColors.info,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white,
+                                  color: AppColors.onPrimary,
                                   width: 4,
                                 ),
                               ),
@@ -515,7 +519,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: const [
                         BoxShadow(color: Color(0x22263B36), blurRadius: 6),

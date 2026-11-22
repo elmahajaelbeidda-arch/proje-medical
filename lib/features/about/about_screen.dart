@@ -39,7 +39,7 @@ class AboutAssociationScreen extends ConsumerWidget {
               context.tr('about_shifa'),
               textAlign: TextAlign.center,
               style: text.bodyLarge?.copyWith(
-                color: Colors.white,
+                color: AppColors.onPrimary,
                 height: 1.8,
                 fontWeight: FontWeight.w500,
               ),
@@ -54,7 +54,7 @@ class AboutAssociationScreen extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         backgroundColor: AppColors.secondary,
                         child: Icon(
                           LucideIcons.handHeart,

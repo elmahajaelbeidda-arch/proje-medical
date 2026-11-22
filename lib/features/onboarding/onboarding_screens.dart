@@ -41,7 +41,6 @@ class ShifaLockup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final dark = Theme.of(context).brightness == Brightness.dark;
     final words = Column(
       crossAxisAlignment: vertical
           ? CrossAxisAlignment.center
@@ -55,7 +54,7 @@ class ShifaLockup extends StatelessWidget {
         Text(
           context.tr('app_tagline'),
           style: text.titleMedium?.copyWith(
-            color: dark ? AppColors.mint : AppColors.turquoise,
+            color: AppColors.turquoiseText,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -63,7 +62,7 @@ class ShifaLockup extends StatelessWidget {
         Text(
           context.tr('association'),
           style: text.bodyMedium?.copyWith(
-            color: dark ? Color(0xB3FFFFFF) : AppColors.grey,
+            color: AppColors.grey,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -136,7 +135,6 @@ class AboutShifaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final dark = Theme.of(context).brightness == Brightness.dark;
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.topCenter,
@@ -147,7 +145,7 @@ class AboutShifaCard extends StatelessWidget {
           margin: const EdgeInsets.only(top: 18),
           padding: const EdgeInsets.fromLTRB(20, 30, 20, 18),
           decoration: BoxDecoration(
-            color: dark ? AppColors.darkSurfaceHigh : AppColors.mint,
+            color: AppColors.secondary,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: AppColors.primary.withValues(alpha: .10)),
           ),
@@ -157,7 +155,7 @@ class AboutShifaCard extends StatelessWidget {
                 context.tr('about_shifa'),
                 textAlign: TextAlign.center,
                 style: text.bodyLarge?.copyWith(
-                  color: dark ? Colors.white : AppColors.text,
+                  color: AppColors.text,
                   height: 1.85,
                   fontWeight: FontWeight.w500,
                 ),
@@ -180,11 +178,7 @@ class AboutShifaCard extends StatelessWidget {
             border: Border.all(color: AppColors.turquoise, width: 2),
             boxShadow: AppColors.shadow,
           ),
-          child: const Icon(
-            LucideIcons.heart,
-            color: AppColors.turquoise,
-            size: 20,
-          ),
+          child: Icon(LucideIcons.heart, color: AppColors.turquoise, size: 20),
         ),
       ],
     );
@@ -241,7 +235,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -250,7 +244,7 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               const ShifaLockup(iconSize: 150, vertical: true),
               const SizedBox(height: 48),
-              const SizedBox(
+              SizedBox(
                 width: 28,
                 height: 28,
                 child: CircularProgressIndicator(
@@ -342,20 +336,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            LucideIcons.globe,
-                            color: AppColors.turquoise,
-                          ),
+                          Icon(LucideIcons.globe, color: AppColors.turquoise),
                           const SizedBox(width: 6),
                           Text(
                             AppStrings.languageNames[locale.languageCode] ??
                                 'العربية',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.turquoiseText,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const Icon(
+                          Icon(
                             LucideIcons.chevronDown,
                             color: AppColors.turquoise,
                           ),
@@ -642,7 +633,7 @@ class _RoleCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
+              Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
             ],
           ),
         ),

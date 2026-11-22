@@ -86,7 +86,7 @@ class BloodTypeBadge extends StatelessWidget {
       width: size,
       height: size,
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.primary,
         shape: BoxShape.circle,
       ),
@@ -94,7 +94,7 @@ class BloodTypeBadge extends StatelessWidget {
         type,
         textDirection: TextDirection.ltr,
         style: TextStyle(
-          color: Colors.white,
+          color: AppColors.onPrimary,
           fontWeight: FontWeight.w900,
           fontSize: size * .34,
         ),
@@ -220,7 +220,7 @@ class BloodHomeScreen extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 26,
                   backgroundColor: AppColors.secondary,
                   child: Icon(
@@ -234,7 +234,7 @@ class BloodHomeScreen extends ConsumerWidget {
                   child: Text(
                     context.tr('donor_section_intro'),
                     style: text.bodyMedium?.copyWith(
-                      color: Colors.white,
+                      color: AppColors.onPrimary,
                       fontWeight: FontWeight.w600,
                       height: 1.6,
                     ),
@@ -251,7 +251,7 @@ class BloodHomeScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(
+                    Icon(
                       LucideIcons.handHeart,
                       size: 52,
                       color: AppColors.primary,
@@ -291,7 +291,7 @@ class BloodHomeScreen extends ConsumerWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              const Icon(LucideIcons.lock, size: 16, color: AppColors.grey),
+              Icon(LucideIcons.lock, size: 16, color: AppColors.grey),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -531,7 +531,7 @@ class _BloodTypePicker extends StatelessWidget {
               textDirection: TextDirection.ltr,
               style: TextStyle(
                 fontWeight: FontWeight.w900,
-                color: value == t ? Colors.white : AppColors.primary,
+                color: value == t ? AppColors.onPrimary : AppColors.primary,
               ),
             ),
             selected: value == t,
@@ -764,18 +764,18 @@ class _NewBloodRequestScreenState extends ConsumerState<NewBloodRequestScreen> {
                 onChanged: (v) => setState(() => _urgent = v),
                 secondary: Icon(
                   LucideIcons.zap,
-                  color: _urgent ? Colors.white : AppColors.emergency,
+                  color: _urgent ? AppColors.onPrimary : AppColors.emergency,
                 ),
                 title: Text(
                   context.tr('urgent_request'),
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: _urgent ? Colors.white : null,
+                    color: _urgent ? AppColors.onPrimary : null,
                   ),
                 ),
                 subtitle: Text(
                   context.tr('urgent_request_desc'),
-                  style: TextStyle(color: _urgent ? Colors.white : null),
+                  style: TextStyle(color: _urgent ? AppColors.onPrimary : null),
                 ),
               ),
             ),
@@ -1040,7 +1040,7 @@ class BloodRequestDetailsScreen extends ConsumerWidget {
                     'linked_n',
                     args: {'n': r.assignedDonorIds.length},
                   ),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w800,
                     color: AppColors.primary,
                   ),
@@ -1109,7 +1109,7 @@ class BloodStatusTimeline extends StatelessWidget {
                   child: Icon(
                     steps[i].$2,
                     size: 17,
-                    color: i <= reached ? Colors.white : AppColors.grey,
+                    color: i <= reached ? AppColors.onPrimary : AppColors.grey,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -1258,7 +1258,7 @@ class _DonorRegisterScreenState extends ConsumerState<DonorRegisterScreen> {
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(LucideIcons.info, size: 16, color: AppColors.grey),
+                Icon(LucideIcons.info, size: 16, color: AppColors.grey),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -1408,11 +1408,7 @@ class PublicNeedCard extends ConsumerWidget {
       showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
-          icon: const Icon(
-            LucideIcons.handHeart,
-            color: AppColors.primary,
-            size: 40,
-          ),
+          icon: Icon(LucideIcons.handHeart, color: AppColors.primary, size: 40),
           title: Text(ctx.tr('bn_register_first_title')),
           content: Text(
             ctx.tr('bn_register_first_body'),
@@ -1495,15 +1491,15 @@ class PublicNeedCard extends ConsumerWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     LucideIcons.circleAlert,
                                     size: 14,
-                                    color: Colors.white,
+                                    color: AppColors.onPrimary,
                                   ),
                                   Text(
                                     context.tr('bn_urgent'),
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      color: AppColors.onPrimary,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w800,
                                     ),
@@ -1513,7 +1509,7 @@ class PublicNeedCard extends ConsumerWidget {
                             ),
                           Text(
                             context.tr('bn_units', args: {'n': missing}),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w900,
                               color: AppColors.primary,
                             ),
@@ -1523,7 +1519,7 @@ class PublicNeedCard extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             LucideIcons.hospital,
                             size: 16,
                             color: AppColors.grey,
@@ -1563,10 +1559,7 @@ class PublicNeedCard extends ConsumerWidget {
               OutlinedButton.icon(
                 onPressed: () =>
                     ref.read(bloodProvider.notifier).withdrawVolunteer(r.id),
-                icon: const Icon(
-                  LucideIcons.circleCheck,
-                  color: AppColors.vivid,
-                ),
+                icon: Icon(LucideIcons.circleCheck, color: AppColors.vivid),
                 label: Text(context.tr('bn_offered')),
               )
             else
@@ -1608,7 +1601,7 @@ class DonationPlacesSection extends ConsumerWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 22,
                     backgroundColor: AppColors.secondary,
                     child: Icon(LucideIcons.droplet, color: AppColors.primary),
@@ -1620,7 +1613,7 @@ class DonationPlacesSection extends ConsumerWidget {
                       children: [
                         Text(
                           p.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w900,
                             color: AppColors.primary,
                           ),
@@ -1631,14 +1624,14 @@ class DonationPlacesSection extends ConsumerWidget {
                             p.city,
                             p.address,
                           ].where((e) => e.isNotEmpty).join('، '),
-                          style: const TextStyle(color: AppColors.grey),
+                          style: TextStyle(color: AppColors.grey),
                         ),
                         if (p.hours.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   LucideIcons.clock,
                                   size: 15,
                                   color: AppColors.turquoise,
@@ -1658,7 +1651,7 @@ class DonationPlacesSection extends ConsumerWidget {
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
                               p.note,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 color: AppColors.text,
                               ),

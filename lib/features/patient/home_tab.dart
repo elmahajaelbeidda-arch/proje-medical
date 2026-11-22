@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -13,6 +14,7 @@ import '../../data/mock_data.dart';
 import '../../models/admin.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart' show AccountReviewBanner;
+import '../../widgets/ui_kit.dart';
 import '../../widgets/visit_counter.dart';
 import '../summons/summons_screens.dart' show SummonsBanner;
 
@@ -62,7 +64,7 @@ class PatientHomeTab extends ConsumerWidget {
       bottom: false,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(_side, 0, _side, 28),
-        children: [
+        children: _stagger([
           const _TopBar(),
           const SizedBox(height: 8),
           const AccountReviewBanner(),
@@ -171,11 +173,16 @@ class PatientHomeTab extends ConsumerWidget {
           _SectionTitle(context.tr('health_tips')),
           const SizedBox(height: 10),
           const _Tips(),
-        ],
+        ]),
       ),
     );
   }
 }
+
+/// Sections appear one after the other when the screen opens.
+List<Widget> _stagger(List<Widget> items) => [
+  for (var i = 0; i < items.length; i++) FadeSlideIn(index: i, child: items[i]),
+];
 
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle(this.text);
@@ -185,7 +192,7 @@ class _SectionTitle extends StatelessWidget {
     header: true,
     child: Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w700,
         color: AppColors.text,
@@ -207,12 +214,13 @@ class _TopBar extends ConsumerWidget {
     final hasNews =
         MockData.notifications(auth.isDoctor).isNotEmpty ||
         ref.watch(adminProvider.select((s) => s.messages.isNotEmpty));
-    return SizedBox(
-      height: 56,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 56),
       child: Row(
         children: [
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -220,7 +228,7 @@ class _TopBar extends ConsumerWidget {
                   '${context.tr('hello')} ${auth.displayName.split(' ').first} 👋',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: AppColors.text,
@@ -229,7 +237,7 @@ class _TopBar extends ConsumerWidget {
                 ),
                 Text(
                   context.tr('how_feel'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     color: AppColors.grey,
                     height: 1.3,
@@ -251,7 +259,7 @@ class _TopBar extends ConsumerWidget {
                 child: Container(
                   width: 40,
                   height: 40,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColors.surface,
                     shape: BoxShape.circle,
                     boxShadow: AppColors.shadow,
@@ -259,13 +267,9 @@ class _TopBar extends ConsumerWidget {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      const Icon(
-                        LucideIcons.bell,
-                        size: 22,
-                        color: AppColors.text,
-                      ),
+                      Icon(LucideIcons.bell, size: 22, color: AppColors.text),
                       if (hasNews)
-                        const PositionedDirectional(
+                        PositionedDirectional(
                           top: 9,
                           end: 10,
                           child: CircleAvatar(
@@ -332,14 +336,14 @@ class AboutAppCard extends StatelessWidget {
                         children: [
                           Text(
                             context.tr('app_name'),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                               color: AppColors.primary,
                               height: 1.5,
                             ),
                           ),
-                          const Text(
+                          Text(
                             shifaVerse,
                             textDirection: TextDirection.rtl,
                             style: TextStyle(
@@ -357,7 +361,7 @@ class AboutAppCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   context.tr('about_short'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     color: AppColors.grey,
                     height: 1.6,
@@ -443,10 +447,10 @@ class _ConsultCard extends StatelessWidget {
             children: [
               Text(
                 context.tr('request_consultation'),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: AppColors.onPrimary,
                   height: 1.4,
                 ),
               ),
@@ -462,7 +466,7 @@ class _ConsultCard extends StatelessWidget {
               const SizedBox(height: 14),
               FilledButton.icon(
                 style: FilledButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.surface,
                   foregroundColor: AppColors.primary,
                   minimumSize: const Size(0, 44),
                   padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -470,7 +474,10 @@ class _ConsultCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: () => context.push('/patient/new'),
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  context.push('/patient/new');
+                },
                 icon: const Icon(LucideIcons.plus, size: 20),
                 label: Text(context.tr('start')),
               ),
@@ -485,9 +492,9 @@ class _ConsultCard extends StatelessWidget {
             color: Colors.white.withValues(alpha: .15),
             shape: BoxShape.circle,
           ),
-          child: const Icon(
+          child: Icon(
             LucideIcons.shieldPlus,
-            color: Colors.white,
+            color: AppColors.onPrimary,
             size: 34,
           ),
         ),
@@ -515,46 +522,44 @@ class _QuickService extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    button: true,
-    label: label,
-    child: Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(16),
-      elevation: 1,
-      shadowColor: const Color(0x0F000000),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: SizedBox(
-          height: 96,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: background,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: color, size: 24),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.text,
-                  height: 1.3,
-                ),
-              ),
-            ],
+  Widget build(BuildContext context) => Pressable(
+    onTap: onTap,
+    semanticLabel: label,
+    child: Container(
+      height: 96,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(Radii.card),
+        boxShadow: AppColors.shadow,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(Radii.button),
+            ),
+            child: Icon(icon, color: color, size: 24),
           ),
-        ),
+          const SizedBox(height: Space.xs),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.xxs),
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: TextSize.small,
+                fontWeight: FontWeight.w600,
+                color: AppColors.text,
+                height: 1.3,
+              ),
+            ),
+          ),
+        ],
       ),
     ),
   );
@@ -580,7 +585,7 @@ void showEmergencySheet(BuildContext context, WidgetRef ref) {
                 color: AppColors.emergencySoft,
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: const Icon(
+              child: Icon(
                 LucideIcons.siren,
                 color: AppColors.emergency,
                 size: 32,
@@ -589,7 +594,7 @@ void showEmergencySheet(BuildContext context, WidgetRef ref) {
             const SizedBox(height: 12),
             Text(
               ctx.tr('qs_emergency'),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: AppColors.emergencyText,
@@ -599,7 +604,7 @@ void showEmergencySheet(BuildContext context, WidgetRef ref) {
             Text(
               ctx.tr('emergency_body'),
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 height: 1.6,
                 color: AppColors.text,
@@ -610,7 +615,7 @@ void showEmergencySheet(BuildContext context, WidgetRef ref) {
               FilledButton.icon(
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.emergency,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.onPrimary,
                 ),
                 onPressed: () => launchUrl(Uri(scheme: 'tel', path: number)),
                 icon: const Icon(LucideIcons.phone),
@@ -620,7 +625,7 @@ void showEmergencySheet(BuildContext context, WidgetRef ref) {
               Text(
                 ctx.tr('emergency_no_number'),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 13, color: AppColors.grey),
+                style: TextStyle(fontSize: 13, color: AppColors.grey),
               ),
           ],
         ),
@@ -664,7 +669,7 @@ class _AnnouncementsState extends ConsumerState<_Announcements> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       LucideIcons.megaphone,
                       color: AppColors.primary,
                       size: 24,
@@ -679,7 +684,7 @@ class _AnnouncementsState extends ConsumerState<_Announcements> {
                             list[i].title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: AppColors.text,
@@ -690,7 +695,7 @@ class _AnnouncementsState extends ConsumerState<_Announcements> {
                             list[i].body,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13,
                               color: AppColors.grey,
                               height: 1.4,
@@ -755,7 +760,7 @@ class _ConsultationRow extends StatelessWidget {
               color: AppColors.secondary,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
+            child: Icon(
               LucideIcons.fileText,
               color: AppColors.primary,
               size: 24,
@@ -768,7 +773,7 @@ class _ConsultationRow extends StatelessWidget {
               children: [
                 Text(
                   context.tr(Specialty.byId(c.specialtyId).key),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: AppColors.text,
@@ -778,7 +783,7 @@ class _ConsultationRow extends StatelessWidget {
                 Text(
                   '${two(d.day)}/${two(d.month)}/${d.year}',
                   textDirection: TextDirection.ltr,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     color: AppColors.grey,
                     height: 1.4,
@@ -836,29 +841,31 @@ class HomeCard extends StatelessWidget {
   final Widget child;
   final VoidCallback? onTap;
   @override
-  Widget build(BuildContext context) => Material(
-    color: AppColors.surface,
-    borderRadius: BorderRadius.circular(16),
-    elevation: 1,
-    shadowColor: const Color(0x0F000000),
-    child: InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: onTap,
-      child: Padding(padding: const EdgeInsets.all(16), child: child),
+  Widget build(BuildContext context) => Pressable(
+    onTap: onTap,
+    child: Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(Space.m),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(Radii.card),
+        boxShadow: AppColors.shadow,
+      ),
+      child: child,
     ),
   );
 }
 
 /// One service: icon in a 44 mint square, title, one-line description.
 class ServiceTile extends StatelessWidget {
-  const ServiceTile({
+  ServiceTile({
     super.key,
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.onTap,
-    this.color = AppColors.primary,
-  });
+    Color? color,
+  }) : color = color ?? AppColors.primary;
   final IconData icon;
   final String title;
   final String subtitle;
@@ -888,7 +895,7 @@ class ServiceTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: AppColors.text,
@@ -899,7 +906,7 @@ class ServiceTile extends StatelessWidget {
                   subtitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     color: AppColors.grey,
                     height: 1.5,
@@ -962,7 +969,7 @@ class _Tips extends StatelessWidget {
                 context.tr(_tips[i].$2),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: AppColors.text,

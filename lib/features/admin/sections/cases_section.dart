@@ -172,7 +172,7 @@ class _CasesSectionState extends ConsumerState<CasesSection> {
                     color: stageColor(c.stage),
                   ),
                   if (c.urgent)
-                    const Icon(
+                    Icon(
                       LucideIcons.circleAlert,
                       color: AppColors.emergency,
                       size: 18,
@@ -317,7 +317,7 @@ class _AdminCasePageState extends ConsumerState<AdminCasePage> {
                         else
                           Text(
                             context.tr('ad_no_access'),
-                            style: const TextStyle(color: AppColors.grey),
+                            style: TextStyle(color: AppColors.grey),
                           ),
                       ],
                     ),

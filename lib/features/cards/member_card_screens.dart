@@ -100,11 +100,11 @@ class MemberCardView extends StatelessWidget {
       aspectRatio: 85.6 / 54,
       child: Card(
         clipBehavior: Clip.antiAlias,
-        color: Colors.white,
+        color: AppColors.surface,
         elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.primary),
+          side: BorderSide(color: AppColors.primary),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -119,7 +119,7 @@ class MemberCardView extends StatelessWidget {
                     height: 32,
                     padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(7),
                     ),
                     child: Image.asset('assets/images/logo_icon.png'),
@@ -128,16 +128,16 @@ class MemberCardView extends StatelessWidget {
                   Expanded(
                     child: Text(
                       context.tr('app_name'),
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: AppColors.onPrimary,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
                   ),
                   Text(
                     context.tr('mc_title'),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.onPrimary,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                     ),
@@ -208,7 +208,7 @@ class MemberCardView extends StatelessWidget {
                             child: QrImageView(
                               data: verifyUrl(c),
                               padding: EdgeInsets.zero,
-                              backgroundColor: Colors.white,
+                              backgroundColor: AppColors.surface,
                             ),
                           ),
                         ),
@@ -234,8 +234,8 @@ class MemberCardView extends StatelessWidget {
                 child: Text(
                   context.tr('cc_suspended'),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: AppColors.onPrimary,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -262,7 +262,7 @@ class _CardPage extends StatelessWidget {
         Text(
           context.tr('mc_suspended_note'),
           textAlign: TextAlign.center,
-          style: const TextStyle(color: AppColors.emergency),
+          style: TextStyle(color: AppColors.emergency),
         ),
       ],
       const SizedBox(height: 14),
@@ -494,7 +494,7 @@ class _VerifyCardScreenState extends ConsumerState<VerifyCardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 38,
                     backgroundColor: AppColors.secondary,
                     child: Icon(

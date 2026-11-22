@@ -50,6 +50,13 @@ class ShifaAdminApp extends ConsumerWidget {
       themeMode: ref.watch(themeModeProvider),
       theme: AppTheme.light(locale.languageCode),
       darkTheme: AppTheme.dark(locale.languageCode),
+      // Colours follow the light / dark mode (the phone's setting by
+      // default). Changing it rebuilds the screens with the new palette.
+      builder: (context, child) {
+        final b = Theme.of(context).brightness;
+        AppColors.use(b);
+        return KeyedSubtree(key: ValueKey(b), child: child ?? const SizedBox());
+      },
     );
   }
 }

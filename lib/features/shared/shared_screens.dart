@@ -148,7 +148,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(92),
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.primary,
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
           ),
@@ -157,10 +157,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(4, 6, 4, 10),
               child: IconTheme(
-                data: const IconThemeData(color: Colors.white),
+                data: IconThemeData(color: AppColors.onPrimary),
                 child: Row(
                   children: [
-                    const BackButton(color: Colors.white),
+                    BackButton(color: AppColors.onPrimary),
                     Stack(
                       clipBehavior: Clip.none,
                       children: [
@@ -168,8 +168,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           width: 48,
                           height: 48,
                           padding: const EdgeInsets.all(3),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
                             shape: BoxShape.circle,
                           ),
                           child: CircleAvatar(
@@ -180,7 +180,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                   : (isDoctor
                                         ? otherName.characters.first
                                         : (doctor?.initials ?? '')),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -205,15 +205,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             otherName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppColors.onPrimary,
                               fontSize: 17,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 LucideIcons.briefcaseMedical,
                                 size: 14,
                                 color: AppColors.secondary,
@@ -224,7 +224,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                   context.tr(Specialty.byId(c.specialtyId).key),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: AppColors.secondary,
                                     fontSize: 13,
                                   ),
@@ -262,7 +262,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             child: Row(
               children: [
-                const Icon(LucideIcons.info, size: 18, color: AppColors.ink),
+                Icon(LucideIcons.info, size: 18, color: AppColors.ink),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -323,7 +323,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           Text(
                             m.text,
                             style: TextStyle(
-                              color: mine ? Colors.white : AppColors.text,
+                              color: mine
+                                  ? AppColors.onPrimary
+                                  : AppColors.text,
                               height: 1.5,
                             ),
                           ),
@@ -373,7 +375,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(26),
-                          borderSide: const BorderSide(color: AppColors.vivid),
+                          borderSide: BorderSide(color: AppColors.vivid),
                         ),
                       ),
                     ),

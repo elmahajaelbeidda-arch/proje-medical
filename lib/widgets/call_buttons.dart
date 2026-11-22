@@ -99,7 +99,7 @@ class CallActions extends StatelessWidget {
           icon: Icon(
             callIcon(k),
             color: onDark
-                ? (enabled ? Colors.white : Colors.white54)
+                ? (enabled ? AppColors.onPrimary : Colors.white54)
                 : (enabled ? null : Theme.of(context).disabledColor),
           ),
         ),
@@ -137,7 +137,7 @@ class CallBubble extends StatelessWidget {
           CircleAvatar(
             radius: 16,
             backgroundColor: AppColors.vivid,
-            child: Icon(callIcon(kind), color: Colors.white, size: 18),
+            child: Icon(callIcon(kind), color: AppColors.onPrimary, size: 18),
           ),
           const SizedBox(width: 8),
           Column(
@@ -149,14 +149,14 @@ class CallBubble extends StatelessWidget {
                   'call_started_msg',
                   args: {'kind': context.tr(callKey(kind))},
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: AppColors.primary,
                 ),
               ),
               Text(
                 context.timeAgo(time),
-                style: const TextStyle(fontSize: 11, color: AppColors.grey),
+                style: TextStyle(fontSize: 11, color: AppColors.grey),
               ),
             ],
           ),

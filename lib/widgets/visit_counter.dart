@@ -34,12 +34,8 @@ class RollingCount extends StatelessWidget {
 /// Pulses a few times when it appears and each time [pulseKey] changes
 /// (new figures), then rests: no endless animation.
 class LiveDot extends StatefulWidget {
-  const LiveDot({
-    super.key,
-    this.color = AppColors.vivid,
-    this.size = 10,
-    this.pulseKey,
-  });
+  LiveDot({super.key, Color? color, this.size = 10, this.pulseKey})
+    : color = color ?? AppColors.vivid;
   final Color color;
   final double size;
   final Object? pulseKey;
@@ -231,12 +227,12 @@ class VisitorStatsCard extends ConsumerWidget {
       children: [
         Row(
           children: [
-            const Icon(LucideIcons.chartLine, color: AppColors.primary),
+            Icon(LucideIcons.chartLine, color: AppColors.primary),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 context.tr('vc_title'),
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w900,
                   color: AppColors.primary,
                   fontSize: 16,
@@ -261,7 +257,7 @@ class VisitorStatsCard extends ConsumerWidget {
         const SizedBox(height: 10),
         Row(
           children: [
-            const Icon(LucideIcons.refreshCw, size: 15, color: AppColors.grey),
+            Icon(LucideIcons.refreshCw, size: 15, color: AppColors.grey),
             const SizedBox(width: 4),
             Expanded(
               child: Text(
@@ -274,7 +270,7 @@ class VisitorStatsCard extends ConsumerWidget {
                               '${two(s.updatedAt.hour)}:${two(s.updatedAt.minute)}',
                         },
                       ),
-                style: const TextStyle(color: AppColors.grey, fontSize: 12),
+                style: TextStyle(color: AppColors.grey, fontSize: 12),
               ),
             ),
             if (s?.demo ?? false)
@@ -286,7 +282,7 @@ class VisitorStatsCard extends ConsumerWidget {
                 ),
                 child: Text(
                   context.tr('vc_demo'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.text,
                     fontSize: 11.5,
                     fontWeight: FontWeight.w700,
@@ -324,7 +320,7 @@ class _Tile extends StatelessWidget {
         CircleAvatar(
           radius: 18,
           backgroundColor: color,
-          child: Icon(icon, color: Colors.white, size: 19),
+          child: Icon(icon, color: AppColors.onPrimary, size: 19),
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -341,7 +337,7 @@ class _Tile extends StatelessWidget {
                     )
                   : RollingCount(
                       value!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                         color: AppColors.text,
@@ -350,7 +346,7 @@ class _Tile extends StatelessWidget {
               Text(
                 context.tr(label),
                 maxLines: 2,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.grey,
                   fontSize: 12,
                   height: 1.3,

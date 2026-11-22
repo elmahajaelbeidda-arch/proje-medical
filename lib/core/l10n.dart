@@ -2501,6 +2501,27 @@ class AppStrings {
       'Numéro d’urgence (bouton « Urgence »)',
     ],
 
+    // Screen states
+    'state_loading': ['جارٍ التحميل', 'Chargement'],
+    'state_offline_title': [
+      'لا يوجد اتصال بالإنترنت',
+      'Pas de connexion Internet',
+    ],
+    'state_offline_body': [
+      'تحقّق من الشبكة ثم أعد المحاولة. بياناتك محفوظة.',
+      'Vérifiez le réseau puis réessayez. Vos données sont conservées.',
+    ],
+    'state_error_title': ['حدث خطأ غير متوقع', 'Une erreur est survenue'],
+    'state_error_body': [
+      'لم نتمكن من تحميل البيانات الآن. حاول مرة أخرى بعد قليل.',
+      'Impossible de charger les données pour le moment. Réessayez dans un instant.',
+    ],
+    'state_retry': ['إعادة المحاولة', 'Réessayer'],
+    'empty_consults': [
+      'لا توجد استشارات بعد، ابدأ أول استشارة الآن',
+      'Aucune consultation pour l’instant : commencez la première dès maintenant',
+    ],
+
     // Chat
     'chat': ['المحادثة', 'Discussion'],
     'type_message': ['اكتب رسالتك...', 'Écrivez votre message...'],
