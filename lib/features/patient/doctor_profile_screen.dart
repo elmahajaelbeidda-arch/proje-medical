@@ -77,11 +77,7 @@ class DoctorProfileScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(16, 56, 16, 16),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [AppColors.primary, AppColors.primaryDark],
-                      ),
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: const [
                         BoxShadow(

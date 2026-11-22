@@ -31,11 +31,7 @@ class AboutAssociationScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: AlignmentDirectional.topStart,
-                end: AlignmentDirectional.bottomEnd,
-                colors: AppColors.heroGradient,
-              ),
+              color: AppColors.primary,
               borderRadius: BorderRadius.circular(20),
             ),
             child: BrandRichText(

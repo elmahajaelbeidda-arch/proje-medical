@@ -1,49 +1,51 @@
 import 'package:flutter/material.dart';
 
-/// Visual identity of "شِفاءٌ لِلنّاس".
+/// Visual identity of "شِفاءٌ لِلنّاس" (clean, iOS / Material 3 style).
 ///
-/// Five colours only (gold was dropped). Every other shade below is a mix
-/// of these (and white), noted next to it, so the app stays in the palette.
+/// Palette of the design brief. The few extra shades are noted: they are
+/// deeper tones of the same colours, used only where small text needs
+/// more contrast (WCAG AA, for older readers).
 class AppColors {
   AppColors._();
 
   // ---- The palette --------------------------------------------------------
-  static const primary = Color(
-    0xFF126B50,
-  ); // emerald: brand, titles, main buttons
-  static const turquoise = Color(
-    0xFF258C91,
-  ); // turquoise: icons, highlights, life
-  static const secondary = Color(0xFFE4F1EB); // mint: cards and light areas
-  static const background = Color(0xFFF7F9F8); // white-grey: app background
-  static const text = Color(0xFF263B36); // dark grey: text and secondary titles
-  static const surface = Color(0xFFFFFFFF); // white cards
+  static const primary = Color(0xFF2F6B55); // green: brand, main actions
+  static const primaryDark = Color(0xFF234F40); // pressed states, headings
+  static const turquoise = Color(0xFF4A8A90); // blue-green: secondary, icons
+  static const secondary = Color(0xFFE6F0EB); // light mint: secondary fills
+  static const background = Color(0xFFF6F8F7); // page background
+  static const surface = Color(0xFFFFFFFF); // cards
+  static const text = Color(0xFF1F2A26); // main text
+  static const grey = Color(0xFF6B7A74); // secondary text
+  static const border = Color(0xFFE3E8E6); // borders and dividers
+  static const emergency = Color(0xFFD9534F); // emergency only
+  static const emergencySoft = Color(0xFFFCEBEA); // emergency background
+  static const answered = Color(0xFF3BA776); // status "answered"
+  static const reviewing = Color(0xFFE0A030); // status "under review"
+  static const navInactive = Color(0xFF9AA6A1); // inactive tab icons
 
-  // ---- Derived shades (mixes of the palette) ------------------------------
-  static const primaryDark = Color(0xFF195A47); // emerald 65% + dark grey
-  static const turquoiseText = Color(
-    0xFF25787A,
-  ); // turquoise 75% + dark grey (small text)
-  static const grey = Color(
-    0xFF61706C,
-  ); // dark grey 73% on white: secondary text
-  static const border = Color(0xFFD5E2DD); // mint 92% + dark grey
-  static const fieldFill = Color(0xFFEEF5F2); // white-grey 55% + mint
-  static const turquoiseSoft = Color(0xFFE5F1F2); // turquoise 12% on white
-  static const emeraldTeal = Color(0xFF1C7C70); // emerald 50% + turquoise
-  static const offline = Color(0xFFABBAB5); // mint 70% + dark grey
+  // ---- Deeper tones for small text (contrast AA) ---------------------------
+  static const turquoiseText = Color(0xFF447C80); // links, verse
+  static const emergencyText = Color(0xFFB44B47); // emergency text on its tint
+  static const answeredText = Color(0xFF2E6F52); // on answeredSoft
+  static const reviewingText = Color(0xFF896B2C); // on reviewingSoft
+  static const answeredSoft = Color(0xFFE2F2EA); // answered 15% on white
+  static const reviewingSoft = Color(0xFFFAF1E0); // reviewing 15% on white
 
-  // Dark mode (deep shades of the dark grey and emerald)
-  static const darkBackground = Color(0xFF172B26);
-  static const darkSurface = Color(0xFF1A3930);
-  static const darkSurfaceHigh = Color(0xFF21473C);
-  static const darkOutline = Color(0xFF4C5F5A);
+  // Older names kept for the other screens.
+  static const fieldFill = background;
+  static const turquoiseSoft = secondary;
+  static const emeraldTeal = turquoise;
+  static const offline = navInactive;
 
-  /// Soft gradient for the few large coloured areas: emerald to turquoise.
-  static const heroGradient = [primary, turquoise];
+  // Dark mode
+  static const darkBackground = Color(0xFF16201D);
+  static const darkSurface = Color(0xFF1F2A26);
+  static const darkSurfaceHigh = Color(0xFF283631);
+  static const darkOutline = Color(0xFF3A4A44);
 
-  /// Urgent cases: turquoise (no red), always with an icon.
-  static const emergency = turquoise;
+  /// Flat colour for the large coloured areas (no gradients).
+  static const heroGradient = [primary, primary];
 
   // ---- Aliases used across the screens -----------------------------------
   static const vivid = turquoise; // lively highlights (numbers, likes, ticks)
@@ -55,23 +57,23 @@ class AppColors {
   static const mint = secondary;
 
   // Role tints (patients: turquoise, doctors: emerald)
-  static const patient = Color(0xFFD8EAEB); // turquoise 18% on white
-  static const doctor = Color(0xFFD9E7E3); // emerald 16% on white
+  static const patient = secondary;
+  static const doctor = secondary;
   static const patientDark = turquoise;
   static const doctorDark = primary;
 
-  static const accent = turquoise; // stars
+  static const accent = reviewing; // stars
   static const info = turquoise;
 
-  // Status (no red anywhere)
+  // Status
   static const danger = emergency;
-  static const success = primary;
-  static const warning = offline; // pending: calm grey-green
-  static const error = Color(0xFF256868); // turquoise 55% + dark grey
+  static const success = answered;
+  static const warning = reviewing;
+  static const error = emergencyText;
 
-  /// Soft shadow in the brand colour.
+  /// Very light shadow: 0 2 8, 6 %.
   static const shadow = [
-    BoxShadow(color: Color(0x14126B50), blurRadius: 18, offset: Offset(0, 6)),
+    BoxShadow(color: Color(0x0F000000), blurRadius: 8, offset: Offset(0, 2)),
   ];
 
   /// Picks dark grey or white text, whichever contrasts more.
@@ -141,14 +143,42 @@ class AppTheme {
     final ink = isLight ? AppColors.text : Colors.white;
     final brand = isLight ? AppColors.primary : Colors.white;
     // Body text in dark grey; main titles in emerald.
+    // Type scale of the brief: 22 large title, 18 card title, 15 body,
+    // 13 small (secondary colour), 11 tab labels; line height 1.6.
+    final muted = isLight ? AppColors.grey : AppColors.navInactive;
     final textTheme = fontTheme
         .apply(bodyColor: ink, displayColor: ink)
         .copyWith(
-          titleLarge: fontTheme.titleLarge?.copyWith(color: brand),
-          headlineSmall: fontTheme.headlineSmall?.copyWith(color: brand),
           headlineMedium: fontTheme.headlineMedium?.copyWith(color: brand),
+          headlineSmall: fontTheme.headlineSmall?.copyWith(
+            color: brand,
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+          ),
+          titleLarge: fontTheme.titleLarge?.copyWith(
+            color: brand,
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+          ),
+          titleMedium: fontTheme.titleMedium?.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+          titleSmall: fontTheme.titleSmall?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+          bodyLarge: fontTheme.bodyLarge?.copyWith(fontSize: 15, height: 1.6),
+          bodyMedium: fontTheme.bodyMedium?.copyWith(fontSize: 15, height: 1.6),
+          bodySmall: fontTheme.bodySmall?.copyWith(
+            fontSize: 13,
+            height: 1.6,
+            color: muted,
+          ),
+          labelSmall: fontTheme.labelSmall?.copyWith(fontSize: 11),
         );
     final radius16 = BorderRadius.circular(16);
+    final radius12 = BorderRadius.circular(12);
 
     return base.copyWith(
       textTheme: textTheme,
@@ -168,16 +198,13 @@ class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        // White cards, a fine mint border and a soft emerald shadow.
-        elevation: isLight ? 2 : 0,
-        shadowColor: const Color(0x1F126B50),
+        // White cards, 16 corners, a very light shadow and no border.
+        elevation: isLight ? 1 : 0,
+        shadowColor: const Color(0x0F000000),
         surfaceTintColor: Colors.transparent,
         margin: EdgeInsets.zero,
         color: isLight ? AppColors.surface : AppColors.darkSurface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: scheme.outlineVariant.withValues(alpha: .7)),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: radius16),
       ),
       listTileTheme: ListTileThemeData(
         iconColor: isLight ? AppColors.turquoise : AppColors.secondary,
@@ -281,7 +308,7 @@ class AppTheme {
           color: brand,
           fontWeight: FontWeight.w800,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(borderRadius: radius12),
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(

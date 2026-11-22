@@ -1403,4 +1403,14 @@ const Map<String, String> enStrings = {
   'chat_notice':
       'The chat is for follow-up only and does not replace an in-person exam.',
   'disclaimer_body': 'Consultations offered on Chifa Linnas are advisory and given by volunteers. They do not replace an in-person medical examination or hospital treatment.\n\n• The app is not meant for emergencies. If in danger, call emergency services right away.\n\n• Do not stop or change any treatment without asking your own doctor.\n\n• Volunteer doctors’ identities are checked before they are accepted.\n\n• Your data and test results are confidential and visible only to the doctor following your case.',
+  'qs_emergency': 'Emergency',
+  'about_short': 'From the Aoun wa Sanad Charity Association… health care that reaches you wherever you are.',
+  'learn_more': 'Learn more',
+  'about_app_title': 'About the app',
+  'home_last_consults': 'My latest consultations',
+  'home_more_services': 'More services',
+  'st_answered': 'Answered',
+  'st_reviewing': 'Under review',
+  'emergency_no_number': 'The association has not set an emergency number yet. Call emergency services or go to the nearest hospital.',
+  'ad_emergency_number': 'Emergency number (“Emergency” button)',
 };

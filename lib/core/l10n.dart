@@ -2480,6 +2480,27 @@ class AppStrings {
       'L’association a vérifié l’identité et les diplômes de ce médecin avant de l’accepter.',
     ],
 
+    // Home redesign
+    'qs_emergency': ['حالة طارئة', 'Urgence'],
+    'about_short': [
+      'من جمعية عون وسند الخيرية… رعاية صحية تصلك أينما كنت.',
+      'De l’association Aoun wa Sanad… des soins qui vous rejoignent où que vous soyez.',
+    ],
+    'learn_more': ['اعرف المزيد', 'En savoir plus'],
+    'about_app_title': ['عن التطبيق', 'À propos de l’application'],
+    'home_last_consults': ['آخر استشاراتي', 'Mes dernières consultations'],
+    'home_more_services': ['خدمات أخرى', 'Autres services'],
+    'st_answered': ['تم الرد', 'Répondu'],
+    'st_reviewing': ['قيد المراجعة', 'En cours d’examen'],
+    'emergency_no_number': [
+      'لم تحدّد الجمعية رقم الطوارئ بعد. اتصل بالإسعاف أو توجّه إلى أقرب مستشفى.',
+      'L’association n’a pas encore indiqué de numéro d’urgence. Appelez les secours ou rendez-vous à l’hôpital le plus proche.',
+    ],
+    'ad_emergency_number': [
+      'رقم الطوارئ (زر «حالة طارئة»)',
+      'Numéro d’urgence (bouton « Urgence »)',
+    ],
+
     // Chat
     'chat': ['المحادثة', 'Discussion'],
     'type_message': ['اكتب رسالتك...', 'Écrivez votre message...'],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:printing/printing.dart';
 
 import '../../core/facility_provider.dart';
@@ -12,6 +13,7 @@ import '../../core/theme.dart';
 import '../../data/mock_data.dart';
 import '../../models/summons.dart';
 import '../../widgets/common.dart';
+import '../patient/home_tab.dart' show ServiceTile;
 import 'summons_pdf.dart';
 
 // ---------------------------------------------------------------------------
@@ -443,34 +445,16 @@ class SummonsBanner extends ConsumerWidget {
         .where((s) => s.isUpcoming())
         .firstOrNull;
     if (next == null) return const SizedBox.shrink();
+    // Same card shape as the home screen: white, 16 corners, light shadow.
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Card(
-        color: AppColors.secondary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        child: ListTile(
-          onTap: () => context.push('/summons/${next.id}'),
-          leading: const CircleAvatar(
-            backgroundColor: AppColors.turquoise,
-            child: Icon(Icons.badge_outlined, color: Colors.white),
-          ),
-          title: Text(
-            context.tr('summons_new_banner'),
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-              color: AppColors.primary,
-            ),
-          ),
-          subtitle: Text(
-            '${next.issuerName}\n${summonsDate(context, next.appointment)} • '
-            '\u2066${summonsTime(next.appointment)}\u2069',
-          ),
-          isThreeLine: true,
-          trailing: const Icon(Icons.chevron_right),
-        ),
+      padding: const EdgeInsets.only(top: 10),
+      child: ServiceTile(
+        icon: LucideIcons.calendarCheck,
+        title: context.tr('summons_new_banner'),
+        subtitle:
+            '${next.issuerName} • ${summonsDate(context, next.appointment)} • '
+            '\u202A${summonsTime(next.appointment)}\u202C',
+        onTap: () => context.push('/summons/${next.id}'),
       ),
     );
   }

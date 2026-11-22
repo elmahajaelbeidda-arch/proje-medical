@@ -1466,7 +1466,7 @@ class PublicNeedCard extends ConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
         side: BorderSide(
-          color: r.urgent ? AppColors.turquoise : AppColors.border,
+          color: r.urgent ? AppColors.emergency : AppColors.border,
           width: r.urgent ? 2 : 1,
         ),
       ),
@@ -1495,7 +1495,7 @@ class PublicNeedCard extends ConsumerWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.turquoise,
+                                color: AppColors.emergency,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(

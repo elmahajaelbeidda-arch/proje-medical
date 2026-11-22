@@ -148,11 +148,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         preferredSize: const Size.fromHeight(92),
         child: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [AppColors.primary, AppColors.primaryDark],
-            ),
+            color: AppColors.primary,
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
           ),
           child: SafeArea(

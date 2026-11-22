@@ -267,13 +267,7 @@ class _PulseHeader extends StatelessWidget {
   const _PulseHeader();
   @override
   Widget build(BuildContext context) => Container(
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        begin: AlignmentDirectional.topStart,
-        end: AlignmentDirectional.bottomEnd,
-        colors: [AppColors.primary, AppColors.emeraldTeal, AppColors.turquoise],
-      ),
-    ),
+    decoration: const BoxDecoration(color: AppColors.primary),
     child: Stack(
       children: [
         Positioned.fill(child: CustomPaint(painter: _PulseLinePainter())),
@@ -378,11 +372,7 @@ class _LiveBanner extends ConsumerWidget {
         onTap: () => context.push('/pulse/live/${live.id}'),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isLive
-                  ? const [AppColors.turquoise, AppColors.emeraldTeal]
-                  : const [Colors.white, AppColors.secondary],
-            ),
+            color: isLive ? AppColors.turquoise : AppColors.surface,
           ),
           padding: const EdgeInsets.all(14),
           child: Row(
@@ -873,13 +863,7 @@ class MediaTile extends StatelessWidget {
     final Widget base = bytes != null
         ? Image.memory(bytes, fit: BoxFit.cover)
         : DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: tone,
-              ),
-            ),
+            decoration: BoxDecoration(color: tone.first),
             child: Center(
               child: Icon(
                 pulseIcon(m.icon),
@@ -917,13 +901,7 @@ class MediaTile extends StatelessWidget {
                   bottom: 0,
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(10, 14, 10, 8),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, Color(0x99263B36)],
-                      ),
-                    ),
+                    decoration: const BoxDecoration(color: Color(0x8C1F2A26)),
                     child: Text(
                       m.caption,
                       maxLines: 1,
@@ -1274,11 +1252,7 @@ class _RecordingTile extends StatelessWidget {
           Container(
             width: 108,
             height: 84,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.primary, AppColors.turquoise],
-              ),
-            ),
+            decoration: const BoxDecoration(color: AppColors.primary),
             child: const Icon(
               Icons.play_circle_fill,
               color: Colors.white,
@@ -1392,15 +1366,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                             : () => _watch(l),
                         child: Ink(
                           decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                AppColors.primary,
-                                AppColors.vivid,
-                                AppColors.turquoise,
-                              ],
-                            ),
+                            color: AppColors.primary,
                           ),
                           child: Stack(
                             children: [
@@ -1936,17 +1902,7 @@ class PulseEntryCard extends StatelessWidget {
     child: InkWell(
       onTap: () => context.push('/pulse'),
       child: Ink(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: AlignmentDirectional.centerStart,
-            end: AlignmentDirectional.centerEnd,
-            colors: [
-              AppColors.primary,
-              AppColors.emeraldTeal,
-              AppColors.turquoise,
-            ],
-          ),
-        ),
+        decoration: const BoxDecoration(color: AppColors.primary),
         child: Stack(
           children: [
             Positioned.fill(child: CustomPaint(painter: _PulseLinePainter())),

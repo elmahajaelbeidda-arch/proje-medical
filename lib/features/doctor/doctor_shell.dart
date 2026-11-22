@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/l10n.dart';
 import '../cards/member_card_screens.dart';
@@ -51,28 +52,28 @@ class _DoctorShellState extends State<DoctorShell> {
           }
           setState(() => _index = const [0, 2, -1, 3][i]);
         },
-        centerIcon: Icons.inbox_outlined,
+        centerIcon: LucideIcons.inbox,
         centerLabel: context.tr('nav_requests'),
         onCenter: () => setState(() => _index = 1),
         items: [
           ShifaNavItem(
-            Icons.dashboard_outlined,
-            Icons.dashboard,
+            LucideIcons.layoutDashboard,
+            LucideIcons.layoutDashboard,
             context.tr('nav_dashboard'),
           ),
           ShifaNavItem(
-            Icons.folder_open_outlined,
-            Icons.folder,
+            LucideIcons.folderOpen,
+            LucideIcons.folderOpen,
             context.tr('nav_cases'),
           ),
           ShifaNavItem(
-            Icons.notifications_outlined,
-            Icons.notifications,
+            LucideIcons.bell,
+            LucideIcons.bell,
             context.tr('notifications'),
           ),
           ShifaNavItem(
-            Icons.person_outline,
-            Icons.person,
+            LucideIcons.user,
+            LucideIcons.user,
             context.tr('nav_profile'),
           ),
         ],
@@ -173,7 +174,7 @@ class DoctorHomeTab extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: AppColors.heroGradient),
+              color: AppColors.primary,
               borderRadius: BorderRadius.circular(22),
             ),
             child: Row(

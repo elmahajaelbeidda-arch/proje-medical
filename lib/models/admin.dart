@@ -584,6 +584,9 @@ class AssociationInfo {
   final String address;
   final String donationNumber;
 
+  /// Number dialled by the «حالة طارئة» button (empty: not set yet).
+  final String emergencyNumber;
+
   const AssociationInfo({
     this.name = 'جمعية عون وسند الخيرية',
     this.phone = '32203250',
@@ -591,6 +594,7 @@ class AssociationInfo {
     this.email = 'contact@aoun-sanad.mr',
     this.address = 'نواكشوط، موريتانيا',
     this.donationNumber = '32203250',
+    this.emergencyNumber = '',
   });
 
   Map<String, Object?> toJson() => {
@@ -600,6 +604,7 @@ class AssociationInfo {
     'email': email,
     'address': address,
     'donationNumber': donationNumber,
+    'emergencyNumber': emergencyNumber,
   };
 
   factory AssociationInfo.fromJson(Map<String, dynamic> j) => AssociationInfo(
@@ -609,6 +614,7 @@ class AssociationInfo {
     email: j['email'] as String,
     address: j['address'] as String,
     donationNumber: j['donationNumber'] as String,
+    emergencyNumber: j['emergencyNumber'] as String? ?? '',
   );
 }
 

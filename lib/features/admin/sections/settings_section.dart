@@ -278,6 +278,7 @@ class _InfoFormState extends ConsumerState<_InfoForm> {
     'email': TextEditingController(text: widget.info.email),
     'address': TextEditingController(text: widget.info.address),
     'donation': TextEditingController(text: widget.info.donationNumber),
+    'emergency': TextEditingController(text: widget.info.emergencyNumber),
   };
 
   @override
@@ -309,6 +310,7 @@ class _InfoFormState extends ConsumerState<_InfoForm> {
           field('email', 'email', ltr: true),
           field('address', 'address'),
           field('donation', 'ad_donation_number', ltr: true),
+          field('emergency', 'ad_emergency_number', ltr: true),
           Align(
             alignment: AlignmentDirectional.centerEnd,
             child: FilledButton(
@@ -324,6 +326,7 @@ class _InfoFormState extends ConsumerState<_InfoForm> {
                         email: _c['email']!.text.trim(),
                         address: _c['address']!.text.trim(),
                         donationNumber: _c['donation']!.text.trim(),
+                        emergencyNumber: _c['emergency']!.text.trim(),
                       ),
                     ),
                 ok: 'ad_done',

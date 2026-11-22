@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
@@ -16,8 +14,8 @@ class ShifaNavItem {
   const ShifaNavItem(this.icon, this.selectedIcon, this.label);
 }
 
-/// Bottom bar with an even number of [items] and a raised diamond button
-/// in the middle for the main action of the screen.
+/// Bottom bar: white, 64 high (+ safe area), a light top shadow, an even
+/// number of [items] and a round main button raised in the middle.
 class ShifaBottomBar extends StatelessWidget {
   const ShifaBottomBar({
     super.key,
@@ -36,6 +34,9 @@ class ShifaBottomBar extends StatelessWidget {
   final String centerLabel;
   final VoidCallback onCenter;
 
+  /// Inactive tabs: secondary text colour (readable, AA).
+  static const _inactive = AppColors.grey;
+
   @override
   Widget build(BuildContext context) {
     final half = items.length ~/ 2;
@@ -49,100 +50,101 @@ class ShifaBottomBar extends StatelessWidget {
           label: it.label,
           child: InkResponse(
             onTap: () => onSelected(i),
-            radius: 36,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 4,
+            radius: 32,
+            child: SizedBox(
+              height: 64,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: on ? AppColors.secondary : Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(
+                      on ? it.selectedIcon : it.icon,
+                      size: 24,
+                      color: on ? AppColors.primary : _inactive,
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    color: on ? AppColors.secondary : Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
+                  const SizedBox(height: 3),
+                  Text(
+                    it.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      height: 1.2,
+                      fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+                      color: on ? AppColors.primary : _inactive,
+                    ),
                   ),
-                  child: Icon(
-                    on ? it.selectedIcon : it.icon,
-                    color: on ? AppColors.primary : AppColors.grey,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  it.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    fontWeight: on ? FontWeight.w800 : FontWeight.w500,
-                    color: on ? AppColors.primary : AppColors.grey,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       );
     }
 
-    return SafeArea(
-      top: false,
-      child: SizedBox(
-        height: 78,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.bottomCenter,
-          children: [
-            Container(
-              height: 68,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x14126B50),
-                    blurRadius: 18,
-                    offset: Offset(0, -4),
-                  ),
-                ],
-              ),
-              child: Row(
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x0F000000),
+            blurRadius: 8,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 64,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Row(
                 children: [
                   for (var i = 0; i < half; i++) item(i),
-                  const SizedBox(width: 78),
+                  const SizedBox(width: 72),
                   for (var i = half; i < items.length; i++) item(i),
                 ],
               ),
-            ),
-            Positioned(
-              top: -14,
-              child: DiamondButton(
-                icon: centerIcon,
-                label: centerLabel,
-                onTap: onCenter,
+              Positioned(
+                top: -18,
+                child: CircleActionButton(
+                  icon: centerIcon,
+                  label: centerLabel,
+                  onTap: onCenter,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// Rounded square turned 45°, the raised main action.
-class DiamondButton extends StatelessWidget {
-  const DiamondButton({
+/// Round main action (56), raised above the bottom bar.
+class CircleActionButton extends StatelessWidget {
+  const CircleActionButton({
     super.key,
     required this.icon,
     required this.label,
     required this.onTap,
-    this.size = 58,
   });
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  final double size;
 
   @override
   Widget build(BuildContext context) => Tooltip(
@@ -150,39 +152,20 @@ class DiamondButton extends StatelessWidget {
     child: Semantics(
       button: true,
       label: label,
-      child: GestureDetector(
-        onTap: onTap,
-        child: SizedBox(
-          width: size * 1.42,
-          height: size * 1.42,
-          child: Center(
-            child: Transform.rotate(
-              angle: math.pi / 4,
-              child: Container(
-                width: size,
-                height: size,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppColors.emeraldTeal, AppColors.primary],
-                  ),
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: Colors.white, width: 4),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x40126B50),
-                      blurRadius: 16,
-                      offset: Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Transform.rotate(
-                  angle: -math.pi / 4,
-                  child: Icon(icon, color: Colors.white, size: 28),
-                ),
-              ),
-            ),
+      child: Material(
+        color: AppColors.primary,
+        shape: const CircleBorder(
+          side: BorderSide(color: AppColors.surface, width: 4),
+        ),
+        elevation: 3,
+        shadowColor: const Color(0x33000000),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: SizedBox(
+            width: 64,
+            height: 64,
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
         ),
       ),
@@ -205,19 +188,7 @@ class WaveHeaderPainter extends CustomPainter {
       ..cubicTo(w * 0.78, h * 0.98, w * 0.6, h * 0.62, w * 0.42, h * 0.8)
       ..cubicTo(w * 0.26, h * 0.96, w * 0.12, h * 0.9, 0, h * 0.78)
       ..close();
-    canvas.drawPath(
-      body,
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [
-            AppColors.primary,
-            AppColors.emeraldTeal,
-            AppColors.turquoise,
-          ],
-        ).createShader(Offset.zero & size),
-    );
+    canvas.drawPath(body, Paint()..color = AppColors.primary);
     // Heartbeat line (from the logo), very light.
     final y = h * 0.38;
     final pulse = Path()

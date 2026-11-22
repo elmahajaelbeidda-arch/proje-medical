@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/about/about_app_screen.dart';
 import '../features/about/about_screen.dart';
 import '../features/aid/aid_screens.dart';
 import '../features/auth/auth_screens.dart';
@@ -245,6 +246,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/about',
         builder: (_, _) => const AboutAssociationScreen(),
       ),
+      GoRoute(path: '/about-app', builder: (_, _) => const AboutAppScreen()),
       GoRoute(path: '/disclaimer', builder: (_, _) => const DisclaimerScreen()),
     ],
   );
