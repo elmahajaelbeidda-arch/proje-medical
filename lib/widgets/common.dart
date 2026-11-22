@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../core/l10n.dart';
 import '../core/providers.dart';
 import '../core/theme.dart';
+import 'shifa_ui.dart' show StatusDot;
 import '../data/mock_data.dart';
 import '../models/models.dart';
 import '../models/registration.dart';
@@ -470,16 +471,39 @@ class DoctorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
-    return Card(
-      clipBehavior: Clip.antiAlias,
+    final on = doctor.available;
+    return Material(
+      // Available doctors stand out with a light green background.
+      color: on ? const Color(0xFFEAF6EF) : Colors.white,
+      borderRadius: BorderRadius.circular(24),
       child: InkWell(
+        borderRadius: BorderRadius.circular(24),
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
             children: [
-              DoctorAvatar(doctor),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(color: Color(0x1A126B50), blurRadius: 10),
+                      ],
+                    ),
+                    child: DoctorAvatar(doctor),
+                  ),
+                  PositionedDirectional(
+                    start: 0,
+                    bottom: 2,
+                    child: StatusDot(on: on),
+                  ),
+                ],
+              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -493,9 +517,7 @@ class DoctorCard extends StatelessWidget {
                     ),
                     Text(
                       '${context.tr(Specialty.byId(doctor.specialtyId).key)} • ${doctor.cityFor(Localizations.localeOf(context).languageCode)}',
-                      style: text.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
+                      style: text.bodySmall?.copyWith(color: AppColors.grey),
                     ),
                     const SizedBox(height: 6),
                     Row(
@@ -506,32 +528,89 @@ class DoctorCard extends StatelessWidget {
                           color: AppColors.accent,
                         ),
                         Text(' ${doctor.rating}  ', style: text.labelMedium),
-                        Icon(
+                        const Icon(
                           Icons.forum_outlined,
                           size: 16,
-                          color: scheme.onSurfaceVariant,
+                          color: AppColors.grey,
                         ),
                         Text(
-                          ' ${doctor.consultationsCount}',
+                          ' ${doctor.consultationsCount}  ',
                           style: text.labelMedium,
+                        ),
+                        Text(
+                          context.tr(on ? 'available_now' : 'unavailable'),
+                          style: text.labelMedium?.copyWith(
+                            color: on ? AppColors.vivid : AppColors.grey,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              Pill(
-                label: context.tr(
-                  doctor.available ? 'available_now' : 'unavailable',
-                ),
-                color: doctor.available ? AppColors.success : Colors.grey,
-              ),
+              const Icon(Icons.chevron_right, color: AppColors.grey),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+/// Round doctor faces in a horizontal row ("available now").
+class DoctorBubble extends StatelessWidget {
+  const DoctorBubble({
+    super.key,
+    required this.doctor,
+    this.onTap,
+    this.selected = false,
+  });
+  final Doctor doctor;
+  final VoidCallback? onTap;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+    borderRadius: BorderRadius.circular(40),
+    onTap: onTap,
+    child: SizedBox(
+      width: 78,
+      child: Column(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  border: Border.all(
+                    color: selected ? AppColors.primary : AppColors.border,
+                    width: selected ? 2.5 : 1.5,
+                  ),
+                ),
+                child: DoctorAvatar(doctor, radius: 28),
+              ),
+              PositionedDirectional(
+                start: 2,
+                bottom: 2,
+                child: StatusDot(on: doctor.available),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            doctor.name.replaceFirst('د. ', ''),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 void showDoctorSheet(BuildContext context, Doctor doctor) {

@@ -10,6 +10,7 @@ import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../core/search.dart';
 import '../../widgets/common.dart';
+import '../../widgets/shifa_ui.dart';
 import '../../widgets/voice_search.dart';
 
 Doctor get _me => MockData.doctorById(MockData.currentDoctorId)!;
@@ -35,29 +36,44 @@ class _DoctorShellState extends State<DoctorShell> {
           const DoctorProfileTab(),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.dashboard_outlined),
-            selectedIcon: const Icon(Icons.dashboard),
-            label: context.tr('nav_dashboard'),
+      // Main action in the middle: the open requests waiting for a doctor.
+      bottomNavigationBar: ShifaBottomBar(
+        selected: switch (_index) {
+          0 => 0,
+          2 => 1,
+          3 => 3,
+          _ => -1,
+        },
+        onSelected: (i) {
+          if (i == 2) {
+            context.push('/notifications');
+            return;
+          }
+          setState(() => _index = const [0, 2, -1, 3][i]);
+        },
+        centerIcon: Icons.inbox_outlined,
+        centerLabel: context.tr('nav_requests'),
+        onCenter: () => setState(() => _index = 1),
+        items: [
+          ShifaNavItem(
+            Icons.dashboard_outlined,
+            Icons.dashboard,
+            context.tr('nav_dashboard'),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.inbox_outlined),
-            selectedIcon: const Icon(Icons.inbox),
-            label: context.tr('nav_requests'),
+          ShifaNavItem(
+            Icons.folder_open_outlined,
+            Icons.folder,
+            context.tr('nav_cases'),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.folder_open_outlined),
-            selectedIcon: const Icon(Icons.folder),
-            label: context.tr('nav_cases'),
+          ShifaNavItem(
+            Icons.notifications_outlined,
+            Icons.notifications,
+            context.tr('notifications'),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.person_outline),
-            selectedIcon: const Icon(Icons.person),
-            label: context.tr('nav_profile'),
+          ShifaNavItem(
+            Icons.person_outline,
+            Icons.person,
+            context.tr('nav_profile'),
           ),
         ],
       ),
@@ -449,114 +465,144 @@ class DoctorProfileTab extends ConsumerWidget {
     final auth = ref.watch(authProvider);
     final text = Theme.of(context).textTheme;
 
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          const SizedBox(height: 12),
-          Center(child: DoctorAvatar(_me, radius: 46)),
-          const SizedBox(height: 12),
-          Text(
-            auth.displayName,
-            textAlign: TextAlign.center,
-            style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          Text(
-            '${context.tr(Specialty.byId(_me.specialtyId).key)} • ${_me.cityFor(Localizations.localeOf(context).languageCode)}',
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Center(
-            child: Pill(
-              label: context.tr('verified_doctor'),
-              color: AppColors.info,
-              icon: Icons.verified,
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        ProfileHero(
+          title: context.tr('nav_profile'),
+          avatar: Container(
+            color: AppColors.secondary,
+            alignment: Alignment.center,
+            child: Text(
+              _me.initials,
+              style: const TextStyle(
+                fontSize: 38,
+                fontWeight: FontWeight.w900,
+                color: AppColors.primary,
+              ),
             ),
           ),
-          if (auth.idNumber.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Center(child: IdVerifiedBadge(auth: auth)),
-          ],
-          const SizedBox(height: 20),
-          InfoCard(
-            title: context.tr('professional_profile'),
-            icon: Icons.badge_outlined,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_me.bio),
+          below: Column(
+            children: [
+              Text(
+                auth.displayName,
+                textAlign: TextAlign.center,
+                style: text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.primary,
+                ),
+              ),
+              Text(
+                '${context.tr(Specialty.byId(_me.specialtyId).key)} • ${_me.cityFor(Localizations.localeOf(context).languageCode)}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.turquoise,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Pill(
+                label: context.tr('verified_doctor'),
+                color: AppColors.info,
+                icon: Icons.verified,
+              ),
+              if (auth.idNumber.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Text(
-                  '${context.tr('experience')}: ${_me.yearsOfExperience} ${context.tr('years')}',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
+                IdVerifiedBadge(auth: auth),
               ],
-            ),
+            ],
           ),
-          const SizedBox(height: 12),
-          InfoCard(
-            title: context.tr('availability_hours'),
-            icon: Icons.schedule,
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final a in _me.availability) Chip(label: Text(a)),
-                ActionChip(
-                  avatar: const Icon(Icons.add, size: 18),
-                  label: const Text('+'),
-                  onPressed: () {},
-                ),
-              ],
-            ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              MenuPanel(
+                title: context.tr('professional_profile'),
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(_me.bio, style: const TextStyle(height: 1.6)),
+                        const SizedBox(height: 8),
+                        Text(
+                          '${context.tr('experience')}: ${_me.yearsOfExperience} ${context.tr('years')}',
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          context.tr('availability_hours'),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final a in _me.availability)
+                              Chip(label: Text(a)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              MenuPanel(
+                title: context.tr('settings'),
+                children: [
+                  const MyCardRow(),
+                  MenuRow(
+                    icon: Icons.notifications_outlined,
+                    title: context.tr('notifications'),
+                    onTap: () => context.push('/notifications'),
+                  ),
+                  MenuRow(
+                    icon: Icons.tune,
+                    title: context.tr('settings'),
+                    onTap: () => context.push('/settings'),
+                  ),
+                  MenuRow(
+                    icon: Icons.diversity_1_outlined,
+                    title: context.tr('pl_name'),
+                    onTap: () => context.push('/pulse'),
+                  ),
+                  MenuRow(
+                    icon: Icons.groups_outlined,
+                    title: context.tr('about_association'),
+                    onTap: () => context.push('/about'),
+                  ),
+                  MenuRow(
+                    icon: Icons.gavel_outlined,
+                    title: context.tr('disclaimer'),
+                    onTap: () => context.push('/disclaimer'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              LogoutTab(
+                label: context.tr('logout'),
+                onTap: () {
+                  ref.read(authProvider.notifier).logout();
+                  context.go('/role');
+                },
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          const SizedBox(height: 12),
-          Card(
-            child: Column(
-              children: [
-                MenuTile(
-                  icon: Icons.notifications_outlined,
-                  title: context.tr('notifications'),
-                  onTap: () => context.push('/notifications'),
-                ),
-                MenuTile(
-                  icon: Icons.settings_outlined,
-                  title: context.tr('settings'),
-                  onTap: () => context.push('/settings'),
-                ),
-                const MyCardTile(),
-                MenuTile(
-                  icon: Icons.diversity_1_outlined,
-                  title: context.tr('pl_name'),
-                  onTap: () => context.push('/pulse'),
-                ),
-                MenuTile(
-                  icon: Icons.groups_outlined,
-                  title: context.tr('about_association'),
-                  onTap: () => context.push('/about'),
-                ),
-                MenuTile(
-                  icon: Icons.gavel_outlined,
-                  title: context.tr('disclaimer'),
-                  onTap: () => context.push('/disclaimer'),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Card(
-            child: MenuTile(
-              icon: Icons.logout,
-              title: context.tr('logout'),
-              color: AppColors.text,
-              onTap: () {
-                ref.read(authProvider.notifier).logout();
-                context.go('/role');
-              },
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

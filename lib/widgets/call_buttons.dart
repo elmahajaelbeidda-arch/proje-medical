@@ -74,8 +74,12 @@ class CallActions extends StatelessWidget {
     required this.enabled,
     required this.onCall,
     this.disabledKey = 'call_wait_doctor',
+    this.onDark = false,
   });
   final bool enabled;
+
+  /// On a coloured header: white icons.
+  final bool onDark;
   final void Function(CallKind kind) onCall;
   final String disabledKey;
 
@@ -93,7 +97,9 @@ class CallActions extends StatelessWidget {
                 ),
           icon: Icon(
             callIcon(k),
-            color: enabled ? null : Theme.of(context).disabledColor,
+            color: onDark
+                ? (enabled ? Colors.white : Colors.white54)
+                : (enabled ? null : Theme.of(context).disabledColor),
           ),
         ),
     ],

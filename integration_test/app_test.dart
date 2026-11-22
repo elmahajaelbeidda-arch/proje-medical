@@ -14,6 +14,8 @@ import 'package:shifa/features/doctor/doctor_shell.dart';
 import 'package:shifa/features/facility/facility_screens.dart';
 import 'package:shifa/features/onboarding/onboarding_screens.dart';
 import 'package:shifa/features/patient/consultation_details_screen.dart';
+import 'package:shifa/features/patient/doctor_profile_screen.dart';
+import 'package:shifa/features/shared/shared_screens.dart';
 import 'package:shifa/features/patient/new_consultation_screen.dart';
 import 'package:shifa/features/patient/patient_shell.dart';
 import 'package:shifa/features/psych/psych_screens.dart';
@@ -60,6 +62,8 @@ void main() {
     await open('/patient/psych', PsychHomeScreen);
     await open('/patient/psych/new', PsychBookingScreen);
     await open('/care-map', CareMapScreen);
+    await open('/doctors/d1', DoctorProfileScreen);
+    await open('/chat/c1', ChatScreen);
     await open('/pulse', PulseHomeScreen);
     await open('/pulse/post/pa1', PostDetailsScreen);
     await open('/pulse/live/lv1', LiveScreen);

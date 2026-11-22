@@ -13,6 +13,7 @@ import '../../models/admin.dart';
 import '../../models/blood.dart' show maskName;
 import '../../models/member_card.dart';
 import '../../widgets/common.dart';
+import '../../widgets/shifa_ui.dart' show MenuRow;
 import '../summons/summons_screens.dart' show loadPdfAssets;
 import 'card_scanner.dart';
 import 'member_card_pdf.dart';
@@ -320,6 +321,17 @@ class MyMemberCardScreen extends ConsumerWidget {
 
 /// Menu entry used in every account (patient, doctor, psychiatrist,
 /// facility).
+/// The same entry in the profile's menu style.
+class MyCardRow extends StatelessWidget {
+  const MyCardRow({super.key});
+  @override
+  Widget build(BuildContext context) => MenuRow(
+    icon: Icons.badge_outlined,
+    title: context.tr('mc_title'),
+    onTap: () => context.push('/my-card'),
+  );
+}
+
 class MyCardTile extends StatelessWidget {
   const MyCardTile({super.key});
   @override

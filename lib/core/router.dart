@@ -12,6 +12,7 @@ import '../features/facility/facility_screens.dart';
 import '../features/doctor/request_details_screen.dart';
 import '../features/onboarding/onboarding_screens.dart';
 import '../features/patient/consultation_details_screen.dart';
+import '../features/patient/doctor_profile_screen.dart';
 import '../features/patient/health_profile_screen.dart';
 import '../features/patient/new_consultation_screen.dart';
 import '../features/patient/patient_shell.dart';
@@ -80,6 +81,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/patient/consultation/:id',
         builder: (_, state) =>
             ConsultationDetailsScreen(id: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/doctors/:id',
+        builder: (_, state) =>
+            DoctorProfileScreen(id: state.pathParameters['id']!),
       ),
       GoRoute(
         path: '/patient/health-profile',

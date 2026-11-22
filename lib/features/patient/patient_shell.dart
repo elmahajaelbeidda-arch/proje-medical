@@ -17,6 +17,7 @@ import '../../models/models.dart';
 import '../../core/search.dart';
 import '../../core/blood_provider.dart';
 import '../../widgets/common.dart';
+import '../../widgets/shifa_ui.dart';
 import '../blood/blood_screens.dart';
 import '../../widgets/voice_search.dart';
 import '../onboarding/onboarding_screens.dart';
@@ -46,41 +47,36 @@ class _PatientShellState extends State<PatientShell> {
           const PatientProfileTab(),
         ],
       ),
-      floatingActionButton: _index == 1
-          ? FloatingActionButton.extended(
-              onPressed: () => context.push('/patient/new'),
-              icon: const Icon(Icons.add),
-              label: Text(context.tr('new_consultation')),
-            )
-          : null,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
-            label: context.tr('nav_home'),
+      // Main action in the middle: ask for a consultation. Blood donation
+      // stays reachable from its home card and from the profile.
+      bottomNavigationBar: ShifaBottomBar(
+        selected: switch (_index) {
+          0 => 0,
+          1 => 1,
+          2 => 2,
+          4 => 3,
+          _ => -1,
+        },
+        onSelected: (i) => setState(() => _index = const [0, 1, 2, 4][i]),
+        centerIcon: Icons.add_comment_outlined,
+        centerLabel: context.tr('new_consultation'),
+        onCenter: () => context.push('/patient/new'),
+        items: [
+          ShifaNavItem(Icons.home_outlined, Icons.home, context.tr('nav_home')),
+          ShifaNavItem(
+            Icons.assignment_outlined,
+            Icons.assignment,
+            context.tr('nav_consultations'),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.assignment_outlined),
-            selectedIcon: const Icon(Icons.assignment),
-            label: context.tr('nav_consultations'),
+          ShifaNavItem(
+            Icons.medical_services_outlined,
+            Icons.medical_services,
+            context.tr('nav_doctors'),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.medical_services_outlined),
-            selectedIcon: const Icon(Icons.medical_services),
-            label: context.tr('nav_doctors'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.bloodtype_outlined),
-            selectedIcon: const Icon(Icons.bloodtype),
-            label: context.tr('nav_blood'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.person_outline),
-            selectedIcon: const Icon(Icons.person),
-            label: context.tr('nav_profile'),
+          ShifaNavItem(
+            Icons.person_outline,
+            Icons.person,
+            context.tr('nav_profile'),
           ),
         ],
       ),
@@ -600,6 +596,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
       ]);
       return okSpecialty && okQuery;
     }).toList();
+    final available = doctors.where((d) => d.available).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -655,17 +652,43 @@ class _DoctorsTabState extends State<DoctorsTab> {
                         ? context.tr('none')
                         : context.tr('no_results', args: {'q': _query}),
                   )
-                : ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: doctors.length + 1,
-                    separatorBuilder: (_, _) => const SizedBox(height: 10),
-                    itemBuilder: (context, i) {
-                      if (i == doctors.length) return const _JoinBanner();
-                      return DoctorCard(
-                        doctor: doctors[i],
-                        onTap: () => showDoctorSheet(context, doctors[i]),
-                      );
-                    },
+                : ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                    children: [
+                      if (available.isNotEmpty) ...[
+                        Text(
+                          context.tr('available_now'),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 96,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: available.length,
+                            separatorBuilder: (_, _) =>
+                                const SizedBox(width: 6),
+                            itemBuilder: (_, i) => DoctorBubble(
+                              doctor: available[i],
+                              onTap: () =>
+                                  context.push('/doctors/${available[i].id}'),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                      for (final d in doctors) ...[
+                        DoctorCard(
+                          doctor: d,
+                          onTap: () => context.push('/doctors/${d.id}'),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                      const _JoinBanner(),
+                    ],
                   ),
           ),
         ],
@@ -706,116 +729,148 @@ class PatientProfileTab extends ConsumerWidget {
     final auth = ref.watch(authProvider);
     final profile = ref.watch(healthProfileProvider);
     final text = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
 
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          const SizedBox(height: 12),
-          Center(
-            child: CircleAvatar(
-              radius: 46,
-              backgroundColor: scheme.primaryContainer,
-              child: Icon(Icons.person, size: 52, color: scheme.primary),
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        ProfileHero(
+          title: context.tr('nav_profile'),
+          avatar: Container(
+            color: AppColors.secondary,
+            alignment: Alignment.center,
+            child: Text(
+              auth.displayName.characters.first,
+              style: const TextStyle(
+                fontSize: 44,
+                fontWeight: FontWeight.w900,
+                color: AppColors.primary,
+              ),
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            auth.displayName,
-            textAlign: TextAlign.center,
-            style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8,
+          actions: [
+            IconButton(
+              tooltip: context.tr('notifications'),
+              onPressed: () => context.push('/notifications'),
+              icon: const Icon(
+                Icons.notifications_outlined,
+                color: Colors.white,
+              ),
+            ),
+          ],
+          below: Column(
             children: [
-              Pill(
-                label: '${profile.age} ${context.tr('years')}',
-                color: scheme.primary,
+              Text(
+                auth.displayName,
+                textAlign: TextAlign.center,
+                style: text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.primary,
+                ),
               ),
-              Pill(
-                label: profile.bloodType,
-                color: AppColors.primary,
-                icon: Icons.bloodtype,
+              const SizedBox(height: 8),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 8,
+                runSpacing: 6,
+                children: [
+                  Pill(
+                    label: '${profile.age} ${context.tr('years')}',
+                    color: AppColors.turquoise,
+                  ),
+                  Pill(
+                    label: '\u202A${profile.bloodType}\u202C',
+                    color: AppColors.primary,
+                    icon: Icons.bloodtype,
+                  ),
+                ],
               ),
+              if (auth.idNumber.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                IdVerifiedBadge(auth: auth),
+              ],
             ],
           ),
-          if (auth.idNumber.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Center(child: IdVerifiedBadge(auth: auth)),
-          ],
-          const SizedBox(height: 24),
-          Card(
-            child: Column(
-              children: [
-                MenuTile(
-                  icon: Icons.folder_shared_outlined,
-                  title: context.tr('health_profile'),
-                  onTap: () => context.push('/patient/health-profile'),
-                ),
-                // Blood requests live only in the patient's profile.
-                MenuTile(
-                  icon: Icons.bloodtype_outlined,
-                  title: context.tr('my_blood_requests'),
-                  onTap: () => context.push('/patient/blood'),
-                ),
-                const MyCardTile(),
-                MenuTile(
-                  icon: Icons.event_note_outlined,
-                  title: context.tr('summons_cards'),
-                  onTap: () => context.push('/patient/summons'),
-                ),
-                MenuTile(
-                  icon: Icons.notifications_outlined,
-                  title: context.tr('notifications'),
-                  onTap: () => context.push('/notifications'),
-                ),
-                MenuTile(
-                  icon: Icons.settings_outlined,
-                  title: context.tr('settings'),
-                  onTap: () => context.push('/settings'),
-                ),
-              ],
-            ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              MenuPanel(
+                title: context.tr('pr_my_health'),
+                children: [
+                  MenuRow(
+                    icon: Icons.folder_shared_outlined,
+                    title: context.tr('health_profile'),
+                    onTap: () => context.push('/patient/health-profile'),
+                  ),
+                  const MyCardRow(),
+                  MenuRow(
+                    icon: Icons.event_note_outlined,
+                    title: context.tr('summons_cards'),
+                    onTap: () => context.push('/patient/summons'),
+                  ),
+                ],
+              ),
+              MenuPanel(
+                title: context.tr('blood_donation'),
+                children: [
+                  MenuRow(
+                    icon: Icons.volunteer_activism_outlined,
+                    title: context.tr('pr_donate_blood'),
+                    onTap: () => context.push('/blood'),
+                  ),
+                  // Blood requests live only in the patient's profile.
+                  MenuRow(
+                    icon: Icons.bloodtype_outlined,
+                    title: context.tr('my_blood_requests'),
+                    onTap: () => context.push('/patient/blood'),
+                  ),
+                ],
+              ),
+              MenuPanel(
+                title: context.tr('settings'),
+                children: [
+                  MenuRow(
+                    icon: Icons.notifications_outlined,
+                    title: context.tr('notifications'),
+                    onTap: () => context.push('/notifications'),
+                  ),
+                  MenuRow(
+                    icon: Icons.tune,
+                    title: context.tr('settings'),
+                    onTap: () => context.push('/settings'),
+                  ),
+                  MenuRow(
+                    icon: Icons.groups_outlined,
+                    title: context.tr('about_association'),
+                    onTap: () => context.push('/about'),
+                  ),
+                  MenuRow(
+                    icon: Icons.gavel_outlined,
+                    title: context.tr('disclaimer'),
+                    onTap: () => context.push('/disclaimer'),
+                  ),
+                  MenuRow(
+                    icon: Icons.support_agent_outlined,
+                    title: context.tr('contact_us'),
+                    onTap: () => context.push('/about'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              LogoutTab(
+                label: context.tr('logout'),
+                onTap: () {
+                  ref.read(authProvider.notifier).logout();
+                  context.go('/role');
+                },
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          const SizedBox(height: 12),
-          Card(
-            child: Column(
-              children: [
-                MenuTile(
-                  icon: Icons.groups_outlined,
-                  title: context.tr('about_association'),
-                  onTap: () => context.push('/about'),
-                ),
-                MenuTile(
-                  icon: Icons.gavel_outlined,
-                  title: context.tr('disclaimer'),
-                  onTap: () => context.push('/disclaimer'),
-                ),
-                MenuTile(
-                  icon: Icons.support_agent_outlined,
-                  title: context.tr('contact_us'),
-                  onTap: () {},
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Card(
-            child: MenuTile(
-              icon: Icons.logout,
-              title: context.tr('logout'),
-              color: AppColors.text,
-              onTap: () {
-                ref.read(authProvider.notifier).logout();
-                context.go('/role');
-              },
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

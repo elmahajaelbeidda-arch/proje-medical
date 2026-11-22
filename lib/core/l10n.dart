@@ -2445,6 +2445,21 @@ class AppStrings {
     ],
     'au_call_server': ['تعديل خادم المكالمات', 'Serveur d’appels modifié'],
 
+    // Redesign
+    'pr_my_health': ['ملفي الصحي', 'Ma santé'],
+    'pr_donate_blood': ['التبرع بالدم وأماكنه', 'Don de sang et lieux de don'],
+
+    'dp_ask': ['طلب استشارة', 'Demander une consultation'],
+    'dp_location': ['الموقع', 'Itinéraire'],
+    'dp_ask_this': ['اطلب استشارة', 'Demander une consultation'],
+    'dp_years': ['سنوات خبرة', 'ans d’expérience'],
+    'dp_consults': ['استشارة', 'consultations'],
+    'dp_rating': ['التقييم', 'note'],
+    'dp_verified_note': [
+      'تحققت الجمعية من هوية هذا الطبيب وشهاداته قبل قبوله متطوعاً.',
+      'L’association a vérifié l’identité et les diplômes de ce médecin avant de l’accepter.',
+    ],
+
     // Chat
     'chat': ['المحادثة', 'Discussion'],
     'type_message': ['اكتب رسالتك...', 'Écrivez votre message...'],

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/calls.dart';
 import '../../widgets/call_buttons.dart';
+import '../../widgets/shifa_ui.dart' show StatusDot;
 
 import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
@@ -102,7 +103,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final c = ref.watch(consultationProvider(widget.id));
     final isDoctor = ref.watch(authProvider).isDoctor;
-    final scheme = Theme.of(context).colorScheme;
     if (c == null) return Scaffold(appBar: AppBar());
 
     final doctor = MockData.doctorById(c.doctorId);
@@ -144,22 +144,113 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          CallActions(
-            enabled: canCall,
-            disabledKey: isDoctor ? 'call_closed' : 'call_wait_doctor',
-            onCall: call,
-          ),
-        ],
-        title: Column(
-          children: [
-            Text(otherName),
-            Text(
-              context.tr(Specialty.byId(c.specialtyId).key),
-              style: Theme.of(context).textTheme.bodySmall,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(92),
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [AppColors.primary, Color(0xFF0D4E3B)],
             ),
-          ],
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
+          ),
+          child: SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4, 6, 4, 10),
+              child: IconTheme(
+                data: const IconThemeData(color: Colors.white),
+                child: Row(
+                  children: [
+                    const BackButton(color: Colors.white),
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          padding: const EdgeInsets.all(3),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: AppColors.secondary,
+                            child: Text(
+                              otherName.isEmpty
+                                  ? '؟'
+                                  : (isDoctor
+                                        ? otherName.characters.first
+                                        : (doctor?.initials ?? '')),
+                              style: const TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (!isDoctor && doctor != null)
+                          PositionedDirectional(
+                            start: 0,
+                            bottom: 0,
+                            child: StatusDot(on: doctor.available, size: 12),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            otherName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.medical_services_outlined,
+                                size: 14,
+                                color: Color(0xFFBFE6D5),
+                              ),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  context.tr(Specialty.byId(c.specialtyId).key),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Color(0xFFBFE6D5),
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    CallActions(
+                      onDark: true,
+                      enabled: canCall,
+                      disabledKey: isDoctor
+                          ? 'call_closed'
+                          : 'call_wait_doctor',
+                      onCall: call,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
       body: Column(
@@ -218,14 +309,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: mine
-                          ? scheme.primary
-                          : scheme.surfaceContainerHighest,
+                      color: mine ? AppColors.primary : const Color(0xFFEEF3F0),
                       borderRadius: BorderRadiusDirectional.only(
-                        topStart: const Radius.circular(18),
-                        topEnd: const Radius.circular(18),
-                        bottomStart: Radius.circular(mine ? 4 : 18),
-                        bottomEnd: Radius.circular(mine ? 18 : 4),
+                        topStart: const Radius.circular(20),
+                        topEnd: const Radius.circular(20),
+                        bottomStart: Radius.circular(mine ? 6 : 20),
+                        bottomEnd: Radius.circular(mine ? 20 : 6),
                       ),
                     ),
                     child: Column(
@@ -237,7 +326,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           Text(
                             m.text,
                             style: TextStyle(
-                              color: mine ? scheme.onPrimary : scheme.onSurface,
+                              color: mine ? Colors.white : AppColors.text,
+                              height: 1.5,
                             ),
                           ),
                         const SizedBox(height: 4),
@@ -245,7 +335,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           context.timeAgo(m.time),
                           style: TextStyle(
                             fontSize: 11,
-                            color: (mine ? scheme.onPrimary : scheme.onSurface),
+                            color: mine ? Colors.white70 : AppColors.grey,
                           ),
                         ),
                       ],
@@ -261,11 +351,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
               child: Row(
                 children: [
-                  IconButton(
-                    tooltip: context.tr('voice_note'),
-                    onPressed: () => _recordVoice(isDoctor),
-                    icon: const Icon(Icons.mic_none),
-                  ),
                   Expanded(
                     child: TextField(
                       controller: _input,
@@ -275,24 +360,47 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       onSubmitted: (_) => _send(isDoctor),
                       decoration: InputDecoration(
                         hintText: context.tr('type_message'),
+                        filled: true,
+                        fillColor: const Color(0xFFF1F5F3),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                          horizontal: 18,
+                          vertical: 14,
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(26),
+                          borderSide: BorderSide.none,
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide(color: scheme.outlineVariant),
+                          borderRadius: BorderRadius.circular(26),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(26),
+                          borderSide: const BorderSide(color: AppColors.vivid),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
+                  IconButton.filledTonal(
+                    tooltip: context.tr('voice_note'),
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppColors.secondary,
+                      foregroundColor: AppColors.primary,
+                      fixedSize: const Size(50, 50),
+                    ),
+                    onPressed: () => _recordVoice(isDoctor),
+                    icon: const Icon(Icons.mic_none),
+                  ),
+                  const SizedBox(width: 6),
                   IconButton.filled(
+                    tooltip: context.tr('send'),
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      fixedSize: const Size(50, 50),
+                    ),
                     onPressed: () => _send(isDoctor),
-                    icon: const Icon(Icons.send),
+                    icon: const Icon(Icons.send_rounded),
                   ),
                 ],
               ),

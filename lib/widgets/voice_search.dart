@@ -127,7 +127,22 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
             hintText: context.tr(
               _listening ? 'voice_search_listening' : widget.hintKey,
             ),
-            prefixIcon: const Icon(Icons.search),
+            prefixIcon: const Icon(Icons.search, color: AppColors.grey),
+            filled: true,
+            fillColor: const Color(0xFFF1F5F3),
+            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: const BorderSide(color: AppColors.vivid, width: 1.5),
+            ),
             suffixIcon: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -144,7 +159,8 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
                     style: IconButton.styleFrom(
                       backgroundColor: _listening
                           ? AppColors.primaryDark
-                          : AppColors.teal,
+                          : AppColors.primary,
+                      fixedSize: const Size(46, 46),
                       foregroundColor: Colors.white,
                     ),
                     onPressed: _toggle,
