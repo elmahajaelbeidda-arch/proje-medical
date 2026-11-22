@@ -28,7 +28,7 @@ enum AdminPermission {
   sendNotifications,
   manageContent,
 
-  /// «نبض شفاء»: publish, review shared stories, moderate interactions.
+  /// «أخبار وأنشطة شفاء»: publish, review shared stories, moderate interactions.
   manageCommunity,
   manageSettings,
   viewAudit,

@@ -4,7 +4,7 @@ import '../models/admin.dart';
 import '../models/pulse.dart';
 import 'admin_provider.dart';
 
-/// Who does an action in «نبض شفاء» (a signed-in member of the app).
+/// Who does an action in «أخبار وأنشطة شفاء» (a signed-in member of the app).
 class PulseActor {
   final String id;
   final String name;

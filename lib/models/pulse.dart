@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'models.dart' show Attachment;
 
 // ---------------------------------------------------------------------------
-// «نبض شفاء» — the community space of the app: news, shared stories,
+// «أخبار وأنشطة شفاء» — the community space of the app: news, shared stories,
 // photos and videos, live and recorded talks, and achievements.
 // Readable by everyone, including visitors who have no account.
 // ---------------------------------------------------------------------------

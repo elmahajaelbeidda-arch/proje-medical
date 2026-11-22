@@ -15,7 +15,7 @@ import '../../pulse/pulse_screens.dart'
 import '../admin_ui.dart';
 import 'overview_section.dart' show Pill;
 
-/// «نبض شفاء»: publish, review shared stories, organise live talks and
+/// «أخبار وأنشطة شفاء»: publish, review shared stories, organise live talks and
 /// moderate interactions. Every action is permission-checked and audited.
 class PulseSection extends ConsumerStatefulWidget {
   const PulseSection({super.key});

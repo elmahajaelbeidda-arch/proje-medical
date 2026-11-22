@@ -2007,9 +2007,9 @@ class AppStrings {
       'Ce cas est suivi par un autre médecin',
     ],
 
-    // «نبض شفاء» — community space
-    'pl_name': ['نبض شفاء', 'Pouls de Chifa'],
-    'pl_title': ['نبض شفاء', 'Pouls de Chifa'],
+    // «أخبار وأنشطة شفاء» — community space
+    'pl_name': ['أخبار وأنشطة شفاء', 'Actualités et activités de Chifa'],
+    'pl_title': ['أخبار وأنشطة شفاء', 'Actualités et activités de Chifa'],
     'pl_slogan': [
       'مساحة تجمعنا لننشر الخير، ونتشارك الأثر، ونبقى على تواصل',
       'Un espace qui nous rassemble pour semer le bien, partager l’impact et rester en lien',
@@ -2036,7 +2036,7 @@ class AppStrings {
       'تتصفح كزائر. سجّل الدخول للإعجاب والتعليق ومشاركة قصتك.',
       'Vous naviguez en visiteur. Connectez-vous pour aimer, commenter et partager votre histoire.',
     ],
-    'pl_join_title': ['انضم إلى نبض شفاء', 'Rejoignez Pouls de Chifa'],
+    'pl_join_title': ['انضم إلى أخبار وأنشطة شفاء', 'Rejoignez Actualités et activités de Chifa'],
     'pl_join_body': [
       'التصفح متاح للجميع. أما الإعجاب والتعليق وطرح الأسئلة ومشاركة القصص فتحتاج إلى تسجيل الدخول.',
       'La lecture est ouverte à tous. Pour aimer, commenter, poser une question ou partager une histoire, connectez-vous.',
@@ -2164,10 +2164,10 @@ class AppStrings {
       'Les témoignages sont suspendus pour le moment',
     ],
     // Dashboard
-    'ads_pulse': ['نبض شفاء', 'Pouls de Chifa'],
+    'ads_pulse': ['أخبار وأنشطة شفاء', 'Actualités et activités de Chifa'],
     'ap_manageCommunity': [
-      'إدارة «نبض شفاء» ومراجعة المشاركات',
-      'Gérer « Pouls de Chifa » et relire les témoignages',
+      'إدارة «أخبار وأنشطة شفاء» ومراجعة المشاركات',
+      'Gérer « Actualités et activités de Chifa » et relire les témoignages',
     ],
     'pla_tab_review': ['المراجعة', 'Relecture'],
     'pla_tab_posts': ['المنشورات', 'Publications'],
@@ -2278,8 +2278,8 @@ class AppStrings {
     'pla_latest_comments': ['أحدث التعليقات', 'Derniers commentaires'],
     // Audit
     'au_pulse_published': [
-      'نشر في «نبض شفاء»',
-      'Publication « Pouls de Chifa »',
+      'نشر في «أخبار وأنشطة شفاء»',
+      'Publication « Actualités et activités de Chifa »',
     ],
     'au_pulse_edited': ['تعديل منشور', 'Publication modifiée'],
     'au_pulse_approved': ['قبول مشاركة ونشرها', 'Témoignage approuvé'],

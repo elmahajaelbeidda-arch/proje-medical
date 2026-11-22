@@ -18,7 +18,7 @@ import '../../widgets/media.dart';
 import '../../widgets/visit_counter.dart';
 
 // ---------------------------------------------------------------------------
-// «نبض شفاء» — open to everyone. Reading needs no account; liking,
+// «أخبار وأنشطة شفاء» — open to everyone. Reading needs no account; liking,
 // commenting, asking and sharing a story need to be signed in.
 // ---------------------------------------------------------------------------
 

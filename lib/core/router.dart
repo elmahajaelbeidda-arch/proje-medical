@@ -193,7 +193,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const SectionOffScreen(),
       ),
 
-      // «نبض شفاء»: open to everyone, visitors included.
+      // «أخبار وأنشطة شفاء»: open to everyone, visitors included.
       GoRoute(path: '/pulse', builder: (_, _) => const PulseHomeScreen()),
       GoRoute(path: '/pulse/new', builder: (_, _) => const SubmitStoryScreen()),
       GoRoute(
