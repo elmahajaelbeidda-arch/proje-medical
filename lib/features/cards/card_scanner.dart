@@ -58,9 +58,9 @@ class _CardScannerScreenState extends State<CardScannerScreen> {
       height: box,
     );
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.text,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.text,
         foregroundColor: Colors.white,
         title: Text(
           context.tr('mc_scan_title'),
@@ -116,7 +116,7 @@ class _CardScannerScreenState extends State<CardScannerScreen> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: _wrongCode
-                                    ? const Color(0xFFBFF2DC)
+                                    ? AppColors.secondary
                                     : Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
@@ -146,7 +146,7 @@ class _WindowPainter extends CustomPainter {
       ..addRect(Offset.zero & size)
       ..addRRect(r)
       ..fillType = PathFillType.evenOdd;
-    canvas.drawPath(veil, Paint()..color = Colors.black54);
+    canvas.drawPath(veil, Paint()..color = Color(0x99263B36));
     canvas.drawRRect(
       r,
       Paint()
@@ -168,7 +168,7 @@ class _CameraError extends StatelessWidget {
   Widget build(BuildContext context) {
     final denied = error.errorCode == MobileScannerErrorCode.permissionDenied;
     return ColoredBox(
-      color: Colors.black,
+      color: AppColors.text,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(28),

@@ -23,7 +23,7 @@ Color statusColor(ConsultationStatus s) => switch (s) {
   ConsultationStatus.pending => AppColors.warning,
   ConsultationStatus.accepted => AppColors.info,
   ConsultationStatus.answered => AppColors.success,
-  ConsultationStatus.closed => Colors.grey,
+  ConsultationStatus.closed => AppColors.grey,
 };
 
 Color urgencyColor(Urgency u) => switch (u) {
@@ -437,7 +437,7 @@ class ConsultationCard extends StatelessWidget {
                   if (c.voiceNote != null)
                     Pill(
                       label: context.tr('voice_note'),
-                      color: AppColors.teal,
+                      color: AppColors.turquoise,
                       icon: Icons.mic,
                     ),
                   if (c.attachments.isNotEmpty)
@@ -474,7 +474,7 @@ class DoctorCard extends StatelessWidget {
     final on = doctor.available;
     return Material(
       // Available doctors stand out with a light green background.
-      color: on ? const Color(0xFFEAF6EF) : Colors.white,
+      color: on ? AppColors.secondary : Colors.white,
       borderRadius: BorderRadius.circular(24),
       child: InkWell(
         borderRadius: BorderRadius.circular(24),

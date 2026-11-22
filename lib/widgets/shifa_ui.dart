@@ -165,7 +165,7 @@ class DiamondButton extends StatelessWidget {
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [AppColors.vivid, AppColors.primary],
+                    colors: [AppColors.emeraldTeal, AppColors.primary],
                   ),
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(color: Colors.white, width: 4),
@@ -211,7 +211,11 @@ class WaveHeaderPainter extends CustomPainter {
         ..shader = const LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [AppColors.primary, Color(0xFF1A7E5F), AppColors.turquoise],
+          colors: [
+            AppColors.primary,
+            AppColors.emeraldTeal,
+            AppColors.turquoise,
+          ],
         ).createShader(Offset.zero & size),
     );
     // Heartbeat line (from the logo), very light.
@@ -474,7 +478,7 @@ class StatusDot extends StatelessWidget {
     width: size,
     height: size,
     decoration: BoxDecoration(
-      color: on ? AppColors.vivid : const Color(0xFFB5C2BD),
+      color: on ? AppColors.vivid : AppColors.offline,
       shape: BoxShape.circle,
       border: Border.all(color: Colors.white, width: 2),
     ),

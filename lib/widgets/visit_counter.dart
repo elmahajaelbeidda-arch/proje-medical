@@ -135,7 +135,7 @@ class VisitorLivePill extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 LiveDot(
-                  color: onDark ? AppColors.vivid : const Color(0xFFBFF2DC),
+                  color: onDark ? AppColors.vivid : AppColors.secondary,
                   size: 9,
                   pulseKey: s?.updatedAt,
                 ),

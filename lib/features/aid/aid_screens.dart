@@ -902,7 +902,7 @@ class _AidPin extends StatelessWidget {
       done ? Icons.check_circle : Icons.location_pin,
       size: 44,
       color: done ? AppColors.grey : urgencyColorOf(request.urgency),
-      shadows: const [Shadow(blurRadius: 4, color: Colors.black38)],
+      shadows: const [Shadow(blurRadius: 4, color: Color(0x61263B36))],
     );
   }
 }

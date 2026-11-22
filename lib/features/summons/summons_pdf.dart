@@ -20,7 +20,7 @@ class SummonsPdfAssets {
 const _green = PdfColor.fromInt(0xFF126B50);
 const _mint = PdfColor.fromInt(0xFFE4F1EB);
 const _ink = PdfColor.fromInt(0xFF263B36);
-const _grey = PdfColor.fromInt(0xFF5E706B);
+const _grey = PdfColor.fromInt(0xFF61706C);
 
 String _two(int n) => n.toString().padLeft(2, '0');
 

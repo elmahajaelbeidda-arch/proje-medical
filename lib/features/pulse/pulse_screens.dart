@@ -133,9 +133,9 @@ IconData pulseIcon(String key) => switch (key) {
 
 const _tones = [
   [AppColors.primary, AppColors.vivid],
-  [AppColors.turquoise, AppColors.vivid],
-  [AppColors.vivid, AppColors.turquoise],
-  [Color(0xFF1C8562), AppColors.turquoise],
+  [AppColors.turquoise, AppColors.emeraldTeal],
+  [AppColors.emeraldTeal, AppColors.primary],
+  [AppColors.emeraldTeal, AppColors.turquoise],
 ];
 
 String kindKey(PulseKind k) => 'pl_kind_${k.name}';
@@ -271,7 +271,7 @@ class _PulseHeader extends StatelessWidget {
       gradient: LinearGradient(
         begin: AlignmentDirectional.topStart,
         end: AlignmentDirectional.bottomEnd,
-        colors: [AppColors.primary, AppColors.vivid, AppColors.turquoise],
+        colors: [AppColors.primary, AppColors.emeraldTeal, AppColors.turquoise],
       ),
     ),
     child: Stack(
@@ -380,7 +380,7 @@ class _LiveBanner extends ConsumerWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isLive
-                  ? const [AppColors.turquoise, AppColors.vivid]
+                  ? const [AppColors.turquoise, AppColors.emeraldTeal]
                   : const [Colors.white, AppColors.secondary],
             ),
           ),
@@ -881,7 +881,11 @@ class MediaTile extends StatelessWidget {
               ),
             ),
             child: Center(
-              child: Icon(pulseIcon(m.icon), color: Colors.white70, size: 46),
+              child: Icon(
+                pulseIcon(m.icon),
+                color: Color(0xB3FFFFFF),
+                size: 46,
+              ),
             ),
           );
     return ClipRRect(
@@ -917,7 +921,7 @@ class MediaTile extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, Colors.black54],
+                        colors: [Colors.transparent, Color(0x99263B36)],
                       ),
                     ),
                     child: Text(
@@ -933,7 +937,7 @@ class MediaTile extends StatelessWidget {
                 ),
               if (more > 0)
                 Container(
-                  color: Colors.black45,
+                  color: Color(0x73263B36),
                   alignment: Alignment.center,
                   child: Text(
                     '+$more',
@@ -1792,7 +1796,7 @@ class _SubmitStoryScreenState extends ConsumerState<SubmitStoryScreen> {
                           onTap: () => setState(() => _photos.remove(a)),
                           child: const CircleAvatar(
                             radius: 12,
-                            backgroundColor: Colors.black54,
+                            backgroundColor: Color(0x99263B36),
                             child: Icon(
                               Icons.close,
                               size: 14,
@@ -1932,7 +1936,11 @@ class PulseEntryCard extends StatelessWidget {
           gradient: LinearGradient(
             begin: AlignmentDirectional.centerStart,
             end: AlignmentDirectional.centerEnd,
-            colors: [AppColors.primary, AppColors.vivid, AppColors.turquoise],
+            colors: [
+              AppColors.primary,
+              AppColors.emeraldTeal,
+              AppColors.turquoise,
+            ],
           ),
         ),
         child: Stack(

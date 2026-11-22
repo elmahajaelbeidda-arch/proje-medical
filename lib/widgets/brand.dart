@@ -55,7 +55,11 @@ class BrandRichText extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = context.tr('app_name');
     final base = style ?? DefaultTextStyle.of(context).style;
-    final nameStyle = base.copyWith(fontWeight: FontWeight.w800);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final nameStyle = base.copyWith(
+      fontWeight: FontWeight.w800,
+      color: dark ? Colors.white : AppColors.primary,
+    );
 
     final parts = text.split(name);
     final spans = <InlineSpan>[];

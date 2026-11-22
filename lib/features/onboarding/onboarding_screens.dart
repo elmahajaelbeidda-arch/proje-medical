@@ -54,7 +54,7 @@ class ShifaLockup extends StatelessWidget {
         Text(
           context.tr('app_tagline'),
           style: text.titleMedium?.copyWith(
-            color: dark ? AppColors.mint : AppColors.teal,
+            color: dark ? AppColors.mint : AppColors.turquoise,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -62,7 +62,7 @@ class ShifaLockup extends StatelessWidget {
         Text(
           context.tr('association'),
           style: text.bodyMedium?.copyWith(
-            color: dark ? Colors.white70 : AppColors.grey,
+            color: dark ? Color(0xB3FFFFFF) : AppColors.grey,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -100,7 +100,6 @@ class ShifaHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
@@ -113,8 +112,9 @@ class ShifaHero extends StatelessWidget {
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+        boxShadow: AppColors.shadow,
         border: const Border(
-          bottom: BorderSide(color: AppColors.green, width: 4),
+          bottom: BorderSide(color: AppColors.gold, width: 3),
         ),
       ),
       child: Column(
@@ -122,33 +122,103 @@ class ShifaHero extends StatelessWidget {
           ?top,
           const SizedBox(height: 12),
           const ShifaLockup(),
-          const SizedBox(height: 20),
-          Container(
-            width: double.infinity,
-            constraints: const BoxConstraints(maxWidth: 600),
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: AlignmentDirectional.topStart,
-                end: AlignmentDirectional.bottomEnd,
-                colors: AppColors.heroGradient,
-              ),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: BrandRichText(
-              context.tr('about_shifa'),
-              textAlign: TextAlign.center,
-              style: text.bodyLarge?.copyWith(
-                color: Colors.white,
-                height: 1.8,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+          const SizedBox(height: 14),
+          const AboutShifaCard(),
         ],
       ),
     );
   }
+}
+
+/// The introduction of the app on a mint card: dark grey text, the name in
+/// emerald, a small gold heart on top and the logo's pulse line in turquoise.
+class AboutShifaCard extends StatelessWidget {
+  const AboutShifaCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.topCenter,
+      children: [
+        Container(
+          width: double.infinity,
+          constraints: const BoxConstraints(maxWidth: 600),
+          margin: const EdgeInsets.only(top: 18),
+          padding: const EdgeInsets.fromLTRB(20, 30, 20, 18),
+          decoration: BoxDecoration(
+            color: dark ? AppColors.darkSurfaceHigh : AppColors.mint,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.primary.withValues(alpha: .10)),
+          ),
+          child: Column(
+            children: [
+              BrandRichText(
+                context.tr('about_shifa'),
+                textAlign: TextAlign.center,
+                style: text.bodyLarge?.copyWith(
+                  color: dark ? Colors.white : AppColors.text,
+                  height: 1.85,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const SizedBox(
+                height: 18,
+                width: 160,
+                child: CustomPaint(painter: _MiniPulsePainter()),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            shape: BoxShape.circle,
+            border: Border.all(color: AppColors.gold, width: 2),
+            boxShadow: AppColors.shadow,
+          ),
+          child: const Icon(
+            Icons.favorite_rounded,
+            color: AppColors.gold,
+            size: 20,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MiniPulsePainter extends CustomPainter {
+  const _MiniPulsePainter();
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height, y = h / 2;
+    final p = Path()
+      ..moveTo(0, y)
+      ..lineTo(w * .36, y)
+      ..lineTo(w * .43, y - h * .45)
+      ..lineTo(w * .52, y + h * .5)
+      ..lineTo(w * .59, y - h * .2)
+      ..lineTo(w * .64, y)
+      ..lineTo(w, y);
+    canvas.drawPath(
+      p,
+      Paint()
+        ..color = AppColors.turquoise
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.4
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 // ---------------------------------------------------------------------------
@@ -186,7 +256,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: 28,
                 height: 28,
                 child: CircularProgressIndicator(
-                  color: AppColors.teal,
+                  color: AppColors.turquoise,
                   strokeWidth: 3,
                 ),
               ),
@@ -240,11 +310,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
     final locale = ref.watch(localeProvider);
 
     return Scaffold(
+      // Pure white welcome screen.
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -273,17 +344,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.language, color: scheme.primary),
+                          const Icon(
+                            Icons.language,
+                            color: AppColors.turquoise,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             AppStrings.languageNames[locale.languageCode] ??
                                 'العربية',
-                            style: TextStyle(
-                              color: scheme.primary,
+                            style: const TextStyle(
+                              color: AppColors.turquoiseText,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          Icon(Icons.arrow_drop_down, color: scheme.primary),
+                          const Icon(
+                            Icons.arrow_drop_down,
+                            color: AppColors.turquoise,
+                          ),
                         ],
                       ),
                     ),
@@ -311,10 +388,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           width: 220,
                           height: 220,
                           decoration: BoxDecoration(
-                            color: AppColors.secondary,
+                            color: AppColors.mint,
                             shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.surface,
+                              width: 10,
+                            ),
+                            boxShadow: AppColors.shadow,
                           ),
-                          child: Icon(icon, size: 110, color: scheme.primary),
+                          child: Icon(
+                            icon,
+                            size: 104,
+                            color: AppColors.turquoise,
+                          ),
                         ),
                         const SizedBox(height: 40),
                         Text(
@@ -329,7 +415,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           context.tr(body),
                           textAlign: TextAlign.center,
                           style: text.bodyLarge?.copyWith(
-                            color: scheme.onSurfaceVariant,
+                            color: AppColors.text,
+                            height: 1.7,
                           ),
                         ),
                       ],
@@ -348,8 +435,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       height: 8,
                       decoration: BoxDecoration(
                         color: i == _page
-                            ? scheme.primary
-                            : scheme.outlineVariant,
+                            ? AppColors.primary
+                            : (i < _page ? AppColors.gold : AppColors.mint),
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
@@ -368,46 +455,22 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 }
 
-/// First onboarding page: logo, name and the introduction of the platform.
+/// First onboarding page: logo, name and the introduction of the app.
 class _IntroPage extends StatelessWidget {
   const _IntroPage();
 
   @override
-  Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const ShifaLockup(iconSize: 120, vertical: true),
-            const SizedBox(height: 24),
-            Container(
-              width: double.infinity,
-              constraints: const BoxConstraints(maxWidth: 600),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: AlignmentDirectional.topStart,
-                  end: AlignmentDirectional.bottomEnd,
-                  colors: AppColors.heroGradient,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: BrandRichText(
-                context.tr('about_shifa'),
-                textAlign: TextAlign.center,
-                style: text.bodyLarge?.copyWith(
-                  color: Colors.white,
-                  height: 1.8,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
-        ),
+  Widget build(BuildContext context) => const Center(
+    child: SingleChildScrollView(
+      child: Column(
+        children: [
+          ShifaLockup(iconSize: 128, vertical: true),
+          SizedBox(height: 18),
+          AboutShifaCard(),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------

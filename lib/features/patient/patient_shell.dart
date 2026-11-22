@@ -124,7 +124,7 @@ class PatientHomeTab extends ConsumerWidget {
               ),
               IconButton.filled(
                 style: IconButton.styleFrom(
-                  backgroundColor: AppColors.teal,
+                  backgroundColor: AppColors.turquoise,
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () => context.push('/notifications'),
@@ -174,7 +174,7 @@ class PatientHomeTab extends ConsumerWidget {
                     gradient: const LinearGradient(
                       begin: AlignmentDirectional.centerStart,
                       end: AlignmentDirectional.centerEnd,
-                      colors: [AppColors.vivid, AppColors.turquoise],
+                      colors: [AppColors.primary, AppColors.emeraldTeal],
                     ),
                     borderRadius: BorderRadius.circular(22),
                   ),
@@ -279,7 +279,7 @@ class PatientHomeTab extends ConsumerWidget {
                     vertical: 6,
                   ),
                   leading: const CircleAvatar(
-                    backgroundColor: AppColors.teal,
+                    backgroundColor: AppColors.turquoise,
                     child: Icon(Icons.map_outlined, color: Colors.white),
                   ),
                   title: Text(
@@ -310,7 +310,7 @@ class PatientHomeTab extends ConsumerWidget {
                       vertical: 6,
                     ),
                     leading: const CircleAvatar(
-                      backgroundColor: AppColors.teal,
+                      backgroundColor: AppColors.turquoise,
                       child: Icon(
                         Icons.psychology_outlined,
                         color: Colors.white,
@@ -345,7 +345,7 @@ class PatientHomeTab extends ConsumerWidget {
                       vertical: 6,
                     ),
                     leading: const CircleAvatar(
-                      backgroundColor: AppColors.teal,
+                      backgroundColor: AppColors.turquoise,
                       child: Icon(Icons.add_location_alt, color: Colors.white),
                     ),
                     title: Text(
@@ -386,7 +386,7 @@ class PatientHomeTab extends ConsumerWidget {
                                 children: [
                                   CircleAvatar(
                                     radius: 24,
-                                    backgroundColor: AppColors.teal,
+                                    backgroundColor: AppColors.turquoise,
                                     child: Icon(
                                       typeIcon(t),
                                       color: AppColors.mint,
@@ -889,7 +889,7 @@ class _BloodBanner extends ConsumerWidget {
         onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
         leading: const CircleAvatar(
-          backgroundColor: AppColors.teal,
+          backgroundColor: AppColors.turquoise,
           child: Icon(Icons.bloodtype, color: Colors.white),
         ),
         title: Text(
@@ -942,7 +942,7 @@ class _BloodRequestCard extends ConsumerWidget {
             children: [
               const CircleAvatar(
                 radius: 24,
-                backgroundColor: AppColors.teal,
+                backgroundColor: AppColors.turquoise,
                 child: Icon(Icons.bloodtype, color: Colors.white),
               ),
               const SizedBox(width: 12),

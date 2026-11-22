@@ -406,7 +406,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      const Icon(Icons.badge_outlined, color: AppColors.teal),
+                      const Icon(
+                        Icons.badge_outlined,
+                        color: AppColors.turquoise,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         context.tr('id_card'),
@@ -601,7 +604,7 @@ class _IdPhotoTile extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 1.58, // ID-1 card format
       child: Material(
-        color: done ? AppColors.teal : AppColors.mint,
+        color: done ? AppColors.turquoise : AppColors.mint,
         borderRadius: BorderRadius.circular(14),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -755,7 +758,7 @@ class _VerifyPhoneScreenState extends ConsumerState<VerifyPhoneScreen> {
             children: [
               const CircleAvatar(
                 radius: 44,
-                backgroundColor: AppColors.teal,
+                backgroundColor: AppColors.turquoise,
                 child: Icon(Icons.sms_outlined, color: Colors.white, size: 44),
               ),
               const SizedBox(height: 20),

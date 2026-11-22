@@ -118,7 +118,7 @@ class FacilityAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => CircleAvatar(
     radius: radius,
-    backgroundColor: AppColors.teal,
+    backgroundColor: AppColors.turquoise,
     child: Icon(facilityTypeIcon(type), color: Colors.white, size: radius),
   );
 }

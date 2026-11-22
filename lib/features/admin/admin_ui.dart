@@ -141,7 +141,7 @@ class Kpi extends StatelessWidget {
     required this.label,
     required this.value,
     required this.icon,
-    this.color = AppColors.teal,
+    this.color = AppColors.turquoise,
     this.onTap,
   });
   final String label;
@@ -449,7 +449,10 @@ Future<Uint8List> buildReportPdf({
             pw.Text('—')
           else
             pw.Table(
-              border: pw.TableBorder.all(color: PdfColors.grey400, width: .5),
+              border: pw.TableBorder.all(
+                color: PdfColor.fromInt(0xFFABBAB5),
+                width: .5,
+              ),
               children: [
                 pw.TableRow(
                   decoration: const pw.BoxDecoration(color: mint),

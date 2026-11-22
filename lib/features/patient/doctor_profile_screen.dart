@@ -80,7 +80,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       gradient: const LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
-                        colors: [AppColors.primary, Color(0xFF0D4E3B)],
+                        colors: [AppColors.primary, AppColors.primaryDark],
                       ),
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: const [
@@ -125,7 +125,7 @@ class DoctorProfileScreen extends StatelessWidget {
                         Text(
                           specialty,
                           style: const TextStyle(
-                            color: Color(0xFFBFE6D5),
+                            color: AppColors.secondary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -136,7 +136,7 @@ class DoctorProfileScreen extends StatelessWidget {
                             const Icon(
                               Icons.place_outlined,
                               size: 16,
-                              color: Color(0xFFBFE6D5),
+                              color: AppColors.secondary,
                             ),
                             const SizedBox(width: 4),
                             Flexible(
@@ -146,7 +146,7 @@ class DoctorProfileScreen extends StatelessWidget {
                                   d.clinicAddress,
                                 ].where((e) => e.isNotEmpty).join(' / '),
                                 style: const TextStyle(
-                                  color: Color(0xFFBFE6D5),
+                                  color: AppColors.secondary,
                                   fontSize: 13,
                                 ),
                               ),

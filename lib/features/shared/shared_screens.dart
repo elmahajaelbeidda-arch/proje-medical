@@ -151,7 +151,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [AppColors.primary, Color(0xFF0D4E3B)],
+              colors: [AppColors.primary, AppColors.primaryDark],
             ),
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
           ),
@@ -219,7 +219,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               const Icon(
                                 Icons.medical_services_outlined,
                                 size: 14,
-                                color: Color(0xFFBFE6D5),
+                                color: AppColors.secondary,
                               ),
                               const SizedBox(width: 4),
                               Flexible(
@@ -228,7 +228,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: Color(0xFFBFE6D5),
+                                    color: AppColors.secondary,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -309,7 +309,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: mine ? AppColors.primary : const Color(0xFFEEF3F0),
+                      color: mine ? AppColors.primary : AppColors.secondary,
                       borderRadius: BorderRadiusDirectional.only(
                         topStart: const Radius.circular(20),
                         topEnd: const Radius.circular(20),
@@ -335,7 +335,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           context.timeAgo(m.time),
                           style: TextStyle(
                             fontSize: 11,
-                            color: mine ? Colors.white70 : AppColors.grey,
+                            color: mine ? Color(0xB3FFFFFF) : AppColors.grey,
                           ),
                         ),
                       ],
@@ -361,7 +361,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       decoration: InputDecoration(
                         hintText: context.tr('type_message'),
                         filled: true,
-                        fillColor: const Color(0xFFF1F5F3),
+                        fillColor: AppColors.fieldFill,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 18,
                           vertical: 14,

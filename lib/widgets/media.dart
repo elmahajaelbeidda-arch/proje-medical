@@ -43,8 +43,8 @@ IconData categoryIcon(AttachmentCategory c) => switch (c) {
 
 Color categoryColor(AttachmentCategory c) => switch (c) {
   AttachmentCategory.exam => AppColors.info,
-  AttachmentCategory.lab => AppColors.teal,
-  AttachmentCategory.prescription => AppColors.green,
+  AttachmentCategory.lab => AppColors.turquoise,
+  AttachmentCategory.prescription => AppColors.primary,
   AttachmentCategory.other => AppColors.grey,
 };
 
@@ -412,7 +412,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
     }
 
     return Material(
-      color: AppColors.teal,
+      color: AppColors.turquoise,
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -424,7 +424,7 @@ class _VoiceRecorderFieldState extends State<VoiceRecorderField> {
               const CircleAvatar(
                 radius: 24,
                 backgroundColor: Colors.white,
-                child: Icon(Icons.mic, color: AppColors.teal, size: 28),
+                child: Icon(Icons.mic, color: AppColors.turquoise, size: 28),
               ),
               const SizedBox(width: 14),
               Expanded(

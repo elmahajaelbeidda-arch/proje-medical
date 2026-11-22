@@ -456,7 +456,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                                   ),
                                   boxShadow: const [
                                     BoxShadow(
-                                      color: Color(0x33000000),
+                                      color: Color(0x33263B36),
                                       blurRadius: 6,
                                     ),
                                   ],
@@ -498,7 +498,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                       horizontal: 6,
                       vertical: 2,
                     ),
-                    color: Colors.white70,
+                    color: Color(0xB3FFFFFF),
                     child: const Text(
                       '© OpenStreetMap',
                       style: TextStyle(fontSize: 10),
@@ -517,7 +517,7 @@ class _CareMapScreenState extends ConsumerState<CareMapScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: const [
-                        BoxShadow(color: Color(0x22000000), blurRadius: 6),
+                        BoxShadow(color: Color(0x22263B36), blurRadius: 6),
                       ],
                     ),
                     child: Text(

@@ -161,7 +161,7 @@ class DoctorHomeTab extends ConsumerWidget {
               secondary: Icon(
                 Icons.circle,
                 size: 14,
-                color: available ? AppColors.success : Colors.grey,
+                color: available ? AppColors.success : AppColors.grey,
               ),
               title: Text(
                 context.tr('available_for_cases'),
@@ -232,7 +232,7 @@ class DoctorHomeTab extends ConsumerWidget {
             child: ListTile(
               onTap: () => context.push('/blood'),
               leading: const CircleAvatar(
-                backgroundColor: AppColors.teal,
+                backgroundColor: AppColors.turquoise,
                 child: Icon(Icons.bloodtype, color: Colors.white),
               ),
               title: Text(

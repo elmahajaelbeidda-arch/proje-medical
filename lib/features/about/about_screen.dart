@@ -58,7 +58,7 @@ class AboutAssociationScreen extends ConsumerWidget {
                   Row(
                     children: [
                       const CircleAvatar(
-                        backgroundColor: AppColors.teal,
+                        backgroundColor: AppColors.turquoise,
                         child: Icon(
                           Icons.volunteer_activism,
                           color: Colors.white,

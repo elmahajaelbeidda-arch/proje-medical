@@ -133,7 +133,7 @@ class _VoiceSearchFieldState extends State<VoiceSearchField> {
             ),
             prefixIcon: const Icon(Icons.search, color: AppColors.grey),
             filled: true,
-            fillColor: const Color(0xFFF1F5F3),
+            fillColor: AppColors.fieldFill,
             contentPadding: const EdgeInsets.symmetric(vertical: 16),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
