@@ -265,8 +265,6 @@ class PsychHomeScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 14),
           const _PrivacyCard(),
-          const SizedBox(height: 10),
-          const CrisisCard(),
           SectionHeader(context.tr('psych_my_sessions')),
           if (mine.isEmpty)
             EmptyState(
