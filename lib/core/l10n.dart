@@ -49,8 +49,8 @@ class AppStrings {
     'id_card': ['بطاقة التعريف الوطنية', 'Carte d’identité nationale'],
     'id_number': ['رقم بطاقة التعريف الوطنية', 'Numéro de la carte d’identité'],
     'id_number_invalid': [
-      'رقم غير صالح (من 9 إلى 18 رقماً)',
-      'Numéro invalide (9 à 18 chiffres)',
+      'الرقم الوطني يتكوّن من 10 أرقام',
+      'Le NNI comporte 10 chiffres',
     ],
     'id_front': ['الوجه الأمامي', 'Recto'],
     'id_back': ['الوجه الخلفي', 'Verso'],

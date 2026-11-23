@@ -397,7 +397,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   TextFormField(
                     controller: _idNumber,
                     keyboardType: TextInputType.number,
-                    maxLength: 18,
+                    // Mauritanian national ID number (NNI): 10 digits.
+                    maxLength: 10,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
                       labelText: context.tr('id_number'),
@@ -406,7 +407,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     validator: (v) {
                       final value = v?.trim() ?? '';
                       if (value.isEmpty) return context.tr('required_field');
-                      if (value.length < 9) {
+                      if (value.length != 10) {
                         return context.tr('id_number_invalid');
                       }
                       return null;

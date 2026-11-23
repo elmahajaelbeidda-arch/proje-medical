@@ -10,7 +10,7 @@ const Map<String, String> enStrings = {
   'app_tagline': 'Charitable medical app',
   'id_card': 'National ID card',
   'id_number': 'National ID number',
-  'id_number_invalid': 'Invalid number (9 to 18 digits)',
+  'id_number_invalid': 'The national ID number has 10 digits',
   'id_front': 'Front',
   'id_back': 'Back',
   'id_privacy':
