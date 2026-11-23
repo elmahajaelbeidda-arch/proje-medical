@@ -1425,8 +1425,6 @@ const Map<String, String> enStrings = {
   'dl_sub': 'Free for Android phones • about 15 MB',
   'dl_old_phones': 'Older phone and the app will not install? Get the version for older phones',
   'dl_android': 'Download for Android',
-  'dl_iphone':
-      'On iPhone: open this link in Safari, then choose “Add to Home Screen”.',
   'about_app_title': 'About the app',
   'home_last_consults': 'My latest consultations',
   'home_more_services': 'More services',
