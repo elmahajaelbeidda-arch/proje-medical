@@ -348,16 +348,16 @@ class AppStrings {
     'review_approved': ['مقبول', 'Accepté'],
     'review_rejected': ['مرفوض', 'Refusé'],
     'account_pending_title': [
-      'حسابك قيد مراجعة فريق المتابعة والإدارة',
+      'حسابك قيد التحقق',
       'Votre compte est en cours de vérification',
     ],
     'account_pending_patient': [
-      'يتحقق الفريق من بياناتك وبطاقة التعريف. يمكنك تصفّح التطبيق، وستصلك رسالة عند قبول حسابك.',
-      'L’équipe de suivi vérifie vos informations. Vous serez notifié dès l’acceptation.',
+      'يتحقق فريق الإدارة من بياناتك وبطاقة التعريف، وستتلقى إشعارًا فور اكتمال التحقق. يمكنك تصفّح التطبيق في هذه الأثناء.',
+      'L’équipe vérifie vos informations et votre carte d’identité. Vous recevrez une notification dès la fin de la vérification. Vous pouvez parcourir l’application en attendant.',
     ],
     'account_pending_doctor': [
-      'يتحقق الفريق من بطاقتك المهنية ورقم تسجيلك. لا يمكنك قبول الحالات قبل قبول حسابك.',
-      'L’équipe de suivi vérifie votre carte professionnelle. Vous pourrez accepter des cas après validation.',
+      'يتحقق فريق الإدارة من بياناتك وبطاقة التعريف وبطاقتك المهنية، وستتلقى إشعارًا فور اكتمال التحقق. يمكنك قبول الحالات بعد ذلك.',
+      'L’équipe vérifie vos informations, votre carte d’identité et votre carte professionnelle. Vous recevrez une notification dès la fin de la vérification, puis pourrez accepter des cas.',
     ],
     'account_rejected_title': ['لم يُقبل حسابك', 'Compte refusé'],
     'account_rejected_body': [

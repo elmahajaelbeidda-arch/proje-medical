@@ -847,34 +847,72 @@ class AccountReviewBanner extends ConsumerWidget {
     if (status == ReviewStatus.approved) return const SizedBox.shrink();
     final pending = status == ReviewStatus.pending;
     final isDoctor = ref.watch(authProvider).isDoctor;
-    return Card(
-      color: pending ? AppColors.warning : AppColors.grey,
-      child: ListTile(
-        leading: Icon(
-          pending ? LucideIcons.hourglass : LucideIcons.ban,
-          color: pending ? AppColors.ink : AppColors.onPrimary,
-        ),
-        title: Text(
-          context.tr(
-            pending ? 'account_pending_title' : 'account_rejected_title',
+    // Light background and dark text: easy to read, in the app's colours
+    // (mint while checking, grey when refused).
+    final tone = pending ? AppColors.reviewingText : AppColors.grey;
+    final soft = pending ? AppColors.reviewingSoft : AppColors.background;
+    return Container(
+      // Its own space below (nothing at all once the account is approved).
+      margin: const EdgeInsets.only(bottom: Space.m),
+      padding: const EdgeInsets.all(Space.m),
+      decoration: BoxDecoration(
+        color: soft,
+        borderRadius: BorderRadius.circular(Radii.card),
+        border: Border.all(color: tone.withValues(alpha: .28)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              pending ? LucideIcons.hourglass : LucideIcons.ban,
+              size: 22,
+              color: tone,
+            ),
           ),
-          style: TextStyle(
-            fontWeight: FontWeight.w800,
-            color: pending ? AppColors.ink : AppColors.onPrimary,
+          const SizedBox(width: Space.s),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.tr(
+                    pending
+                        ? 'account_pending_title'
+                        : 'account_rejected_title',
+                  ),
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.text,
+                  ),
+                ),
+                const SizedBox(height: Space.xxs),
+                Text(
+                  context.tr(
+                    !pending
+                        ? 'account_rejected_body'
+                        : isDoctor
+                        ? 'account_pending_doctor'
+                        : 'account_pending_patient',
+                  ),
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.65,
+                    color: AppColors.text.withValues(alpha: .8),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        subtitle: Text(
-          context.tr(
-            !pending
-                ? 'account_rejected_body'
-                : isDoctor
-                ? 'account_pending_doctor'
-                : 'account_pending_patient',
-          ),
-          style: TextStyle(
-            color: pending ? AppColors.ink : AppColors.onPrimary,
-          ),
-        ),
+        ],
       ),
     );
   }
