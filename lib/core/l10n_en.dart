@@ -597,6 +597,14 @@ const Map<String, String> enStrings = {
       'Sign-in blocked after 5 failures. Try again in 5 minutes.',
   'ad_login_disabled': 'This admin account is disabled',
   'ad_code_wrong': 'Wrong code',
+  'ad_login_not_staff':
+      'This account is not part of the follow-up & management team',
+  'ad_login_network':
+      'Cannot reach the server. Check the Internet and try again',
+  'ad_save_failed':
+      'Latest changes not saved yet (offline). Retrying automatically',
+  'ad_remote_new_admin_hint': 'First create the member’s account in Supabase (Authentication ← Users ← Add user), then add them here with their e-mail.',
+  'ad_remote_admin_failed': 'Failed: check the account exists in Supabase and that you are a general manager',
   'ad_demo_accounts': 'Demo accounts (one per role)',
   'ad_demo_code': 'Demo code: 123456 (until an app is linked)',
   'ad_no_access':

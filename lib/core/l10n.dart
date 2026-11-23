@@ -1155,6 +1155,26 @@ class AppStrings {
       'Ce compte administrateur est désactivé',
     ],
     'ad_code_wrong': ['رمز التحقق غير صحيح', 'Code incorrect'],
+    'ad_login_not_staff': [
+      'هذا الحساب ليس من فريق المتابعة والإدارة',
+      'Ce compte ne fait pas partie de l’équipe',
+    ],
+    'ad_login_network': [
+      'تعذّر الاتصال بالخادم. تحقق من الإنترنت ثم أعد المحاولة',
+      'Connexion au serveur impossible. Vérifiez Internet et réessayez',
+    ],
+    'ad_save_failed': [
+      'لم تُحفظ آخر التعديلات بعد (لا اتصال). سنعيد المحاولة تلقائيًا',
+      'Dernières modifications non enregistrées (hors ligne). Nouvel essai automatique',
+    ],
+    'ad_remote_new_admin_hint': [
+      'أنشئ حساب العضو أولًا في Supabase (Authentication ← Users ← Add user)، ثم أضفه هنا ببريده.',
+      'Créez d’abord son compte dans Supabase (Authentication ← Users ← Add user), puis ajoutez-le ici avec son e-mail.',
+    ],
+    'ad_remote_admin_failed': [
+      'تعذّر التعديل: تأكد أن الحساب موجود في Supabase وأن لديك صلاحية المدير العام',
+      'Échec : vérifiez que le compte existe dans Supabase et que vous êtes administrateur général',
+    ],
     'ad_demo_accounts': [
       'حسابات تجريبية (حساب لكل دور)',
       'Comptes de démonstration (un par rôle)',

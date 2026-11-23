@@ -8,6 +8,7 @@ import 'core/admin_router.dart';
 import 'core/l10n.dart';
 import 'core/providers.dart';
 import 'core/theme.dart';
+import 'features/admin/admin_sync.dart';
 import 'features/admin/demo_admins.dart';
 import 'features/aid/aid_repository.dart';
 
@@ -23,7 +24,12 @@ Future<void> main() async {
   }
   runApp(
     ProviderScope(
-      overrides: [adminSeedAccountsProvider.overrideWithValue(demoAdmins())],
+      // Demo accounts only without a server; with one, the team signs in
+      // with its real accounts (Supabase).
+      overrides: [
+        if (!supabaseConfigured)
+          adminSeedAccountsProvider.overrideWithValue(demoAdmins()),
+      ],
       child: const ShifaAdminApp(),
     ),
   );
@@ -55,7 +61,10 @@ class ShifaAdminApp extends ConsumerWidget {
       builder: (context, child) {
         final b = Theme.of(context).brightness;
         AppColors.use(b);
-        return KeyedSubtree(key: ValueKey(b), child: child ?? const SizedBox());
+        return KeyedSubtree(
+          key: ValueKey(b),
+          child: AdminSync(child: child ?? const SizedBox()),
+        );
       },
     );
   }

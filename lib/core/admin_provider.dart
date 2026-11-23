@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/admin/totp.dart';
 import '../models/admin.dart';
+import 'admin_remote.dart' show RemoteSession;
 
 class AdminState {
   final List<AdminAccount> admins;
@@ -30,6 +31,9 @@ class AdminState {
   final int failedLogins;
   final DateTime? lockedUntil;
 
+  /// Signed in through the server (Supabase): data is saved there.
+  final bool remote;
+
   const AdminState({
     required this.admins,
     this.audit = const [],
@@ -48,6 +52,7 @@ class AdminState {
     this.sessionVerified = false,
     this.failedLogins = 0,
     this.lockedUntil,
+    this.remote = false,
   });
 
   AdminAccount? get me {
@@ -84,6 +89,7 @@ class AdminState {
     int? failedLogins,
     DateTime? lockedUntil,
     bool clearLock = false,
+    bool? remote,
   }) => AdminState(
     admins: admins ?? this.admins,
     audit: audit ?? this.audit,
@@ -106,6 +112,7 @@ class AdminState {
         : (sessionVerified ?? this.sessionVerified),
     failedLogins: failedLogins ?? this.failedLogins,
     lockedUntil: clearLock ? null : (lockedUntil ?? this.lockedUntil),
+    remote: remote ?? this.remote,
   );
 }
 
@@ -710,13 +717,24 @@ class AdminNotifier extends Notifier<AdminState> {
   /// salted hashes only.
   String exportBackup() {
     _require(AdminPermission.manageBackups);
+    final json = _dataJson(withAdmins: true);
+    _log('au_backup_created', sensitive: true);
+    return const JsonEncoder.withIndent(' ').convert(json);
+  }
+
+  /// The administration data as JSON (backups and the server copy).
+  Map<String, dynamic> _dataJson({required bool withAdmins}) {
     final s = state;
-    final json = {
+    return {
       'format': 'shifa-linnas-admin-backup',
       'version': 1,
       'createdAt': DateTime.now().toIso8601String(),
-      'admins': [for (final a in s.admins) a.toJson()],
-      'audit': [for (final a in s.audit) a.toJson()],
+      if (withAdmins) 'admins': [for (final a in s.admins) a.toJson()],
+      // The server copy keeps the latest 3000 entries.
+      'audit': [
+        for (final a in s.audit.take(withAdmins ? s.audit.length : 3000))
+          a.toJson(),
+      ],
       'donations': [for (final d in s.donations) d.toJson()],
       'expenses': [for (final e in s.expenses) e.toJson()],
       'services': [for (final r in s.services) r.toJson()],
@@ -738,8 +756,6 @@ class AdminNotifier extends Notifier<AdminState> {
           e.key: e.value.toIso8601String(),
       },
     };
-    _log('au_backup_created', sensitive: true);
-    return const JsonEncoder.withIndent(' ').convert(json);
   }
 
   /// Replaces the administration data with a backup. The current admin must
@@ -753,16 +769,29 @@ class AdminNotifier extends Notifier<AdminState> {
     List<T> list<T>(String k, T Function(Map<String, dynamic>) f) => [
       for (final x in (j[k] as List? ?? const [])) f(x as Map<String, dynamic>),
     ];
+    final admins = state.remote
+        ? state.admins
+        : list('admins', AdminAccount.fromJson);
+    if (!admins.any((a) => a.id == me.id && a.active)) {
+      throw const FormatException('current admin missing from backup');
+    }
+    state = _withData(state.copyWith(admins: admins), j);
+    _log(
+      'au_backup_restored',
+      details: j['createdAt'] as String? ?? '',
+      sensitive: true,
+    );
+  }
+
+  static AdminState _withData(AdminState base, Map<String, dynamic> j) {
+    List<T> list<T>(String k, T Function(Map<String, dynamic>) f) => [
+      for (final x in (j[k] as List? ?? const [])) f(x as Map<String, dynamic>),
+    ];
     Map<String, T> map<T>(String k, T Function(Map<String, dynamic>) f) => {
       for (final e in ((j[k] as Map<String, dynamic>?) ?? const {}).entries)
         e.key: f(e.value as Map<String, dynamic>),
     };
-    final admins = list('admins', AdminAccount.fromJson);
-    if (!admins.any((a) => a.id == me.id && a.active)) {
-      throw const FormatException('current admin missing from backup');
-    }
-    state = state.copyWith(
-      admins: admins,
+    return base.copyWith(
       audit: list('audit', AuditEntry.fromJson),
       donations: list('donations', Donation.fromJson),
       expenses: list('expenses', Expense.fromJson),
@@ -772,18 +801,60 @@ class AdminNotifier extends Notifier<AdminState> {
       evaluations: map('evaluations', DoctorEvaluation.fromJson),
       messages: list('messages', AdminMessage.fromJson),
       announcements: list('announcements', Announcement.fromJson),
-      settings: AppSettings.fromJson(j['settings'] as Map<String, dynamic>),
       suspendedAccounts:
           (j['suspendedAccounts'] as Map<String, dynamic>? ?? const {}).map(
             (k, v) => MapEntry(k, v as String),
           ),
+      settings: j['settings'] == null
+          ? const AppSettings()
+          : AppSettings.fromJson(j['settings'] as Map<String, dynamic>),
       cardRenewals: (j['cardRenewals'] as Map<String, dynamic>? ?? const {})
           .map((k, v) => MapEntry(k, DateTime.parse(v as String))),
     );
-    _log(
-      'au_backup_restored',
-      details: j['createdAt'] as String? ?? '',
-      sensitive: true,
+  }
+
+  // -------------------------------------------------------------------------
+  // Server (Supabase): real sign-in and shared data
+  // -------------------------------------------------------------------------
+
+  /// Opens the session of a team member signed in on the server. The first
+  /// time (nothing saved yet) the dashboard starts empty: no demo data.
+  void openRemote(RemoteSession s) {
+    final admins = [for (final r in s.staff) r.toAccount()];
+    var next = AdminState(admins: admins, remote: true);
+    if (s.state != null) next = _withData(next, s.state!);
+    state = next.copyWith(sessionAdminId: s.userId, sessionVerified: true);
+    _log('au_login', target: state.me?.email ?? '');
+  }
+
+  /// New list of team members (after adding or disabling one).
+  void setStaff(List<AdminAccount> admins) =>
+      state = state.copyWith(admins: admins);
+
+  /// What is saved on the server: the whole dashboard (team only)...
+  Map<String, dynamic> serverState() => _dataJson(withAdmins: false);
+
+  /// ...and what the users' app reads (public).
+  Map<String, dynamic> serverPublic() => {
+    'settings': state.settings.toJson(),
+    'announcements': [for (final a in state.announcements) a.toJson()],
+    'suspendedAccounts': state.suspendedAccounts.keys.toList(),
+  };
+
+  /// Users' app: settings and announcements set by the dashboard.
+  void applyPublic(Map<String, dynamic> j) {
+    state = state.copyWith(
+      settings: j['settings'] == null
+          ? state.settings
+          : AppSettings.fromJson(j['settings'] as Map<String, dynamic>),
+      announcements: [
+        for (final x in (j['announcements'] as List? ?? const []))
+          Announcement.fromJson(x as Map<String, dynamic>),
+      ],
+      suspendedAccounts: {
+        for (final id in (j['suspendedAccounts'] as List? ?? const []))
+          id as String: '',
+      },
     );
   }
 

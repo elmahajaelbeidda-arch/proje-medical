@@ -3,6 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'core/admin_provider.dart';
+import 'core/admin_remote.dart';
 import 'core/l10n.dart';
 import 'core/providers.dart';
 import 'core/router.dart';
@@ -19,7 +21,16 @@ Future<void> main() async {
       publishableKey: supabaseAnonKey,
     );
   }
-  runApp(const ProviderScope(child: ShifaApp()));
+  final container = ProviderContainer();
+  runApp(
+    UncontrolledProviderScope(container: container, child: const ShifaApp()),
+  );
+  // Sections on/off, association information and announcements set by the
+  // dashboard (server), applied as soon as they arrive.
+  final public = await AdminRemote.loadPublic();
+  if (public != null) {
+    container.read(adminProvider.notifier).applyPublic(public);
+  }
 }
 
 class ShifaApp extends ConsumerWidget {

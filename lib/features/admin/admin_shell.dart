@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin_provider.dart';
+import '../../core/admin_remote.dart';
+import 'admin_sync.dart';
 import '../../core/l10n.dart';
 import '../../core/theme.dart';
 import '../../models/admin.dart';
@@ -86,7 +88,46 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
   final _code = TextEditingController();
   bool _codeStep = false;
   bool _obscure = true;
+  bool _busy = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    // Server: reopen the session kept from an earlier visit.
+    if (AdminRemote.enabled) {
+      _busy = true;
+      const AdminRemote().resume().then((s) {
+        if (!mounted) return;
+        if (s != null) ref.read(adminProvider.notifier).openRemote(s);
+        setState(() => _busy = false);
+      });
+    }
+  }
+
+  Future<void> _remoteLogin() async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      final s = await const AdminRemote().signIn(_email.text, _password.text);
+      if (!mounted) return;
+      ref.read(adminProvider.notifier).openRemote(s);
+    } on RemoteLoginException catch (e) {
+      if (!mounted) return;
+      setState(
+        () => _error = switch (e.error) {
+          RemoteLoginError.wrongPassword => 'ad_login_wrong',
+          RemoteLoginError.notStaff => 'ad_login_not_staff',
+          RemoteLoginError.disabled => 'ad_login_disabled',
+          RemoteLoginError.network => 'ad_login_network',
+        },
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   static const _demo = [
     ('admin@shifa.mr', 'Admin@2026', AdminRole.superAdmin),
@@ -107,6 +148,10 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
   }
 
   void _login() {
+    if (AdminRemote.enabled) {
+      _remoteLogin();
+      return;
+    }
     final r = ref
         .read(adminProvider.notifier)
         .login(_email.text, _password.text);
@@ -209,8 +254,14 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
               const SizedBox(height: 14),
               FilledButton(
                 style: FilledButton.styleFrom(minimumSize: const Size(0, 50)),
-                onPressed: _codeStep ? _verify : _login,
-                child: Text(context.tr(_codeStep ? 'ad_verify' : 'login')),
+                onPressed: _busy ? null : (_codeStep ? _verify : _login),
+                child: _busy
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(context.tr(_codeStep ? 'ad_verify' : 'login')),
               ),
               if (_codeStep)
                 TextButton(
@@ -223,47 +274,48 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                   child: Text(context.tr('back')),
                 ),
               const SizedBox(height: 18),
-              // Demo accounts (one per role) to try the permissions.
-              Card(
-                color: AppColors.secondary,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        context.tr('ad_demo_accounts'),
-                        style: const TextStyle(fontWeight: FontWeight.w900),
-                      ),
-                      const SizedBox(height: 6),
-                      for (final d in _demo)
-                        InkWell(
-                          onTap: () => setState(() {
-                            _codeStep = false;
-                            _error = null;
-                            _email.text = d.$1;
-                            _password.text = d.$2;
-                          }),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(context.tr('ar_${d.$3.name}')),
-                                ),
-                                Text(
-                                  '${d.$1}  /  ${d.$2}',
-                                  textDirection: TextDirection.ltr,
-                                  style: text.bodySmall,
-                                ),
-                              ],
+              // Demo accounts (one per role), only without a server.
+              if (!AdminRemote.enabled)
+                Card(
+                  color: AppColors.secondary,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          context.tr('ad_demo_accounts'),
+                          style: const TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                        const SizedBox(height: 6),
+                        for (final d in _demo)
+                          InkWell(
+                            onTap: () => setState(() {
+                              _codeStep = false;
+                              _error = null;
+                              _email.text = d.$1;
+                              _password.text = d.$2;
+                            }),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(context.tr('ar_${d.$3.name}')),
+                                  ),
+                                  Text(
+                                    '${d.$1}  /  ${d.$2}',
+                                    textDirection: TextDirection.ltr,
+                                    style: text.bodySmall,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -328,9 +380,12 @@ class AdminShell extends ConsumerWidget {
         ),
         IconButton(
           tooltip: context.tr('logout'),
-          onPressed: () {
+          onPressed: () async {
+            // Save the last changes before leaving.
+            await AdminSync.flush(ref);
             ref.read(adminProvider.notifier).logout();
-            context.go('/admin');
+            if (AdminRemote.enabled) await const AdminRemote().signOut();
+            if (context.mounted) context.go('/admin');
           },
           icon: const Icon(LucideIcons.logOut),
         ),

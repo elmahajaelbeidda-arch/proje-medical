@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../core/admin_provider.dart';
+import '../../../core/admin_remote.dart';
 import '../../../core/l10n.dart';
 import '../../../core/search.dart';
 import '../../../core/theme.dart';
@@ -87,6 +88,7 @@ class _MyAccountState extends ConsumerState<_MyAccount> {
   @override
   Widget build(BuildContext context) {
     final me = ref.watch(adminProvider).me!;
+    final remote = ref.watch(adminProvider.select((s) => s.remote));
     final linked = me.totpSecret != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,90 +118,95 @@ class _MyAccountState extends ConsumerState<_MyAccount> {
             ],
           ),
         ),
-        Panel(
-          title: context.tr('ad_2fa'),
-          trailing: Pill(
-            label: context.tr(linked ? 'ad_2fa_app' : 'ad_2fa_demo'),
-            color: linked ? AppColors.success : AppColors.grey,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(context.tr('ad_2fa_hint')),
-              const SizedBox(height: 8),
-              if (_secret == null)
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    FilledButton.icon(
-                      onPressed: () =>
-                          setState(() => _secret = Totp.newSecret()),
-                      icon: const Icon(LucideIcons.qrCode),
-                      label: Text(
-                        context.tr(linked ? 'ad_2fa_relink' : 'ad_2fa_link'),
-                      ),
-                    ),
-                    if (linked)
-                      OutlinedButton.icon(
-                        onPressed: () {
-                          ref.read(adminProvider.notifier).disableMyTotp();
-                          snack(context, 'ad_done');
-                        },
-                        icon: const Icon(LucideIcons.smartphone),
-                        label: Text(context.tr('ad_2fa_disable')),
-                      ),
-                  ],
-                )
-              else ...[
-                Center(
-                  child: Container(
-                    color: AppColors.surface,
-                    padding: const EdgeInsets.all(8),
-                    child: QrImageView(
-                      data: Totp.uri(_secret!, me.email),
-                      size: 180,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                SelectableText(
-                  _secret!,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+        // Two-factor app: demo mode only for now (on the server, the
+        // account is protected by Supabase sign-in).
+        if (!remote)
+          Panel(
+            title: context.tr('ad_2fa'),
+            trailing: Pill(
+              label: context.tr(linked ? 'ad_2fa_app' : 'ad_2fa_demo'),
+              color: linked ? AppColors.success : AppColors.grey,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(context.tr('ad_2fa_hint')),
                 const SizedBox(height: 8),
-                TextField(
-                  controller: _code,
-                  keyboardType: TextInputType.number,
-                  textDirection: TextDirection.ltr,
-                  maxLength: 6,
-                  decoration: InputDecoration(labelText: context.tr('ad_code')),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    final ok = ref
-                        .read(adminProvider.notifier)
-                        .enableTotp(_secret!, _code.text);
-                    snack(
-                      context,
-                      ok ? 'ad_2fa_enabled' : 'ad_code_wrong',
-                      error: !ok,
-                    );
-                    if (ok) {
-                      setState(() => _secret = null);
-                      _code.clear();
-                    }
-                  },
-                  child: Text(context.tr('ad_verify')),
-                ),
+                if (_secret == null)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      FilledButton.icon(
+                        onPressed: () =>
+                            setState(() => _secret = Totp.newSecret()),
+                        icon: const Icon(LucideIcons.qrCode),
+                        label: Text(
+                          context.tr(linked ? 'ad_2fa_relink' : 'ad_2fa_link'),
+                        ),
+                      ),
+                      if (linked)
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            ref.read(adminProvider.notifier).disableMyTotp();
+                            snack(context, 'ad_done');
+                          },
+                          icon: const Icon(LucideIcons.smartphone),
+                          label: Text(context.tr('ad_2fa_disable')),
+                        ),
+                    ],
+                  )
+                else ...[
+                  Center(
+                    child: Container(
+                      color: AppColors.surface,
+                      padding: const EdgeInsets.all(8),
+                      child: QrImageView(
+                        data: Totp.uri(_secret!, me.email),
+                        size: 180,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  SelectableText(
+                    _secret!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _code,
+                    keyboardType: TextInputType.number,
+                    textDirection: TextDirection.ltr,
+                    maxLength: 6,
+                    decoration: InputDecoration(
+                      labelText: context.tr('ad_code'),
+                    ),
+                  ),
+                  FilledButton(
+                    onPressed: () {
+                      final ok = ref
+                          .read(adminProvider.notifier)
+                          .enableTotp(_secret!, _code.text);
+                      snack(
+                        context,
+                        ok ? 'ad_2fa_enabled' : 'ad_code_wrong',
+                        error: !ok,
+                      );
+                      if (ok) {
+                        setState(() => _secret = null);
+                        _code.clear();
+                      }
+                    },
+                    child: Text(context.tr('ad_verify')),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
         Panel(
           title: context.tr('ad_change_password'),
           child: Column(
@@ -225,10 +232,27 @@ class _MyAccountState extends ConsumerState<_MyAccount> {
               Align(
                 alignment: AlignmentDirectional.centerEnd,
                 child: FilledButton(
-                  onPressed: () {
-                    final ok = ref
-                        .read(adminProvider.notifier)
-                        .changeMyPassword(_current.text, _next.text);
+                  onPressed: () async {
+                    final bool ok;
+                    if (remote) {
+                      // Server account: the new password is set there.
+                      ok =
+                          _next.text.length >= 8 &&
+                          await const AdminRemote().changePassword(
+                            _current.text,
+                            _next.text,
+                          );
+                      if (ok) {
+                        ref
+                            .read(adminProvider.notifier)
+                            .record('au_password_changed', target: me.email);
+                      }
+                    } else {
+                      ok = ref
+                          .read(adminProvider.notifier)
+                          .changeMyPassword(_current.text, _next.text);
+                    }
+                    if (!context.mounted) return;
                     snack(context, ok ? 'ad_done' : 'ad_invalid', error: !ok);
                     if (ok) {
                       _current.clear();
@@ -317,11 +341,24 @@ class _Admins extends ConsumerWidget {
                     ),
                     if (a.id != state.me!.id)
                       TextButton.icon(
-                        onPressed: () => guarded(
-                          context,
-                          () => notifier.setAdminActive(a.id, !a.active),
-                          ok: 'ad_done',
-                        ),
+                        onPressed: () => state.remote
+                            ? _remote(
+                                context,
+                                ref,
+                                () => const AdminRemote().setStaffActive(
+                                  a.id,
+                                  !a.active,
+                                ),
+                                a.active
+                                    ? 'au_admin_disabled'
+                                    : 'au_admin_enabled',
+                                a.email,
+                              )
+                            : guarded(
+                                context,
+                                () => notifier.setAdminActive(a.id, !a.active),
+                                ok: 'ad_done',
+                              ),
                         icon: Icon(
                           a.active ? LucideIcons.ban : LucideIcons.circleCheck,
                         ),
@@ -356,6 +393,7 @@ class _Admins extends ConsumerWidget {
     final name = TextEditingController(text: existing?.name ?? '');
     final email = TextEditingController(text: existing?.email ?? '');
     final password = TextEditingController();
+    final remote = ref.read(adminProvider).remote;
     var role = existing?.role ?? AdminRole.communications;
     var perms = {...(existing?.permissions ?? rolePermissions(role))};
     final ok = await showDialog<bool>(
@@ -383,24 +421,34 @@ class _Admins extends ConsumerWidget {
                       textDirection: TextDirection.ltr,
                       decoration: InputDecoration(labelText: ctx.tr('email')),
                     ),
-                    TextField(
-                      controller: password,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: ctx.tr('password'),
-                        helperText: ctx.tr('ad_password_rule'),
+                    if (remote)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          ctx.tr('ad_remote_new_admin_hint'),
+                          style: Theme.of(ctx).textTheme.bodySmall,
+                        ),
+                      )
+                    else
+                      TextField(
+                        controller: password,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: ctx.tr('password'),
+                          helperText: ctx.tr('ad_password_rule'),
+                        ),
                       ),
-                    ),
                   ],
                   DropdownButtonFormField<AdminRole>(
                     initialValue: role,
                     decoration: InputDecoration(labelText: ctx.tr('ad_role')),
                     items: [
                       for (final r in AdminRole.values)
-                        DropdownMenuItem(
-                          value: r,
-                          child: Text(ctx.tr('ar_${r.name}')),
-                        ),
+                        if (!remote || r != AdminRole.custom)
+                          DropdownMenuItem(
+                            value: r,
+                            child: Text(ctx.tr('ar_${r.name}')),
+                          ),
                     ],
                     onChanged: (v) => setState(() {
                       role = v ?? role;
@@ -410,17 +458,19 @@ class _Admins extends ConsumerWidget {
                     }),
                   ),
                   const SizedBox(height: 6),
+                  // On the server each member has a role (its permissions).
                   for (final p in AdminPermission.values)
-                    CheckboxListTile(
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      value: perms.contains(p),
-                      onChanged: (v) => setState(() {
-                        role = AdminRole.custom;
-                        v == true ? perms.add(p) : perms.remove(p);
-                      }),
-                      title: Text(ctx.tr('ap_${p.name}')),
-                    ),
+                    if (!remote)
+                      CheckboxListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        value: perms.contains(p),
+                        onChanged: (v) => setState(() {
+                          role = AdminRole.custom;
+                          v == true ? perms.add(p) : perms.remove(p);
+                        }),
+                        title: Text(ctx.tr('ap_${p.name}')),
+                      ),
                 ],
               ),
             ),
@@ -443,6 +493,21 @@ class _Admins extends ConsumerWidget {
       c.dispose();
     }
     if (ok != true || !context.mounted) return;
+    if (remote) {
+      final mail = existing?.email ?? e.trim();
+      await _remote(
+        context,
+        ref,
+        () => const AdminRemote().grantStaff(
+          mail,
+          existing?.name ?? n.trim(),
+          role,
+        ),
+        existing == null ? 'au_admin_created' : 'au_permissions_changed',
+        mail,
+      );
+      return;
+    }
     final notifier = ref.read(adminProvider.notifier);
     guarded(context, () {
       if (existing == null) {
@@ -457,6 +522,27 @@ class _Admins extends ConsumerWidget {
         notifier.updatePermissions(existing.id, role, perms);
       }
     }, ok: 'ad_done');
+  }
+}
+
+/// Runs a change of the team on the server, then reloads the team list.
+Future<void> _remote(
+  BuildContext context,
+  WidgetRef ref,
+  Future<void> Function() action,
+  String auditAction,
+  String target,
+) async {
+  final n = ref.read(adminProvider.notifier);
+  try {
+    n.authorize(AdminPermission.manageAdmins);
+    await action();
+    final staff = await const AdminRemote().listStaff();
+    n.setStaff([for (final r in staff) r.toAccount()]);
+    n.record(auditAction, target: target);
+    if (context.mounted) snack(context, 'ad_done');
+  } catch (_) {
+    if (context.mounted) snack(context, 'ad_remote_admin_failed', error: true);
   }
 }
 
