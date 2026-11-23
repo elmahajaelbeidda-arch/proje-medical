@@ -52,7 +52,7 @@ class VerseText extends StatelessWidget {
           TextSpan(text: '﴿', style: bracket),
           TextSpan(
             text: inner,
-            style: style.copyWith(fontFamily: 'ElMessiri'),
+            style: style.copyWith(fontFamily: AppFonts.brand),
           ),
           TextSpan(text: '﴾', style: bracket),
         ],

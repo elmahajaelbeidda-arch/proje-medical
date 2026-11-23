@@ -13,6 +13,8 @@ TextStyle brandNameStyle(
 }) {
   final base = Theme.of(context).textTheme.headlineLarge ?? const TextStyle();
   return base.copyWith(
+    // The name keeps its identity font (El Messiri).
+    fontFamily: AppFonts.brand,
     fontWeight: FontWeight.w800,
     fontSize: fontSize,
     height: 1.7,

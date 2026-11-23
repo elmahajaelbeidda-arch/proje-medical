@@ -50,17 +50,18 @@ class Palette {
       reviewingText;
 
   static const light = Palette(
-    primary: Color(0xFF2F6B55),
+    // Same green and turquoise, a little deeper and clearer (not faded).
+    primary: Color(0xFF1F6B52),
     onPrimary: Color(0xFFFFFFFF),
-    primaryDark: Color(0xFF234F40),
-    turquoise: Color(0xFF4A8A90),
-    turquoiseText: Color(0xFF447C80), // deeper, for small text
-    secondary: Color(0xFFE6F0EB),
-    background: Color(0xFFF6F8F7),
+    primaryDark: Color(0xFF16523F),
+    turquoise: Color(0xFF23898F),
+    turquoiseText: Color(0xFF19737A), // deeper, for small text
+    secondary: Color(0xFFE4F1EB),
+    background: Color(0xFFF5F8F7),
     surface: Color(0xFFFFFFFF),
-    text: Color(0xFF1F2A26),
-    grey: Color(0xFF6B7A74),
-    border: Color(0xFFE3E8E6),
+    text: Color(0xFF17231F),
+    grey: Color(0xFF5F6E68),
+    border: Color(0xFFE0E7E4),
     navInactive: Color(0xFF9AA6A1),
     emergency: Color(0xFFD9534F),
     emergencySoft: Color(0xFFFCEBEA),
@@ -181,7 +182,7 @@ class AppColors {
       return (la > lb ? la + .05 : lb + .05) / (la > lb ? lb + .05 : la + .05);
     }
 
-    final dark = Color(0xFF1F2A26);
+    final dark = Color(0xFF17231F);
     return contrast(background, Colors.white) >= contrast(background, dark)
         ? Colors.white
         : dark;
@@ -228,12 +229,13 @@ class AppTheme {
           outlineVariant: p.border,
           error: p.emergencyText,
         );
-    // El Messiri for the whole app (Arabic, French and English), bundled in
-    // assets/fonts with its four weights, so it works offline.
+    // IBM Plex Sans Arabic for the interface (Arabic, French and English):
+    // modern and very readable. El Messiri stays for the app's name and the
+    // verse (identity). Both are bundled in assets/fonts (offline).
     final base = ThemeData(
       colorScheme: scheme,
       useMaterial3: true,
-      fontFamily: 'ElMessiri',
+      fontFamily: AppFonts.ui,
     );
     final f = base.textTheme;
     // Type scale of the brief: 22 large title, 18 card title, 15 body,
@@ -374,7 +376,7 @@ class AppTheme {
               textStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                fontFamily: 'ElMessiri',
+                fontFamily: AppFonts.ui,
               ),
             ).copyWith(
               overlayColor: WidgetStatePropertyAll(
@@ -391,7 +393,7 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'ElMessiri',
+            fontFamily: AppFonts.ui,
           ),
         ),
       ),
@@ -401,7 +403,7 @@ class AppTheme {
           minimumSize: const Size(44, 44),
           textStyle: const TextStyle(
             fontWeight: FontWeight.w700,
-            fontFamily: 'ElMessiri',
+            fontFamily: AppFonts.ui,
           ),
         ),
       ),
@@ -422,13 +424,13 @@ class AppTheme {
         side: BorderSide(color: p.border),
         labelStyle: TextStyle(
           color: p.text,
-          fontFamily: 'ElMessiri',
+          fontFamily: AppFonts.ui,
           fontSize: 14,
         ),
         secondaryLabelStyle: TextStyle(
           color: p.primary,
           fontWeight: FontWeight.w700,
-          fontFamily: 'ElMessiri',
+          fontFamily: AppFonts.ui,
         ),
         shape: RoundedRectangleBorder(borderRadius: button),
       ),
@@ -471,7 +473,7 @@ class AppTheme {
         backgroundColor: p.text,
         contentTextStyle: TextStyle(
           color: p.background,
-          fontFamily: 'ElMessiri',
+          fontFamily: AppFonts.ui,
           fontSize: 15,
         ),
         actionTextColor: p.secondary,
@@ -514,7 +516,7 @@ class AppTheme {
         labelTextStyle: WidgetStateProperty.resolveWith(
           (st) => TextStyle(
             fontSize: TextSize.tab,
-            fontFamily: 'ElMessiri',
+            fontFamily: AppFonts.ui,
             color: st.contains(WidgetState.selected) ? p.primary : p.grey,
             fontWeight: st.contains(WidgetState.selected)
                 ? FontWeight.w700
@@ -543,6 +545,12 @@ class AppTheme {
 // ---------------------------------------------------------------------------
 // Design tokens: spacing, radii, type and motion, used by every screen.
 // ---------------------------------------------------------------------------
+
+/// Fonts: [ui] for the interface, [brand] for the app's name and verse.
+abstract final class AppFonts {
+  static const ui = 'Plex';
+  static const brand = 'ElMessiri';
+}
 
 /// Spacing on a 4 / 8 grid.
 abstract final class Space {

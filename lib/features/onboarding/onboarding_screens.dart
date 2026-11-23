@@ -1,11 +1,11 @@
+export 'welcome_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../widgets/visit_counter.dart';
 import '../patient/home_tab.dart' show VerseText;
-import '../pulse/pulse_screens.dart' show PulseEntryCard;
 
 import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
@@ -564,86 +564,6 @@ class _ShortPulsePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _ShortPulsePainter o) => o.color != color;
-}
-
-// ---------------------------------------------------------------------------
-// First screen: sign in or create an account
-// ---------------------------------------------------------------------------
-
-class WelcomeScreen extends ConsumerWidget {
-  const WelcomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
-          children: [
-            Center(
-              child: Container(
-                width: 150,
-                height: 150,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.secondary,
-                  shape: BoxShape.circle,
-                ),
-                child: const AppLogo(size: 92),
-              ),
-            ),
-            const SizedBox(height: 16),
-            BrandName(
-              fontSize: 30,
-              color: AppColors.primary,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 6),
-            VerseText(
-              style: TextStyle(
-                fontSize: 15,
-                height: 1.7,
-                color: AppColors.turquoiseText,
-              ),
-            ),
-            const SizedBox(height: 28),
-            FilledButton.icon(
-              onPressed: () => context.push('/login'),
-              icon: const Icon(LucideIcons.logIn),
-              label: Text(context.tr('login')),
-            ),
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: () => context.push('/role'),
-              icon: const Icon(LucideIcons.userPlus),
-              label: Text(context.tr('create_account')),
-            ),
-            const SizedBox(height: 24),
-            // Open to visitors: no account needed to read the news.
-            const PulseEntryCard(),
-            const SizedBox(height: 16),
-            const VisitorStatsCard(),
-            const SizedBox(height: 8),
-            TextButton.icon(
-              onPressed: () => context.push('/about'),
-              icon: const Icon(LucideIcons.users),
-              label: Text(context.tr('about_association')),
-            ),
-            TextButton.icon(
-              onPressed: () => context.push('/verify-card'),
-              icon: const Icon(LucideIcons.scanQrCode),
-              label: Text(context.tr('mc_verify_link')),
-            ),
-            TextButton.icon(
-              onPressed: () => context.push('/disclaimer'),
-              icon: const Icon(LucideIcons.info),
-              label: Text(context.tr('disclaimer')),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 // ---------------------------------------------------------------------------

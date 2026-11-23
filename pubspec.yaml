@@ -98,6 +98,16 @@ flutter:
           weight: 600
         - asset: assets/fonts/ElMessiri-Bold.ttf
           weight: 700
+    # Interface font (Arabic + Latin), SIL OFL 1.1.
+    - family: Plex
+      fonts:
+        - asset: assets/fonts/IBMPlexSansArabic-Regular.ttf
+        - asset: assets/fonts/IBMPlexSansArabic-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/IBMPlexSansArabic-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/IBMPlexSansArabic-Bold.ttf
+          weight: 700
     # Only the two ornate brackets ﴿ ﴾ from Amiri (SIL OFL 1.1).
     - family: AmiriBrackets
       fonts:
