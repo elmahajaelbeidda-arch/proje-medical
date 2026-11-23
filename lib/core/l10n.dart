@@ -2036,7 +2036,10 @@ class AppStrings {
       'تتصفح كزائر. سجّل الدخول للإعجاب والتعليق ومشاركة قصتك.',
       'Vous naviguez en visiteur. Connectez-vous pour aimer, commenter et partager votre histoire.',
     ],
-    'pl_join_title': ['انضم إلى أخبار وأنشطة شفاء', 'Rejoignez Actualités et activités de Chifa'],
+    'pl_join_title': [
+      'انضم إلى أخبار وأنشطة شفاء',
+      'Rejoignez Actualités et activités de Chifa',
+    ],
     'pl_join_body': [
       'التصفح متاح للجميع. أما الإعجاب والتعليق وطرح الأسئلة ومشاركة القصص فتحتاج إلى تسجيل الدخول.',
       'La lecture est ouverte à tous. Pour aimer, commenter, poser une question ou partager une histoire, connectez-vous.',
@@ -2508,6 +2511,13 @@ class AppStrings {
       'De l’association Aoun wa Sanad… des soins qui vous rejoignent où que vous soyez.',
     ],
     'learn_more': ['اعرف المزيد', 'En savoir plus'],
+    'dl_title': ['حمّل تطبيق شِفاءٌ لِلنّاس', 'Téléchargez l’application'],
+    'dl_sub': ['مجاني لهواتف أندرويد', 'Gratuite pour Android'],
+    'dl_android': ['تحميل لأندرويد', 'Télécharger pour Android'],
+    'dl_iphone': [
+      'على الآيفون: افتح هذا الرابط في Safari ثم اختر «إضافة إلى الشاشة الرئيسية».',
+      'Sur iPhone : ouvrez ce lien dans Safari puis « Sur l’écran d’accueil ».',
+    ],
     'about_app_title': ['عن التطبيق', 'À propos de l’application'],
     'home_last_consults': ['آخر استشاراتي', 'Mes dernières consultations'],
     'home_more_services': ['خدمات أخرى', 'Autres services'],

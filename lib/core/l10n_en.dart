@@ -1415,6 +1415,11 @@ const Map<String, String> enStrings = {
   'qs_emergency': 'Emergency',
   'about_short': 'From the Aoun wa Sanad Charity Association… health care that reaches you wherever you are.',
   'learn_more': 'Learn more',
+  'dl_title': 'Download the Chifa Linnas app',
+  'dl_sub': 'Free for Android phones',
+  'dl_android': 'Download for Android',
+  'dl_iphone':
+      'On iPhone: open this link in Safari, then choose “Add to Home Screen”.',
   'about_app_title': 'About the app',
   'home_last_consults': 'My latest consultations',
   'home_more_services': 'More services',

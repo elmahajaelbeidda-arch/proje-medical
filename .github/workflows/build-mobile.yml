@@ -82,6 +82,36 @@ jobs:
           path: dist/
           retention-days: 30
 
+  # Public download link used by the «تحميل لأندرويد» button of the web app:
+  # https://github.com/<owner>/<repo>/releases/download/android-latest/shifa-linnas.apk
+  # Updated only when the emulator test passed.
+  publish-android:
+    name: Publish Android download link
+    needs: [android, android-device-test]
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: shifa-linnas-android
+          path: dist
+      - name: Update the «android-latest» release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          NOTES="آخر نسخة من تطبيق «شِفاءٌ لِلنّاس» لأندرويد — $(date -u +%Y-%m-%d) — ${GITHUB_SHA::7}"
+          if gh release view android-latest >/dev/null 2>&1; then
+            gh release edit android-latest --title "شِفاءٌ لِلنّاس — أندرويد" --notes "$NOTES"
+          else
+            gh release create android-latest --target "$GITHUB_SHA" \
+              --title "شِفاءٌ لِلنّاس — أندرويد" --notes "$NOTES"
+          fi
+          gh release upload android-latest dist/shifa-linnas.apk --clobber
+
   android-device-test:
     name: Android emulator test
     runs-on: ubuntu-latest

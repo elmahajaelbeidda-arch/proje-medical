@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -7,6 +8,7 @@ import '../../core/admin_provider.dart';
 import '../../core/app_info.dart';
 import '../../core/l10n.dart';
 import '../../core/theme.dart';
+import '../../widgets/app_download.dart';
 import '../../widgets/brand.dart';
 import '../patient/home_tab.dart' show VerseText;
 
@@ -98,6 +100,7 @@ class AboutAppScreen extends ConsumerWidget {
               ],
             ),
           ),
+          if (kIsWeb) ...[const SizedBox(height: 16), const AppDownloadCard()],
           const SizedBox(height: 24),
           Text(
             '${context.tr('version')} $appVersion',
