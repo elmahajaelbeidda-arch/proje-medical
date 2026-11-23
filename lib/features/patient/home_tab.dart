@@ -257,16 +257,29 @@ class _TopBar extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${context.tr('hello')} ${auth.displayName.split(' ').first} 👋',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.text,
-                    height: 1.3,
-                  ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        '${context.tr('hello')} ${auth.displayName.split(' ').first}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.text,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    // Greeting hand in the app's colours (no yellow emoji).
+                    Icon(
+                      LucideIcons.hand,
+                      size: 20,
+                      color: AppColors.turquoise,
+                    ),
+                  ],
                 ),
                 Text(
                   context.tr('how_feel'),
