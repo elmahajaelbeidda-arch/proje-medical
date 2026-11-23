@@ -95,16 +95,26 @@ class Attachment {
   final Uint8List? bytes;
   final int? size;
 
+  /// Where the file is kept on the server (opened with a short-lived link).
+  final String? remotePath;
+
   const Attachment(
     this.name,
     this.kind, {
     this.category = AttachmentCategory.lab,
     this.bytes,
     this.size,
+    this.remotePath,
   });
 
-  Attachment withCategory(AttachmentCategory c) =>
-      Attachment(name, kind, category: c, bytes: bytes, size: size);
+  Attachment withCategory(AttachmentCategory c) => Attachment(
+    name,
+    kind,
+    category: c,
+    bytes: bytes,
+    size: size,
+    remotePath: remotePath,
+  );
 }
 
 /// A recorded voice message. [source] is a file path (mobile) or a blob URL
@@ -176,6 +186,9 @@ class Consultation {
   final List<ChatMessage> messages;
   final int? rating;
 
+  /// Name of the doctor who accepted the case (server accounts).
+  final String? doctorName;
+
   const Consultation({
     required this.id,
     required this.patientId,
@@ -197,6 +210,7 @@ class Consultation {
     this.reply,
     this.messages = const [],
     this.rating,
+    this.doctorName,
   });
 
   String get displayPatientName {
@@ -218,6 +232,7 @@ class Consultation {
     DoctorReply? reply,
     List<ChatMessage>? messages,
     int? rating,
+    String? doctorName,
   }) {
     return Consultation(
       id: id,
@@ -240,6 +255,7 @@ class Consultation {
       reply: reply ?? this.reply,
       messages: messages ?? this.messages,
       rating: rating ?? this.rating,
+      doctorName: doctorName ?? this.doctorName,
     );
   }
 }

@@ -90,7 +90,7 @@ class PatientHomeTab extends ConsumerWidget {
     final settings = ref.watch(appSettingsProvider);
     final mine = ref
         .watch(consultationsProvider)
-        .where((c) => c.patientId == MockData.currentPatientId)
+        .where((c) => c.patientId == CurrentAccount.patientId)
         .toList();
 
     return SafeArea(

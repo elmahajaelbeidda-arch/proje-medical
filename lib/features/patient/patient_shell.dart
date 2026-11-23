@@ -98,7 +98,7 @@ class MyConsultationsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mine = ref
         .watch(consultationsProvider)
-        .where((c) => c.patientId == MockData.currentPatientId)
+        .where((c) => c.patientId == CurrentAccount.patientId)
         .toList();
     final active = mine.where((c) => c.isActive).toList();
     final done = mine.where((c) => !c.isActive).toList();

@@ -4,11 +4,13 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
+import '../core/consultations_remote.dart';
 import '../core/l10n.dart';
 import '../core/theme.dart';
 import '../models/models.dart';
@@ -223,10 +225,27 @@ void showAttachmentPreview(BuildContext context, Attachment a) {
                       children: [
                         AttachmentThumb(a, size: 96),
                         const SizedBox(height: 16),
-                        Text(
-                          ctx.tr('preview_placeholder'),
-                          textAlign: TextAlign.center,
-                        ),
+                        if (a.remotePath != null)
+                          // Server file: opened with a short-lived link.
+                          FilledButton.icon(
+                            onPressed: () async {
+                              final url = await const ConsultationsRemote()
+                                  .fileUrl(a.remotePath!);
+                              if (url != null) {
+                                await launchUrl(
+                                  Uri.parse(url),
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              }
+                            },
+                            icon: const Icon(LucideIcons.externalLink),
+                            label: Text(ctx.tr('open_file')),
+                          )
+                        else
+                          Text(
+                            ctx.tr('preview_placeholder'),
+                            textAlign: TextAlign.center,
+                          ),
                       ],
                     ),
                   ),

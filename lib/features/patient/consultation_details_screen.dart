@@ -8,7 +8,6 @@ import '../../core/summons_provider.dart';
 import '../summons/summons_screens.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
-import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
@@ -30,7 +29,7 @@ class ConsultationDetailsScreen extends ConsumerWidget {
       );
     }
     final sp = Specialty.byId(c.specialtyId);
-    final doctor = MockData.doctorById(c.doctorId);
+    final doctor = consultationDoctor(c);
     final text = Theme.of(context).textTheme;
 
     return Scaffold(

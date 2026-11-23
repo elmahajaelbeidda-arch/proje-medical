@@ -107,7 +107,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final isDoctor = ref.watch(authProvider).isDoctor;
     if (c == null) return Scaffold(appBar: AppBar());
 
-    final doctor = MockData.doctorById(c.doctorId);
+    final doctor = consultationDoctor(c);
     final otherName = isDoctor ? c.displayPatientName : (doctor?.name ?? '');
     final messages = c.messages.reversed.toList();
     // Calls: the assigned doctor starts them; the patient joins a call the

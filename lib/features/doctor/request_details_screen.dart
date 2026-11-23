@@ -11,7 +11,6 @@ import '../../models/summons.dart';
 import '../../core/summons_provider.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
-import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../models/registration.dart';
 import '../../widgets/common.dart';
@@ -35,7 +34,7 @@ class RequestDetailsScreen extends ConsumerWidget {
       );
     }
     final sp = Specialty.byId(c.specialtyId);
-    final isMine = c.doctorId == MockData.currentDoctorId;
+    final isMine = c.doctorId == CurrentAccount.doctorId;
     final takenByOther = c.doctorId != null && !isMine;
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
@@ -167,7 +166,7 @@ class RequestDetailsScreen extends ConsumerWidget {
               onPressed: () {
                 ref
                     .read(consultationsProvider.notifier)
-                    .accept(c.id, MockData.currentDoctorId);
+                    .accept(c.id, CurrentAccount.doctorId);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(context.tr('case_accepted'))),
                 );
@@ -344,7 +343,7 @@ class _SummonsAction extends ConsumerWidget {
     final c = consultation;
     ref.watch(summonsProvider);
     final existing = ref.read(summonsProvider.notifier).bySource(c.id);
-    final me = MockData.doctorById(MockData.currentDoctorId)!;
+    final me = CurrentAccount.doctor;
 
     Future<void> issue() async {
       final draft = await showSummonsForm(

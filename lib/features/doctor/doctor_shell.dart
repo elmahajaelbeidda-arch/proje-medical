@@ -7,14 +7,13 @@ import '../../core/l10n.dart';
 import '../cards/member_card_screens.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
-import '../../data/mock_data.dart';
 import '../../models/models.dart';
 import '../../core/search.dart';
 import '../../widgets/common.dart';
 import '../../widgets/shifa_ui.dart';
 import '../../widgets/voice_search.dart';
 
-Doctor get _me => MockData.doctorById(MockData.currentDoctorId)!;
+Doctor get _me => CurrentAccount.doctor;
 
 class DoctorShell extends StatefulWidget {
   const DoctorShell({super.key});
@@ -108,7 +107,7 @@ class DoctorHomeTab extends ConsumerWidget {
     final helped = all
         .where(
           (c) =>
-              c.doctorId == MockData.currentDoctorId &&
+              c.doctorId == CurrentAccount.doctorId &&
               c.status == ConsultationStatus.answered,
         )
         .length;
@@ -411,7 +410,7 @@ class MyCasesTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mine = ref
         .watch(consultationsProvider)
-        .where((c) => c.doctorId == MockData.currentDoctorId)
+        .where((c) => c.doctorId == CurrentAccount.doctorId)
         .toList();
     final progress = mine
         .where((c) => c.status == ConsultationStatus.accepted)

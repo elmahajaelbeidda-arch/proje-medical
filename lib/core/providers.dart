@@ -5,6 +5,7 @@ import '../data/mock_data.dart';
 import '../models/models.dart';
 import '../models/registration.dart';
 import 'accounts_remote.dart';
+import 'consultations_remote.dart';
 import 'admin_provider.dart';
 
 // ---------------------------------------------------------------------------
@@ -95,9 +96,42 @@ class AuthState {
   String get userId => isDoctor ? doctorId : MockData.currentPatientId;
 }
 
+/// Who is signed in, for the parts of the app linked to the server: the
+/// account's id there (else the demo ids). Kept up to date by AuthNotifier.
+abstract final class CurrentAccount {
+  static String patientId = MockData.currentPatientId;
+  static String doctorId = MockData.currentDoctorId;
+
+  /// The signed-in doctor (a server account has no demo profile).
+  static Doctor doctor = MockData.doctorById(MockData.currentDoctorId)!;
+
+  static void update(AuthState a) {
+    final serverId = AccountsRemote.enabled ? a.registrationId : null;
+    patientId = serverId ?? MockData.currentPatientId;
+    doctorId = serverId ?? a.doctorId;
+    doctor = serverId == null || !a.isDoctor
+        ? (MockData.doctorById(a.doctorId) ??
+              MockData.doctorById(MockData.currentDoctorId)!)
+        : Doctor(
+            id: serverId,
+            name: a.name,
+            specialtyId: a.specialtyId ?? 'general',
+            yearsOfExperience: 0,
+            rating: 0,
+            consultationsCount: 0,
+            city: '',
+            cityFr: '',
+            bio: '',
+          );
+  }
+}
+
 class AuthNotifier extends Notifier<AuthState> {
   @override
-  AuthState build() => const AuthState();
+  AuthState build() {
+    listenSelf((_, next) => CurrentAccount.update(next));
+    return const AuthState();
+  }
 
   void selectRole(UserRole role) =>
       state = AuthState(role: role, name: state.name);
@@ -203,14 +237,24 @@ final doctorAvailableProvider = NotifierProvider<AvailabilityNotifier, bool>(
 
 class HealthProfileNotifier extends Notifier<HealthProfile> {
   @override
-  HealthProfile build() => const HealthProfile(
-    age: 54,
-    male: true,
-    bloodType: 'O+',
-    chronicDiseases: {'cd_diabetes'},
-    allergies: '',
-    medications: 'Metformin 850mg',
-  );
+  HealthProfile build() => AccountsRemote.enabled
+      // Real accounts start empty: the patient fills their health profile.
+      ? const HealthProfile(
+          age: 0,
+          male: true,
+          bloodType: '',
+          chronicDiseases: {},
+          allergies: '',
+          medications: '',
+        )
+      : const HealthProfile(
+          age: 54,
+          male: true,
+          bloodType: 'O+',
+          chronicDiseases: {'cd_diabetes'},
+          allergies: '',
+          medications: 'Metformin 850mg',
+        );
 
   void update(HealthProfile profile) => state = profile;
 }
@@ -225,8 +269,36 @@ final healthProfileProvider =
 // ---------------------------------------------------------------------------
 
 class ConsultationsNotifier extends Notifier<List<Consultation>> {
+  /// Server mode: the list comes from the server, live.
+  bool get _remote =>
+      ConsultationsRemote.enabled &&
+      ref.read(authProvider).registrationId != null;
+
   @override
-  List<Consultation> build() => MockData.consultations();
+  List<Consultation> build() {
+    if (!ConsultationsRemote.enabled) return MockData.consultations();
+    final account = ref.watch(
+      authProvider.select((a) => a.loggedIn ? a.registrationId : null),
+    );
+    // The dashboard team sees every consultation (server rules).
+    final team = ref.watch(
+      adminProvider.select((s) => s.remote && s.me != null),
+    );
+    if (account == null && !team) return const [];
+    final sub = const ConsultationsRemote().watch().listen(
+      (list) => state = list,
+      onError: (_) {},
+    );
+    ref.onDispose(sub.cancel);
+    return const [];
+  }
+
+  /// Runs a change on the server; on failure the list is put back.
+  void _push(Future<void> Function() action, List<Consultation> before) {
+    action().catchError((Object _) {
+      if (ref.mounted) state = before;
+    });
+  }
 
   Consultation? byId(String id) {
     for (final c in state) {
@@ -247,11 +319,13 @@ class ConsultationsNotifier extends Notifier<List<Consultation>> {
     required String patientName,
     required HealthProfile profile,
   }) {
-    final id = 'c${DateTime.now().millisecondsSinceEpoch}';
+    final remote = _remote;
+    final id = remote ? newUuid() : 'c${DateTime.now().millisecondsSinceEpoch}';
+    final before = state;
     state = [
       Consultation(
         id: id,
-        patientId: MockData.currentPatientId,
+        patientId: CurrentAccount.patientId,
         patientName: patientName,
         patientAge: profile.age,
         patientMale: profile.male,
@@ -268,6 +342,10 @@ class ConsultationsNotifier extends Notifier<List<Consultation>> {
       ),
       ...state,
     ];
+    if (remote) {
+      final c = state.first;
+      _push(() => const ConsultationsRemote().create(c), before);
+    }
     return id;
   }
 
@@ -275,21 +353,63 @@ class ConsultationsNotifier extends Notifier<List<Consultation>> {
     state = [for (final c in state) c.id == id ? change(c) : c];
   }
 
-  void accept(String id, String doctorId) => _update(
-    id,
-    (c) => c.copyWith(status: ConsultationStatus.accepted, doctorId: doctorId),
+  void accept(String id, String doctorId) {
+    final before = state;
+    _update(
+      id,
+      (c) => c.copyWith(
+        status: ConsultationStatus.accepted,
+        doctorId: doctorId,
+        doctorName: ref.read(authProvider).displayName,
+      ),
+    );
+    if (_remote) _push(() => const ConsultationsRemote().accept(id), before);
+  }
+
+  void reply(String id, DoctorReply reply) {
+    final before = state;
+    _update(
+      id,
+      (c) => c.copyWith(status: ConsultationStatus.answered, reply: reply),
+    );
+    if (_remote) {
+      _push(() => const ConsultationsRemote().reply(id, reply), before);
+    }
+  }
+
+  void sendMessage(String id, ChatMessage message) {
+    final before = state;
+    _update(id, (c) => c.copyWith(messages: [...c.messages, message]));
+    if (_remote) {
+      _push(() => const ConsultationsRemote().sendMessage(id, message), before);
+    }
+  }
+
+  void rate(String id, int rating) {
+    final before = state;
+    _update(id, (c) => c.copyWith(rating: rating));
+    if (_remote) {
+      _push(() => const ConsultationsRemote().rate(id, rating), before);
+    }
+  }
+}
+
+/// Doctor of a consultation: a demo profile, or (server accounts) a short
+/// profile made from the name saved when the doctor accepted the case.
+Doctor? consultationDoctor(Consultation c) {
+  final demo = MockData.doctorById(c.doctorId);
+  if (demo != null || c.doctorId == null) return demo;
+  return Doctor(
+    id: c.doctorId!,
+    name: c.doctorName ?? '',
+    specialtyId: c.specialtyId,
+    yearsOfExperience: 0,
+    rating: 0,
+    consultationsCount: 0,
+    city: '',
+    cityFr: '',
+    bio: '',
   );
-
-  void reply(String id, DoctorReply reply) => _update(
-    id,
-    (c) => c.copyWith(status: ConsultationStatus.answered, reply: reply),
-  );
-
-  void sendMessage(String id, ChatMessage message) =>
-      _update(id, (c) => c.copyWith(messages: [...c.messages, message]));
-
-  void rate(String id, int rating) =>
-      _update(id, (c) => c.copyWith(rating: rating));
 }
 
 final consultationsProvider =

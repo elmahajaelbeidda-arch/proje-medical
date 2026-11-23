@@ -1764,6 +1764,7 @@ class AppStrings {
     'phone': ['رقم الهاتف', 'Téléphone'],
     'no_account': ['ليس لديك حساب؟', 'Pas de compte ?'],
     'have_account': ['لديك حساب؟', 'Déjà un compte ?'],
+    'open_file': ['فتح الملف', 'Ouvrir le fichier'],
     'link_verify_card': ['التحقق من البطاقة', 'Vérifier une carte'],
     'link_disclaimer': ['إخلاء المسؤولية', 'Avertissement'],
     'account_created': [
