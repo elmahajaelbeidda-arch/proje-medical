@@ -1421,8 +1421,6 @@ const Map<String, String> enStrings = {
   'demo_accounts_hint':
       'Demo accounts (any password) — removed once the server is linked',
   'psych_doctor_short': 'Psychiatrist',
-  'dl_old_phones': 'Older phone and the app will not install? Get the version for older phones',
-  'dl_android': 'Get the Android app',
   'about_app_title': 'About the app',
   'home_last_consults': 'My latest consultations',
   'home_more_services': 'More services',

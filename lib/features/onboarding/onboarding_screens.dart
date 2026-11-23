@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +13,6 @@ import '../../models/admin.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
-import '../../widgets/app_download.dart';
 import '../../widgets/brand.dart';
 import '../../widgets/ui_kit.dart' show FadeSlideIn;
 
@@ -620,8 +618,6 @@ class WelcomeScreen extends ConsumerWidget {
               icon: const Icon(LucideIcons.userPlus),
               label: Text(context.tr('create_account')),
             ),
-            // Web on Android / computers: small link to install the app.
-            if (kIsWeb) const AppDownloadCard(),
             const SizedBox(height: 24),
             // Open to visitors: no account needed to read the news.
             const PulseEntryCard(),
