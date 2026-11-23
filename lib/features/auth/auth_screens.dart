@@ -19,7 +19,6 @@ import '../../models/registration.dart';
 import '../../widgets/brand.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media.dart';
-import '../onboarding/onboarding_screens.dart';
 
 /// Accounts suspended by the administration cannot sign in.
 bool _blockedIfSuspended(BuildContext context, WidgetRef ref) {
@@ -210,9 +209,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Center(child: AppLogo(size: 72)),
-                const Center(child: BrandName(fontSize: 30)),
-                const SizedBox(height: 20),
+                const Center(child: LogoDisc(size: 88)),
+                const SizedBox(height: Space.xs),
+                Center(
+                  child: BrandName(fontSize: 28, color: AppColors.primary),
+                ),
+                const SizedBox(height: Space.m),
                 Text(
                   context.tr('login_welcome'),
                   textAlign: TextAlign.center,

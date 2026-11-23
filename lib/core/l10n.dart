@@ -1764,6 +1764,8 @@ class AppStrings {
     'phone': ['رقم الهاتف', 'Téléphone'],
     'no_account': ['ليس لديك حساب؟', 'Pas de compte ?'],
     'have_account': ['لديك حساب؟', 'Déjà un compte ?'],
+    'link_verify_card': ['التحقق من البطاقة', 'Vérifier une carte'],
+    'link_disclaimer': ['إخلاء المسؤولية', 'Avertissement'],
     'account_created': [
       'تم إنشاء حسابك. رمز حسابك:',
       'Compte créé. Votre code :',

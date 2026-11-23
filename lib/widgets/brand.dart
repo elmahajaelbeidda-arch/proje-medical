@@ -73,3 +73,61 @@ class BrandRichText extends StatelessWidget {
     );
   }
 }
+
+/// The logo on a white disc with a soft halo (welcome and sign-in screens).
+class LogoDisc extends StatelessWidget {
+  const LogoDisc({super.key, this.size = 112});
+
+  /// Diameter of the white disc (the halo is a little larger).
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final halo = size * 1.32;
+    return SizedBox(
+      width: halo,
+      height: halo,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppColors.secondary,
+                  AppColors.secondary.withValues(alpha: 0),
+                ],
+                stops: const [.55, 1],
+              ),
+            ),
+          ),
+          Container(
+            width: size,
+            height: size,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              shape: BoxShape.circle,
+              boxShadow: AppColors.isDark
+                  ? const []
+                  : [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: .12),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+            ),
+            child: Image.asset(
+              'assets/images/logo_icon.png',
+              width: size * .625,
+              height: size * .625,
+              semanticLabel: context.tr('app_name'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

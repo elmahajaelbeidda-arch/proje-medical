@@ -9,7 +9,7 @@ import '../../core/pulse_provider.dart';
 import '../../core/theme.dart';
 import '../../models/pulse.dart';
 import '../../widgets/brand.dart';
-import '../../widgets/ui_kit.dart' show FadeSlideIn;
+import '../../widgets/ui_kit.dart' show FadeSlideIn, Pressable;
 import '../../widgets/visit_counter.dart';
 import '../patient/home_tab.dart' show VerseText;
 import '../pulse/pulse_screens.dart' show PulseEntryCard, kindIcon, kindKey;
@@ -64,54 +64,8 @@ class _BrandHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // White disc with a soft halo: the logo stands out without a heavy
-        // coloured block.
-        SizedBox(
-          width: 168,
-          height: 168,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.secondary,
-                      AppColors.secondary.withValues(alpha: 0),
-                    ],
-                    stops: const [.55, 1],
-                  ),
-                ),
-              ),
-              Container(
-                width: 124,
-                height: 124,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  shape: BoxShape.circle,
-                  boxShadow: AppColors.isDark
-                      ? const []
-                      : [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(alpha: .12),
-                            blurRadius: 24,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                ),
-                child: Image.asset(
-                  'assets/images/logo_icon.png',
-                  width: 78,
-                  height: 78,
-                  semanticLabel: context.tr('app_name'),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: Space.xs),
+        const LogoDisc(size: 112),
+        const SizedBox(height: Space.s),
         BrandName(
           fontSize: 32,
           color: AppColors.primary,
@@ -305,6 +259,7 @@ class _NewsSectionState extends ConsumerState<_NewsSection> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Column(
@@ -318,11 +273,14 @@ class _NewsSectionState extends ConsumerState<_NewsSection> {
                       color: AppColors.text,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     context.tr('pl_slogan'),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 12.5, color: AppColors.grey),
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      height: 1.5,
+                      color: AppColors.grey,
+                    ),
                   ),
                 ],
               ),
@@ -349,7 +307,7 @@ class _NewsSectionState extends ConsumerState<_NewsSection> {
         else ...[
           // The cards reach the screen edges, so the next one peeks in.
           SizedBox(
-            height: 168,
+            height: 178,
             child: OverflowBox(
               maxWidth: MediaQuery.sizeOf(context).width,
               child: PageView.builder(
@@ -398,14 +356,16 @@ class _NewsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(18),
-      shadowColor: const Color(0x14000000),
-      elevation: AppColors.isDark ? 0 : 2,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTap: () => context.push(item.route),
+    return Pressable(
+      radius: 18,
+      haptic: true,
+      onTap: () => context.push(item.route),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: AppColors.shadow,
+        ),
         child: Padding(
           padding: const EdgeInsets.all(Space.m),
           child: Column(
@@ -507,8 +467,8 @@ class _QuickLinks extends StatelessWidget {
   Widget build(BuildContext context) {
     final links = [
       (LucideIcons.users, 'about_association', '/about'),
-      (LucideIcons.scanQrCode, 'mc_verify_link', '/verify-card'),
-      (LucideIcons.shieldCheck, 'disclaimer', '/disclaimer'),
+      (LucideIcons.scanQrCode, 'link_verify_card', '/verify-card'),
+      (LucideIcons.shieldCheck, 'link_disclaimer', '/disclaimer'),
     ];
     return IntrinsicHeight(
       child: Row(
@@ -542,12 +502,14 @@ class _QuickLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
+    return Pressable(
+      radius: 16,
+      haptic: true,
+      onTap: onTap,
+      semanticLabel: label,
+      child: Material(
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: Space.xs,

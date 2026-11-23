@@ -16,7 +16,7 @@ import '../../core/theme.dart';
 import '../../models/models.dart';
 import '../../models/registration.dart';
 import '../../widgets/brand.dart';
-import '../../widgets/ui_kit.dart' show FadeSlideIn;
+import '../../widgets/ui_kit.dart' show FadeSlideIn, Pressable;
 
 /// The heart + cross icon of "شِفاءٌ لِلنّاس".
 class AppLogo extends StatelessWidget {
@@ -714,41 +714,59 @@ class _RoleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     // Same card shape as the home screen: white, 16 corners, light shadow.
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: AppColors.secondary,
-                  borderRadius: BorderRadius.circular(12),
+    return Pressable(
+      haptic: true,
+      onTap: onTap,
+      semanticLabel: title,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(Radii.card),
+          boxShadow: AppColors.shadow,
+        ),
+        child: ConstrainedBox(
+          // Same height for every card.
+          constraints: const BoxConstraints(minHeight: 92),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, size: 24, color: darkColor),
                 ),
-                child: Icon(icon, size: 26, color: darkColor),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: text.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: text.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(subtitle, style: text.bodyMedium),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        maxLines: 2,
+                        style: text.bodySmall?.copyWith(height: 1.5),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Icon(LucideIcons.chevronRightDir, color: AppColors.grey),
-            ],
+                Icon(
+                  LucideIcons.chevronRightDir,
+                  size: 20,
+                  color: AppColors.grey,
+                ),
+              ],
+            ),
           ),
         ),
       ),

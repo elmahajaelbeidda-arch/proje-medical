@@ -282,6 +282,8 @@ class AppTheme {
         );
     final card = BorderRadius.circular(Radii.card);
     final button = BorderRadius.circular(Radii.button);
+    // Main buttons: same height and corners on every screen.
+    final action = BorderRadius.circular(Radii.action);
 
     return base.copyWith(
       textTheme: textTheme,
@@ -365,13 +367,13 @@ class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style:
             FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(52),
+              minimumSize: const Size.fromHeight(54),
               backgroundColor: p.primary,
               foregroundColor: p.onPrimary,
               disabledBackgroundColor: p.border,
               disabledForegroundColor: p.grey,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: button),
+              shape: RoundedRectangleBorder(borderRadius: action),
               textStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -385,13 +387,14 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(52),
+          minimumSize: const Size.fromHeight(54),
           foregroundColor: p.primary,
-          side: BorderSide(color: p.border, width: 1.2),
-          shape: RoundedRectangleBorder(borderRadius: button),
+          backgroundColor: p.surface,
+          side: BorderSide(color: p.primary.withValues(alpha: .28), width: 1.4),
+          shape: RoundedRectangleBorder(borderRadius: action),
           textStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             fontFamily: AppFonts.ui,
           ),
         ),
@@ -567,6 +570,9 @@ abstract final class Space {
 
 abstract final class Radii {
   static const double button = 12;
+
+  /// Main actions (sign in, create an account, send...).
+  static const double action = 16;
   static const double card = 16;
   static const double hero = 20;
   static const double sheet = 24;
