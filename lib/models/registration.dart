@@ -26,6 +26,9 @@ class Registration {
   /// When the committee approved or rejected the account.
   final DateTime? reviewedAt;
 
+  /// Account code given by the server (P-001 / M-001), when linked.
+  final String? serverCode;
+
   const Registration({
     required this.id,
     required this.role,
@@ -41,12 +44,14 @@ class Registration {
     this.phoneVerified = false,
     this.status = ReviewStatus.pending,
     this.reviewedAt,
+    this.serverCode,
   });
 
   bool get isDoctor => role == UserRole.doctor;
 
   /// "P-012" for patients, "M-004" for doctors (médecins).
   String get code {
+    if (serverCode != null && serverCode!.isNotEmpty) return serverCode!;
     var digits = id.replaceAll(RegExp(r'\D'), '');
     if (digits.isEmpty) digits = '0';
     if (digits.length > 4) digits = digits.substring(digits.length - 4);
@@ -72,6 +77,7 @@ class Registration {
     phoneVerified: phoneVerified ?? this.phoneVerified,
     status: status ?? this.status,
     reviewedAt: reviewedAt ?? this.reviewedAt,
+    serverCode: serverCode,
   );
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/mock_data.dart';
 import '../models/models.dart';
 import '../models/registration.dart';
+import 'accounts_remote.dart';
 import 'admin_provider.dart';
 
 // ---------------------------------------------------------------------------
@@ -172,7 +173,10 @@ class AuthNotifier extends Notifier<AuthState> {
     specialtyId: role == UserRole.doctor ? specialtyId : null,
   );
 
-  void logout() => state = const AuthState();
+  void logout() {
+    state = const AuthState();
+    if (AccountsRemote.enabled) const AccountsRemote().signOut();
+  }
 }
 
 final authProvider = NotifierProvider<AuthNotifier, AuthState>(
@@ -365,13 +369,30 @@ class RegistrationsNotifier extends Notifier<List<Registration>> {
     state = [for (final r in state) r.id == id ? f(r) : r];
   }
 
+  /// Server: the list of accounts as the team sees it.
+  void replaceAll(List<Registration> list) => state = list;
+
+  /// Server: the signed-in person's own account.
+  void upsert(Registration r) => state = [
+    r,
+    for (final x in state)
+      if (x.id != r.id) x,
+  ];
+
   void markPhoneVerified(String id) =>
       _update(id, (r) => r.copyWith(phoneVerified: true));
 
   /// Committee: approve or reject an account.
   void review(String id, ReviewStatus status) {
+    final before = byId(id);
     _update(id, (r) => r.copyWith(status: status, reviewedAt: DateTime.now()));
     final r = byId(id);
+    // Server: save the decision there (undone here if it fails).
+    if (AccountsRemote.enabled && ref.read(adminProvider).remote) {
+      const AccountsRemote().review(id, status).catchError((_) {
+        if (before != null) _update(id, (_) => before);
+      });
+    }
     ref
         .read(adminProvider.notifier)
         .recordIfAdmin(

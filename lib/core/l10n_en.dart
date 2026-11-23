@@ -1421,6 +1421,13 @@ const Map<String, String> enStrings = {
   'qs_emergency': 'Emergency',
   'about_short': 'From the Aoun wa Sanad Charity Association… health care that reaches you wherever you are.',
   'learn_more': 'Learn more',
+  'account_created': 'Account created. Your account code:',
+  'account_review_note':
+      'The team will review your account soon. Keep your code to sign in.',
+  'login_wrong_password': 'Wrong password',
+  'account_confirm_email_on':
+      'Server not fully set up: turn off «Confirm email» in Supabase',
+  'password_rule': 'At least 8 characters',
   'create_account': 'Create an account',
   'login_sub': 'Sign in and we take you straight to your space',
   'login_id': 'Phone or account code',

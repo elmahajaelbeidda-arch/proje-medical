@@ -1764,6 +1764,20 @@ class AppStrings {
     'phone': ['رقم الهاتف', 'Téléphone'],
     'no_account': ['ليس لديك حساب؟', 'Pas de compte ?'],
     'have_account': ['لديك حساب؟', 'Déjà un compte ?'],
+    'account_created': [
+      'تم إنشاء حسابك. رمز حسابك:',
+      'Compte créé. Votre code :',
+    ],
+    'account_review_note': [
+      'سيراجع فريق المتابعة حسابك قريبًا. احفظ رمز حسابك لتسجيل الدخول به.',
+      'L’équipe va examiner votre compte. Gardez votre code pour vous connecter.',
+    ],
+    'login_wrong_password': ['كلمة المرور غير صحيحة', 'Mot de passe incorrect'],
+    'account_confirm_email_on': [
+      'إعداد الخادم غير مكتمل: يجب إيقاف «Confirm email» في Supabase',
+      'Serveur mal configuré : désactivez « Confirm email » dans Supabase',
+    ],
+    'password_rule': ['8 أحرف على الأقل', '8 caractères minimum'],
     'create_account': ['إنشاء حساب جديد', 'Créer un compte'],
     'login_sub': [
       'ادخل بحسابك، وسننقلك مباشرة إلى الخانة التي تعنيك',

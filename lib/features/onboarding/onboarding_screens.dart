@@ -7,12 +7,14 @@ import 'package:go_router/go_router.dart';
 
 import '../patient/home_tab.dart' show VerseText;
 
+import '../../core/accounts_remote.dart';
 import '../../core/admin_provider.dart';
 import '../../core/l10n.dart';
 import '../../models/admin.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../models/models.dart';
+import '../../models/registration.dart';
 import '../../widgets/brand.dart';
 import '../../widgets/ui_kit.dart' show FadeSlideIn;
 
@@ -219,19 +221,51 @@ class _MiniPulsePainter extends CustomPainter {
 // Splash
 // ---------------------------------------------------------------------------
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 1800), () {
-      if (mounted) context.go('/onboarding');
-    });
+    _start();
+  }
+
+  /// Server: a person already signed in on this phone goes straight to
+  /// their space; otherwise the introduction.
+  Future<void> _start() async {
+    final wait = Future.delayed(const Duration(milliseconds: 1800));
+    final p = AccountsRemote.enabled
+        ? await const AccountsRemote().current()
+        : null;
+    await wait;
+    if (!mounted) return;
+    if (p == null || p.status == ReviewStatus.rejected) {
+      context.go('/onboarding');
+      return;
+    }
+    ref.read(registrationsProvider.notifier).upsert(p.toRegistration());
+    ref
+        .read(authProvider.notifier)
+        .loginAs(
+          role: p.role,
+          name: p.name,
+          phone: p.phone,
+          idNumber: p.nationalId,
+          registrationId: p.userId,
+          specialtyId: p.specialtyId,
+        );
+    final auth = ref.read(authProvider);
+    context.go(
+      auth.isPsychDoctor
+          ? '/psych/doctor'
+          : auth.isDoctor
+          ? '/doctor'
+          : '/patient',
+    );
   }
 
   @override

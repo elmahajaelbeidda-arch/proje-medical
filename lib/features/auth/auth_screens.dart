@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/account_lookup.dart';
+import '../../core/accounts_remote.dart';
 import '../../core/admin_provider.dart';
 import '../../core/facility_provider.dart';
 import '../../core/l10n.dart';
@@ -56,6 +57,15 @@ void _goHome(BuildContext context, WidgetRef ref) {
   );
 }
 
+/// Message of a server account error.
+String accountErrorKey(AccountError e) => switch (e) {
+  AccountError.notFound => 'login_not_found',
+  AccountError.wrongPassword => 'login_wrong_password',
+  AccountError.confirmEmailOn => 'account_confirm_email_on',
+  AccountError.weakPassword => 'password_rule',
+  AccountError.network => 'ad_login_network',
+};
+
 // ---------------------------------------------------------------------------
 // Login
 // ---------------------------------------------------------------------------
@@ -81,8 +91,61 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
+  bool _busy = false;
+
+  /// Server: real sign-in, then the person's own space.
+  Future<void> _loginRemote() async {
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.of(context);
+    String msg(String k) => context.tr(k);
+    try {
+      final p = await const AccountsRemote().signIn(_id.text, _password.text);
+      if (!mounted) return;
+      ref.read(registrationsProvider.notifier).upsert(p.toRegistration());
+      ref
+          .read(authProvider.notifier)
+          .loginAs(
+            role: p.role,
+            name: p.name,
+            phone: p.phone,
+            idNumber: p.nationalId,
+            registrationId: p.userId,
+            specialtyId: p.specialtyId,
+          );
+      _goHome(context, ref);
+    } on AccountException catch (e) {
+      // Not a person's account: maybe a medical facility (next stage).
+      if (e.error == AccountError.notFound && _loginLocalFacility()) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(msg(accountErrorKey(e.error))),
+          backgroundColor: AppColors.emergency,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// Medical facilities still sign in locally until their stage is linked.
+  bool _loginLocalFacility() {
+    final account = findAccount(
+      const [],
+      ref.read(facilityProvider).facilities,
+      _id.text,
+    );
+    if (account == null || account.kind != AccountKind.facility) return false;
+    ref.read(facilitySessionProvider.notifier).signIn(account.facilityId!);
+    context.go('/facility/home');
+    return true;
+  }
+
   void _login() {
     if (!_formKey.currentState!.validate()) return;
+    if (AccountsRemote.enabled) {
+      _loginRemote();
+      return;
+    }
     final account = findAccount(
       ref.read(registrationsProvider),
       ref.read(facilityProvider).facilities,
@@ -201,8 +264,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 FilledButton(
-                  onPressed: _login,
-                  child: Text(context.tr('login')),
+                  onPressed: _busy ? null : _login,
+                  child: _busy
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(context.tr('login')),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -218,37 +287,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
                 // Demo stage only: ready-made accounts (any password).
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary,
-                    borderRadius: BorderRadius.circular(12),
+                if (!AccountsRemote.enabled)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          context.tr('demo_accounts_hint'),
+                          style: TextStyle(fontSize: 13, color: AppColors.grey),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final (label, code) in demoLoginCodes)
+                              ActionChip(
+                                label: Text('${context.tr(label)} · $code'),
+                                onPressed: () => setState(() {
+                                  _id.text = code;
+                                  _password.text = 'demo1234';
+                                }),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        context.tr('demo_accounts_hint'),
-                        style: TextStyle(fontSize: 13, color: AppColors.grey),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          for (final (label, code) in demoLoginCodes)
-                            ActionChip(
-                              label: Text('${context.tr(label)} · $code'),
-                              onPressed: () => setState(() {
-                                _id.text = code;
-                                _password.text = 'demo1234';
-                              }),
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
@@ -274,6 +344,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _phone = TextEditingController();
   final _idNumber = TextEditingController();
   final _license = TextEditingController();
+  final _password = TextEditingController();
+  bool _busy = false;
   String? _specialty;
   Attachment? _certificate;
   bool _accepted = false;
@@ -285,6 +357,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _phone.dispose();
     _idNumber.dispose();
     _license.dispose();
+    _password.dispose();
     super.dispose();
   }
 
@@ -295,6 +368,70 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       category: AttachmentCategory.other,
     );
     if (files.isNotEmpty) setState(() => _certificate = files.first);
+  }
+
+  /// Server: creates the real account, then opens the person's space
+  /// (waiting for the team's review).
+  Future<void> _submitRemote(UserRole role, String name, bool isDoctor) async {
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.of(context);
+    String msg(String k) => context.tr(k);
+    try {
+      final p = await const AccountsRemote().signUp(
+        role: role,
+        name: name,
+        phone: _phone.text,
+        nationalId: _idNumber.text,
+        password: _password.text,
+        specialtyId: isDoctor ? _specialty : null,
+        licenseNumber: isDoctor ? _license.text : null,
+        certificate: isDoctor ? _certificate : null,
+      );
+      if (!mounted) return;
+      ref.read(registrationsProvider.notifier).upsert(p.toRegistration());
+      ref
+          .read(authProvider.notifier)
+          .loginAs(
+            role: p.role,
+            name: p.name,
+            phone: p.phone,
+            idNumber: p.nationalId,
+            registrationId: p.userId,
+            specialtyId: p.specialtyId,
+          );
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            '${msg('account_created')} ${p.code}\n${msg(isDoctor ? 'doctor_review_note' : 'account_review_note')}',
+          ),
+          duration: const Duration(seconds: 8),
+        ),
+      );
+      _goHome(context, ref);
+    } on DuplicateRegistrationException catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(msg('dup_${e.field}')),
+          backgroundColor: AppColors.emergency,
+        ),
+      );
+    } on AccountException catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(msg(accountErrorKey(e.error))),
+          backgroundColor: AppColors.emergency,
+        ),
+      );
+    } catch (_) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(msg('ad_login_network')),
+          backgroundColor: AppColors.emergency,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   void _submit() {
@@ -316,6 +453,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final auth = ref.read(authProvider);
     final isDoctor = auth.isDoctor;
     final name = isDoctor ? 'د. ${_name.text.trim()}' : _name.text;
+    if (AccountsRemote.enabled) {
+      _submitRemote(auth.role, name, isDoctor);
+      return;
+    }
     // The new account is sent to the committee for review.
     final String registrationId;
     try {
@@ -427,12 +568,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    controller: _password,
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: context.tr('password'),
+                      helperText: context.tr('password_rule'),
                       prefixIcon: const Icon(LucideIcons.lock),
                     ),
-                    validator: required,
+                    validator: (v) {
+                      if (v == null || v.isEmpty) {
+                        return context.tr('required_field');
+                      }
+                      if (v.length < 8) return context.tr('password_rule');
+                      return null;
+                    },
                   ),
 
                   // ---------------- National ID card ----------------
@@ -564,8 +713,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   const SizedBox(height: 16),
                   FilledButton(
-                    onPressed: _submit,
-                    child: Text(context.tr('register')),
+                    onPressed: _busy ? null : _submit,
+                    child: _busy
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(context.tr('register')),
                   ),
                   const SizedBox(height: 8),
                   Row(

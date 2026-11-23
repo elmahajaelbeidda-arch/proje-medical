@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin_provider.dart';
+import '../../core/accounts_remote.dart';
 import '../../core/admin_remote.dart';
 import '../../core/l10n.dart';
+import '../../core/providers.dart';
 import '../../core/theme.dart';
 
 /// Saves the dashboard on the server a moment after each change, while a
@@ -27,6 +29,7 @@ class AdminSync extends ConsumerStatefulWidget {
 
 class _AdminSyncState extends ConsumerState<AdminSync> {
   Timer? _timer;
+  Timer? _refresh;
   bool _dirty = false;
   bool _failed = false;
 
@@ -34,11 +37,29 @@ class _AdminSyncState extends ConsumerState<AdminSync> {
   void initState() {
     super.initState();
     AdminSync._current = this;
+    // New sign-ups arrive while the dashboard is open.
+    _refresh = Timer.periodic(const Duration(seconds: 60), (_) => _pull());
+  }
+
+  /// Patients' and doctors' accounts, as saved on the server.
+  Future<void> _pull() async {
+    final s = ref.read(adminProvider);
+    if (!s.remote || s.me == null) return;
+    try {
+      final list = await const AccountsRemote().listProfiles();
+      if (!mounted) return;
+      ref.read(registrationsProvider.notifier).replaceAll([
+        for (final p in list) p.toRegistration(),
+      ]);
+    } catch (_) {
+      // Kept as is; tried again in a minute.
+    }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _refresh?.cancel();
     if (identical(AdminSync._current, this)) AdminSync._current = null;
     super.dispose();
   }
@@ -68,8 +89,11 @@ class _AdminSyncState extends ConsumerState<AdminSync> {
   Widget build(BuildContext context) {
     ref.listen(adminProvider, (prev, next) {
       if (!next.remote || next.me == null) return;
-      // Signing in loads the data: nothing to save yet.
-      if (prev?.me == null) return;
+      // Signing in loads the data: nothing to save yet, accounts to fetch.
+      if (prev?.me == null) {
+        _pull();
+        return;
+      }
       _dirty = true;
       _timer?.cancel();
       _timer = Timer(const Duration(milliseconds: 1200), _save);
