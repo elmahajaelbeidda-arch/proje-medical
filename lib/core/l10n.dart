@@ -2532,10 +2532,6 @@ class AppStrings {
       'Ancien téléphone ? Téléchargez la version pour anciens téléphones',
     ],
     'dl_android': ['تحميل لأندرويد', 'Télécharger pour Android'],
-    'dl_iphone': [
-      'على الآيفون: افتح هذا الرابط في Safari ثم اختر «إضافة إلى الشاشة الرئيسية».',
-      'Sur iPhone : ouvrez ce lien dans Safari puis « Sur l’écran d’accueil ».',
-    ],
     'about_app_title': ['عن التطبيق', 'À propos de l’application'],
     'home_last_consults': ['آخر استشاراتي', 'Mes dernières consultations'],
     'home_more_services': ['خدمات أخرى', 'Autres services'],

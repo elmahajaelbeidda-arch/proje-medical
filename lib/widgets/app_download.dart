@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -7,7 +8,8 @@ import '../core/app_info.dart';
 import '../core/l10n.dart';
 import '../core/theme.dart';
 
-/// «حمّل التطبيق»: shown in the web version only, to install the phone app.
+/// «حمّل التطبيق»: shown in the web version on Android phones and
+/// computers only (hidden on iPhone, where no file can be installed).
 class AppDownloadCard extends StatelessWidget {
   const AppDownloadCard({super.key, this.force = false});
 
@@ -17,6 +19,10 @@ class AppDownloadCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!kIsWeb && !force) return const SizedBox.shrink();
+    // Useless on iPhone and iPad: there is no file to install there.
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return const SizedBox.shrink();
+    }
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -78,11 +84,6 @@ class AppDownloadCard extends StatelessWidget {
               context.tr('dl_old_phones'),
               textAlign: TextAlign.center,
             ),
-          ),
-          Text(
-            context.tr('dl_iphone'),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, height: 1.5, color: AppColors.grey),
           ),
         ],
       ),
