@@ -8,85 +8,47 @@ import '../core/app_info.dart';
 import '../core/l10n.dart';
 import '../core/theme.dart';
 
-/// «حمّل التطبيق»: shown in the web version on Android phones and
-/// computers only (hidden on iPhone, where no file can be installed).
+/// Small «حمّل التطبيق لأندرويد» link, in the web version on Android phones
+/// and computers only (hidden on iPhone, where no file can be installed).
 class AppDownloadCard extends StatelessWidget {
-  const AppDownloadCard({super.key, this.force = false});
+  const AppDownloadCard({
+    super.key,
+    this.force = false,
+    this.oldPhones = false,
+  });
 
   /// Show it outside the web too (tests).
   final bool force;
 
+  /// Also offer the version for older phones (About page).
+  final bool oldPhones;
+
   @override
   Widget build(BuildContext context) {
     if (!kIsWeb && !force) return const SizedBox.shrink();
-    // Useless on iPhone and iPad: there is no file to install there.
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return const SizedBox.shrink();
     }
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppColors.shadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.secondary,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(LucideIcons.smartphone, color: AppColors.primary),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.tr('dl_title'),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    Text(
-                      context.tr('dl_sub'),
-                      style: TextStyle(fontSize: 13, color: AppColors.grey),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          FilledButton.icon(
-            onPressed: () => launchUrl(
-              Uri.parse(androidApkUrl),
-              mode: LaunchMode.externalApplication,
-            ),
-            icon: const Icon(LucideIcons.download),
-            label: Text(context.tr('dl_android')),
-          ),
+    void open(String url) =>
+        launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextButton.icon(
+          onPressed: () => open(androidApkUrl),
+          icon: const Icon(LucideIcons.download, size: 20),
+          label: Text(context.tr('dl_android')),
+        ),
+        if (oldPhones)
           TextButton(
-            onPressed: () => launchUrl(
-              Uri.parse(androidApkOldPhonesUrl),
-              mode: LaunchMode.externalApplication,
-            ),
+            onPressed: () => open(androidApkOldPhonesUrl),
             child: Text(
               context.tr('dl_old_phones'),
               textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12, color: AppColors.grey),
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 }

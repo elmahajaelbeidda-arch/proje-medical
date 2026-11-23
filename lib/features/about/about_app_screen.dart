@@ -100,7 +100,10 @@ class AboutAppScreen extends ConsumerWidget {
               ],
             ),
           ),
-          if (kIsWeb) ...[const SizedBox(height: 16), const AppDownloadCard()],
+          if (kIsWeb) ...[
+            const SizedBox(height: 16),
+            const AppDownloadCard(oldPhones: true),
+          ],
           const SizedBox(height: 24),
           Text(
             '${context.tr('version')} $appVersion',
