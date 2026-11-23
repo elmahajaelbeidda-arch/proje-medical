@@ -34,7 +34,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     // Unknown links (e.g. dashboard pages, which are not part of this app)
     // lead to the start screen.
-    onException: (_, _, router) => router.go('/role'),
+    onException: (_, _, router) => router.go('/welcome'),
     redirect: (context, state) {
       // Sections switched off by the administration.
       final loc = state.matchedLocation;
@@ -56,13 +56,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Psychiatrist workspace: volunteer psychiatrists only.
       final psychDoctorPage = state.matchedLocation.startsWith('/psych/doctor');
       if (psychDoctorPage && !ref.read(authProvider).isPsychDoctor) {
-        return '/role';
+        return '/welcome';
       }
       return null;
     },
     routes: [
       GoRoute(path: '/', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingScreen()),
+      GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
       GoRoute(path: '/role', builder: (_, _) => const RoleSelectScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),

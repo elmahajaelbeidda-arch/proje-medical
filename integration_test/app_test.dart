@@ -12,6 +12,7 @@ import 'package:shifa/features/pulse/pulse_screens.dart';
 import 'package:shifa/features/cards/member_card_screens.dart';
 import 'package:shifa/features/doctor/doctor_shell.dart';
 import 'package:shifa/features/facility/facility_screens.dart';
+import 'package:shifa/features/auth/auth_screens.dart';
 import 'package:shifa/features/onboarding/onboarding_screens.dart';
 import 'package:shifa/features/patient/consultation_details_screen.dart';
 import 'package:shifa/features/patient/doctor_profile_screen.dart';
@@ -49,6 +50,8 @@ void main() {
       expect(tester.takeException(), isNull, reason: location);
     }
 
+    await open('/welcome', WelcomeScreen);
+    await open('/login', LoginScreen);
     await open('/role', RoleSelectScreen);
     expect(find.text(AppStrings.of('ar', 'role_patient')), findsOneWidget);
 

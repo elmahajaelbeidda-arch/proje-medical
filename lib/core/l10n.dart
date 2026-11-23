@@ -1744,6 +1744,25 @@ class AppStrings {
     'phone': ['رقم الهاتف', 'Téléphone'],
     'no_account': ['ليس لديك حساب؟', 'Pas de compte ?'],
     'have_account': ['لديك حساب؟', 'Déjà un compte ?'],
+    'create_account': ['إنشاء حساب جديد', 'Créer un compte'],
+    'login_sub': [
+      'ادخل بحسابك، وسننقلك مباشرة إلى الخانة التي تعنيك',
+      'Connectez-vous : vous serez dirigé vers votre espace',
+    ],
+    'login_id': ['رقم الهاتف أو رمز الحساب', 'Téléphone ou code du compte'],
+    'login_id_help': [
+      'رمز الحساب مثل P-013، أو رقم الهاتف، أو الرقم الوطني',
+      'Code du compte (ex. P-013), téléphone ou NNI',
+    ],
+    'login_not_found': [
+      'لا يوجد حساب بهذه البيانات',
+      'Aucun compte avec ces informations',
+    ],
+    'demo_accounts_hint': [
+      'حسابات تجريبية (أي كلمة مرور) — تُزال عند ربط الخادم',
+      'Comptes de démonstration (tout mot de passe) — retirés à la mise en service',
+    ],
+    'psych_doctor_short': ['طبيب نفسي', 'Psychiatre'],
     'forgot_password': ['نسيت كلمة المرور؟', 'Mot de passe oublié ?'],
     'specialty': ['التخصص', 'Spécialité'],
     'license_number': [

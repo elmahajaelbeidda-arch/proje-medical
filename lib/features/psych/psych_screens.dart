@@ -1310,7 +1310,7 @@ class _PsychDoctorShellState extends ConsumerState<PsychDoctorShell> {
         OutlinedButton.icon(
           onPressed: () {
             ref.read(authProvider.notifier).logout();
-            context.go('/role');
+            context.go('/welcome');
           },
           icon: const Icon(LucideIcons.logOut),
           label: Text(context.tr('logout')),

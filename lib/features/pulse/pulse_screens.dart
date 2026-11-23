@@ -73,7 +73,7 @@ void asMember(
               style: FilledButton.styleFrom(minimumSize: Size.fromHeight(50)),
               onPressed: () {
                 Navigator.pop(ctx);
-                context.push('/role');
+                context.push('/welcome');
               },
               icon: Icon(LucideIcons.logIn),
               label: Text(ctx.tr('pl_join_btn')),
@@ -352,7 +352,7 @@ class _GuestBanner extends ConsumerWidget {
           const SizedBox(width: 10),
           Expanded(child: Text(context.tr('pl_guest_note'))),
           TextButton(
-            onPressed: () => context.push('/role'),
+            onPressed: () => context.push('/welcome'),
             child: Text(context.tr('pl_join_btn')),
           ),
         ],

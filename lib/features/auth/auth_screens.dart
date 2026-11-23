@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/account_lookup.dart';
 import '../../core/admin_provider.dart';
+import '../../core/facility_provider.dart';
 import '../../core/l10n.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
@@ -64,137 +66,190 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
+/// One sign-in for every account: phone number, account code or national
+/// ID number, then the password. The account found decides where to go.
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _id = TextEditingController();
+  final _password = TextEditingController();
   bool _obscure = true;
 
   @override
-  Widget build(BuildContext context) {
-    final auth = ref.watch(authProvider);
-    final text = Theme.of(context).textTheme;
+  void dispose() {
+    _id.dispose();
+    _password.dispose();
+    super.dispose();
+  }
 
+  void _login() {
+    if (!_formKey.currentState!.validate()) return;
+    final account = findAccount(
+      ref.read(registrationsProvider),
+      ref.read(facilityProvider).facilities,
+      _id.text,
+    );
+    if (account == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.tr('login_not_found')),
+          action: SnackBarAction(
+            label: context.tr('register'),
+            onPressed: () => context.push('/role'),
+          ),
+        ),
+      );
+      return;
+    }
+    if (account.kind == AccountKind.facility) {
+      if (ref
+          .read(adminProvider)
+          .suspendedAccounts
+          .containsKey(account.facilityId)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(context.tr('account_suspended_msg')),
+            backgroundColor: AppColors.emergency,
+          ),
+        );
+        return;
+      }
+      ref.read(facilitySessionProvider.notifier).signIn(account.facilityId!);
+      context.go('/facility/home');
+      return;
+    }
+    ref
+        .read(authProvider.notifier)
+        .loginAs(
+          role: roleOf(account),
+          name: account.name,
+          phone: account.phone,
+          idNumber: account.idNumber,
+          registrationId: account.registrationId,
+          specialtyId: account.specialtyId,
+        );
+    if (_blockedIfSuspended(context, ref)) return;
+    _goHome(context, ref);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
     String? required(String? v) =>
         (v == null || v.trim().isEmpty) ? context.tr('required_field') : null;
 
-    return Theme(
-      data: auth.isCommittee
-          ? Theme.of(context)
-          : AppTheme.forRole(Theme.of(context), isDoctor: auth.isDoctor),
-      child: Scaffold(
-        appBar: AppBar(),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Center(child: AppLogo(size: 72)),
-                  const Center(child: BrandName(fontSize: 30)),
-                  const SizedBox(height: 24),
-                  Text(
-                    context.tr('login_welcome'),
-                    textAlign: TextAlign.center,
-                    style: text.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+    return Scaffold(
+      appBar: AppBar(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Center(child: AppLogo(size: 72)),
+                const Center(child: BrandName(fontSize: 30)),
+                const SizedBox(height: 20),
+                Text(
+                  context.tr('login_welcome'),
+                  textAlign: TextAlign.center,
+                  style: text.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
                   ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: Chip(
-                      backgroundColor: auth.isCommittee
-                          ? AppColors.secondary
-                          : AppColors.role(auth.isDoctor),
-                      side: BorderSide.none,
-                      avatar: Icon(
-                        auth.isCommittee
-                            ? LucideIcons.users
-                            : auth.isDoctor
-                            ? LucideIcons.briefcaseMedical
-                            : LucideIcons.userRound,
-                        color: AppColors.ink,
-                        size: 18,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  context.tr('login_sub'),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.grey),
+                ),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _id,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: context.tr('login_id'),
+                    helperText: context.tr('login_id_help'),
+                    helperMaxLines: 2,
+                    prefixIcon: const Icon(LucideIcons.user),
+                  ),
+                  validator: required,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _password,
+                  obscureText: _obscure,
+                  onFieldSubmitted: (_) => _login(),
+                  decoration: InputDecoration(
+                    labelText: context.tr('password'),
+                    prefixIcon: const Icon(LucideIcons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscure ? LucideIcons.eye : LucideIcons.eyeOff,
                       ),
-                      label: Text(
-                        context.tr(
-                          auth.isCommittee
-                              ? 'role_committee'
-                              : auth.isDoctor
-                              ? 'role_doctor'
-                              : 'role_patient',
-                        ),
+                      onPressed: () => setState(() => _obscure = !_obscure),
+                    ),
+                  ),
+                  validator: required,
+                ),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(context.tr('forgot_password')),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                FilledButton(
+                  onPressed: _login,
+                  child: Text(context.tr('login')),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(context.tr('no_account')),
+                    TextButton(
+                      onPressed: () => context.push('/role'),
+                      child: Text(context.tr('register')),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Demo stage only: ready-made accounts (any password).
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        context.tr('demo_accounts_hint'),
+                        style: TextStyle(fontSize: 13, color: AppColors.grey),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                  TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: context.tr('phone_or_email'),
-                      prefixIcon: const Icon(LucideIcons.user),
-                    ),
-                    validator: required,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    obscureText: _obscure,
-                    decoration: InputDecoration(
-                      labelText: context.tr('password'),
-                      prefixIcon: const Icon(LucideIcons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscure ? LucideIcons.eye : LucideIcons.eyeOff,
-                        ),
-                        onPressed: () => setState(() => _obscure = !_obscure),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final (label, code) in demoLoginCodes)
+                            ActionChip(
+                              label: Text('${context.tr(label)} · $code'),
+                              onPressed: () => setState(() {
+                                _id.text = code;
+                                _password.text = 'demo1234';
+                              }),
+                            ),
+                        ],
                       ),
-                    ),
-                    validator: required,
+                    ],
                   ),
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(context.tr('forgot_password')),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: () {
-                      if (!_formKey.currentState!.validate()) return;
-                      ref.read(authProvider.notifier).login();
-                      if (_blockedIfSuspended(context, ref)) return;
-                      _goHome(context, ref);
-                    },
-                    child: Text(context.tr('login')),
-                  ),
-                  // Demo account of a volunteer psychiatrist.
-                  if (auth.isDoctor)
-                    TextButton.icon(
-                      onPressed: () {
-                        ref
-                            .read(authProvider.notifier)
-                            .login(specialtyId: 'psych');
-                        if (_blockedIfSuspended(context, ref)) return;
-                        _goHome(context, ref);
-                      },
-                      icon: const Icon(LucideIcons.brain),
-                      label: Text(context.tr('psych_demo_login')),
-                    ),
-                  const SizedBox(height: 16),
-                  if (!auth.isCommittee)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(context.tr('no_account')),
-                        TextButton(
-                          onPressed: () => context.push('/register'),
-                          child: Text(context.tr('register')),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

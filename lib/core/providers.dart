@@ -153,6 +153,25 @@ class AuthNotifier extends Notifier<AuthState> {
     );
   }
 
+  /// Signs in the account found by the one sign-in form.
+  void loginAs({
+    required UserRole role,
+    required String name,
+    String phone = '',
+    String idNumber = '',
+    String? registrationId,
+    String? specialtyId,
+  }) => state = AuthState(
+    role: role,
+    loggedIn: true,
+    name: name,
+    phone: phone,
+    idNumber: idNumber,
+    phoneVerified: true,
+    registrationId: registrationId,
+    specialtyId: role == UserRole.doctor ? specialtyId : null,
+  );
+
   void logout() => state = const AuthState();
 }
 

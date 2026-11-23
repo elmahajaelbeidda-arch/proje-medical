@@ -132,7 +132,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                     tooltip: context.tr('logout'),
                     onPressed: () {
                       ref.read(authProvider.notifier).logout();
-                      context.go('/role');
+                      context.go('/welcome');
                     },
                     icon: const Icon(LucideIcons.logOut),
                   ),

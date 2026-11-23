@@ -295,7 +295,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   void _next() {
     if (_page == _count - 1) {
-      context.go('/role');
+      context.go('/welcome');
     } else {
       _controller.nextPage(
         duration: const Duration(milliseconds: 350),
@@ -361,7 +361,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   const Spacer(),
                   if (_page < _count - 1)
                     TextButton(
-                      onPressed: () => context.go('/role'),
+                      onPressed: () => context.go('/welcome'),
                       child: Text(context.tr('skip')),
                     ),
                 ],
@@ -569,7 +569,91 @@ class _ShortPulsePainter extends CustomPainter {
 }
 
 // ---------------------------------------------------------------------------
-// Role selection
+// First screen: sign in or create an account
+// ---------------------------------------------------------------------------
+
+class WelcomeScreen extends ConsumerWidget {
+  const WelcomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+          children: [
+            Center(
+              child: Container(
+                width: 150,
+                height: 150,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.secondary,
+                  shape: BoxShape.circle,
+                ),
+                child: const AppLogo(size: 92),
+              ),
+            ),
+            const SizedBox(height: 16),
+            BrandName(
+              fontSize: 30,
+              color: AppColors.primary,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 6),
+            VerseText(
+              style: TextStyle(
+                fontSize: 15,
+                height: 1.7,
+                color: AppColors.turquoiseText,
+              ),
+            ),
+            const SizedBox(height: 28),
+            FilledButton.icon(
+              onPressed: () => context.push('/login'),
+              icon: const Icon(LucideIcons.logIn),
+              label: Text(context.tr('login')),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => context.push('/role'),
+              icon: const Icon(LucideIcons.userPlus),
+              label: Text(context.tr('create_account')),
+            ),
+            const SizedBox(height: 24),
+            // Open to visitors: no account needed to read the news.
+            const PulseEntryCard(),
+            if (kIsWeb) ...[
+              const SizedBox(height: 16),
+              const AppDownloadCard(),
+            ],
+            const SizedBox(height: 16),
+            const VisitorStatsCard(),
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: () => context.push('/about'),
+              icon: const Icon(LucideIcons.users),
+              label: Text(context.tr('about_association')),
+            ),
+            TextButton.icon(
+              onPressed: () => context.push('/verify-card'),
+              icon: const Icon(LucideIcons.scanQrCode),
+              label: Text(context.tr('mc_verify_link')),
+            ),
+            TextButton.icon(
+              onPressed: () => context.push('/disclaimer'),
+              icon: const Icon(LucideIcons.info),
+              label: Text(context.tr('disclaimer')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// New account: choose the kind of account
 // ---------------------------------------------------------------------------
 
 class RoleSelectScreen extends ConsumerWidget {
@@ -582,106 +666,79 @@ class RoleSelectScreen extends ConsumerWidget {
 
     void choose(UserRole role) {
       ref.read(authProvider.notifier).selectRole(role);
-      context.push('/login');
+      context.push('/register');
     }
 
     return Scaffold(
+      appBar: AppBar(title: Text(context.tr('create_account'))),
       body: ListView(
-        padding: EdgeInsets.zero,
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
         children: [
-          const ShifaHero(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Public visitor counter (no sign-in needed).
-                const Center(child: VisitorLivePill()),
-                const SizedBox(height: 14),
-                Text(
-                  context.tr('who_are_you'),
-                  textAlign: TextAlign.center,
-                  style: text.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  context.tr('choose_role'),
-                  textAlign: TextAlign.center,
-                  style: text.bodyLarge,
-                ),
-                const SizedBox(height: 16),
-                // Web only: install the phone app.
-                if (kIsWeb) ...[
-                  const AppDownloadCard(),
-                  const SizedBox(height: 16),
-                ],
-                // Open to visitors: no account needed to explore.
-                const PulseEntryCard(),
-                const SizedBox(height: 16),
-                _RoleCard(
-                  icon: LucideIcons.userRound,
-                  title: context.tr('role_patient'),
-                  subtitle: context.tr('role_patient_desc'),
-                  color: AppColors.patient,
-                  darkColor: AppColors.patientDark,
-                  onTap: () => choose(UserRole.patient),
-                ),
-                const SizedBox(height: 14),
-                _RoleCard(
-                  icon: LucideIcons.briefcaseMedical,
-                  title: context.tr('role_doctor'),
-                  subtitle: context.tr('role_doctor_desc'),
-                  color: AppColors.doctor,
-                  darkColor: AppColors.doctorDark,
-                  onTap: () => choose(UserRole.doctor),
-                ),
-                const SizedBox(height: 14),
-                if (settings.enabled(AppSection.blood)) ...[
-                  // Blood donation only (no blood request here).
-                  _RoleCard(
-                    icon: LucideIcons.droplet,
-                    title: context.tr('role_donor'),
-                    subtitle: context.tr('role_donor_desc'),
-                    color: AppColors.secondary,
-                    darkColor: AppColors.primary,
-                    onTap: () => context.push('/blood'),
-                  ),
-                ],
-                if (settings.enabled(AppSection.facilities)) ...[
-                  const SizedBox(height: 14),
-                  _RoleCard(
-                    icon: LucideIcons.hospital,
-                    title: context.tr('role_facility'),
-                    subtitle: context.tr('role_facility_desc'),
-                    color: AppColors.secondary,
-                    darkColor: AppColors.primary,
-                    onTap: () => context.push('/facility'),
-                  ),
-                ],
-                const SizedBox(height: 16),
-                const VisitorStatsCard(),
-                const SizedBox(height: 8),
-                TextButton.icon(
-                  onPressed: () => context.push('/about'),
-                  icon: const Icon(LucideIcons.users),
-                  label: Text(context.tr('about_association')),
-                ),
-                const SizedBox(height: 8),
-                TextButton.icon(
-                  onPressed: () => context.push('/verify-card'),
-                  icon: const Icon(LucideIcons.scanQrCode),
-                  label: Text(context.tr('mc_verify_link')),
-                ),
-                TextButton.icon(
-                  onPressed: () => context.push('/disclaimer'),
-                  icon: const Icon(LucideIcons.info),
-                  label: Text(context.tr('disclaimer')),
-                ),
-              ],
+          Text(
+            context.tr('who_are_you'),
+            textAlign: TextAlign.center,
+            style: text.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            context.tr('choose_role'),
+            textAlign: TextAlign.center,
+            style: text.bodyLarge,
+          ),
+          const SizedBox(height: 20),
+          _RoleCard(
+            icon: LucideIcons.userRound,
+            title: context.tr('role_patient'),
+            subtitle: context.tr('role_patient_desc'),
+            color: AppColors.patient,
+            darkColor: AppColors.patientDark,
+            onTap: () => choose(UserRole.patient),
+          ),
+          const SizedBox(height: 14),
+          _RoleCard(
+            icon: LucideIcons.briefcaseMedical,
+            title: context.tr('role_doctor'),
+            subtitle: context.tr('role_doctor_desc'),
+            color: AppColors.doctor,
+            darkColor: AppColors.doctorDark,
+            onTap: () => choose(UserRole.doctor),
+          ),
+          if (settings.enabled(AppSection.blood)) ...[
+            const SizedBox(height: 14),
+            _RoleCard(
+              icon: LucideIcons.droplet,
+              title: context.tr('role_donor'),
+              subtitle: context.tr('role_donor_desc'),
+              color: AppColors.secondary,
+              darkColor: AppColors.primary,
+              onTap: () => context.push('/blood/donor'),
+            ),
+          ],
+          if (settings.enabled(AppSection.facilities)) ...[
+            const SizedBox(height: 14),
+            _RoleCard(
+              icon: LucideIcons.hospital,
+              title: context.tr('role_facility'),
+              subtitle: context.tr('role_facility_desc'),
+              color: AppColors.secondary,
+              darkColor: AppColors.primary,
+              onTap: () => context.push('/facility/register'),
+            ),
+          ],
+          const SizedBox(height: 16),
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(context.tr('have_account')),
+              TextButton(
+                onPressed: () => context.push('/login'),
+                child: Text(context.tr('login')),
+              ),
+            ],
           ),
         ],
       ),

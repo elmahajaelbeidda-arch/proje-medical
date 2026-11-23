@@ -11,6 +11,7 @@ import 'package:shifa/features/about/about_app_screen.dart';
 import 'package:shifa/features/blood/blood_screens.dart';
 import 'package:shifa/features/cards/member_card_screens.dart';
 import 'package:shifa/features/doctor/doctor_shell.dart';
+import 'package:shifa/features/auth/auth_screens.dart';
 import 'package:shifa/features/onboarding/onboarding_screens.dart';
 import 'package:shifa/features/patient/consultation_details_screen.dart';
 import 'package:shifa/features/patient/new_consultation_screen.dart';
@@ -25,7 +26,9 @@ void main() {
     'pulse': () => const PulseHomeScreen(),
     'doctor page': () => const DoctorProfileScreen(id: 'd1'),
     'doctor space': () => const DoctorShell(),
+    'welcome': () => const WelcomeScreen(),
     'role': () => const RoleSelectScreen(),
+    'login': () => const LoginScreen(),
     'blood': () => const BloodHomeScreen(),
     'new consultation': () => const NewConsultationScreen(),
     'consultation': () => const ConsultationDetailsScreen(id: 'c1'),

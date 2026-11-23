@@ -911,7 +911,7 @@ class _FacilityHomeScreenState extends ConsumerState<FacilityHomeScreen> {
 
     void logout() {
       ref.read(facilitySessionProvider.notifier).signOut();
-      context.go('/role');
+      context.go('/welcome');
     }
 
     final appBar = AppBar(

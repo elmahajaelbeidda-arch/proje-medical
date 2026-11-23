@@ -604,7 +604,7 @@ class DoctorProfileTab extends ConsumerWidget {
                 label: context.tr('logout'),
                 onTap: () {
                   ref.read(authProvider.notifier).logout();
-                  context.go('/role');
+                  context.go('/welcome');
                 },
               ),
               const SizedBox(height: 24),
