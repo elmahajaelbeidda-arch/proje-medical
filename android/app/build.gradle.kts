@@ -55,6 +55,14 @@ android {
         }
     }
 
+    // Native libraries compressed in the APK: about half the download size
+    // (the phone unpacks them once at install).
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     buildTypes {
         release {
             val release = signingConfigs.getByName("release")

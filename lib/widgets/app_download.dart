@@ -69,7 +69,16 @@ class AppDownloadCard extends StatelessWidget {
             icon: const Icon(LucideIcons.download),
             label: Text(context.tr('dl_android')),
           ),
-          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => launchUrl(
+              Uri.parse(androidApkOldPhonesUrl),
+              mode: LaunchMode.externalApplication,
+            ),
+            child: Text(
+              context.tr('dl_old_phones'),
+              textAlign: TextAlign.center,
+            ),
+          ),
           Text(
             context.tr('dl_iphone'),
             textAlign: TextAlign.center,

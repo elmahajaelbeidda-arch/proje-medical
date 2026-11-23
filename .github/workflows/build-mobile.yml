@@ -66,14 +66,19 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          flutter build apk --release \
+          # One small APK per kind of phone processor instead of one big file.
+          flutter build apk --release --split-per-abi \
+            --target-platform android-arm,android-arm64 \
             --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }} \
             --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
           flutter build appbundle --release \
             --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }} \
             --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
           mkdir -p dist
-          cp build/app/outputs/flutter-apk/app-release.apk dist/shifa-linnas.apk
+          # Recent phones (64-bit, nearly all phones since 2017).
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk dist/shifa-linnas.apk
+          # Older 32-bit phones.
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk dist/shifa-linnas-old-phones.apk
           cp build/app/outputs/bundle/release/app-release.aab dist/shifa-linnas.aab
           ls -la dist
       - uses: actions/upload-artifact@v4
@@ -110,7 +115,7 @@ jobs:
             gh release create android-latest --target "$GITHUB_SHA" \
               --title "شِفاءٌ لِلنّاس — أندرويد" --notes "$NOTES"
           fi
-          gh release upload android-latest dist/shifa-linnas.apk --clobber
+          gh release upload android-latest dist/shifa-linnas.apk dist/shifa-linnas-old-phones.apk --clobber
 
   android-device-test:
     name: Android emulator test

@@ -2523,7 +2523,14 @@ class AppStrings {
     ],
     'learn_more': ['اعرف المزيد', 'En savoir plus'],
     'dl_title': ['حمّل تطبيق شِفاءٌ لِلنّاس', 'Téléchargez l’application'],
-    'dl_sub': ['مجاني لهواتف أندرويد', 'Gratuite pour Android'],
+    'dl_sub': [
+      'مجاني لهواتف أندرويد • نحو 15 ميغابايت',
+      'Gratuite pour Android • environ 15 Mo',
+    ],
+    'dl_old_phones': [
+      'هاتف قديم ولم يعمل التطبيق؟ حمّل النسخة الخاصة بالهواتف القديمة',
+      'Ancien téléphone ? Téléchargez la version pour anciens téléphones',
+    ],
     'dl_android': ['تحميل لأندرويد', 'Télécharger pour Android'],
     'dl_iphone': [
       'على الآيفون: افتح هذا الرابط في Safari ثم اختر «إضافة إلى الشاشة الرئيسية».',
