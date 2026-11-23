@@ -63,15 +63,18 @@ class Palette {
     grey: Color(0xFF5F6E68),
     border: Color(0xFFE0E7E4),
     navInactive: Color(0xFF9AA6A1),
-    emergency: Color(0xFFD9534F),
-    emergencySoft: Color(0xFFFCEBEA),
-    emergencyText: Color(0xFFB44B47),
+    // Petrol blue in place of red (urgent, alerts, errors).
+    emergency: Color(0xFF376D70),
+    emergencySoft: Color(0xFFE3EEEE),
+    emergencyText: Color(0xFF376D70),
     answered: Color(0xFF3BA776),
     answeredSoft: Color(0xFFE2F2EA),
     answeredText: Color(0xFF2E6F52),
-    reviewing: Color(0xFFE0A030),
-    reviewingSoft: Color(0xFFFAF1E0),
-    reviewingText: Color(0xFF896B2C),
+    // Mint green in place of gold (pending, under review, ratings).
+    // Backgrounds #DDF0E7; text and icons in a deeper mint (readable).
+    reviewing: Color(0xFF2F7D60),
+    reviewingSoft: Color(0xFFDDF0E7),
+    reviewingText: Color(0xFF2A7256),
   );
 
   /// Dark mode of the brief: background #121816, cards #1C2421, green
@@ -89,15 +92,15 @@ class Palette {
     grey: Color(0xFF9BA9A3),
     border: Color(0xFF2A3430),
     navInactive: Color(0xFF8C9A94),
-    emergency: Color(0xFFE0605C),
-    emergencySoft: Color(0xFF3A2220),
-    emergencyText: Color(0xFFF2A3A0),
+    emergency: Color(0xFF7FB3B6),
+    emergencySoft: Color(0xFF1C3133),
+    emergencyText: Color(0xFF9CC9CB),
     answered: Color(0xFF4CC08A),
     answeredSoft: Color(0xFF1E3329),
     answeredText: Color(0xFF7AD3A8),
-    reviewing: Color(0xFFE8B04A),
-    reviewingSoft: Color(0xFF382E1A),
-    reviewingText: Color(0xFFEDC27A),
+    reviewing: Color(0xFF8FD1B5),
+    reviewingSoft: Color(0xFF1F3A30),
+    reviewingText: Color(0xFFA8DCC6),
   );
 }
 
