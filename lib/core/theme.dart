@@ -229,9 +229,8 @@ class AppTheme {
           outlineVariant: p.border,
           error: p.emergencyText,
         );
-    // IBM Plex Sans Arabic for the interface (Arabic, French and English):
-    // modern and very readable. El Messiri stays for the app's name and the
-    // verse (identity). Both are bundled in assets/fonts (offline).
+    // El Messiri for the whole app and the dashboard (Arabic, French and
+    // English), bundled in assets/fonts with its four weights (offline).
     final base = ThemeData(
       colorScheme: scheme,
       useMaterial3: true,
@@ -548,7 +547,7 @@ class AppTheme {
 
 /// Fonts: [ui] for the interface, [brand] for the app's name and verse.
 abstract final class AppFonts {
-  static const ui = 'Plex';
+  static const ui = 'ElMessiri';
   static const brand = 'ElMessiri';
 }
 
