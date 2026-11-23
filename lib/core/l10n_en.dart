@@ -13,8 +13,6 @@ const Map<String, String> enStrings = {
   'id_number_invalid': 'Invalid number (9 to 18 digits)',
   'id_front': 'Front',
   'id_back': 'Back',
-  'id_upload_hint': 'Take clear photos of both sides of the card',
-  'id_photos_required': 'Please attach both sides of the card',
   'id_privacy':
       'Your data is confidential and only used to verify your identity',
   'tap_to_add': 'Tap to add',

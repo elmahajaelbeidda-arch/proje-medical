@@ -54,14 +54,6 @@ class AppStrings {
     ],
     'id_front': ['الوجه الأمامي', 'Recto'],
     'id_back': ['الوجه الخلفي', 'Verso'],
-    'id_upload_hint': [
-      'صوّر بطاقة التعريف بوضوح من الوجهين',
-      'Photographiez clairement les deux faces de la carte',
-    ],
-    'id_photos_required': [
-      'يرجى رفع صورتي بطاقة التعريف',
-      'Veuillez joindre les deux faces de la carte',
-    ],
     'id_privacy': [
       'بياناتك سرية وتُستخدم فقط للتحقق من هويتك',
       'Vos données sont confidentielles et servent uniquement à vérifier votre identité',

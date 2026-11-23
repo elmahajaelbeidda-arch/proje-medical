@@ -221,8 +221,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _license = TextEditingController();
   String? _specialty;
   Attachment? _certificate;
-  Attachment? _idFront;
-  Attachment? _idBack;
   bool _accepted = false;
   bool _psychPledge = false;
 
@@ -233,17 +231,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _idNumber.dispose();
     _license.dispose();
     super.dispose();
-  }
-
-  Future<Attachment?> _pickImage() async {
-    final source = await askImageSource(context);
-    if (source == null || !mounted) return null;
-    final files = await pickAttachments(
-      context,
-      source,
-      category: AttachmentCategory.other,
-    );
-    return files.isEmpty ? null : files.first;
   }
 
   Future<void> _pickCertificate() async {
@@ -257,12 +244,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    if (_idFront == null || _idBack == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.tr('id_photos_required'))));
-      return;
-    }
     if (!_accepted) {
       ScaffoldMessenger.of(
         context,
@@ -290,8 +271,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             name: name,
             phone: _phone.text,
             idNumber: _idNumber.text,
-            idFront: _idFront,
-            idBack: _idBack,
             specialtyId: isDoctor ? _specialty : null,
             licenseNumber: isDoctor ? _license.text : null,
             certificate: isDoctor ? _certificate : null,
@@ -433,36 +412,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       return null;
                     },
                   ),
-                  Text(
-                    context.tr('id_upload_hint'),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _IdPhotoTile(
-                          label: context.tr('id_front'),
-                          file: _idFront,
-                          onTap: () async {
-                            final f = await _pickImage();
-                            if (f != null) setState(() => _idFront = f);
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _IdPhotoTile(
-                          label: context.tr('id_back'),
-                          file: _idBack,
-                          onTap: () async {
-                            final f = await _pickImage();
-                            if (f != null) setState(() => _idBack = f);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -576,93 +525,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _IdPhotoTile extends StatelessWidget {
-  const _IdPhotoTile({
-    required this.label,
-    required this.file,
-    required this.onTap,
-  });
-  final String label;
-  final Attachment? file;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final bytes = file?.bytes;
-    final done = file != null;
-    return AspectRatio(
-      aspectRatio: 1.58, // ID-1 card format
-      child: Material(
-        color: done ? AppColors.turquoise : AppColors.mint,
-        borderRadius: BorderRadius.circular(14),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (bytes != null) Image.memory(bytes, fit: BoxFit.cover),
-              if (!done)
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(LucideIcons.imagePlus, color: AppColors.ink, size: 30),
-                    const SizedBox(height: 6),
-                    Text(
-                      label,
-                      style: TextStyle(
-                        color: AppColors.ink,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    Text(
-                      context.tr('tap_to_add'),
-                      style: TextStyle(color: AppColors.ink, fontSize: 12),
-                    ),
-                  ],
-                )
-              else
-                PositionedDirectional(
-                  start: 6,
-                  bottom: 6,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.success,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          LucideIcons.check,
-                          color: AppColors.onPrimary,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          label,
-                          style: TextStyle(
-                            color: AppColors.onPrimary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
           ),
         ),
       ),
