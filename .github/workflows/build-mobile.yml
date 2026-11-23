@@ -70,11 +70,11 @@ jobs:
           # the emulator-only x86 copy.
           flutter build apk --release \
             --target-platform android-arm,android-arm64 \
-            --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
+            --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
           flutter build appbundle --release \
-            --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
+            --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
           mkdir -p dist
           cp build/app/outputs/flutter-apk/app-release.apk dist/shifa-linnas.apk
           cp build/app/outputs/bundle/release/app-release.aab dist/shifa-linnas.aab
@@ -181,8 +181,8 @@ jobs:
       - name: Build for iPhone (release, unsigned)
         run: |
           flutter build ios --release --no-codesign \
-            --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
+            --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
           mkdir -p dist/Payload
           cp -R build/ios/iphoneos/Runner.app dist/Payload/
           (cd dist && zip -qr shifa-linnas-unsigned.ipa Payload && rm -rf Payload)
