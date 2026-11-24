@@ -6,6 +6,7 @@ import '../features/about/about_screen.dart';
 import '../features/aid/aid_screens.dart';
 import '../features/auth/auth_screens.dart';
 import '../features/care_map/care_map.dart';
+import '../features/calls/live_call_screen.dart';
 import '../features/cards/member_card_screens.dart';
 import '../features/blood/blood_screens.dart';
 import '../features/doctor/doctor_shell.dart';
@@ -237,6 +238,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/chat/:id',
         builder: (_, state) => ChatScreen(id: state.pathParameters['id']!),
+      ),
+      // Voice / video call inside the app (LiveKit).
+      GoRoute(
+        path: '/call/:id',
+        builder: (_, state) => LiveCallScreen(
+          consultationId: state.pathParameters['id']!,
+          kind: state.uri.queryParameters['kind'] == 'video'
+              ? CallKind.video
+              : CallKind.voice,
+          otherName: state.uri.queryParameters['name'] ?? '',
+        ),
       ),
       GoRoute(
         path: '/notifications',

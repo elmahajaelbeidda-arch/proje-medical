@@ -10,6 +10,7 @@ import 'core/providers.dart';
 import 'core/router.dart';
 import 'core/theme.dart';
 import 'features/aid/aid_repository.dart';
+import 'features/calls/incoming_call.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,7 +62,10 @@ class ShifaApp extends ConsumerWidget {
       builder: (context, child) {
         final b = Theme.of(context).brightness;
         AppColors.use(b);
-        return KeyedSubtree(key: ValueKey(b), child: child ?? const SizedBox());
+        return KeyedSubtree(
+          key: ValueKey(b),
+          child: IncomingCallWatcher(child: child ?? const SizedBox()),
+        );
       },
     );
   }

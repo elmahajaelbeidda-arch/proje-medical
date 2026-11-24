@@ -9,6 +9,7 @@ import '../../widgets/shifa_ui.dart' show StatusDot;
 
 import '../../core/admin_provider.dart';
 import '../../core/app_info.dart';
+import '../../core/accounts_remote.dart';
 import '../../core/l10n.dart';
 import '../../core/providers.dart';
 import '../../core/theme.dart';
@@ -137,6 +138,29 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         return;
       }
       if (!context.mounted) return;
+      // Server accounts: the call happens inside the app (LiveKit).
+      if (AccountsRemote.enabled) {
+        if (isDoctor) {
+          ref
+              .read(consultationsProvider.notifier)
+              .sendMessage(
+                c.id,
+                ChatMessage(
+                  fromDoctor: true,
+                  text: '',
+                  time: DateTime.now(),
+                  call: kind,
+                ),
+              );
+        }
+        context.push(
+          Uri(
+            path: '/call/${c.id}',
+            queryParameters: {'kind': kind.name, 'name': otherName},
+          ).toString(),
+        );
+        return;
+      }
       final opened = await openCall(
         context,
         ref,
