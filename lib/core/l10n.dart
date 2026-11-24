@@ -111,7 +111,7 @@ class AppStrings {
       'تعذّر بدء التسجيل',
       'Impossible de démarrer l’enregistrement',
     ],
-    'max_duration': ['الحد الأقصى 3 دقائق', 'Durée max : 3 minutes'],
+    'max_duration': ['الحد الأقصى دقيقة واحدة', 'Durée max : 1 minute'],
     'demo_audio': [
       'تسجيل تجريبي (غير قابل للتشغيل)',
       'Enregistrement de démonstration (non lisible)',

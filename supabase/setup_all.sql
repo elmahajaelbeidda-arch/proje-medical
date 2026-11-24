@@ -1360,6 +1360,16 @@ alter table public.consultations
   add column if not exists voice_path text,
   add column if not exists voice_ms int;
 
+-- A voice clip lasts one minute at most (the app stops at 60 seconds).
+do $$ begin
+  alter table public.consultation_messages
+    add constraint voice_one_minute check (voice_ms is null or voice_ms <= 61000);
+exception when duplicate_object then null; end $$;
+do $$ begin
+  alter table public.consultations
+    add constraint voice_one_minute check (voice_ms is null or voice_ms <= 61000);
+exception when duplicate_object then null; end $$;
+
 -- A consultation id taken from a storage path «<id>/...».
 create or replace function public.consultation_of_path(p_name text)
 returns uuid language sql immutable as $$

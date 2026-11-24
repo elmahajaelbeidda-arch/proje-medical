@@ -20,7 +20,7 @@ import '../models/models.dart';
 // ---------------------------------------------------------------------------
 
 const maxFileBytes = 10 * 1024 * 1024; // 10 MB
-const maxVoiceDuration = Duration(minutes: 3);
+const maxVoiceDuration = Duration(minutes: 1);
 
 String formatBytes(int? bytes) {
   if (bytes == null) return '';

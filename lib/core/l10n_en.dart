@@ -47,7 +47,7 @@ const Map<String, String> enStrings = {
   'record_again': 'Record again',
   'mic_denied': 'Microphone access denied. Enable it in settings.',
   'record_failed': 'Could not start recording',
-  'max_duration': 'Max duration: 3 minutes',
+  'max_duration': 'Max duration: 1 minute',
   'demo_audio': 'Demo recording (cannot be played)',
   'voice_message': '🎤 Voice message',
   'send_voice': 'Send recording',
