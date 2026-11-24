@@ -656,7 +656,7 @@ class _PsychBookingScreenState extends ConsumerState<PsychBookingScreen> {
   }
 
   Widget _privacyStep() {
-    final doctor = MockData.doctorById(_doctorId)!;
+    final doctor = MockData.doctorById(_doctorId) ?? CurrentAccount.doctor;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -774,7 +774,8 @@ class _PsychSessionScreenState extends ConsumerState<PsychSessionScreen> {
     final session = s;
     final notifier = ref.read(psychProvider.notifier);
     final text = Theme.of(context).textTheme;
-    final doctor = MockData.doctorById(session.doctorId)!;
+    final doctor =
+        MockData.doctorById(session.doctorId) ?? CurrentAccount.doctor;
     _notes ??= TextEditingController(text: session.privateNotes);
     final history = widget.asDoctor
         ? (ref

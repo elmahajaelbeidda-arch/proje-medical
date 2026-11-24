@@ -1,3 +1,5 @@
+import '../data/mock_data.dart';
+
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -863,6 +865,8 @@ class AdminNotifier extends Notifier<AdminState> {
   // -------------------------------------------------------------------------
 
   static AdminState _seed(List<AdminAccount> seedAdmins) {
+    // Real server: no demo donations, announcements or agreements.
+    if (MockData.live) return AdminState(admins: seedAdmins);
     final now = DateTime.now();
     DateTime ago(int days) => now.subtract(Duration(days: days));
     return AdminState(

@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/admin_provider.dart';
 import 'core/admin_remote.dart';
 import 'core/l10n.dart';
+import 'data/mock_data.dart';
 import 'core/providers.dart';
 import 'core/router.dart';
 import 'core/theme.dart';
@@ -16,6 +17,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Patient map backend (see supabase/migrations). Without the keys the
   // feature runs on demo data.
+  // Real server: only real people and content, no demo data.
+  MockData.live = supabaseConfigured;
   if (supabaseConfigured) {
     await Supabase.initialize(
       url: supabaseUrl,

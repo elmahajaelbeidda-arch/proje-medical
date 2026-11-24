@@ -8,6 +8,10 @@ import '../models/registration.dart';
 class MockData {
   MockData._();
 
+  /// True when the app runs on the real server (Supabase): no demo people
+  /// or content are shown, only what people really register.
+  static bool live = false;
+
   static const currentPatientId = 'p1';
   static const currentDoctorId = 'd1';
 
@@ -17,7 +21,7 @@ class MockData {
   /// Demo volunteer psychiatrist account.
   static const psychDoctorId = 'd9';
 
-  static const doctors = <Doctor>[
+  static const _doctors = <Doctor>[
     Doctor(
       id: 'd1',
       name: 'د. سارة بن علي',
@@ -179,6 +183,12 @@ class MockData {
     ),
   ];
 
+  /// Demo volunteer doctors (none on the real server).
+  static List<Doctor> get doctors => live ? const [] : _doctors;
+
+  /// The demo doctor account (fallback profile, never listed when live).
+  static Doctor get demoDoctor => _doctors.first;
+
   static Doctor? doctorById(String? id) {
     if (id == null) return null;
     for (final d in doctors) {
@@ -188,6 +198,7 @@ class MockData {
   }
 
   static List<Consultation> consultations() {
+    if (live) return const [];
     final now = DateTime.now();
     return [
       Consultation(
@@ -367,6 +378,7 @@ class MockData {
   }
 
   static List<AppNotification> notifications(bool forDoctor) {
+    if (live) return const [];
     final now = DateTime.now();
     if (forDoctor) {
       return [
@@ -420,6 +432,7 @@ class MockData {
   // -------------------------------------------------------------------------
 
   static List<BloodDonor> bloodDonors() {
+    if (live) return const [];
     final now = DateTime.now();
     return [
       BloodDonor(
@@ -512,46 +525,49 @@ class MockData {
   }
 
   /// Where to give blood (demo list; the team manages the real one).
-  static List<DonationPlace> donationPlaces() => const [
-    DonationPlace(
-      id: 'dp1',
-      name: 'بنك الدم — المركز الاستشفائي الوطني',
-      city: 'نواكشوط',
-      address: 'تفرغ زينة',
-      hours: 'السبت – الخميس · 8:00 – 14:00',
-      latitude: 18.0907,
-      longitude: -15.9757,
-    ),
-    DonationPlace(
-      id: 'dp2',
-      name: 'مستشفى الشيخ زايد — وحدة نقل الدم',
-      city: 'نواكشوط',
-      address: 'توجنين',
-      hours: 'كل يوم · 8:00 – 20:00',
-      latitude: 18.1063,
-      longitude: -15.9406,
-    ),
-    DonationPlace(
-      id: 'dp3',
-      name: 'مختبر الشفاء للتحاليل الطبية (شريك)',
-      city: 'نواكشوط',
-      address: 'لكصر، قرب السوق المركزي',
-      hours: 'السبت – الخميس · 9:00 – 13:00',
-      note: 'فحص الفصيلة مجاناً للمتبرعين المسجلين.',
-      latitude: 18.0935,
-      longitude: -15.9610,
-    ),
-    DonationPlace(
-      id: 'dp4',
-      name: 'مستشفى كيفة الجهوي — بنك الدم',
-      city: 'كيفة',
-      hours: 'السبت – الخميس · 8:00 – 14:00',
-      latitude: 16.6206,
-      longitude: -11.4045,
-    ),
-  ];
+  static List<DonationPlace> donationPlaces() => live
+      ? const []
+      : const [
+          DonationPlace(
+            id: 'dp1',
+            name: 'بنك الدم — المركز الاستشفائي الوطني',
+            city: 'نواكشوط',
+            address: 'تفرغ زينة',
+            hours: 'السبت – الخميس · 8:00 – 14:00',
+            latitude: 18.0907,
+            longitude: -15.9757,
+          ),
+          DonationPlace(
+            id: 'dp2',
+            name: 'مستشفى الشيخ زايد — وحدة نقل الدم',
+            city: 'نواكشوط',
+            address: 'توجنين',
+            hours: 'كل يوم · 8:00 – 20:00',
+            latitude: 18.1063,
+            longitude: -15.9406,
+          ),
+          DonationPlace(
+            id: 'dp3',
+            name: 'مختبر الشفاء للتحاليل الطبية (شريك)',
+            city: 'نواكشوط',
+            address: 'لكصر، قرب السوق المركزي',
+            hours: 'السبت – الخميس · 9:00 – 13:00',
+            note: 'فحص الفصيلة مجاناً للمتبرعين المسجلين.',
+            latitude: 18.0935,
+            longitude: -15.9610,
+          ),
+          DonationPlace(
+            id: 'dp4',
+            name: 'مستشفى كيفة الجهوي — بنك الدم',
+            city: 'كيفة',
+            hours: 'السبت – الخميس · 8:00 – 14:00',
+            latitude: 16.6206,
+            longitude: -11.4045,
+          ),
+        ];
 
   static List<BloodRequest> bloodRequests() {
+    if (live) return const [];
     final now = DateTime.now();
     return [
       // Request of the demo patient (from their profile).
@@ -647,6 +663,7 @@ class MockData {
   // -------------------------------------------------------------------------
 
   static List<Registration> registrations() {
+    if (live) return const [];
     final now = DateTime.now();
     return [
       Registration(

@@ -71,6 +71,7 @@ class SummonsNotifier extends Notifier<List<Summons>> {
   }
 
   static List<Summons> _seed() {
+    if (MockData.live) return const [];
     final now = DateTime.now();
     final d = MockData.doctorById('d2')!;
     return [

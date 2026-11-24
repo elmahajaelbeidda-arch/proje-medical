@@ -148,6 +148,7 @@ class PsychNotifier extends Notifier<List<PsychSession>> {
   }
 
   static List<PsychSession> _seed() {
+    if (MockData.live) return const [];
     final now = DateTime.now();
     DateTime at(int days, int hour) =>
         DateTime(now.year, now.month, now.day + days, hour);

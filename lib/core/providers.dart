@@ -112,15 +112,14 @@ abstract final class CurrentAccount {
   static String doctorId = MockData.currentDoctorId;
 
   /// The signed-in doctor (a server account has no demo profile).
-  static Doctor doctor = MockData.doctorById(MockData.currentDoctorId)!;
+  static Doctor doctor = MockData.demoDoctor;
 
   static void update(AuthState a) {
     final serverId = AccountsRemote.enabled ? a.registrationId : null;
     patientId = serverId ?? MockData.currentPatientId;
     doctorId = serverId ?? a.doctorId;
     doctor = serverId == null || !a.isDoctor
-        ? (MockData.doctorById(a.doctorId) ??
-              MockData.doctorById(MockData.currentDoctorId)!)
+        ? (MockData.doctorById(a.doctorId) ?? MockData.demoDoctor)
         : Doctor(
             id: serverId,
             name: a.name,

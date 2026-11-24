@@ -1,3 +1,5 @@
+import '../data/mock_data.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/admin.dart';
@@ -513,6 +515,7 @@ final pulseProvider = NotifierProvider<PulseNotifier, PulseState>(
 // ---------------------------------------------------------------------------
 
 PulseState seedPulse(DateTime now) {
+  if (MockData.live) return const PulseState();
   DateTime ago(int days, [int hours = 0]) =>
       now.subtract(Duration(days: days, hours: hours));
   const team = 'جمعية عون وسند الخيرية';

@@ -35,8 +35,12 @@ class FacilityNotifier extends Notifier<FacilityState> {
   int _seq = 0;
 
   @override
-  FacilityState build() =>
-      FacilityState(facilities: _seedFacilities(), referrals: _seedReferrals());
+  FacilityState build() => MockData.live
+      ? const FacilityState(facilities: [], referrals: [])
+      : FacilityState(
+          facilities: _seedFacilities(),
+          referrals: _seedReferrals(),
+        );
 
   /// New facility: waits for the association's approval.
   String register({

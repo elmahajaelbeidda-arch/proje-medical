@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/admin_provider.dart';
 import 'core/admin_router.dart';
 import 'core/l10n.dart';
+import 'data/mock_data.dart';
 import 'core/providers.dart';
 import 'core/theme.dart';
 import 'features/admin/admin_sync.dart';
@@ -16,6 +17,8 @@ import 'features/aid/aid_repository.dart';
 /// from the users' app (lib/main.dart). Published under /admin/.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Real server: only real people and content, no demo data.
+  MockData.live = supabaseConfigured;
   if (supabaseConfigured) {
     await Supabase.initialize(
       url: supabaseUrl,
