@@ -161,6 +161,27 @@ class AttachmentThumb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bytes = attachment.bytes;
+    final remote = attachment.remotePath;
+    if (attachment.kind == AttachmentKind.image &&
+        bytes == null &&
+        remote != null) {
+      // Server image: small preview through a short-lived link.
+      return FutureBuilder<String?>(
+        future: const ConsultationsRemote().fileUrl(remote),
+        builder: (context, snap) => snap.data == null
+            ? _placeholder()
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  snap.data!,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => _placeholder(),
+                ),
+              ),
+      );
+    }
     if (attachment.kind == AttachmentKind.image && bytes != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -172,6 +193,10 @@ class AttachmentThumb extends StatelessWidget {
         ),
       );
     }
+    return _placeholder();
+  }
+
+  Widget _placeholder() {
     final isPdf = attachment.kind == AttachmentKind.pdf;
     final color = isPdf ? AppColors.grey : categoryColor(attachment.category);
     return Container(
@@ -213,7 +238,9 @@ void showAttachmentPreview(BuildContext context, Attachment a) {
             ),
           ),
           Flexible(
-            child: a.kind == AttachmentKind.image && bytes != null
+            child: a.remotePath != null && bytes == null
+                ? _ServerFilePreview(a)
+                : a.kind == AttachmentKind.image && bytes != null
                 ? InteractiveViewer(
                     maxScale: 5,
                     child: Image.memory(bytes, fit: BoxFit.contain),
@@ -225,27 +252,10 @@ void showAttachmentPreview(BuildContext context, Attachment a) {
                       children: [
                         AttachmentThumb(a, size: 96),
                         const SizedBox(height: 16),
-                        if (a.remotePath != null)
-                          // Server file: opened with a short-lived link.
-                          FilledButton.icon(
-                            onPressed: () async {
-                              final url = await const ConsultationsRemote()
-                                  .fileUrl(a.remotePath!);
-                              if (url != null) {
-                                await launchUrl(
-                                  Uri.parse(url),
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              }
-                            },
-                            icon: const Icon(LucideIcons.externalLink),
-                            label: Text(ctx.tr('open_file')),
-                          )
-                        else
-                          Text(
-                            ctx.tr('preview_placeholder'),
-                            textAlign: TextAlign.center,
-                          ),
+                        Text(
+                          ctx.tr('preview_placeholder'),
+                          textAlign: TextAlign.center,
+                        ),
                       ],
                     ),
                   ),
@@ -532,7 +542,15 @@ class _VoiceNotePlayerState extends State<VoiceNotePlayer> {
       await _player.pause();
       return;
     }
-    final src = widget.note.source;
+    var src = widget.note.source;
+    // Voice note kept on the server: played through a short-lived link.
+    if (src.startsWith(serverAudioPrefix)) {
+      final url = await const ConsultationsRemote().fileUrl(
+        src.substring(serverAudioPrefix.length),
+      );
+      if (url == null) return;
+      src = url;
+    }
     final isUrl = kIsWeb || src.startsWith('blob:') || src.startsWith('http');
     await _player.play(isUrl ? UrlSource(src) : DeviceFileSource(src));
   }
@@ -618,6 +636,77 @@ class _VoiceNotePlayerState extends State<VoiceNotePlayer> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// A medical file kept on the server: images are shown here; a PDF gets an
+/// «open» button whose link is ready before the tap (Safari opens it then).
+class _ServerFilePreview extends StatefulWidget {
+  const _ServerFilePreview(this.a);
+  final Attachment a;
+  @override
+  State<_ServerFilePreview> createState() => _ServerFilePreviewState();
+}
+
+class _ServerFilePreviewState extends State<_ServerFilePreview> {
+  late final Future<String?> _url = const ConsultationsRemote().fileUrl(
+    widget.a.remotePath!,
+  );
+
+  Widget _unavailable(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(32),
+    child: Text(context.tr('file_unavailable'), textAlign: TextAlign.center),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String?>(
+      future: _url,
+      builder: (context, snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return const Padding(
+            padding: EdgeInsets.all(48),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        final url = snap.data;
+        if (url == null) return _unavailable(context);
+        if (widget.a.kind == AttachmentKind.image) {
+          return InteractiveViewer(
+            maxScale: 5,
+            child: Image.network(
+              url,
+              fit: BoxFit.contain,
+              loadingBuilder: (_, child, p) => p == null
+                  ? child
+                  : const Padding(
+                      padding: EdgeInsets.all(48),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+              errorBuilder: (_, _, _) => _unavailable(context),
+            ),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AttachmentThumb(widget.a, size: 96),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: () => launchUrl(
+                  Uri.parse(url),
+                  mode: LaunchMode.externalApplication,
+                ),
+                icon: const Icon(LucideIcons.externalLink),
+                label: Text(context.tr('open_file')),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

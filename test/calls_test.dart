@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shifa/models/models.dart';
 import 'package:shifa/core/admin_provider.dart';
 import 'package:shifa/core/calls.dart';
 import 'package:shifa/features/admin/demo_admins.dart';
@@ -89,5 +90,33 @@ void main() {
     expect(c.read(adminProvider).audit.first.action, 'au_call_server');
     admin.setCallServer('');
     expect(c.read(callServerProvider), defaultCallServer);
+  });
+
+  test('server consultations: same room on both phones, join from chat', () {
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final n = c.read(callsProvider.notifier);
+    const id = '6b1c2d3e-0000-4000-8000-000000000001';
+    expect(n.roomFor(id), 'shifa6b1c2d3e000040008000000000000001');
+    expect(
+      ProviderContainer().read(callsProvider.notifier).roomFor(id),
+      n.roomFor(id),
+    );
+    final now = DateTime(2026, 11, 24, 10);
+    final call = ChatMessage(
+      fromDoctor: true,
+      text: '',
+      time: now.subtract(const Duration(minutes: 5)),
+      call: CallKind.video,
+    );
+    expect(n.patientCanJoin(id, now: now, messages: [call]), isTrue);
+    expect(
+      n.patientCanJoin(
+        id,
+        now: now.add(const Duration(hours: 2)),
+        messages: [call],
+      ),
+      isFalse,
+    );
   });
 }

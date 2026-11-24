@@ -9,6 +9,7 @@ library;
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:cross_file/cross_file.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/models.dart';
@@ -25,6 +26,9 @@ String newUuid([math.Random? rnd]) {
   return '${s.substring(0, 8)}-${s.substring(8, 12)}-${s.substring(12, 16)}-'
       '${s.substring(16, 20)}-${s.substring(20)}';
 }
+
+/// Voice notes kept on the server: «server-audio:» then the storage path.
+const serverAudioPrefix = 'server-audio:';
 
 T _enum<T extends Enum>(List<T> values, Object? name, T fallback) =>
     values.where((v) => v.name == name).firstOrNull ?? fallback;
@@ -73,6 +77,12 @@ Consultation consultationFromRows(
                 DateTime.tryParse(reply['date'] as String? ?? '')?.toLocal() ??
                 DateTime.now(),
           ),
+    voiceNote: j['voice_path'] == null
+        ? null
+        : VoiceNote(
+            '$serverAudioPrefix${j['voice_path']}',
+            Duration(milliseconds: (j['voice_ms'] as num?)?.toInt() ?? 0),
+          ),
     attachments: [
       for (final f in files)
         Attachment(
@@ -94,6 +104,12 @@ Consultation consultationFromRows(
           time:
               DateTime.tryParse(m['created_at'] as String? ?? '')?.toLocal() ??
               DateTime.now(),
+          voice: m['voice_path'] == null
+              ? null
+              : VoiceNote(
+                  '$serverAudioPrefix${m['voice_path']}',
+                  Duration(milliseconds: (m['voice_ms'] as num?)?.toInt() ?? 0),
+                ),
           call: switch (m['call_kind']) {
             'voice' => CallKind.voice,
             'video' => CallKind.video,
@@ -155,6 +171,26 @@ class ConsultationsRemote {
       } catch (_) {}
     }
 
+    // Safety net: the list is also read again every few seconds, so new
+    // requests, replies and messages arrive even when live updates are off.
+    Future<void> poll() async {
+      try {
+        final results = await Future.wait([
+          _db.from('consultations').select(),
+          _db.from('consultation_messages').select(),
+          _db.from('consultation_files').select(),
+        ]);
+        cases = [for (final r in results[0] as List) r as Map<String, dynamic>];
+        msgs = [for (final r in results[1] as List) r as Map<String, dynamic>];
+        files = [for (final r in results[2] as List) r as Map<String, dynamic>];
+        ready = 2;
+        emit();
+      } catch (_) {}
+    }
+
+    poll();
+    final timer = Timer.periodic(const Duration(seconds: 6), (_) => poll());
+
     final subs = <StreamSubscription<dynamic>>[
       _db.from('consultations').stream(primaryKey: ['id']).listen((rows) {
         cases = rows;
@@ -162,16 +198,17 @@ class ConsultationsRemote {
         emit();
         // New consultations may bring new files.
         loadFiles();
-      }, onError: controller.addError),
+      }, onError: (_) {}),
       _db.from('consultation_messages').stream(primaryKey: ['id']).listen((
         rows,
       ) {
         msgs = rows;
         if (ready < 2) ready++;
         emit();
-      }, onError: controller.addError),
+      }, onError: (_) {}),
     ];
     controller.onCancel = () {
+      timer.cancel();
       for (final s in subs) {
         s.cancel();
       }
@@ -194,6 +231,22 @@ class ConsultationsRemote {
       'symptoms': c.symptoms,
       'duration_key': c.durationKey,
     });
+    final voice = c.voiceNote;
+    if (voice != null && voice.playable) {
+      try {
+        final path = await _uploadVoice(c.id, voice, 'request');
+        await _db.rpc(
+          'set_consultation_voice',
+          params: {
+            'p_id': c.id,
+            'p_path': path,
+            'p_ms': voice.duration.inMilliseconds,
+          },
+        );
+      } catch (_) {
+        // The request is sent; only its voice note is missing.
+      }
+    }
     var n = 0;
     for (final a in c.attachments) {
       final bytes = a.bytes;
@@ -235,19 +288,56 @@ class ConsultationsRemote {
       _db.rpc('rate_consultation', params: {'p_id': id, 'p_stars': stars});
 
   Future<void> sendMessage(String id, ChatMessage m) async {
+    String? voicePath;
+    final voice = m.voice;
+    if (voice != null && voice.playable) {
+      voicePath = await _uploadVoice(
+        id,
+        voice,
+        'msg_${DateTime.now().millisecondsSinceEpoch}',
+      );
+    }
     await _db.from('consultation_messages').insert({
       'consultation_id': id,
       'text': m.text,
       if (m.call != null) 'call_kind': m.call!.name,
+      'voice_path': ?voicePath,
+      if (voice != null) 'voice_ms': voice.duration.inMilliseconds,
     });
   }
 
-  /// Short-lived link to open a medical file.
+  /// Uploads a recorded voice note (WAV) and gives its storage path.
+  Future<String> _uploadVoice(String id, VoiceNote v, String name) async {
+    final bytes = await XFile(v.source).readAsBytes();
+    final path = '$id/voice/$name.wav';
+    await _db.storage
+        .from('consultations')
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: const FileOptions(
+            contentType: 'audio/wav',
+            upsert: true,
+          ),
+        );
+    return path;
+  }
+
+  /// Short-lived link (10 minutes) to open a medical file or a voice note.
+  /// Kept a few minutes so a file shown twice is not asked for again.
   Future<String?> fileUrl(String path) async {
+    final cached = _urls[path];
+    if (cached != null && DateTime.now().isBefore(cached.$2)) return cached.$1;
     try {
-      return await _db.storage.from('consultations').createSignedUrl(path, 600);
+      final url = await _db.storage
+          .from('consultations')
+          .createSignedUrl(path, 600);
+      _urls[path] = (url, DateTime.now().add(const Duration(minutes: 8)));
+      return url;
     } catch (_) {
       return null;
     }
   }
+
+  static final Map<String, (String, DateTime)> _urls = {};
 }

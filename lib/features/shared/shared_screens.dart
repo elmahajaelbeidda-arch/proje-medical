@@ -118,7 +118,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final open = c.status != ConsultationStatus.closed;
     final canCall = isDoctor
         ? open && c.doctorId == auth.doctorId
-        : open && calls.patientCanJoin(c.id);
+        : open && calls.patientCanJoin(c.id, messages: c.messages);
     Future<void> call(CallKind kind) async {
       final opened = await openCall(
         context,

@@ -1422,6 +1422,7 @@ const Map<String, String> enStrings = {
   'about_short': 'From the Aoun wa Sanad Charity Association… health care that reaches you wherever you are.',
   'learn_more': 'Learn more',
   'open_file': 'Open the file',
+  'file_unavailable': 'Cannot open the file. Check the Internet and try again',
   'link_verify_card': 'Check a card',
   'link_disclaimer': 'Disclaimer',
   'account_created': 'Account created. Your account code:',

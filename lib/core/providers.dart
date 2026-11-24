@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -290,6 +292,17 @@ class ConsultationsNotifier extends Notifier<List<Consultation>> {
       onError: (_) {},
     );
     ref.onDispose(sub.cancel);
+    // The person's own account (e.g. approved by the team meanwhile) is
+    // read again now and then, without signing out and in.
+    if (account != null) {
+      final timer = Timer.periodic(const Duration(seconds: 30), (_) async {
+        final p = await const AccountsRemote().current();
+        if (p != null && ref.mounted) {
+          ref.read(registrationsProvider.notifier).upsert(p.toRegistration());
+        }
+      });
+      ref.onDispose(timer.cancel);
+    }
     return const [];
   }
 

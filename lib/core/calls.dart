@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/models.dart' show CallKind;
+import '../models/models.dart' show CallKind, ChatMessage;
 import 'admin_provider.dart';
 
 export '../models/models.dart' show CallKind;
@@ -11,16 +11,19 @@ export '../models/models.dart' show CallKind;
 // Voice and video calls between a doctor and a patient (Jitsi Meet).
 //
 // Every consultation / psych session gets its own private room, named with
-// a long random code that only the two parties' screens know. The call
-// itself runs on the Jitsi server set by the association (default: the
-// public meet.jit.si). Nothing of the call is recorded: the app only keeps
-// when a call was started, by whom, and of which kind.
+// a long random code that only the two parties' screens know (with the
+// server: made from the consultation's secret id, so both phones meet in
+// the same room). The call itself runs on the Jitsi server set by the
+// association (default: the public meet.ffmuc.net, which needs no sign-in).
+// Nothing of the call is recorded: the app only keeps when a call was
+// started, by whom, and of which kind.
 // ---------------------------------------------------------------------------
 
 /// Server used when the dashboard sets none (build option CALL_SERVER).
 const defaultCallServer = String.fromEnvironment(
   'CALL_SERVER',
-  defaultValue: 'https://meet.jit.si',
+  // meet.jit.si now asks the first person to sign in with Google / GitHub.
+  defaultValue: 'https://meet.ffmuc.net',
 );
 
 class CallRecord {
@@ -63,6 +66,11 @@ class CallsNotifier extends Notifier<CallsState> {
   String roomFor(String contextId) {
     final existing = state.rooms[contextId];
     if (existing != null) return existing;
+    // Server consultations have a random secret id (UUID): the same room on
+    // the patient's and the doctor's phones.
+    if (RegExp(r'^[0-9a-f]{8}-[0-9a-f-]{27}$').hasMatch(contextId)) {
+      return 'shifa${contextId.replaceAll('-', '')}';
+    }
     final code = 'shifa-${newRoomCode()}';
     state = CallsState(
       rooms: {...state.rooms, contextId: code},
@@ -78,11 +86,23 @@ class CallsNotifier extends Notifier<CallsState> {
     return r;
   }
 
-  /// The doctor started a call recently: the patient may join it.
-  bool patientCanJoin(String contextId, {DateTime? now}) {
+  /// The doctor started a call recently: the patient may join it. With the
+  /// server, the call announced in the conversation counts too.
+  bool patientCanJoin(
+    String contextId, {
+    DateTime? now,
+    List<ChatMessage> messages = const [],
+  }) {
+    final t = now ?? DateTime.now();
+    for (final m in messages.reversed) {
+      if (m.call != null && m.fromDoctor) {
+        if (t.difference(m.time) <= callJoinWindow) return true;
+        break;
+      }
+    }
     final last = state.lastCall(contextId);
     if (last == null || !last.byDoctor) return false;
-    return (now ?? DateTime.now()).difference(last.at) <= callJoinWindow;
+    return t.difference(last.at) <= callJoinWindow;
   }
 }
 
@@ -113,7 +133,8 @@ Uri callUri({
     'config.prejoinPageEnabled=false',
     'config.startWithVideoMuted=$voice',
     'config.startAudioOnly=$voice',
-    'config.disableDeepLinking=false',
+    // Stay in the phone's browser (no «install the app» page).
+    'config.disableDeepLinking=true',
     'userInfo.displayName=$name',
   ].join('&');
   return Uri.parse('$base/$room#$config');
