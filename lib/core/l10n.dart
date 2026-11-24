@@ -2510,6 +2510,10 @@ class AppStrings {
       'يبدأ الطبيب المكالمة، وسيظهر لك هنا زر «انضم» عندها.',
       'Le médecin lance l’appel ; un bouton « Rejoindre » apparaîtra alors ici.',
     ],
+    'call_accept_first': [
+      'اقبل الحالة أولًا لتتمكن من الاتصال بالمريض',
+      'Acceptez d’abord le cas pour appeler le patient',
+    ],
     'call_closed': [
       'لا يمكن الاتصال في استشارة مغلقة',
       'Pas d’appel pour une consultation clôturée',

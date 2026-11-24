@@ -77,8 +77,13 @@ class AuthState {
   bool get isPsychDoctor => isDoctor && specialtyId == 'psych';
 
   /// Doctor account behind this session (demo data).
-  String get doctorId =>
-      isPsychDoctor ? MockData.psychDoctorId : MockData.currentDoctorId;
+  String get doctorId {
+    // A real (server) doctor account is known by its own id.
+    if (AccountsRemote.enabled && isDoctor && registrationId != null) {
+      return registrationId!;
+    }
+    return isPsychDoctor ? MockData.psychDoctorId : MockData.currentDoctorId;
+  }
 
   /// e.g. "•••• 4821"
   String get maskedId => idNumber.length <= 4
@@ -92,7 +97,9 @@ class AuthState {
   String get displayName {
     if (name.isNotEmpty) return name;
     if (isCommittee) return 'فريق المتابعة والإدارة';
-    return isDoctor ? MockData.doctorById(doctorId)!.name : 'محمد الأمين';
+    return isDoctor
+        ? (MockData.doctorById(doctorId)?.name ?? '')
+        : 'محمد الأمين';
   }
 
   String get userId => isDoctor ? doctorId : MockData.currentPatientId;
@@ -377,6 +384,35 @@ class ConsultationsNotifier extends Notifier<List<Consultation>> {
       ),
     );
     if (_remote) _push(() => const ConsultationsRemote().accept(id), before);
+  }
+
+  /// A doctor acts on a new case (message, voice, call): the case becomes
+  /// theirs first, so there is no separate «accept» step to remember.
+  Future<bool> ensureMine(String id) async {
+    final c = byId(id);
+    if (c == null) return false;
+    final me = CurrentAccount.doctorId;
+    if (c.doctorId == me) return true;
+    if (c.doctorId != null || c.status != ConsultationStatus.pending) {
+      return false;
+    }
+    final before = state;
+    _update(
+      id,
+      (x) => x.copyWith(
+        status: ConsultationStatus.accepted,
+        doctorId: me,
+        doctorName: ref.read(authProvider).displayName,
+      ),
+    );
+    if (!_remote) return true;
+    try {
+      await const ConsultationsRemote().accept(id);
+      return true;
+    } catch (_) {
+      if (ref.mounted) state = before;
+      return false;
+    }
   }
 
   void reply(String id, DoctorReply reply) {

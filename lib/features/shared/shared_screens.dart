@@ -40,9 +40,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     super.dispose();
   }
 
-  void _send(bool asDoctor) {
+  /// A doctor writing on a new case takes it first (no separate step).
+  Future<bool> _ready(bool asDoctor) async {
+    if (!asDoctor) return true;
+    return ref.read(consultationsProvider.notifier).ensureMine(widget.id);
+  }
+
+  Future<void> _send(bool asDoctor) async {
     final value = _input.text.trim();
     if (value.isEmpty) return;
+    if (!await _ready(asDoctor) || !mounted) return;
     ref
         .read(consultationsProvider.notifier)
         .sendMessage(
@@ -88,6 +95,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
     );
     if (send != true || note == null) return;
+    if (!await _ready(asDoctor) || !mounted) return;
     ref
         .read(consultationsProvider.notifier)
         .sendMessage(
@@ -117,9 +125,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final calls = ref.read(callsProvider.notifier);
     final open = c.status != ConsultationStatus.closed;
     final canCall = isDoctor
-        ? open && c.doctorId == auth.doctorId
+        // Their case, or a new case they may take (taken on the first call).
+        ? open &&
+              (c.doctorId == auth.doctorId ||
+                  (c.doctorId == null &&
+                      c.status == ConsultationStatus.pending))
         : open && calls.patientCanJoin(c.id, messages: c.messages);
     Future<void> call(CallKind kind) async {
+      if (isDoctor &&
+          !await ref.read(consultationsProvider.notifier).ensureMine(c.id)) {
+        return;
+      }
+      if (!context.mounted) return;
       final opened = await openCall(
         context,
         ref,
@@ -239,8 +256,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     CallActions(
                       onDark: true,
                       enabled: canCall,
-                      disabledKey: isDoctor
+                      disabledKey: !open
                           ? 'call_closed'
+                          : isDoctor
+                          ? 'call_accept_first'
                           : 'call_wait_doctor',
                       onCall: call,
                     ),

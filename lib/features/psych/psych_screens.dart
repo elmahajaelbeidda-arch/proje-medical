@@ -1224,7 +1224,8 @@ class _PsychDoctorShellState extends ConsumerState<PsychDoctorShell> {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
-    final me = MockData.doctorById(auth.doctorId)!;
+    // A real (server) psychiatrist has no demo profile.
+    final me = MockData.doctorById(auth.doctorId) ?? CurrentAccount.doctor;
     // Registered psychiatrists accepted the pledge at sign-up.
     final pledged =
         ref.watch(psychPledgeProvider) || auth.registrationId != null;

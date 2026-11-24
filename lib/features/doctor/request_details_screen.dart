@@ -173,10 +173,20 @@ class RequestDetailsScreen extends ConsumerWidget {
               },
               icon: const Icon(LucideIcons.userCheck),
               label: Text(context.tr('accept_case')),
-            )
-          else if (takenByOther)
+            ),
+          if (c.status == ConsultationStatus.pending &&
+              ref.watch(myAccountStatusProvider) == ReviewStatus.approved) ...[
+            const SizedBox(height: 10),
+            // Message, voice note or call right away (the case is taken on
+            // the first one).
+            OutlinedButton.icon(
+              onPressed: () => context.push('/chat/${c.id}'),
+              icon: const Icon(LucideIcons.messageCircle),
+              label: Text(context.tr('chat')),
+            ),
+          ] else if (takenByOther)
             Center(child: Text(context.tr('accepted_by_other')))
-          else ...[
+          else if (c.status != ConsultationStatus.pending) ...[
             if (c.status == ConsultationStatus.accepted)
               FilledButton.icon(
                 onPressed: () => context.push('/doctor/reply/${c.id}'),

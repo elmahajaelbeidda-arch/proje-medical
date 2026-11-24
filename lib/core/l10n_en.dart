@@ -1421,6 +1421,7 @@ const Map<String, String> enStrings = {
   'qs_emergency': 'Emergency',
   'about_short': 'From the Aoun wa Sanad Charity Association… health care that reaches you wherever you are.',
   'learn_more': 'Learn more',
+  'call_accept_first': 'Accept the case first to call the patient',
   'open_file': 'Open the file',
   'file_unavailable': 'Cannot open the file. Check the Internet and try again',
   'link_verify_card': 'Check a card',
