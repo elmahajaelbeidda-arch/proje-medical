@@ -97,6 +97,8 @@ class AuthState {
   String get displayName {
     if (name.isNotEmpty) return name;
     if (isCommittee) return 'فريق المتابعة والإدارة';
+    // Real server: never a demo name.
+    if (MockData.live) return '';
     return isDoctor
         ? (MockData.doctorById(doctorId)?.name ?? '')
         : 'محمد الأمين';

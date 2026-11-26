@@ -36,6 +36,8 @@ void main() {
     expect(c.read(adminProvider).announcements, isEmpty);
     expect(c.read(adminProvider).donations, isEmpty);
     expect(c.read(carePlacesProvider), isEmpty);
+    // No demo name as a fallback either.
+    expect(const AuthState().displayName, isEmpty);
   });
 
   final screens = <String, Widget Function()>{
