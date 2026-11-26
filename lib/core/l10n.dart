@@ -2529,6 +2529,19 @@ class AppStrings {
       'تعذّر تشغيل الميكروفون أو الكاميرا. اسمح للتطبيق باستعمالهما ثم أعد المحاولة',
       'Micro ou caméra indisponible. Autorisez-les puis réessayez',
     ],
+    'lc_connect_failed': [
+      'تعذّر الدخول إلى غرفة المكالمة',
+      'Impossible de rejoindre l’appel',
+    ],
+    'lc_mic_denied': [
+      'الميكروفون غير مسموح: الطرف الآخر لا يسمعك. اسمح به من إعدادات المتصفح ثم أعد الاتصال',
+      'Micro refusé : l’autre personne ne vous entend pas. Autorisez-le puis rappelez',
+    ],
+    'lc_camera_denied': [
+      'الكاميرا غير مسموحة: المكالمة مستمرة بالصوت فقط',
+      'Caméra refusée : l’appel continue en audio',
+    ],
+    'lc_tap_for_sound': ['اضغط لتشغيل الصوت', 'Touchez pour activer le son'],
     'lc_mute': ['كتم', 'Muet'],
     'lc_unmute': ['إلغاء الكتم', 'Réactiver'],
     'lc_camera_off': ['إيقاف الكاميرا', 'Caméra off'],

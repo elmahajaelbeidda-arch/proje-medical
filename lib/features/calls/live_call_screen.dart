@@ -77,39 +77,75 @@ class _LiveCallScreenState extends State<LiveCallScreen> {
     _start();
   }
 
+  /// Technical reason of a failure (small, to help find the cause).
+  String? _detail;
+
+  /// The browser blocked the sound until a tap (Safari): button shown.
+  bool _needsAudioTap = false;
+
+  /// Microphone or camera refused: the call goes on, a notice is shown.
+  String? _warningKey;
+
   Future<void> _start() async {
+    // 1. Ticket from the server.
+    final CallTicket ticket;
     try {
-      final ticket = await fetchCallTicket(widget.consultationId);
-      final room = Room(
-        roomOptions: const RoomOptions(adaptiveStream: true, dynacast: true),
-      );
-      _room = room;
-      room.addListener(_onRoomChanged);
-      _events = room.createListener()
-        ..on<RoomDisconnectedEvent>((_) => _finish())
-        ..on<ParticipantDisconnectedEvent>((_) {
-          if (room.remoteParticipants.isEmpty && _phase == _Phase.inCall) {
-            _finish();
-          }
-        });
-      await room.connect(ticket.url, ticket.token);
-      await room.localParticipant?.setMicrophoneEnabled(true);
-      if (_video) await room.localParticipant?.setCameraEnabled(true);
-      if (!kIsWeb) {
-        try {
-          await AudioManager.instance.setSpeakerOutputPreferred(_speaker);
-        } catch (_) {}
-      }
-      _onRoomChanged();
+      ticket = await fetchCallTicket(widget.consultationId);
     } on CallTicketError catch (e) {
       _fail(switch (e) {
         CallTicketError.notConfigured => 'lc_not_configured',
         CallTicketError.notAllowed => 'lc_not_allowed',
         CallTicketError.network => 'lc_network',
       });
-    } catch (_) {
-      _fail('lc_media_failed');
+      return;
     }
+    // 2. Join the room.
+    final room = Room(
+      roomOptions: const RoomOptions(adaptiveStream: true, dynacast: true),
+    );
+    _room = room;
+    room.addListener(_onRoomChanged);
+    _events = room.createListener()
+      ..on<RoomDisconnectedEvent>((_) => _finish())
+      ..on<ParticipantDisconnectedEvent>((_) {
+        if (room.remoteParticipants.isEmpty && _phase == _Phase.inCall) {
+          _finish();
+        }
+      })
+      ..on<AudioPlaybackStatusChanged>((e) {
+        if (mounted) setState(() => _needsAudioTap = !e.isPlaying);
+      });
+    try {
+      await room.connect(ticket.url, ticket.token);
+    } catch (e) {
+      _detail = e.toString();
+      _fail('lc_connect_failed');
+      return;
+    }
+    // 3. Microphone, then camera: a refusal does not end the call.
+    try {
+      await room.localParticipant?.setMicrophoneEnabled(true);
+    } catch (e) {
+      _detail = e.toString();
+      _muted = true;
+      _warningKey = 'lc_mic_denied';
+    }
+    if (_video) {
+      try {
+        await room.localParticipant?.setCameraEnabled(true);
+      } catch (e) {
+        _detail = e.toString();
+        _cameraOff = true;
+        _warningKey ??= 'lc_camera_denied';
+      }
+    }
+    if (!kIsWeb) {
+      try {
+        await AudioManager.instance.setSpeakerOutputPreferred(_speaker);
+      } catch (_) {}
+    }
+    if (mounted) setState(() => _needsAudioTap = !room.canPlaybackAudio);
+    _onRoomChanged();
   }
 
   void _onRoomChanged() {
@@ -272,6 +308,40 @@ class _LiveCallScreenState extends State<LiveCallScreen> {
                     ],
                   ),
                   const Spacer(),
+                  if (_warningKey != null && _phase != _Phase.failed)
+                    _Notice(context.tr(_warningKey!)),
+                  if (_needsAudioTap && _phase != _Phase.failed)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: Space.m),
+                      child: FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 48),
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.primary,
+                        ),
+                        onPressed: () async {
+                          await _room?.startAudio();
+                          if (mounted) setState(() => _needsAudioTap = false);
+                        },
+                        icon: const Icon(LucideIcons.volume2),
+                        label: Text(context.tr('lc_tap_for_sound')),
+                      ),
+                    ),
+                  if (_phase == _Phase.failed && _detail != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                      child: Text(
+                        _detail!,
+                        textAlign: TextAlign.center,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                        textDirection: TextDirection.ltr,
+                        style: TextStyle(
+                          color: onDark.withValues(alpha: .6),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
                   if (_phase == _Phase.failed)
                     Padding(
                       padding: const EdgeInsets.all(Space.l),
@@ -536,4 +606,30 @@ class _Controls extends StatelessWidget {
       ),
     );
   }
+}
+
+class _Notice extends StatelessWidget {
+  const _Notice(this.text);
+  final String text;
+  @override
+  Widget build(BuildContext context) => Container(
+    margin: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.m),
+    padding: const EdgeInsets.all(Space.s),
+    decoration: BoxDecoration(
+      color: Colors.white.withValues(alpha: .14),
+      borderRadius: BorderRadius.circular(Radii.button),
+    ),
+    child: Row(
+      children: [
+        const Icon(LucideIcons.info, color: Colors.white, size: 18),
+        const SizedBox(width: Space.xs),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          ),
+        ),
+      ],
+    ),
+  );
 }

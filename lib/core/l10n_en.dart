@@ -1429,6 +1429,10 @@ const Map<String, String> enStrings = {
   'lc_network': 'Cannot connect. Check the Internet and try again',
   'lc_media_failed':
       'Microphone or camera unavailable. Allow them and try again',
+  'lc_connect_failed': 'Cannot join the call',
+  'lc_mic_denied': 'Microphone not allowed: the other person cannot hear you. Allow it in the browser settings, then call again',
+  'lc_camera_denied': 'Camera not allowed: the call goes on with voice only',
+  'lc_tap_for_sound': 'Tap to turn the sound on',
   'lc_mute': 'Mute',
   'lc_unmute': 'Unmute',
   'lc_camera_off': 'Camera off',
